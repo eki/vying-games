@@ -9,6 +9,7 @@ require 'rules/tictactoe'
 
 require 'bots/humanbot'
 require 'bots/randombot'
+require 'bots/exhaustivebot'
 
 rules = nil
 players = {}
