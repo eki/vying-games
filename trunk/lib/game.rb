@@ -101,6 +101,9 @@ class Op
     s = "#{name} (#{short})"
   end
 
+  def <=>( op )
+    self.to_s <=> op.to_s
+  end
 end
 
 class Game
