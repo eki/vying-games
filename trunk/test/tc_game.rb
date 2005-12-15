@@ -152,17 +152,17 @@ class FakeRules
     {"fake_board" => "edcba", "fake_player" => "player1"}
   end
 
-  def FakeRules.ops( game )
-    return nil if final?( game )
+  def FakeRules.ops( state )
+    return nil if final?( state )
 
     op1 = Op.new( "Succ!", 'r' ) do
-      s = game.history.last.dup
+      s = state.dup
       s.fake_board.succ!
       s
     end
 
     op2 = Op.new( "Squeeze!", 's' ) do
-      s = game.history.last.dup
+      s = state.dup
       s.fake_board.squeeze!
       s
     end
@@ -170,8 +170,8 @@ class FakeRules
     [op1,op2]
   end
 
-  def FakeRules.final?( game )
-    game.fake_board.length == 1
+  def FakeRules.final?( state )
+    state.fake_board.length == 1
   end
 end
 

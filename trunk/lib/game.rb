@@ -127,10 +127,6 @@ class Game
     @rules, @history, @sequence = rules, [State.new( rules.init )], []
   end
 
-  def initialize_copy( game )
-    
-  end
-
   def method_missing( method_id, *args )
     return history.last.method_missing( method_id, args )
   end
@@ -140,7 +136,7 @@ class Game
   end
 
   def ops
-    @ops_cache = rules.ops( self )
+    @ops_cache = rules.ops( history.last )
   end
 
   def <<( op )
@@ -159,27 +155,27 @@ class Game
   end
 
   def final?
-    rules.final?( self )
+    rules.final?( history.last )
   end
 
   def winner?( player )
-    rules.winner?( self, player )
+    rules.winner?( history.last, player )
   end
 
   def loser?( player )
-    rules.loser?( self, player )
+    rules.loser?( history.last, player )
   end
 
   def draw?
-    rules.draw?( self )
+    rules.draw?( history.last )
   end
 
   def score( player )
-    rules.score( self, player )
+    rules.score( history.last, player )
   end
 
   def to_s
-    rules.to_s( self )
+    rules.to_s( history.last )
   end
 end
 

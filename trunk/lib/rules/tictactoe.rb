@@ -14,18 +14,18 @@ class TicTacToe
     [Piece.x,Piece.o]
   end
                                                     
-  def TicTacToe.ops( game )
-    return nil if game.final? # Do we still want to check this here?
+  def TicTacToe.ops( state )
+    return nil if final?( state )
 
     a = []
 
-    game.board.coords.each do |x,y|
-      next unless game.board[x,y].empty?
+    state.board.coords.each do |x,y|
+      next unless state.board[x,y].empty?
 
-      p = game.turn
+      p = state.turn
 
       op = Op.new( "Place #{p.name}", Board.xy_to_s( x, y ) ) do
-        s = game.history.last.dup
+        s = state.dup
         s.board[x,y] = p.current
         s.turn.next!
         s
@@ -37,48 +37,48 @@ class TicTacToe
     (a == []) ? nil : a
   end
 
-  def TicTacToe.final?( game )
-    empties = game.board.count( Piece.empty )
+  def TicTacToe.final?( state )
+    empties = state.board.count( Piece.empty )
 
     return true  if empties == 0
     return false if empties >  4
 
-    game.board               =~ /(\S)\1\1/ ||
-    game.board.rotate( 45 )  =~ /(\S)\1\1/ ||
-    game.board.rotate( 90 )  =~ /(\S)\1\1/ ||
-    game.board.rotate( 315 ) =~ /(\S)\1\1/
+    state.board               =~ /(\S)\1\1/ ||
+    state.board.rotate( 45 )  =~ /(\S)\1\1/ ||
+    state.board.rotate( 90 )  =~ /(\S)\1\1/ ||
+    state.board.rotate( 315 ) =~ /(\S)\1\1/
   end
 
-  def TicTacToe.winner?( game, player )
-    return game.board               =~ /(#{player.short})\1\1/ ||
-           game.board.rotate( 45 )  =~ /(#{player.short})\1\1/ ||
-           game.board.rotate( 90 )  =~ /(#{player.short})\1\1/ ||
-           game.board.rotate( 315 ) =~ /(#{player.short})\1\1/
+  def TicTacToe.winner?( state, player )
+    return state.board               =~ /(#{player.short})\1\1/ ||
+           state.board.rotate( 45 )  =~ /(#{player.short})\1\1/ ||
+           state.board.rotate( 90 )  =~ /(#{player.short})\1\1/ ||
+           state.board.rotate( 315 ) =~ /(#{player.short})\1\1/
   end
 
-  def TicTacToe.loser?( game, player )
-    return !draw?( game ) &&
-           game.board               !~ /(#{player.short})\1\1/ &&
-           game.board.rotate( 45 )  !~ /(#{player.short})\1\1/ &&
-           game.board.rotate( 90 )  !~ /(#{player.short})\1\1/ &&
-           game.board.rotate( 315 ) !~ /(#{player.short})\1\1/
+  def TicTacToe.loser?( state, player )
+    return !draw?( state) &&
+           state.board               !~ /(#{player.short})\1\1/ &&
+           state.board.rotate( 45 )  !~ /(#{player.short})\1\1/ &&
+           state.board.rotate( 90 )  !~ /(#{player.short})\1\1/ &&
+           state.board.rotate( 315 ) !~ /(#{player.short})\1\1/
   end
 
-  def TicTacToe.draw?( game )
-    return game.board               !~ /(\S)\1\1/ &&
-           game.board.rotate( 45 )  !~ /(\S)\1\1/ &&
-           game.board.rotate( 90 )  !~ /(\S)\1\1/ &&
-           game.board.rotate( 315 ) !~ /(\S)\1\1/
+  def TicTacToe.draw?( state )
+    return state.board               !~ /(\S)\1\1/ &&
+           state.board.rotate( 45 )  !~ /(\S)\1\1/ &&
+           state.board.rotate( 90 )  !~ /(\S)\1\1/ &&
+           state.board.rotate( 315 ) !~ /(\S)\1\1/
   end
 
-  def TicTacToe.score( game, player )
-    return  0 if draw?( game )
-    return  1 if winner?( game, player )
-    return -1 if loser?( game, player )
+  def TicTacToe.score( state, player )
+    return  0 if draw?( state )
+    return  1 if winner?( state, player )
+    return -1 if loser?( state, player )
   end
 
-  def TicTacToe.to_s( game )
-    "Board:\n#{game.board}\nTurn: #{game.turn}"
+  def TicTacToe.to_s( state )
+    "Board:\n#{state.board}\nTurn: #{state.turn}"
   end
 
 end

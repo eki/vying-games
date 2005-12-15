@@ -28,18 +28,18 @@ class ConnectFour
     [Piece.red,Piece.blue]
   end
 
-  def ConnectFour.ops( game )
-    return nil if game.final? # Do we still want to check this here?
+  def ConnectFour.ops( state )
+    return nil if final?( state )
 
     a = []
 
-    game.board.width.times do |x|
-      next unless game.board.drop?( x ) 
+    state.board.width.times do |x|
+      next unless state.board.drop?( x ) 
 
-      p = game.turn
+      p = state.turn
 
       op = Op.new( "Drop", "#{p.short}#{x}" ) do
-        s = game.history.last.dup
+        s = state.dup
         s.board.drop( x, s.turn.current )
         s.turn.next!
         s
@@ -51,48 +51,48 @@ class ConnectFour
     (a == []) ? nil : a
   end
 
-  def ConnectFour.final?( game )
-    empties = game.board.count( Piece.empty )
+  def ConnectFour.final?( state )
+    empties = state.board.count( Piece.empty )
 
     return true  if empties == 0
     return false if empties >  7*6-4
 
-    return game.board               =~ /(\S)\1\1\1/ ||
-           game.board.rotate( 45 )  =~ /(\S)\1\1\1/ ||
-           game.board.rotate( 90 )  =~ /(\S)\1\1\1/ ||
-           game.board.rotate( 315 ) =~ /(\S)\1\1\1/
+    return state.board               =~ /(\S)\1\1\1/ ||
+           state.board.rotate( 45 )  =~ /(\S)\1\1\1/ ||
+           state.board.rotate( 90 )  =~ /(\S)\1\1\1/ ||
+           state.board.rotate( 315 ) =~ /(\S)\1\1\1/
   end
 
-  def ConnectFour.winner?( game, player )
-    return game.board               =~ /(#{player.short})\1\1\1/ ||
-           game.board.rotate( 45 )  =~ /(#{player.short})\1\1\1/ ||
-           game.board.rotate( 90 )  =~ /(#{player.short})\1\1\1/ ||
-           game.board.rotate( 315 ) =~ /(#{player.short})\1\1\1/
+  def ConnectFour.winner?( state, player )
+    return state.board               =~ /(#{player.short})\1\1\1/ ||
+           state.board.rotate( 45 )  =~ /(#{player.short})\1\1\1/ ||
+           state.board.rotate( 90 )  =~ /(#{player.short})\1\1\1/ ||
+           state.board.rotate( 315 ) =~ /(#{player.short})\1\1\1/
   end
 
-  def ConnectFour.loser?( game, player )
-    return !draw?( game ) &&
-           game.board               !~ /(#{player.short})\1\1\1/ &&
-           game.board.rotate( 45 )  !~ /(#{player.short})\1\1\1/ &&
-           game.board.rotate( 90 )  !~ /(#{player.short})\1\1\1/ &&
-           game.board.rotate( 315 ) !~ /(#{player.short})\1\1\1/
+  def ConnectFour.loser?( state, player )
+    return !draw?( state ) &&
+           state.board               !~ /(#{player.short})\1\1\1/ &&
+           state.board.rotate( 45 )  !~ /(#{player.short})\1\1\1/ &&
+           state.board.rotate( 90 )  !~ /(#{player.short})\1\1\1/ &&
+           state.board.rotate( 315 ) !~ /(#{player.short})\1\1\1/
   end
 
-  def ConnectFour.draw?( game )
-    return game.board               !~ /(\S)\1\1\1/ &&
-           game.board.rotate( 45 )  !~ /(\S)\1\1\1/ &&
-           game.board.rotate( 90 )  !~ /(\S)\1\1\1/ &&
-           game.board.rotate( 315 ) !~ /(\S)\1\1\1/
+  def ConnectFour.draw?( state )
+    return state.board               !~ /(\S)\1\1\1/ &&
+           state.board.rotate( 45 )  !~ /(\S)\1\1\1/ &&
+           state.board.rotate( 90 )  !~ /(\S)\1\1\1/ &&
+           state.board.rotate( 315 ) !~ /(\S)\1\1\1/
   end
 
-  def ConnectFour.score( game, player )
-    return  0 if draw?( game )
-    return  1 if winner?( game, player )
-    return -1 if loser?( game, player )
+  def ConnectFour.score( state, player )
+    return  0 if draw?( state )
+    return  1 if winner?( state, player )
+    return -1 if loser?( state, player )
   end
 
-  def ConnectFour.to_s( game )
-    "Board:\n#{game.board}\nTurn: #{game.turn}"
+  def ConnectFour.to_s( state )
+    "Board:\n#{state.board}\nTurn: #{state.turn}"
   end
 
 end
