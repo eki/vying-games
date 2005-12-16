@@ -1,7 +1,6 @@
-$:.unshift File.join( File.dirname( __FILE__ ), ".." )
 
 require 'game'
-require 'search'
+require 'ai/search'
 
 class ExhaustiveBot
 
