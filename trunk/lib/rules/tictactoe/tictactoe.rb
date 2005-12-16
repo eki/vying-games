@@ -4,10 +4,11 @@ require 'game'
 
 class TicTacToe
 
-  def TicTacToe.init                                 #Trickiness--Piece can
-    { "board" => Board.new( 3, 3 ),                  #be used in place of
-      "turn"  => PlayerSet.new( *players ) }         #Player--though not 
-  end                                                #vice versa
+  State = Struct.new( :board, :turn )
+
+  def TicTacToe.init
+    State.new( Board.new( 3, 3 ), PlayerSet.new( *players ) )
+  end
 
   def TicTacToe.players
     [Piece.x,Piece.o]

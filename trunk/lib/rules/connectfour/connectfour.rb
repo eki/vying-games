@@ -18,10 +18,11 @@ end
 
 class ConnectFour
 
-  def ConnectFour.init                               #Trickiness--Piece can
-    { "board" => ConnectFourBoard.new( 7, 6 ),       #be used in place of
-      "turn"  => PlayerSet.new( *players ) }         #Player--though not
-  end                                                #vice versa
+  State = Struct.new( :board, :turn )
+
+  def ConnectFour.init
+    State.new( ConnectFourBoard.new( 7, 6 ), PlayerSet.new( *players ) )
+  end
 
   def ConnectFour.players
     [Piece.red,Piece.blue]

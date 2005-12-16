@@ -106,32 +106,25 @@ class Op
   end
 end
 
-class Game
-  class State < Hash
-    def initialize( h )
-      h.each { |k,v| self[k] = v }
-    end
-
-    def initialize_copy( original )
-      original.each { |k,v| self[k] = v.dup }
-    end
-
-    def method_missing( method_id, *args )
-      name = method_id.to_s
-
-      return self[name] if self.has_key?( name )
-      Kernel.method_missing( method_id, args )
-    end
+class Struct
+  def initialize_copy( original )
+    original.each_pair { |k,v| self[k] = v.dup }
   end
+end
+
+class Game
 
   attr_reader :rules, :history, :sequence
 
   def initialize( rules )
-    @rules, @history, @sequence = rules, [State.new( rules.init )], []
+    @rules, @history, @sequence = rules, [rules.init], []
   end
 
   def method_missing( method_id, *args )
-    return history.last.method_missing( method_id, args )
+    if history.last.respond_to?( method_id )
+      return history.last.send( method_id )
+    end
+    Kernel.method_missing( method_id, *args )
   end
 
   def players
