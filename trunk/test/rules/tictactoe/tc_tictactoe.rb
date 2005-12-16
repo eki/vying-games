@@ -1,8 +1,7 @@
-$:.unshift File.join( File.dirname( __FILE__ ), "..", "lib" )
 
 require "test/unit"
 require "game"
-require "rules/tictactoe"
+require "rules/tictactoe/tictactoe"
 
 class TestTicTacToe < Test::Unit::TestCase
   def test_init

@@ -1,7 +1,6 @@
-$:.unshift File.join( File.dirname( __FILE__ ), "..", "lib" )
 
 require "test/unit"
-require "rules/connectfour"
+require "rules/connectfour/connectfour"
 
 class TestConnectFourBoard < Test::Unit::TestCase
   def test_drop
