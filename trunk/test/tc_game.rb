@@ -147,8 +147,11 @@ class TestOp < Test::Unit::TestCase
 end
 
 class FakeRules
+
+  State = Struct.new( :fake_board, :fake_player )
+
   def FakeRules.init
-    {"fake_board" => "edcba", "fake_player" => "player1"}
+    State.new( "edcba", "player1" )
   end
 
   def FakeRules.ops( state )

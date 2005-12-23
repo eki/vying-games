@@ -57,6 +57,50 @@ class TestPiece < Test::Unit::TestCase
   end
 end
 
+class TestTwoSidedPiece < Test::Unit::TestCase
+  def test_initialize
+    p2 = TwoSidedPiece.new( Piece.white, Piece.black )
+    assert_equal( Piece.white, p2 )
+    assert_equal( Piece.white.name, p2.name )
+    assert_equal( Piece.white.short, p2.short )
+    assert_equal( Piece.white, p2.up )
+    assert_equal( Piece.black, p2.down )
+  end
+
+  def test_flip
+    p2 = TwoSidedPiece.new( Piece.white, Piece.black )
+    assert_equal( Piece.black, p2.flip! )
+    assert_equal( Piece.black, p2.up )
+    assert_equal( Piece.white, p2.down )
+    assert_equal( Piece.white, p2.flip! )
+    assert_equal( Piece.white, p2.up )
+    assert_equal( Piece.black, p2.down )
+  end
+
+  def test_become
+    p2 = TwoSidedPiece.new( Piece.white, Piece.black )
+    assert_equal( Piece.white, p2.become( Piece.white ) )
+    assert_equal( Piece.black, p2.become( Piece.black ) )
+    assert_equal( Piece.black, p2.up )
+    assert_equal( Piece.white, p2.down )
+    assert_equal( Piece.empty, p2.become( Piece.empty ) )
+    assert_equal( Piece.empty, p2.up )
+    assert_equal( Piece.empty, p2.down )
+    p2 = TwoSidedPiece.new( Piece.red, Piece.blue )
+    p2dup = p2.dup
+    assert_equal( p2, p2dup )
+    p2dup.become( TwoSidedPiece.new( Piece.white, Piece.black ) )
+    assert_not_equal( p2, p2dup )
+  end
+
+  def test_empty
+    p2 = TwoSidedPiece.empty
+    assert( p2.empty? )
+    assert_equal( Piece.empty, p2.up )
+    assert_equal( Piece.empty, p2.down )
+  end
+end
+
 class TestBoard < Test::Unit::TestCase
   def test_initialize
     b = Board.new
@@ -70,6 +114,28 @@ class TestBoard < Test::Unit::TestCase
     b = Board.new( 7, 6 )
     assert_equal( 7, b.width )
     assert_equal( 6, b.height )
+
+    b = Board.new( 8, 8, TwoSidedPiece )
+    assert_equal( 8, b.width )
+    assert_equal( 8, b.height )
+    assert_equal( Piece.empty, b[0,0] )
+    assert_equal( TwoSidedPiece.empty, b[0,0] )
+    assert( b[0,0].empty? )
+  end
+
+  def test_twosided
+    b = Board.new( 8, 8, TwoSidedPiece )
+    b[0,0] = TwoSidedPiece.new( Piece.black, Piece.white )
+    assert_equal( Piece.black, b[0,0] )
+    assert_equal( Piece.white, b[0,0].flip! )
+    b[0,0] = Piece.black
+    assert_equal( Piece.black, b[0,0] )
+    assert_equal( Piece.black, b[0,0].up )
+    assert_equal( Piece.white, b[0,0].down )
+    b[0,0] = Piece.empty
+    assert_equal( Piece.empty, b[0,0] )
+    assert_equal( Piece.empty, b[0,0].up )
+    assert_equal( Piece.empty, b[0,0].down )
   end
 
   def test_dup
@@ -201,6 +267,18 @@ class TestBoard < Test::Unit::TestCase
     assert_equal( 1, b.count( Piece.blue ) )
   end
 
+  def test_move
+    b = Board.new( 3, 3 )
+    b[0,0] = Piece.queen
+    b[2,2] = Piece.pawn
+    b.move( b[0,0], 0, 2 )
+    assert_equal( Piece.empty, b[0,0] )
+    assert_equal( Piece.queen, b[0,2] )
+    b.move( b[0,2], 2, 2 )
+    assert_equal( Piece.empty, b[0,2] )
+    assert_equal( Piece.queen, b[2,2] )
+  end
+
   def test_rotate
     b = Board.new( 3, 3 )     # abc
     b[0,0] = Piece.a          # def
@@ -266,6 +344,60 @@ class TestBoard < Test::Unit::TestCase
     assert_equal( "abc\ndef",     b.to_s    )
     assert_equal( "a\ndb\nec\nf", b45.to_s  )
     assert_equal( "c\nbf\nae\nd", b315.to_s )
+  end
+
+  def test_capture?
+    b = Board.new
+    b[0,0] = Piece.x
+    b[1,0] = Piece.o
+    b[2,0] = Piece.o
+    assert( b.capture?( 3, 0, Piece.x ) )
+    assert( !b.capture?( 0, 1, Piece.x ) )
+    assert( !b.capture?( 4, 0, Piece.x ) )
+    b[1,1] = Piece.x
+    assert( b.capture?( 1, 2, Piece.o ) )
+    assert( b.capture?( 0, 2, Piece.o ) )
+  end
+
+  def test_capture_set_coords
+    b = Board.new
+    b[2,2] = Piece.x
+    b[3,3] = Piece.o
+    b[4,4] = Piece.x
+    b[5,5] = Piece.o
+    b[6,6] = Piece.o
+    b[7,7] = Piece.x
+    assert_equal( [[3,3],[5,5],[6,6]], b.capture_set_coords( 4, 4 ) )
+  end
+
+  def test_capture_set
+    b = Board.new
+    b[6,6] = Piece.x
+    b[6,5] = Piece.o
+    b[6,4] = Piece.o
+    b[6,3] = Piece.o
+    b[6,2] = Piece.x
+    assert_equal( [Piece.o,Piece.o,Piece.o], b.capture_set( 6, 2 ) )
+  end
+
+  def test_capture
+    b = Board.new
+    b[0,0] = Piece.x
+    b[1,0] = Piece.o
+    b[2,0] = Piece.x
+    b.capture( 2, 0 ) { |p| p.become( Piece.empty ) }
+    assert_equal( Piece.x, b[0,0] )
+    assert_equal( Piece.empty, b[1,0] )
+    assert_equal( Piece.x, b[2,0] )
+    b[2,1] = Piece.o
+    b[2,2] = Piece.o
+    b[2,3] = Piece.o
+    b.capture( 2, 4, Piece.x ) { |p| p.become( Piece.x ) }
+    assert_equal( Piece.x, b[2,0] )
+    assert_equal( Piece.x, b[2,1] )
+    assert_equal( Piece.x, b[2,2] )
+    assert_equal( Piece.x, b[2,3] )
+    assert_equal( Piece.x, b[2,4] )
   end
 end
 

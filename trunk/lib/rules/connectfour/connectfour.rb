@@ -1,3 +1,9 @@
+# NAME
+#   Connect Four
+#
+# ALIASES
+#   Plot Four, The Captain's Mistress
+#
 
 require 'board'
 require 'game'
@@ -16,9 +22,15 @@ class ConnectFourBoard < Board
   end
 end
 
-class ConnectFour
+class ConnectFour < Rules
 
-  State = Struct.new( :board, :turn )
+  INFO = Info.new( __FILE__ )
+
+  class State < Struct.new( :board, :turn )
+    def to_s
+      "Board:\n#{board}\nTurn: #{turn}"
+    end
+  end
 
   def ConnectFour.init
     State.new( ConnectFourBoard.new( 7, 6 ), PlayerSet.new( *players ) )
@@ -84,16 +96,5 @@ class ConnectFour
            state.board.rotate( 90 )  !~ /(\S)\1\1\1/ &&
            state.board.rotate( 315 ) !~ /(\S)\1\1\1/
   end
-
-  def ConnectFour.score( state, player )
-    return  0 if draw?( state )
-    return  1 if winner?( state, player )
-    return -1 if loser?( state, player )
-  end
-
-  def ConnectFour.to_s( state )
-    "Board:\n#{state.board}\nTurn: #{state.turn}"
-  end
-
 end
 

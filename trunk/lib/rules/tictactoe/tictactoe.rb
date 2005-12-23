@@ -1,10 +1,26 @@
+# NAME
+#   Tic Tac Toe
+#
+# ALIASES
+#   Noughts and Crosses, Noughts and Crosses, X's and O's, Tick Tat Toe,
+#   Tit Tat Toe
+#
+# RESOURCES
+#   Wikipedia <http://en.wikipedia.org/wiki/Tic-tac-toe>
+#
 
 require 'board'
 require 'game'
 
-class TicTacToe
+class TicTacToe < Rules
 
-  State = Struct.new( :board, :turn )
+  INFO = Info.new( __FILE__ )
+
+  class State < Struct.new( :board, :turn )
+    def to_s
+      "Board:\n#{board}\nTurn: #{turn}"
+    end
+  end
 
   def TicTacToe.init
     State.new( Board.new( 3, 3 ), PlayerSet.new( *players ) )
@@ -70,16 +86,5 @@ class TicTacToe
            state.board.rotate( 90 )  !~ /(\S)\1\1/ &&
            state.board.rotate( 315 ) !~ /(\S)\1\1/
   end
-
-  def TicTacToe.score( state, player )
-    return  0 if draw?( state )
-    return  1 if winner?( state, player )
-    return -1 if loser?( state, player )
-  end
-
-  def TicTacToe.to_s( state )
-    "Board:\n#{state.board}\nTurn: #{state.turn}"
-  end
-
 end
 

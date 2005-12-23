@@ -4,12 +4,15 @@ require "optparse"
 
 require 'match'
 
-require 'rules/connectfour'
-require 'rules/tictactoe'
+require 'rules/connectfour/connectfour'
+require 'rules/connect6/connect6'
+require 'rules/tictactoe/fifteen'
+require 'rules/tictactoe/tictactoe'
+require 'rules/othello/othello'
 
-require 'bots/humanbot'
-require 'bots/randombot'
-require 'bots/exhaustivebot'
+require 'ai/bots/humanbot'
+require 'ai/bots/randombot'
+require 'ai/bots/exhaustivebot'
 
 rules = nil
 players = {}
@@ -24,6 +27,10 @@ opts.on( "-pARG" ) do |p|
 end
 
 opts.parse( ARGV )
+
+players.each_pair do |p,v|
+  puts "#{p}:#{v} not valid!" if !rules.players.include?( p )
+end
 
 m = Match.new( rules, players )
 m.play( number )
