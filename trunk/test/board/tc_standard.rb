@@ -441,7 +441,10 @@ class TestBoard < Test::Unit::TestCase
     b[0,1] = '2'
     b[1,1] = '3'
    
-    assert_equal( "01\n23\n", b.to_s ) 
+    assert_equal( "01\n23\n", b.to_s )
+    assert_equal( "01", b.to_s( b.coords.row( Coord[0,0] ) ) )
+    assert_equal( "02", b.to_s( b.coords.column( Coord[0,0] ) ) )
+    assert_equal( "03", b.to_s( b.coords.diagonal( Coord[0,0], 1 ) ) )
   end
 end
 
