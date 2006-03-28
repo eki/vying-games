@@ -5,7 +5,7 @@ require "rules/connectfour/connectfour"
 class TestConnectFourBoard < Test::Unit::TestCase
   def test_drop
     b = ConnectFourBoard.new( 3, 3 )
-    s = "rrr\nrrr\nrrr"
+    s = "rrr\nrrr\nrrr\n"
 
     3.times do |x|
       b.drop( x, Piece.red ) while b.drop?( x )
@@ -41,7 +41,7 @@ class TestConnectFour < Test::Unit::TestCase
 
     assert_not_equal( g.history[0], g.history.last )
 
-    assert_equal( 42-19, g.board.count( Piece.empty ) )
+    assert_equal( 42-19, g.board.count( nil ) )
     assert_equal( 10, g.board.count( Piece.red ) )
     assert_equal( 9, g.board.count( Piece.blue ) )
   end
