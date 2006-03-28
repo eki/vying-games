@@ -411,6 +411,28 @@ class TestBoard < Test::Unit::TestCase
     b.each { |p| assert_equal( a[i], p ); i += 1 }
   end
 
+  def test_each_from
+    b = Board.new( 8, 8 )
+    b[3,3] = Piece.x
+    b[3,4] = Piece.x
+    b[3,6] = Piece.x
+    b[2,2] = Piece.o
+    b[1,1] = Piece.o
+    b[0,0] = Piece.o
+
+    count1 = b.each_from( Coord[3,3], [:nw,:s] ) { |p| !p.nil? }
+    count2 = b.each_from( Coord[3,3], [:nw,:s] ) { |p| p == Piece.x }
+    count3 = b.each_from( Coord[3,3], [:nw] ) { |p| p == Piece.x }
+    count4 = b.each_from( Coord[3,3], [:nw,:s] ) { |p| p == Piece.o }
+    count5 = b.each_from( Coord[3,6], [:nw,:s,:e,:w] ) { |p| !p.nil? }
+
+    assert_equal( 4, count1 )
+    assert_equal( 1, count2 )
+    assert_equal( 0, count3 )
+    assert_equal( 3, count4 )
+    assert_equal( 0, count5 )
+  end
+
   def test_count
     b = Board.new( 3, 3 )
 
