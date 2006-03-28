@@ -130,5 +130,23 @@ class TestConnectFour < Test::Unit::TestCase
     assert_equal( 0, g.score( Player.blue ) )
   end
 
+  def test_game05
+    # This game is going to be a win for Blue (horizontal 5-in-a-row)
+    g = Game.new( ConnectFour )
+    g << "r6" << "b0" << "r0" << "b2" << "r2" << "b3" << "r3" << "b4" << "r4"
+    assert( !g.final? )
+    g << "b1"
+    assert( g.final? )
+
+    assert( !g.draw? )
+    assert( !g.winner?( Player.red ) )
+    assert( g.loser?( Player.red ) )
+    assert( g.winner?( Player.blue ) )
+    assert( !g.loser?( Player.blue ) )
+
+    assert_equal( -1, g.score( Player.red ) )
+    assert_equal( 1, g.score( Player.blue ) )
+  end
+
 end
 
