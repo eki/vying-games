@@ -2,6 +2,34 @@
 require "test/unit"
 require "board/standard"
 
+class TestPiece < Test::Unit::TestCase
+  def test_initialize
+    p = Piece.new( 'Black', 'b' )
+
+    assert_equal( 'Black', p.name )
+    assert_equal( 'b', p.short )
+
+    assert_equal( 'Black', Piece.black.name )
+    assert_equal( 'b', Piece.black.short )
+  end
+
+  def test_equal
+    p = Piece.new( 'Black', 'b' )
+    assert( p == p )
+    assert( p == Piece.black )
+    assert( p == Piece.blue )  # == only compare's short
+    assert( p != Piece.red )
+    assert( p != nil )
+  end
+
+  def test_to_s
+    assert_equal( 'b', Piece.black.to_s )
+    assert_equal( 'b', Piece.blue.to_s )
+    assert_equal( 'r', Piece.red.to_s )
+    assert_equal( '@', Piece.new( 'Black', '@' ).to_s )
+  end
+end
+
 class TestCoord < Test::Unit::TestCase
   def test_initialize
     c = Coord[0,1]
@@ -342,6 +370,22 @@ class TestBoard < Test::Unit::TestCase
     assert_equal( :test, b2[1,1] )
   end
 
+  def test_equal
+    b = Board.new( 3, 3 )
+    assert( b == b )
+
+    b2 = b.dup
+    assert( b == b2 )
+    assert( b2 == b )
+
+    assert( b == Board.new( 3, 3 ) )
+
+    b2[0,0] = Piece.x
+    assert( b != b2 )
+
+    assert( b != Board.new( 4, 4 ) )
+  end
+
   def test_assignment
     b = Board.new( 3, 3 )
 
@@ -365,6 +409,29 @@ class TestBoard < Test::Unit::TestCase
     i = 0
 
     b.each { |p| assert_equal( a[i], p ); i += 1 }
+  end
+
+  def test_count
+    b = Board.new( 3, 3 )
+
+    assert_equal( 9, b.count( nil ) )
+
+    b[0,0] = :b00
+    b[1,1] = :b11
+
+    assert_equal( 7, b.count( nil ) )
+    assert_equal( 1, b.count( :b00 ) )
+    assert_equal( 1, b.count( :b11 ) )
+    assert_equal( 0, b.count( :b22 ) )
+
+    b[2,2] = :b22
+
+    assert_equal( 1, b.count( :b22 ) )
+
+    b[1,0] = b[1,1] = Piece.x
+
+    assert_equal( 2, b.count( Piece.x ) )
+    assert_equal( 0, b.count( :b11 ) )
   end
 
   def test_to_s
