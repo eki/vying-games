@@ -31,7 +31,7 @@ class TestTicTacToe < Test::Unit::TestCase
 
     assert_not_equal( g.history[0], g.history.last )
 
-    assert_equal( 2, g.board.count( Piece.empty ) )
+    assert_equal( 2, g.board.count( nil ) )
     assert_equal( 4, g.board.count( Piece.x ) )
     assert_equal( 3, g.board.count( Piece.o ) )
   end

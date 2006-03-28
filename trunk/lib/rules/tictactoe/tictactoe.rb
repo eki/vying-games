@@ -9,21 +9,21 @@
 #   Wikipedia <http://en.wikipedia.org/wiki/Tic-tac-toe>
 #
 
-require 'board'
+require 'board/standard'
 require 'game'
 
 class TicTacToe < Rules
 
   INFO = Info.new( __FILE__ )
 
-  class State < Struct.new( :board, :turn )
+  class State < Struct.new( :board, :turn, :lastc, :lastp )
     def to_s
-      "Board:\n#{board}\nTurn: #{turn}"
+      "Board:\n#{board}\nTurn: #{turn}\nLast: #{last}"
     end
   end
 
   def TicTacToe.init
-    State.new( Board.new( 3, 3 ), PlayerSet.new( *players ) )
+    State.new( Board.new( 3, 3 ), PlayerSet.new( *players ), nil, :noone )
   end
 
   def TicTacToe.players
@@ -35,14 +35,15 @@ class TicTacToe < Rules
 
     a = []
 
-    state.board.coords.each do |x,y|
-      next unless state.board[x,y].empty?
+    state.board.coords.each do |c|
+      next unless state.board[c].nil?
 
       p = state.turn
 
-      op = Op.new( "Place #{p.name}", Board.xy_to_s( x, y ) ) do
+      op = Op.new( "Place #{p.name}", c.to_s ) do
         s = state.dup
-        s.board[x,y] = p.current
+        s.board[c] = p.current
+        s.lastc, s.lastp = c, p.current
         s.turn.next!
         s
       end
@@ -54,37 +55,54 @@ class TicTacToe < Rules
   end
 
   def TicTacToe.final?( state )
-    empties = state.board.count( Piece.empty )
+    b = state.board
+    lc = state.lastc
+    lp = state.lastp
 
-    return true  if empties == 0
-    return false if empties >  4
+    return false if lc.nil?
 
-    state.board               =~ /(\S)\1\1/ ||
-    state.board.rotate( 45 )  =~ /(\S)\1\1/ ||
-    state.board.rotate( 90 )  =~ /(\S)\1\1/ ||
-    state.board.rotate( 315 ) =~ /(\S)\1\1/
+    return true  if b.count( nil ) == 0
+    return true  if b[b.coords.row( lc )].all? { |p| p == lp }
+    return true  if b[b.coords.column( lc )].all? { |p| p == lp }
+
+    dc1 = b.coords.diagonal( lc, 1 )
+    return true  if dc1.length == 3 && b[dc1].all? { |p| p == lp }
+
+    dc2 = b.coords.diagonal( lc, -1 )
+    return true  if dc2.length == 3 && b[dc2].all? { |p| p == lp }
+
+    return false
   end
 
   def TicTacToe.winner?( state, player )
-    return state.board               =~ /(#{player.short})\1\1/ ||
-           state.board.rotate( 45 )  =~ /(#{player.short})\1\1/ ||
-           state.board.rotate( 90 )  =~ /(#{player.short})\1\1/ ||
-           state.board.rotate( 315 ) =~ /(#{player.short})\1\1/
+    TicTacToe.final?( state ) && !TicTacToe.draw?( state ) &&
+    state.lastp == player
   end
 
   def TicTacToe.loser?( state, player )
-    return !draw?( state) &&
-           state.board               !~ /(#{player.short})\1\1/ &&
-           state.board.rotate( 45 )  !~ /(#{player.short})\1\1/ &&
-           state.board.rotate( 90 )  !~ /(#{player.short})\1\1/ &&
-           state.board.rotate( 315 ) !~ /(#{player.short})\1\1/
+    TicTacToe.final?( state ) && !TicTacToe.draw?( state ) &&
+    state.lastp != player
   end
 
   def TicTacToe.draw?( state )
-    return state.board               !~ /(\S)\1\1/ &&
-           state.board.rotate( 45 )  !~ /(\S)\1\1/ &&
-           state.board.rotate( 90 )  !~ /(\S)\1\1/ &&
-           state.board.rotate( 315 ) !~ /(\S)\1\1/
+    b = state.board
+    lc = state.lastc
+    lp = state.lastp
+
+    return false if lc.nil?
+
+    return false if b.count( nil ) != 0
+
+    return false if b[b.coords.row( lc )].all? { |p| p == lp }
+    return false if b[b.coords.column( lc )].all? { |p| p == lp }
+
+    dc1 = b.coords.diagonal( lc, 1 )
+    return false if dc1.length == 3 && b[dc1].all? { |p| p == lp }
+
+    dc2 = b.coords.diagonal( lc, -1 )
+    return false if dc2.length == 3 && b[dc2].all? { |p| p == lp }
+
+    return true
   end
 end
 
