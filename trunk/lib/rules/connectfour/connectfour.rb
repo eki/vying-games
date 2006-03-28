@@ -76,10 +76,10 @@ class ConnectFour < Rules
     lc = position.lastc
     lp = position.lastp
 
-    b.to_s( b.coords.row( lc ) )          =~ /(#{lp.short})\1\1\1/ ||
-    b.to_s( b.coords.column( lc ) )       =~ /(#{lp.short})\1\1\1/ ||
-    b.to_s( b.coords.diagonal( lc, 1 ) )  =~ /(#{lp.short})\1\1\1/ ||
-    b.to_s( b.coords.diagonal( lc, -1 ) ) =~ /(#{lp.short})\1\1\1/
+    b.each_from( lc, [:e,:w] ) { |p| p == lp } >= 3 ||
+    b.each_from( lc, [:n,:s] ) { |p| p == lp } >= 3 ||
+    b.each_from( lc, [:ne,:sw] ) { |p| p == lp } >= 3 ||
+    b.each_from( lc, [:nw,:se] ) { |p| p == lp } >= 3
   end
 
   def ConnectFour.winner?( position, player )
@@ -87,10 +87,10 @@ class ConnectFour < Rules
     lc = position.lastc
     lp = position.lastp
 
-    b.to_s( b.coords.row( lc ) )          =~ /(#{player.short})\1\1\1/ ||
-    b.to_s( b.coords.column( lc ) )       =~ /(#{player.short})\1\1\1/ ||
-    b.to_s( b.coords.diagonal( lc, 1 ) )  =~ /(#{player.short})\1\1\1/ ||
-    b.to_s( b.coords.diagonal( lc, -1 ) ) =~ /(#{player.short})\1\1\1/
+    b.each_from( lc, [:e,:w] ) { |p| p == player } >= 3 ||
+    b.each_from( lc, [:n,:s] ) { |p| p == player } >= 3 ||
+    b.each_from( lc, [:ne,:sw] ) { |p| p == player } >= 3 ||
+    b.each_from( lc, [:nw,:se] ) { |p| p == player } >= 3
   end
 
   def ConnectFour.loser?( position, player )
@@ -103,10 +103,10 @@ class ConnectFour < Rules
     lp = position.lastp
 
     b.count( nil ) == 0 &&
-    b.to_s( b.coords.row( lc ) )          !~ /(\S)\1\1\1/ &&
-    b.to_s( b.coords.column( lc ) )       !~ /(\S)\1\1\1/ &&
-    b.to_s( b.coords.diagonal( lc, 1 ) )  !~ /(\S)\1\1\1/ &&
-    b.to_s( b.coords.diagonal( lc, -1 ) ) !~ /(\S)\1\1\1/
+    b.each_from( lc, [:e,:w] ) { |p| p == lp } < 3 &&
+    b.each_from( lc, [:n,:s] ) { |p| p == lp } < 3 &&
+    b.each_from( lc, [:ne,:sw] ) { |p| p == lp } < 3 &&
+    b.each_from( lc, [:nw,:se] ) { |p| p == lp } < 3
   end
 end
 
