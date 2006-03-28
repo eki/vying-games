@@ -13,7 +13,9 @@ class Piece
   end
 
   def ==( p )
-    !p.nil? && short == p.short
+    return nil              if p.nil?
+    return short == p.short if p.respond_to? :short
+    return to_s == p.to_s  
   end
 
   def to_s
