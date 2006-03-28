@@ -187,6 +187,23 @@ class Board
     self
   end
 
+  #  Yields the piece at each coordinate starting at 's' in the given
+  #  directions.  If the given block returns true, we continue in the
+  #  current direction, if the block returns false we move on to the
+  #  next direction.  Ultimately the each_from returns a count of the
+  #  number of times yield returned true. 
+
+  def each_from( s, directions )
+    i = 0
+    directions.each do |d|
+      c = s
+      while (c = coords.next( c, d )) && yield( self[c] )
+        i += 1
+      end
+    end
+    i
+  end
+
   def count( piece )
     select { |p| p == piece }.length
   end
