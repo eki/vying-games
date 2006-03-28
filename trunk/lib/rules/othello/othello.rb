@@ -12,7 +12,7 @@ class Othello < Rules
   BLACK = TwoSidedPiece.new( Piece.black, Piece.white )
   WHITE = TwoSidedPiece.new( Piece.white, Piece.black )
 
-  class State < Struct.new( :board, :turn, :opscache, :frontier )
+  class Position < Struct.new( :board, :turn, :opscache, :frontier )
     def to_s
       "Board:\n#{board}\nTurn: #{turn}"
     end
@@ -26,32 +26,32 @@ class Othello < Rules
         b.neighbors8( 3, 4 ) + b.neighbors8( 4, 3 )
     f.reject! { |x,y| !b[x,y].empty? }
     f.uniq!
-    State.new( b, PlayerSet.new( *players ), nil, f )
+    Position.new( b, PlayerSet.new( *players ), nil, f )
   end
 
   def Othello.players
     [BLACK,WHITE]
   end
                                                     
-  def Othello.ops( state )
-    return state.opscache unless state.opscache.nil?
+  def Othello.ops( position )
+    return position.opscache unless position.opscache.nil?
 
     a = []
 
     pass = Op.new( "Pass", "p" ) do
-      s = state.dup
+      s = position.dup
       s.turn.next!
       s.opscache = nil
       s
     end
 
-    state.frontier.each do |x,y|
-      next unless state.board[x,y].empty?
-      next unless state.board.capture?( x, y, state.turn )
+    position.frontier.each do |x,y|
+      next unless position.board[x,y].empty?
+      next unless position.board.capture?( x, y, position.turn )
 
-      op = Op.new( "Place #{state.turn.name}", Board.xy_to_s( x, y ) ) do
-        s = state.dup
-        s.board.capture( x, y, state.turn.current ) { |p| p.flip! }
+      op = Op.new( "Place #{position.turn.name}", Board.xy_to_s( x, y ) ) do
+        s = position.dup
+        s.board.capture( x, y, position.turn.current ) { |p| p.flip! }
         s.turn.next!
         s.opscache = nil
         s.frontier += s.board.neighbors8( x, y )
@@ -63,26 +63,26 @@ class Othello < Rules
       a << op
     end
 
-    state.opscache = (a == []) ? [pass] : a
+    position.opscache = (a == []) ? [pass] : a
   end
 
-  def Othello.final?( state )
-    state.board.count( Piece.empty ) == 0 || ops( state ).nil?
+  def Othello.final?( position )
+    position.board.count( Piece.empty ) == 0 || ops( position ).nil?
   end
 
-  def Othello.winner?( state, player )
+  def Othello.winner?( position, player )
     player = player == BLACK ? BLACK : WHITE
-    state.board.count( player ) > state.board.count( player.flip )
+    position.board.count( player ) > position.board.count( player.flip )
   end
 
-  def Othello.loser?( state, player )
+  def Othello.loser?( position, player )
     player = player == BLACK ? BLACK : WHITE
-    state.board.count( player ) < state.board.count( player.flip )
+    position.board.count( player ) < position.board.count( player.flip )
   end
 
-  def Othello.draw?( state )
+  def Othello.draw?( position )
     player = player == BLACK ? BLACK : WHITE
-    state.board.count( player ) == state.board.count( player.flip )
+    position.board.count( player ) == position.board.count( player.flip )
   end
 end
 

@@ -46,33 +46,33 @@ class Fifteen < Rules
 
   INFO = Info.new( __FILE__ )
 
-  class State < Struct.new( :unused, :a_list, :b_list, :turn )
+  class Position < Struct.new( :unused, :a_list, :b_list, :turn )
     def to_s
       "Unused: #{unused}\nA: #{a_list}\nB: #{b_list}\nTurn: #{turn}"
     end
   end
 
   def Fifteen.init
-    State.new( (1..9).to_a, [], [], PlayerSet.new( *players ) )
+    Position.new( (1..9).to_a, [], [], PlayerSet.new( *players ) )
   end
 
   def Fifteen.players
     [Player.a,Player.b]
   end
                                                     
-  def Fifteen.ops( state )
-    return nil if final?( state )
+  def Fifteen.ops( position )
+    return nil if final?( position )
 
     a = []
 
-    state.unused.each do |n|
-      p = state.turn
+    position.unused.each do |n|
+      p = position.turn
 
       op = Op.new( "#{p.name} takes #{n}", "#{p.short}#{n}" ) do
-        s = state.dup
+        s = position.dup
         s.unused.delete( n )
-        s.a_list << n if state.turn == Player.a
-        s.b_list << n if state.turn == Player.b
+        s.a_list << n if position.turn == Player.a
+        s.b_list << n if position.turn == Player.b
         s.turn.next!
         s
       end
@@ -92,24 +92,26 @@ class Fifteen < Rules
     false
   end
 
-  def Fifteen.final?( state )
-    return true  if state.unused.length == 0
-    return false if state.unused.length >  4
-    has_15?( state.a_list ) || has_15?( state.b_list )
+  def Fifteen.final?( position )
+    return true  if position.unused.length == 0
+    return false if position.unused.length >  4
+    has_15?( position.a_list ) || has_15?( position.b_list )
   end
 
-  def Fifteen.winner?( state, player )
-    return has_15?( state.a_list ) if player == Player.a
-    return has_15?( state.b_list ) if player == Player.b
+  def Fifteen.winner?( position, player )
+    return has_15?( position.a_list ) if player == Player.a
+    return has_15?( position.b_list ) if player == Player.b
   end
 
-  def Fifteen.loser?( state, player )
-    return !draw?( state ) && !has_15?( state.a_list ) if player == Player.a
-    return !draw?( state ) && !has_15?( state.b_list ) if player == Player.b
+  def Fifteen.loser?( position, player )
+    p = position
+    return !draw?( p ) && !has_15?( p.a_list ) if player == Player.a
+    return !draw?( p ) && !has_15?( p.b_list ) if player == Player.b
   end
 
-  def Fifteen.draw?( state )
-    state.unused.empty? && !has_15?( state.a_list ) && !has_15?( state.b_list )
+  def Fifteen.draw?( position )
+    p = position
+    p.unused.empty? && !has_15?( p.a_list ) && !has_15?( p.b_list )
   end
 end
 

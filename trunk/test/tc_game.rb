@@ -148,23 +148,23 @@ end
 
 class FakeRules
 
-  State = Struct.new( :fake_board, :fake_player )
+  Position = Struct.new( :fake_board, :fake_player )
 
   def FakeRules.init
-    State.new( "edcba", "player1" )
+    Position.new( "edcba", "player1" )
   end
 
-  def FakeRules.ops( state )
-    return nil if final?( state )
+  def FakeRules.ops( position )
+    return nil if final?( position )
 
     op1 = Op.new( "Succ!", 'r' ) do
-      s = state.dup
+      s = position.dup
       s.fake_board.succ!
       s
     end
 
     op2 = Op.new( "Squeeze!", 's' ) do
-      s = state.dup
+      s = position.dup
       s.fake_board.squeeze!
       s
     end
@@ -172,8 +172,8 @@ class FakeRules
     [op1,op2]
   end
 
-  def FakeRules.final?( state )
-    state.fake_board.length == 1
+  def FakeRules.final?( position )
+    position.fake_board.length == 1
   end
 end
 

@@ -12,7 +12,7 @@ class Connect6 < Rules
 
   INFO = Info.new( __FILE__ )
 
-  class State < Struct.new( :board, :turn, :lastc, :lastp )
+  class Position < Struct.new( :board, :turn, :lastc, :lastp )
     def to_s
       "Board:\n#{board}\nTurn: #{turn}\nLast: (#{lastc}, #{lastp})"
     end
@@ -20,25 +20,25 @@ class Connect6 < Rules
 
   def Connect6.init
     s = [Piece.black, Piece.white, Piece.white, Piece.black]
-    State.new( Board.new( 19, 19 ), PlayerSet.new( *s ), nil, :noone )
+    Position.new( Board.new( 19, 19 ), PlayerSet.new( *s ), nil, :noone )
   end
 
   def Connect6.players
     [Piece.black,Piece.white]
   end
 
-  def Connect6.ops( state )
-    return nil if final?( state )
+  def Connect6.ops( position )
+    return nil if final?( position )
 
     a = []
 
-    state.board.coords.each do |c|
-      next unless state.board[c].nil?
+    position.board.coords.each do |c|
+      next unless position.board[c].nil?
 
-      p = state.turn
+      p = position.turn
 
       op = Op.new( "Place #{p.name}", c.to_s ) do
-        s = state.dup
+        s = position.dup
         s.board[c] = p.current
         s.lastc, s.lastp = c, p.current
         s.turn.next!
@@ -51,17 +51,17 @@ class Connect6 < Rules
     (a == []) ? nil : a
   end
 
-  def Connect6.final?( state )
-    return false if state.lastc.nil?
+  def Connect6.final?( position )
+    return false if position.lastc.nil?
 
-    empties = state.board.count( nil )
+    empties = position.board.count( nil )
 
     return true  if empties == 0
     return false if empties > 19*19-11
 
-    b = state.board
-    lc = state.lastc
-    lp = state.lastp
+    b = position.board
+    lc = position.lastc
+    lp = position.lastp
 
     b.to_s( b.coords.row( lc ) )          =~ /(#{lp.short})\1\1\1\1\1/ ||
     b.to_s( b.coords.column( lc ) )       =~ /(#{lp.short})\1\1\1\1\1/ ||
@@ -69,10 +69,10 @@ class Connect6 < Rules
     b.to_s( b.coords.diagonal( lc, -1 ) ) =~ /(#{lp.short})\1\1\1\1\1/
   end
 
-  def Connect6.winner?( state, player )
-    b = state.board
-    lc = state.lastc
-    lp = state.lastp
+  def Connect6.winner?( position, player )
+    b = position.board
+    lc = position.lastc
+    lp = position.lastp
 
     b.to_s( b.coords.row( lc ) )          =~ /(#{player.short})\1\1\1\1\1/ ||
     b.to_s( b.coords.column( lc ) )       =~ /(#{player.short})\1\1\1\1\1/ ||
@@ -80,14 +80,14 @@ class Connect6 < Rules
     b.to_s( b.coords.diagonal( lc, -1 ) ) =~ /(#{player.short})\1\1\1\1\1/
   end
 
-  def Connect6.loser?( state, player )
-    !draw?( state ) && player != state.lastp
+  def Connect6.loser?( position, player )
+    !draw?( position ) && player != position.lastp
   end
 
-  def Connect6.draw?( state )
-    b = state.board
-    lc = state.lastc
-    lp = state.lastp
+  def Connect6.draw?( position )
+    b = position.board
+    lc = position.lastc
+    lp = position.lastp
 
     b.count( nil ) == 0 &&
     b.to_s( b.coords.row( lc ) )          !~ /(\S)\1\1\1\1\1/ &&

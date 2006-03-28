@@ -149,10 +149,10 @@ class Rules
     end
   end
 
-  def Rules.score( state, player )
-    return  0 if draw?( state )
-    return  1 if winner?( state, player )
-    return -1 if loser?( state, player )
+  def Rules.score( position, player )
+    return  0 if draw?( position )
+    return  1 if winner?( position, player )
+    return -1 if loser?( position, player )
   end
 end
 

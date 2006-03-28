@@ -16,32 +16,32 @@ class TicTacToe < Rules
 
   INFO = Info.new( __FILE__ )
 
-  class State < Struct.new( :board, :turn, :lastc, :lastp )
+  class Position < Struct.new( :board, :turn, :lastc, :lastp )
     def to_s
       "Board:\n#{board}\nTurn: #{turn}\nLast: #{last}"
     end
   end
 
   def TicTacToe.init
-    State.new( Board.new( 3, 3 ), PlayerSet.new( *players ), nil, :noone )
+    Position.new( Board.new( 3, 3 ), PlayerSet.new( *players ), nil, :noone )
   end
 
   def TicTacToe.players
     [Piece.x,Piece.o]
   end
                                                     
-  def TicTacToe.ops( state )
-    return nil if final?( state )
+  def TicTacToe.ops( position )
+    return nil if final?( position )
 
     a = []
 
-    state.board.coords.each do |c|
-      next unless state.board[c].nil?
+    position.board.coords.each do |c|
+      next unless position.board[c].nil?
 
-      p = state.turn
+      p = position.turn
 
       op = Op.new( "Place #{p.name}", c.to_s ) do
-        s = state.dup
+        s = position.dup
         s.board[c] = p.current
         s.lastc, s.lastp = c, p.current
         s.turn.next!
@@ -54,10 +54,10 @@ class TicTacToe < Rules
     (a == []) ? nil : a
   end
 
-  def TicTacToe.final?( state )
-    b = state.board
-    lc = state.lastc
-    lp = state.lastp
+  def TicTacToe.final?( position )
+    b = position.board
+    lc = position.lastc
+    lp = position.lastp
 
     return false if lc.nil?
 
@@ -74,20 +74,20 @@ class TicTacToe < Rules
     return false
   end
 
-  def TicTacToe.winner?( state, player )
-    TicTacToe.final?( state ) && !TicTacToe.draw?( state ) &&
-    state.lastp == player
+  def TicTacToe.winner?( position, player )
+    TicTacToe.final?( position ) && !TicTacToe.draw?( position ) &&
+    position.lastp == player
   end
 
-  def TicTacToe.loser?( state, player )
-    TicTacToe.final?( state ) && !TicTacToe.draw?( state ) &&
-    state.lastp != player
+  def TicTacToe.loser?( position, player )
+    TicTacToe.final?( position ) && !TicTacToe.draw?( position ) &&
+    position.lastp != player
   end
 
-  def TicTacToe.draw?( state )
-    b = state.board
-    lc = state.lastc
-    lp = state.lastp
+  def TicTacToe.draw?( position )
+    b = position.board
+    lc = position.lastc
+    lp = position.lastp
 
     return false if lc.nil?
 
