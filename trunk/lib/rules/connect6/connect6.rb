@@ -27,28 +27,23 @@ class Connect6 < Rules
     [Piece.black,Piece.white]
   end
 
+  def Connect6.op?( position, op )
+    c = Coord.from_s( op )
+    position.board.coords.include?( c ) && position.board[c].nil?
+  end
+
   def Connect6.ops( position )
     return nil if final?( position )
+    cs = position.board.coords.select { |c| position.board[c].nil? }
+    a = cs.map { |c| c.to_s }
+    a == [] ? nil : a
+  end
 
-    a = []
-
-    position.board.coords.each do |c|
-      next unless position.board[c].nil?
-
-      p = position.turn
-
-      op = Op.new( "Place #{p.name}", c.to_s ) do
-        s = position.dup
-        s.board[c] = p.current
-        s.lastc, s.lastp = c, p.current
-        s.turn.next!
-        s
-      end
-      op.freeze
-      a << op
-    end
-
-    (a == []) ? nil : a
+  def Connect6.apply( position, op )
+    c, pos, p = Coord.from_s( op ), position.dup, position.turn.current
+    pos.board[c], pos.lastc, pos.lastp = p, c, p
+    pos.turn.next!
+    pos
   end
 
   def Connect6.final?( position )
