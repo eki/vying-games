@@ -44,6 +44,11 @@ class Coord
     Coord.new( x, y )
   end
 
+  def Coord.from_s( s )
+    s.to_s =~ /(\w)(\d+)/
+    Coord[$1[0]-97,$2.to_i]
+  end
+
   def <=>( c )
     (t = y <=> c.y) != 0 ? t : x <=> c.x
   end
