@@ -59,28 +59,26 @@ class Fifteen < Rules
   def Fifteen.players
     [Player.a,Player.b]
   end
-                                                    
+
+  def Fifteen.op?( position, op )
+    op.to_s =~ /(a|b)(\d)/
+    position.turn.short == $1 && position.unused.include?( $2.to_i )
+  end
+
   def Fifteen.ops( position )
     return nil if final?( position )
+    a = position.unused.map { |n| "#{position.turn.short}#{n}" }
+    a == [] ? nil : a
+  end
 
-    a = []
-
-    position.unused.each do |n|
-      p = position.turn
-
-      op = Op.new( "#{p.name} takes #{n}", "#{p.short}#{n}" ) do
-        s = position.dup
-        s.unused.delete( n )
-        s.a_list << n if position.turn == Player.a
-        s.b_list << n if position.turn == Player.b
-        s.turn.next!
-        s
-      end
-      op.freeze
-      a << op
-    end
-
-    (a == []) ? nil : a
+  def Fifteen.apply( position, op )
+    op.to_s =~ /(a|b)(\d)/
+    pos, n = position.dup, $2.to_i
+    pos.unused.delete( n )
+    pos.a_list << n if position.turn == Player.a
+    pos.b_list << n if position.turn == Player.b
+    pos.turn.next!
+    pos
   end
 
   def Fifteen.has_15?( list )
