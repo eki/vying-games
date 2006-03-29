@@ -25,15 +25,14 @@ class TestConnectFour < Test::Unit::TestCase
   def test_ops
     g = Game.new( ConnectFour )
     ops = g.ops
-    assert_equal( 'Drop', ops[0].name )
 
-    assert_equal( 'r0', ops[0].short )
-    assert_equal( 'r1', ops[1].short )
-    assert_equal( 'r2', ops[2].short )
-    assert_equal( 'r3', ops[3].short )
-    assert_equal( 'r4', ops[4].short )
-    assert_equal( 'r5', ops[5].short )
-    assert_equal( 'r6', ops[6].short )
+    assert_equal( 'r0', ops[0] )
+    assert_equal( 'r1', ops[1] )
+    assert_equal( 'r2', ops[2] )
+    assert_equal( 'r3', ops[3] )
+    assert_equal( 'r4', ops[4] )
+    assert_equal( 'r5', ops[5] )
+    assert_equal( 'r6', ops[6] )
 
     while ops = g.ops do
       g << ops[0]

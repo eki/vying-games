@@ -41,27 +41,24 @@ class ConnectFour < Rules
     [Piece.red,Piece.blue]
   end
 
+  def ConnectFour.op?( position, op )
+    op.to_s =~ /(r|b)(\d)/
+    position.board.drop?( $2.to_i )
+  end
+
   def ConnectFour.ops( position )
     return nil if final?( position )
+    xs = (0..position.board.coords.width).select { |x| position.board.drop? x }
+    a = xs.map { |x| "#{position.turn.short}#{x}" }
+    a == [] ? nil : a
+  end
 
-    a = []
-
-    position.board.coords.width.times do |x|
-      next unless position.board.drop?( x ) 
-
-      p = position.turn
-
-      op = Op.new( "Drop", "#{p.short}#{x}" ) do
-        s = position.dup
-        s.lastc, s.lastp = s.board.drop( x, s.turn.current ), s.turn.current
-        s.turn.next!
-        s
-      end
-      op.freeze
-      a << op
-    end
-
-    (a == []) ? nil : a
+  def ConnectFour.apply( position, op )
+    op.to_s =~ /(r|b)(\d)/
+    x, pos, p = $2.to_i, position.dup, position.turn.current
+    pos.lastc, pos.lastp = pos.board.drop( x, p ), p
+    pos.turn.next!
+    pos
   end
 
   def ConnectFour.final?( position )
