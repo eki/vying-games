@@ -154,23 +154,44 @@ class FakeRules
     Position.new( "edcba", "player1" )
   end
 
+  def FakeRules.op?( position, op )
+    op.to_s =~ /(r|s)/
+  end
+
   def FakeRules.ops( position )
     return nil if final?( position )
-
-    op1 = Op.new( "Succ!", 'r' ) do
-      s = position.dup
-      s.fake_board.succ!
-      s
-    end
-
-    op2 = Op.new( "Squeeze!", 's' ) do
-      s = position.dup
-      s.fake_board.squeeze!
-      s
-    end
-
-    [op1,op2]
+    ['r','s']
   end
+
+  def FakeRules.apply( position, op )
+    if op.to_s =~ /r/
+      pos = position.dup
+      pos.fake_board.succ!
+      return pos
+    elsif op.to_s =~ /s/
+      pos = position.dup
+      pos.fake_board.squeeze!
+      pos
+    end
+  end
+
+#  def FakeRules.ops( position )
+#    return nil if final?( position )
+#
+#    op1 = Op.new( "Succ!", 'r' ) do
+#      s = position.dup
+#      s.fake_board.succ!
+#      s
+#    end
+#
+#    op2 = Op.new( "Squeeze!", 's' ) do
+#      s = position.dup
+#      s.fake_board.squeeze!
+#      s
+#    end
+#
+#    [op1,op2]
+#  end
 
   def FakeRules.final?( position )
     position.fake_board.length == 1
@@ -191,8 +212,8 @@ class TestGame < Test::Unit::TestCase
     g = Game.new( FakeRules )
     ops = g.ops
 
-    assert_equal( "Succ!", ops[0].name )
-    assert_equal( "Squeeze!", ops[1].name )
+    assert_equal( "r", ops[0] )
+    assert_equal( "s", ops[1] )
 
     g << ops[0]
 
