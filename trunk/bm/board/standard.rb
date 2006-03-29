@@ -13,8 +13,12 @@ diagpos = b.coords.diagonal( Coord[4,4], 1 )
 diagneg = b.coords.diagonal( Coord[3,3], -1 )
 
 Benchmark.bm(12) do |x|
-  x.report( "new:" ) do
-    n.times { Board.new }
+  x.report( "new (8x8):" ) do
+    n.times { Board.new( 8, 8 ) }
+  end
+
+  x.report( "new (19x19):" ) do
+    n.times { Board.new( 19, 19 ) }
   end
 
   x.report( "dup:" ) do
