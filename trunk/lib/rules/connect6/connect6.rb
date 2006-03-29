@@ -12,15 +12,18 @@ class Connect6 < Rules
 
   INFO = Info.new( __FILE__ )
 
-  class Position < Struct.new( :board, :turn, :lastc, :lastp )
+  class Position < Struct.new( :board, :turn, :lastc, :lastp, :unused_ops )
     def to_s
       "Board:\n#{board}\nTurn: #{turn}\nLast: (#{lastc}, #{lastp})"
     end
   end
 
+  @@init_ops = Coords.new( 19, 19 ).map { |c| c.to_s }
+
   def Connect6.init
     s = [Piece.black, Piece.white, Piece.white, Piece.black]
-    Position.new( Board.new( 19, 19 ), PlayerSet.new( *s ), nil, :noone )
+    Position.new( Board.new( 19, 19 ), PlayerSet.new( *s ), nil, :noone,
+                  @@init_ops.dup )
   end
 
   def Connect6.players
@@ -28,31 +31,35 @@ class Connect6 < Rules
   end
 
   def Connect6.op?( position, op )
-    c = Coord.from_s( op )
-    position.board.coords.include?( c ) && position.board[c].nil?
+    #c = Coord.from_s( op )
+    #position.board.coords.include?( c ) && position.board[c].nil?
+    position.unused_ops.include?( op.to_s )
   end
 
   def Connect6.ops( position )
-    return nil if final?( position )
-    cs = position.board.coords.select { |c| position.board[c].nil? }
-    a = cs.map { |c| c.to_s }
-    a == [] ? nil : a
+    #return nil if final?( position )
+    #cs = position.board.coords.select { |c| position.board[c].nil? }
+    #a = cs.map { |c| c.to_s }
+    #a == [] ? nil : a
+    position.unused_ops
   end
 
   def Connect6.apply( position, op )
     c, pos, p = Coord.from_s( op ), position.dup, position.turn.current
     pos.board[c], pos.lastc, pos.lastp = p, c, p
+    pos.unused_ops.delete( c.to_s )
     pos.turn.next!
     pos
   end
 
   def Connect6.final?( position )
     return false if position.lastc.nil?
+    return true  if position.unused_ops.empty?
 
-    empties = position.board.count( nil )
+    #empties = position.board.count( nil )
 
-    return true  if empties == 0
-    return false if empties > 19*19-11
+    #return true  if empties == 0
+    #return false if empties > 19*19-11
 
     b = position.board
     lc = position.lastc
