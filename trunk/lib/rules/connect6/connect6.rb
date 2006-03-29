@@ -34,7 +34,7 @@ class Connect6 < Rules
   end
 
   def Connect6.ops( position )
-    position.unused_ops
+    final?( position ) || position.unused_ops == [] ? nil : position.unused_ops
   end
 
   def Connect6.apply( position, op )
@@ -60,10 +60,11 @@ class Connect6 < Rules
   def Connect6.winner?( position, player )
     b, lc, lp = position.board, position.lastc, position.lastp
 
-    b.each_from( lc, [:e,:w] ) { |p| p == player } >= 5 ||
-    b.each_from( lc, [:n,:s] ) { |p| p == player } >= 5 ||
-    b.each_from( lc, [:ne,:sw] ) { |p| p == player } >= 5 ||
-    b.each_from( lc, [:nw,:se] ) { |p| p == player } >= 5
+    lp == player &&
+    (b.each_from( lc, [:e,:w] ) { |p| p == player } >= 5 ||
+     b.each_from( lc, [:n,:s] ) { |p| p == player } >= 5 ||
+     b.each_from( lc, [:ne,:sw] ) { |p| p == player } >= 5 ||
+     b.each_from( lc, [:nw,:se] ) { |p| p == player } >= 5)
   end
 
   def Connect6.loser?( position, player )
