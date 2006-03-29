@@ -119,33 +119,6 @@ class TestPlayerSet < Test::Unit::TestCase
 
 end
 
-class TestOp < Test::Unit::TestCase
-  def test_initialize
-    n = "TestOp"
-    s = "to"
-
-    op = Op.new( n, s ) { 23 }
-
-    assert_equal( n, op.name )
-    assert_equal( s, op.short )
-    assert_equal( 23, op.call )
-    assert_equal( 23, op.action.call )
-    assert_equal( "TestOp (to)", op.to_s )
-
-    op = Op.new
-    op.name = n
-    op.short = s
-    op.action = lambda { 23 }
-
-    assert_equal( n, op.name )
-    assert_equal( s, op.short )
-    assert_equal( 23, op.call )
-    assert_equal( 23, op.action.call )
-    assert_equal( "TestOp (to)", op.to_s )
-
-  end
-end
-
 class FakeRules
 
   Position = Struct.new( :fake_board, :fake_player )

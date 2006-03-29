@@ -87,26 +87,6 @@ class PlayerSet
   end
 end
 
-class Op
-  attr_accessor :name, :short, :action
-
-  def initialize( name=nil, short=nil, &action )
-    @name, @short, @action = name, short, action
-  end
-
-  def call
-    action.call
-  end
-
-  def to_s
-    s = "#{name} (#{short})"
-  end
-
-  def <=>( op )
-    self.to_s <=> op.to_s
-  end
-end
-
 class Struct
   def initialize_copy( original )
     nd = [Symbol, NilClass]
