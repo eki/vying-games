@@ -21,9 +21,8 @@ class Connect6 < Rules
   @@init_ops = Coords.new( 19, 19 ).map { |c| c.to_s }
 
   def Connect6.init
-    s = [Piece.black, Piece.white, Piece.white, Piece.black]
-    Position.new( Board.new( 19, 19 ), PlayerSet.new( *s ), nil, :noone,
-                  @@init_ops.dup )
+    ps = PlayerSet.new( Piece.black, Piece.white, Piece.white, Piece.black )
+    Position.new( Board.new( 19, 19 ), ps, nil, :noone, @@init_ops.dup )
   end
 
   def Connect6.players
@@ -31,16 +30,10 @@ class Connect6 < Rules
   end
 
   def Connect6.op?( position, op )
-    #c = Coord.from_s( op )
-    #position.board.coords.include?( c ) && position.board[c].nil?
     position.unused_ops.include?( op.to_s )
   end
 
   def Connect6.ops( position )
-    #return nil if final?( position )
-    #cs = position.board.coords.select { |c| position.board[c].nil? }
-    #a = cs.map { |c| c.to_s }
-    #a == [] ? nil : a
     position.unused_ops
   end
 
@@ -56,14 +49,7 @@ class Connect6 < Rules
     return false if position.lastc.nil?
     return true  if position.unused_ops.empty?
 
-    #empties = position.board.count( nil )
-
-    #return true  if empties == 0
-    #return false if empties > 19*19-11
-
-    b = position.board
-    lc = position.lastc
-    lp = position.lastp
+    b, lc, lp = position.board, position.lastc, position.lastp
 
     b.each_from( lc, [:e,:w] ) { |p| p == lp } >= 5 ||
     b.each_from( lc, [:n,:s] ) { |p| p == lp } >= 5 ||
@@ -72,9 +58,7 @@ class Connect6 < Rules
   end
 
   def Connect6.winner?( position, player )
-    b = position.board
-    lc = position.lastc
-    lp = position.lastp
+    b, lc, lp = position.board, position.lastc, position.lastp
 
     b.each_from( lc, [:e,:w] ) { |p| p == player } >= 5 ||
     b.each_from( lc, [:n,:s] ) { |p| p == player } >= 5 ||
@@ -87,9 +71,7 @@ class Connect6 < Rules
   end
 
   def Connect6.draw?( position )
-    b = position.board
-    lc = position.lastc
-    lp = position.lastp
+    b, lc, lp = position.board, position.lastc, position.lastp
 
     b.count( nil ) == 0 &&
     b.each_from( lc, [:e,:w] ) { |p| p == lp } < 5 &&
