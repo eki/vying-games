@@ -13,17 +13,16 @@ class TestTicTacToe < Test::Unit::TestCase
   def test_ops
     g = Game.new( TicTacToe )
     ops = g.ops
-    assert_equal( 'Place X', ops[0].name )
 
-    assert_equal( 'a0', ops[0].short )
-    assert_equal( 'b0', ops[1].short )
-    assert_equal( 'c0', ops[2].short )
-    assert_equal( 'a1', ops[3].short )
-    assert_equal( 'b1', ops[4].short )
-    assert_equal( 'c1', ops[5].short )
-    assert_equal( 'a2', ops[6].short )
-    assert_equal( 'b2', ops[7].short )
-    assert_equal( 'c2', ops[8].short )
+    assert_equal( 'a0', ops[0] )
+    assert_equal( 'b0', ops[1] )
+    assert_equal( 'c0', ops[2] )
+    assert_equal( 'a1', ops[3] )
+    assert_equal( 'b1', ops[4] )
+    assert_equal( 'c1', ops[5] )
+    assert_equal( 'a2', ops[6] )
+    assert_equal( 'b2', ops[7] )
+    assert_equal( 'c2', ops[8] )
 
     while ops = g.ops do
       g << ops[0]
