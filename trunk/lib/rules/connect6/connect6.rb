@@ -63,10 +63,10 @@ class Connect6 < Rules
     lc = position.lastc
     lp = position.lastp
 
-    b.to_s( b.coords.row( lc ) )          =~ /(#{lp.short})\1\1\1\1\1/ ||
-    b.to_s( b.coords.column( lc ) )       =~ /(#{lp.short})\1\1\1\1\1/ ||
-    b.to_s( b.coords.diagonal( lc, 1 ) )  =~ /(#{lp.short})\1\1\1\1\1/ ||
-    b.to_s( b.coords.diagonal( lc, -1 ) ) =~ /(#{lp.short})\1\1\1\1\1/
+    b.each_from( lc, [:e,:w] ) { |p| p == lp } >= 5 ||
+    b.each_from( lc, [:n,:s] ) { |p| p == lp } >= 5 ||
+    b.each_from( lc, [:ne,:sw] ) { |p| p == lp } >= 5 ||
+    b.each_from( lc, [:nw,:se] ) { |p| p == lp } >= 5
   end
 
   def Connect6.winner?( position, player )
@@ -74,10 +74,10 @@ class Connect6 < Rules
     lc = position.lastc
     lp = position.lastp
 
-    b.to_s( b.coords.row( lc ) )          =~ /(#{player.short})\1\1\1\1\1/ ||
-    b.to_s( b.coords.column( lc ) )       =~ /(#{player.short})\1\1\1\1\1/ ||
-    b.to_s( b.coords.diagonal( lc, 1 ) )  =~ /(#{player.short})\1\1\1\1\1/ ||
-    b.to_s( b.coords.diagonal( lc, -1 ) ) =~ /(#{player.short})\1\1\1\1\1/
+    b.each_from( lc, [:e,:w] ) { |p| p == player } >= 5 ||
+    b.each_from( lc, [:n,:s] ) { |p| p == player } >= 5 ||
+    b.each_from( lc, [:ne,:sw] ) { |p| p == player } >= 5 ||
+    b.each_from( lc, [:nw,:se] ) { |p| p == player } >= 5
   end
 
   def Connect6.loser?( position, player )
@@ -90,10 +90,10 @@ class Connect6 < Rules
     lp = position.lastp
 
     b.count( nil ) == 0 &&
-    b.to_s( b.coords.row( lc ) )          !~ /(\S)\1\1\1\1\1/ &&
-    b.to_s( b.coords.column( lc ) )       !~ /(\S)\1\1\1\1\1/ &&
-    b.to_s( b.coords.diagonal( lc, 1 ) )  !~ /(\S)\1\1\1\1\1/ &&
-    b.to_s( b.coords.diagonal( lc, -1 ) ) !~ /(\S)\1\1\1\1\1/
+    b.each_from( lc, [:e,:w] ) { |p| p == lp } < 5 &&
+    b.each_from( lc, [:n,:s] ) { |p| p == lp } < 5 &&
+    b.each_from( lc, [:ne,:sw] ) { |p| p == lp } < 5 &&
+    b.each_from( lc, [:nw,:se] ) { |p| p == lp } < 5
   end
 end
 
