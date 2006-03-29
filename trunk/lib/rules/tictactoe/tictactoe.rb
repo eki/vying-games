@@ -18,7 +18,7 @@ class TicTacToe < Rules
 
   class Position < Struct.new( :board, :turn, :lastc, :lastp )
     def to_s
-      "Board:\n#{board}\nTurn: #{turn}\nLast: #{last}"
+      "Board:\n#{board}\nTurn: #{turn}\nLast: (#{lastc}, #{lastp})"
     end
   end
 
@@ -29,29 +29,24 @@ class TicTacToe < Rules
   def TicTacToe.players
     [Piece.x,Piece.o]
   end
-                                                    
+
+  def TicTacToe.op?( position, op )
+    c = Coord.from_s( op )
+    position.board.coords.include?( c ) && position.board[c].nil?
+  end
+
   def TicTacToe.ops( position )
     return nil if final?( position )
+    cs = position.board.coords.select { |c| position.board[c].nil? }
+    a = cs.map { |c| c.to_s }
+    a == [] ? nil : a
+  end
 
-    a = []
-
-    position.board.coords.each do |c|
-      next unless position.board[c].nil?
-
-      p = position.turn
-
-      op = Op.new( "Place #{p.name}", c.to_s ) do
-        s = position.dup
-        s.board[c] = p.current
-        s.lastc, s.lastp = c, p.current
-        s.turn.next!
-        s
-      end
-      op.freeze
-      a << op
-    end
-
-    (a == []) ? nil : a
+  def TicTacToe.apply( position, op )
+    c, pos, p = Coord.from_s( op ), position.dup, position.turn.current
+    pos.board[c], pos.lastc, pos.lastp = p, c, p
+    pos.turn.next!
+    pos
   end
 
   def TicTacToe.final?( position )

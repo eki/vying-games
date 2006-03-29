@@ -178,24 +178,33 @@ class Game
     super.respond_to?( method_id )
   end
 
-  def ops
-    @ops_cache = rules.ops( history.last )
-  end
+#  def ops
+#    @ops_cache = rules.ops( history.last )
+#  end
 
   def <<( op )
-    @ops_cache ||= ops
-    if @ops_cache.include?( op )
-      @history  << op.call
+    if op?( op )
+      @history << apply( op )
       @sequence << op
-      @ops_cache = nil
       return self
-    else
-      @ops_cache.each do |o|
-        return self << o if o.short == op
-      end
     end
     raise "#{op} not a valid operation"
   end
+
+#  def <<( op )
+#    @ops_cache ||= ops
+#    if @ops_cache.include?( op )
+#      @history  << op.call
+#      @sequence << op
+#      @ops_cache = nil
+#      return self
+#    else
+#      @ops_cache.each do |o|
+#        return self << o if o.short == op
+#      end
+#    end
+#    raise "#{op} not a valid operation"
+#  end
 
   def players
     rules.players
