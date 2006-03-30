@@ -2,87 +2,99 @@
 #   Othello
 #
 
-require 'board'
+require 'board/standard'
 require 'game'
+
+class OthelloBoard < Board
+  def valid?( c, bp, directions=[:n,:s,:e,:w,:ne,:nw,:se,:sw] )
+    return false if !self[c].nil?
+
+    op = bp == Piece.black ? Piece.white : Piece.black
+
+    directions.each do |d|
+      opc, f = 0, false
+      each_from( c, [d] ) do |p| 
+        p == op ? opc += 1 : (p == bp && opc > 0 ? f = true : nil)
+      end
+      return true if f 
+    end
+
+    false
+  end
+
+  def place( c, bp )
+    op = bp == Piece.black ? Piece.white : Piece.black
+
+    [:n,:s,:w,:e,:ne,:nw,:se,:sw].each do |d|
+      if valid?( c, bp, [d] )
+        tc = c
+        while tc = coords.next( tc, d )
+          self[tc] == op ? self[tc] = bp : break
+        end
+      end
+    end
+    self[c] = bp
+  end
+end
 
 class Othello < Rules
 
   INFO = Info.new( __FILE__ )
 
-  BLACK = TwoSidedPiece.new( Piece.black, Piece.white )
-  WHITE = TwoSidedPiece.new( Piece.white, Piece.black )
-
-  class Position < Struct.new( :board, :turn, :opscache, :frontier )
+  class Position < Struct.new( :board, :turn )
     def to_s
       "Board:\n#{board}\nTurn: #{turn}"
     end
   end
 
   def Othello.init
-    b = Board.new( 8, 8, TwoSidedPiece )
-    b[3,3] = b[4,4] = BLACK
-    b[3,4] = b[4,3] = WHITE
-    f = b.neighbors8( 3, 3 ) + b.neighbors8( 4, 4 ) +
-        b.neighbors8( 3, 4 ) + b.neighbors8( 4, 3 )
-    f.reject! { |x,y| !b[x,y].empty? }
-    f.uniq!
-    Position.new( b, PlayerSet.new( *players ), nil, f )
+    b = OthelloBoard.new( 8, 8 )
+    b[3,3] = b[4,4] = Piece.white
+    b[3,4] = b[4,3] = Piece.black
+    Position.new( b, PlayerSet.new( *players ) )
   end
 
   def Othello.players
-    [BLACK,WHITE]
+    [Piece.black,Piece.white]
   end
-                                                    
+
+  def Othello.op?( position, op )
+    position.board.valid?( Coord.from_s( op.to_s ), position.turn )
+  end
+
   def Othello.ops( position )
-    return position.opscache unless position.opscache.nil?
+    b, bp = position.board, position.turn.current
+    cs = b.coords.select { |c| b.valid?( c, bp ) }
+    a = cs.map { |c| c.to_s }
+    a == [] ? nil : a
+  end
 
-    a = []
-
-    pass = Op.new( "Pass", "p" ) do
-      s = position.dup
-      s.turn.next!
-      s.opscache = nil
-      s
-    end
-
-    position.frontier.each do |x,y|
-      next unless position.board[x,y].empty?
-      next unless position.board.capture?( x, y, position.turn )
-
-      op = Op.new( "Place #{position.turn.name}", Board.xy_to_s( x, y ) ) do
-        s = position.dup
-        s.board.capture( x, y, position.turn.current ) { |p| p.flip! }
-        s.turn.next!
-        s.opscache = nil
-        s.frontier += s.board.neighbors8( x, y )
-        s.frontier.reject! { |x,y| !s.board[x,y].empty? }
-        s.frontier.uniq!
-        s
-      end
-      op.freeze
-      a << op
-    end
-
-    position.opscache = (a == []) ? [pass] : a
+  def Othello.apply( position, op )
+    pos = position.dup
+    b, c = pos.board, Coord.from_s( op )
+    b.place( c, pos.turn.current )
+    pos.turn.next!
+    return pos if ops( pos )
+    pos.turn.next!
+    pos
   end
 
   def Othello.final?( position )
-    position.board.count( Piece.empty ) == 0 || ops( position ).nil?
+    !ops( position )
   end
 
   def Othello.winner?( position, player )
-    player = player == BLACK ? BLACK : WHITE
-    position.board.count( player ) > position.board.count( player.flip )
+    opp = player == Player.black ? Player.white : Player.black
+    position.board.count( player ) > position.board.count( opp )
   end
 
   def Othello.loser?( position, player )
-    player = player == BLACK ? BLACK : WHITE
-    position.board.count( player ) < position.board.count( player.flip )
+    opp = player == Player.black ? Player.white : Player.black
+    position.board.count( player ) < position.board.count( opp )
   end
 
   def Othello.draw?( position )
-    player = player == BLACK ? BLACK : WHITE
-    position.board.count( player ) == position.board.count( player.flip )
+    position.board.count( Player.white ) == position.board.count( Player.black )
   end
 end
 
