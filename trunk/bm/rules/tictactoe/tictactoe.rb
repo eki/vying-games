@@ -4,16 +4,29 @@ require 'game'
 
 n=10000
 
-Benchmark.bm(12) do |x|
+pos = TicTacToe.init
+
+Benchmark.bm(14) do |x|
+
+  x.report( "init:" ) do
+    n.times { TicTacToe.init }
+  end
+
   x.report( "ops:" ) do
+    n.times { TicTacToe.ops( pos ) }
+  end
+
+  x.report( "final?:" ) do
+    n.times { TicTacToe.final?( pos ) }
+  end
+
+  x.report( "random moves:" ) do
     g = Game.new( TicTacToe )
     n.times do
-      ops = g.ops
-      if ops.nil?
+      if g.final?
         g = Game.new( TicTacToe )
-        ops = g.ops
       end
-      g << ops[rand(ops.length)]
+      g << g.ops[rand(g.ops.length)]
     end
   end
 end

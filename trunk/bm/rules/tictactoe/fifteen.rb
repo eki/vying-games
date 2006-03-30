@@ -1,30 +1,30 @@
 require 'benchmark'
-require 'rules/connect6/connect6'
+require 'rules/tictactoe/fifteen'
 require 'game'
 
 n=10000
 
-pos = Connect6.init
+pos = Fifteen.init
 
 Benchmark.bm(14) do |x|
 
   x.report( "init:" ) do
-    n.times { Connect6.init }
+    n.times { Fifteen.init }
   end
 
   x.report( "ops:" ) do
-    n.times { Connect6.ops( pos ) }
+    n.times { Fifteen.ops( pos ) }
   end
 
   x.report( "final?:" ) do
-    n.times { Connect6.final?( pos ) }
+    n.times { Fifteen.final?( pos ) }
   end
 
   x.report( "random moves:" ) do
-    g = Game.new( Connect6 )
+    g = Game.new( Fifteen )
     n.times do
       if g.final?
-        g = Game.new( Connect6 )
+        g = Game.new( Fifteen )
       end
       g << g.ops[rand(g.ops.length)]
     end

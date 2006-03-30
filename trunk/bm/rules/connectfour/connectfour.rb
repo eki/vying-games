@@ -4,16 +4,29 @@ require 'game'
 
 n=10000
 
-Benchmark.bm(12) do |x|
+pos = ConnectFour.init
+
+Benchmark.bm(14) do |x|
+
+  x.report( "init:" ) do
+    n.times { ConnectFour.init }
+  end
+
   x.report( "ops:" ) do
+    n.times { ConnectFour.ops( pos ) }
+  end
+
+  x.report( "final?:" ) do
+    n.times { ConnectFour.final?( pos ) }
+  end
+
+  x.report( "random moves:" ) do
     g = Game.new( ConnectFour )
     n.times do
-      ops = g.ops
-      if ops.nil?
+      if g.final?
         g = Game.new( ConnectFour )
-        ops = g.ops
       end
-      g << ops[rand(ops.length)]
+      g << g.ops[rand(g.ops.length)]
     end
   end
 end
