@@ -9,4 +9,5 @@ require "rules/tictactoe/tc_tictactoe"
 require "rules/tictactoe/tc_fifteen"
 require "rules/connectfour/tc_connectfour"
 require "rules/connect6/tc_connect6"
+require "rules/othello/tc_othello"
 
