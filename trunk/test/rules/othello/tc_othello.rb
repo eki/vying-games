@@ -6,8 +6,6 @@ class TestOthelloBoard < Test::Unit::TestCase
   def test_valid_ns
     b = OthelloBoard.new( 8, 8 )
 
-    # Check :n, :s
-
     b[3,3] = Piece.black
     b[3,4] = Piece.white
 
@@ -46,7 +44,6 @@ class TestOthelloBoard < Test::Unit::TestCase
 
   def test_valid_nw_se
     b = OthelloBoard.new( 8, 8 )
-
 
     b[0,0] = Piece.white
     b[1,1] = Piece.black
@@ -102,6 +99,112 @@ class TestOthelloBoard < Test::Unit::TestCase
       assert( !b.valid?( c, Piece.black ) )
       assert( !b.valid?( c, Piece.white ) )
     end
+  end
+
+  def test_place_n
+    b = OthelloBoard.new( 8, 8 )
+
+    b[3,3] = Piece.black
+    b[3,4] = Piece.white
+
+    b.place( Coord[3,5], Piece.black )
+
+    assert_equal( b[3,3], Piece.black )
+    assert_equal( b[3,4], Piece.black )
+    assert_equal( b[3,5], Piece.black )
+
+    assert_equal( 8*8-3, b.count( nil ) )
+  end
+
+  def test_place_s
+    b = OthelloBoard.new( 8, 8 )
+
+    b[3,3] = Piece.black
+    b[3,4] = Piece.white
+
+    b.place( Coord[3,2], Piece.white )
+
+    assert_equal( b[3,2], Piece.white )
+    assert_equal( b[3,3], Piece.white )
+    assert_equal( b[3,4], Piece.white )
+
+    assert_equal( 8*8-3, b.count( nil ) )
+  end
+
+  def test_place_e
+    b = OthelloBoard.new( 8, 8 )
+
+    b[3,3] = Piece.black
+    b[4,3] = Piece.white
+    b[5,3] = Piece.white
+
+    b.place( Coord[2,3], Piece.white )
+
+    assert_equal( b[2,3], Piece.white )
+    assert_equal( b[3,3], Piece.white )
+    assert_equal( b[4,3], Piece.white )
+    assert_equal( b[5,3], Piece.white )
+
+    assert_equal( 8*8-4, b.count( nil ) )
+  end
+
+  def test_place_w
+    b = OthelloBoard.new( 8, 8 )
+
+    b[3,3] = Piece.black
+    b[4,3] = Piece.white
+    b[5,3] = Piece.white
+
+    b.place( Coord[6,3], Piece.black )
+
+    assert_equal( b[6,3], Piece.black )
+    assert_equal( b[3,3], Piece.black )
+    assert_equal( b[4,3], Piece.black )
+    assert_equal( b[5,3], Piece.black )
+
+    assert_equal( 8*8-4, b.count( nil ) )
+  end
+
+  def test_place_nw_se
+    b = OthelloBoard.new( 8, 8 )
+
+    b[0,0] = Piece.black
+    b[1,1] = Piece.white
+    b[2,2] = Piece.white
+    b[4,4] = Piece.white
+    b[5,5] = Piece.black
+
+    b.place( Coord[3,3], Piece.black )
+
+    assert_equal( b[0,0], Piece.black )
+    assert_equal( b[1,1], Piece.black )
+    assert_equal( b[2,2], Piece.black )
+    assert_equal( b[3,3], Piece.black )
+    assert_equal( b[4,4], Piece.black )
+    assert_equal( b[5,5], Piece.black )
+
+    assert_equal( 8*8-6, b.count( nil ) )
+  end
+
+  def test_place_ne_sw
+    b = OthelloBoard.new( 8, 8 )
+
+    b[7,0] = Piece.black
+    b[6,1] = Piece.white
+    b[5,2] = Piece.white
+    b[3,4] = Piece.white
+    b[2,5] = Piece.black
+
+    b.place( Coord[4,3], Piece.black )
+
+    assert_equal( b[7,0], Piece.black )
+    assert_equal( b[6,1], Piece.black )
+    assert_equal( b[5,2], Piece.black )
+    assert_equal( b[4,3], Piece.black )
+    assert_equal( b[3,4], Piece.black )
+    assert_equal( b[2,5], Piece.black )
+
+    assert_equal( 8*8-6, b.count( nil ) )
   end
 end
 
