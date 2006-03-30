@@ -208,42 +208,40 @@ class TestOthelloBoard < Test::Unit::TestCase
   end
 end
 
-#class TestOthello < Test::Unit::TestCase
-#  def test_init
-#    g = Game.new( Othello )
-#    assert_equal( OthelloBoard.new( 7, 6 ), g.board )
-#    assert_equal( Player.black, g.turn )
-#  end
-#
-#  def test_ops
-#    g = Game.new( Othello )
-#    ops = g.ops
-#
-#    assert_equal( 'r0', ops[0] )
-#    assert_equal( 'r1', ops[1] )
-#    assert_equal( 'r2', ops[2] )
-#    assert_equal( 'r3', ops[3] )
-#    assert_equal( 'r4', ops[4] )
-#    assert_equal( 'r5', ops[5] )
-#    assert_equal( 'r6', ops[6] )
-#
-#    while ops = g.ops do
-#      g << ops[0]
-#    end
-#
-#    assert_not_equal( g.history[0], g.history.last )
-#
-#    assert_equal( 42-19, g.board.count( nil ) )
-#    assert_equal( 10, g.board.count( Piece.red ) )
-#    assert_equal( 9, g.board.count( Piece.blue ) )
-#  end
-#
-#  def test_players
-#    g = Game.new( Othello )
-#    assert_equal( [Player.black,Player.white], g.players )
-#    assert_equal( [Piece.red,Piece.blue], g.players )
-#  end
-#
+class TestOthello < Test::Unit::TestCase
+  def test_init
+    g = Game.new( Othello )
+
+    b = OthelloBoard.new( 8, 8 )
+    b[3,3] = b[4,4] = Piece.white
+    b[3,4] = b[4,3] = Piece.black
+
+    assert_equal( b, g.board )
+    assert_equal( Player.black, g.turn )
+  end
+
+  def test_ops
+    g = Game.new( Othello )
+    ops = g.ops
+
+    assert_equal( 'd3', ops[0] )
+    assert_equal( 'c4', ops[1] )
+    assert_equal( 'f5', ops[2] )
+    assert_equal( 'e6', ops[3] )
+
+    while ops = g.ops do
+      g << ops[0]
+    end
+
+    assert_not_equal( g.history[0], g.history.last )
+  end
+
+  def test_players
+    g = Game.new( Othello )
+    assert_equal( [Player.black,Player.white], g.players )
+    assert_equal( [Piece.black,Piece.white], g.players )
+  end
+
 #  def test_game01
 #    # This game is going to be a win for Red (vertical)
 #    g = Game.new( Othello )
@@ -261,7 +259,7 @@ end
 #    assert_equal( 1, g.score( Player.black ) )
 #    assert_equal( -1, g.score( Player.white ) )
 #  end
-#
+
 #  def test_game02
 #    # This game is going to be a win for Blue (diagonal)
 #    g = Game.new( Othello )
@@ -279,7 +277,7 @@ end
 #    assert_equal( -1, g.score( Player.black ) )
 #    assert_equal( 1, g.score( Player.white ) )
 #  end
-#
+
 #  def test_game03
 #    # This game is going to be a win for Blue (diagonal)
 #    g = Game.new( Othello )
@@ -297,7 +295,7 @@ end
 #    assert_equal( -1, g.score( Player.black ) )
 #    assert_equal( 1, g.score( Player.white ) )
 #  end
-#
+
 #  def test_game04
 #    # This game is going to be a draw
 #    g = Game.new( Othello )
@@ -321,7 +319,7 @@ end
 #    assert_equal( 0, g.score( Player.black ) )
 #    assert_equal( 0, g.score( Player.white ) )
 #  end
-#
+
 #  def test_game05
 #    # This game is going to be a win for Blue (horizontal 5-in-a-row)
 #    g = Game.new( Othello )
@@ -339,6 +337,6 @@ end
 #    assert_equal( -1, g.score( Player.black ) )
 #    assert_equal( 1, g.score( Player.white ) )
 #  end
-#
-#end
+
+end
 
