@@ -41,17 +41,25 @@ class Othello < Rules
 
   INFO = Info.new( __FILE__ )
 
-  class Position < Struct.new( :board, :turn )
+  class Position < Struct.new( :board, :turn, :occupied, :frontier )
     def to_s
       "Board:\n#{board}\nTurn: #{turn}"
     end
+  end
+
+  def Othello.frontier( coords )
   end
 
   def Othello.init
     b = OthelloBoard.new( 8, 8 )
     b[3,3] = b[4,4] = Piece.white
     b[3,4] = b[4,3] = Piece.black
-    Position.new( b, PlayerSet.new( *players ) )
+
+    occupied = [Coord[3,3], Coord[4,4], Coord[3,4], Coord[4,3]]
+    frontier = occupied.map { |c| b.coords.neighbors( c ) }
+    frontier = frontier.flatten.select { |c| b[c].nil? }.uniq
+
+    Position.new( b, PlayerSet.new( *players ), occupied, frontier )
   end
 
   def Othello.players
@@ -63,8 +71,8 @@ class Othello < Rules
   end
 
   def Othello.ops( position )
-    b, bp = position.board, position.turn.current
-    cs = b.coords.select { |c| b.valid?( c, bp ) }
+    b, bp, f = position.board, position.turn.current, position.frontier
+    cs = f.select { |c| b.valid?( c, bp ) }
     a = cs.map { |c| c.to_s }
     a == [] ? nil : a
   end
@@ -73,6 +81,13 @@ class Othello < Rules
     pos = position.dup
     b, c = pos.board, Coord.from_s( op )
     b.place( c, pos.turn.current )
+
+    pos.occupied << c
+
+    pos.frontier += b.coords.neighbors( c ).select { |c| b[c].nil? }
+    pos.frontier.uniq!
+    pos.frontier.delete( c )
+
     pos.turn.next!
     return pos if ops( pos )
     pos.turn.next!
