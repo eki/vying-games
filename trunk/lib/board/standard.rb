@@ -213,22 +213,12 @@ class Board
   end
 
   def to_s( cs = nil )
-    if cs.nil?
-      return coords.column( Coord[0,0] ).inject( '' ) do |s,colc|
-        r = coords.row( colc ).inject( '' ) do |rs,c| 
-          rs + (self[c].nil? ? ' ' : self[c].to_s)
-        end
-        s + r + "\n" 
+    coords.column( Coord[0,0] ).inject( '' ) do |s,colc|
+      r = coords.row( colc ).inject( '' ) do |rs,c| 
+        rs + (self[c].nil? ? ' ' : self[c].to_s)
       end
-    else
-      return Board.to_s( self[cs] )
+      s + r + "\n" 
     end
-  end
-
-  def Board.to_s( pieces )
-    s = ''
-    pieces.each { |p| s << (p.nil? ? ' ' : p.to_s) }
-    s
   end
 end
 
