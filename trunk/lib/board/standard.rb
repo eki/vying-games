@@ -46,7 +46,7 @@ class Coord
 
   def Coord.from_s( s )
     s.to_s =~ /(\w)(\d+)/
-    Coord[$1[0]-97,$2.to_i]
+    Coord[$1[0]-97,$2.to_i-1]
   end
 
   def <=>( c )
@@ -62,8 +62,7 @@ class Coord
   end
 
   def to_s
-    #"(#{x},#{y})"
-    "#{(97+x).chr}#{y}"
+    "#{(97+x).chr}#{y+1}"
   end
 end
 

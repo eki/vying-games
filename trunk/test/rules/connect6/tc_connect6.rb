@@ -8,22 +8,22 @@ class TestConnect6 < Test::Unit::TestCase
     assert_equal( Board.new( 19, 19 ), g.board )
     assert_equal( Player.black, g.turn )
     assert_equal( 19*19, g.unused_ops.length )
-    assert_equal( 'a0', g.unused_ops.first )
-    assert_equal( 's18', g.unused_ops.last )
+    assert_equal( 'a1', g.unused_ops.first )
+    assert_equal( 's19', g.unused_ops.last )
   end
 
   def test_ops
     g = Game.new( Connect6 )
     ops = g.ops
 
-    assert_equal( 'a0', ops[0] )
-    assert_equal( 'b0', ops[1] )
-    assert_equal( 'c0', ops[2] )
-    assert_equal( 'd0', ops[3] )
-    assert_equal( 'e0', ops[4] )
-    assert_equal( 'f0', ops[5] )
-    assert_equal( 'g0', ops[6] )
-    assert_equal( 's18', ops[19*19-1] )
+    assert_equal( 'a1', ops[0] )
+    assert_equal( 'b1', ops[1] )
+    assert_equal( 'c1', ops[2] )
+    assert_equal( 'd1', ops[3] )
+    assert_equal( 'e1', ops[4] )
+    assert_equal( 'f1', ops[5] )
+    assert_equal( 'g1', ops[6] )
+    assert_equal( 's19', ops[19*19-1] )
 
     while ops = g.ops do
       g << ops[0]
@@ -45,10 +45,10 @@ class TestConnect6 < Test::Unit::TestCase
   def test_game01
     # This game is going to be a win for White (vertical)
     g = Game.new( Connect6 )
-    g << "b0" << "f13" << "f12" << "b1" << "b2" << "f11" << "f10" <<
-         "b3" << "b4"  << "f9"
+    g << "b1" << "f14" << "f13" << "b2" << "b3" << "f12" << "f11" <<
+         "b4" << "b5"  << "f10"
     assert( !g.final? )
-    g << "f8"
+    g << "f9"
     assert( g.final? )
 
     assert( !g.draw? )
@@ -64,10 +64,10 @@ class TestConnect6 < Test::Unit::TestCase
   def test_game02
     # This game is going to be a win for White (diagonal)(winner in middle)
     g = Game.new( Connect6 )
-    g << "f12" << "a0" << "c2" << "f11" << "f10" << "d3" << "e4" <<
-         "f13" << "f9" << "f5"
+    g << "f13" << "a1"  << "c3" << "f12" << "f11" << "d4" << "e5" <<
+         "f14" << "f10" << "f6"
     assert( !g.final? )
-    g << "b1"
+    g << "b2"
     assert( g.final? )
 
     assert( !g.draw? )
@@ -83,10 +83,10 @@ class TestConnect6 < Test::Unit::TestCase
   def test_game03
     # This game is going to be a win for Black (horizontal)(7-in-a-row)
     g = Game.new( Connect6 )
-    g << "a0" << "f9" << "f8" << "b0" << "c0" << "g9" << "g8" <<
-         "e0" << "f0" << "g7" << "g6" << "g0"
+    g << "a1" << "f10" << "f9" << "b1" << "c1" << "g10" << "g9" <<
+         "e1" << "f1" << "g8" << "g7" << "g1"
     assert( !g.final? )
-    g << "d0"
+    g << "d1"
     assert( g.final? )
 
     assert( !g.draw? )
@@ -106,45 +106,45 @@ class TestConnect6 < Test::Unit::TestCase
     # This draw was generated (this is a very difficult game to intentionally
     # draw!  This hasn't been gone over in a ton of details, but appears to
     # be correct.
-    sequence = ["j15", "g2", "h7", "c3", "h13", "p4", "h11", "h8", "b0", "d15",
-                "h1", "o1", "n13", "h10", "g5", "m16", "c16", "k16", "b13",
-                "m10", "j5", "e0", "e2", "m2", "f6", "q0", "j6", "k12", "a4",
-                "g18", "g14", "h15", "r13", "j18", "a0", "k8", "l1", "i6",
-                "p3", "s5", "m18", "e12", "l12", "i17", "m11", "s8", "a5",
-                "d4", "l3", "m4", "b18", "p12", "m3", "b17", "k4", "r10", "n9",
-                "o15", "a6", "k6", "k3", "d6", "c17", "r14", "d14", "k5", "g6",
-                "i3", "b8", "s14", "b16", "i1", "j4", "m12", "l8", "q3", "h18",
-                "b11", "f5", "o2", "s10", "p17", "o18", "r5", "c0", "q13",
-                "l9", "f2", "r3", "e7", "g0", "e1", "i13", "r9", "f9", "q4",
-                "l7", "k17", "f15", "n12", "l4", "p11", "c15", "d7", "r4",
-                "h2", "a3", "q17", "q15", "i10", "k0", "c5", "i2", "j7", "n8",
-                "b6", "p9", "c14", "f12", "q14", "p0", "m8", "n5", "k11",
-                "g10", "a17", "a18", "i7", "d12", "p13", "m14", "o9", "a16",
-                "g16", "p16", "p7", "j12", "p8", "k1", "l13", "d3", "h12",
-                "c4", "a13", "k7", "i5", "l5", "r0", "n10", "o7", "h3", "c1",
-                "l10", "o6", "p18", "n18", "c10", "j9", "i14", "q8", "s1",
-                "m17", "b1", "e3", "s11", "c8", "m9", "j1", "f11", "e8", "f18",
-                "s13", "i0", "s17", "o12", "n0", "i12", "k14", "j0", "l2",
-                "b9", "q6", "b10", "g7", "b5", "j10", "q10", "f13", "a1", "a10",
-                "o11", "e14", "i9", "r1", "p5", "s16", "c9", "r15", "k2", "c18",
-                "e11", "f7", "p10", "e10", "n6", "j2", "l0", "e13", "f14",
-                "l15", "d8", "r11", "r6", "d18", "f8", "s15", "r2", "c2", "o8",
-                "h17", "j17", "d0", "s7", "o14", "e17", "b7", "h16", "n4",
-                "f4", "l6", "d11", "l17", "q11", "p1", "o13", "m15", "e4",
-                "g15", "f16", "g17", "c13", "q16", "d16", "e16", "a14", "f10",
-                "e5", "o5", "d17", "s3", "m13", "q12", "g12", "e15", "h0",
-                "a2", "r17", "p2", "j13", "i16", "i4", "g4", "n2", "i11", "s6",
-                "q7", "n11", "n7", "c11", "a12", "n15", "d9", "a15", "r8",
-                "f3", "r16", "g13", "n3", "g8", "i15", "s9", "s2", "k9", "j3",
-                "m6", "b12", "o16", "n17", "c6", "m5", "f0", "g3", "r12",
-                "s12", "q9", "g9", "k18", "l14", "r7", "e6", "p6", "h6", "o0",
-                "q18", "q1", "f17", "d5", "d1", "b2", "l11", "n1", "j11", "h4",
-                "a7", "e9", "h9", "b4", "n16", "c7", "q2", "a11", "q5", "b14",
-                "i18", "m1", "p15", "j8", "a8", "s18", "l18", "k13", "p14",
-                "c12", "s4", "d10", "o3", "g11", "m7", "d2", "b3", "n14",
-                "l16", "j16", "o10", "o17", "g1", "k15", "a9", "o4", "m0",
-                "f1", "h5", "i8", "s0", "j14", "e18", "k10", "r18", "d13",
-                "h14", "b15"]
+    sequence = ["j16", "g3", "h8", "c4", "h14", "p5", "h12", "h9", "b1", "d16",
+                "h2", "o2", "n14", "h11", "g6", "m17", "c17", "k17", "b14",
+                "m11", "j6", "e1", "e3", "m3", "f7", "q1", "j7", "k13", "a5",
+                "g19", "g15", "h16", "r14", "j19", "a1", "k9", "l2", "i7",
+                "p4", "s6", "m19", "e13", "l13", "i18", "m12", "s9", "a6",
+                "d5", "l4", "m5", "b19", "p13", "m4", "b18", "k5", "r11", "n10",
+                "o16", "a7", "k7", "k4", "d7", "c18", "r15", "d15", "k6", "g7",
+                "i4", "b9", "s15", "b17", "i2", "j5", "m13", "l9", "q4", "h19",
+                "b12", "f6", "o3", "s11", "p18", "o19", "r6", "c1", "q14",
+                "l10", "f3", "r4", "e8", "g1", "e2", "i14", "r10", "f10", "q5",
+                "l8", "k18", "f16", "n13", "l5", "p12", "c16", "d8", "r5",
+                "h3", "a4", "q18", "q16", "i11", "k1", "c6", "i3", "j8", "n9",
+                "b7", "p10", "c15", "f13", "q15", "p1", "m9", "n6", "k12",
+                "g11", "a18", "a19", "i8", "d13", "p14", "m15", "o10", "a17",
+                "g17", "p17", "p8", "j13", "p9", "k2", "l14", "d4", "h13",
+                "c5", "a14", "k8", "i6", "l6", "r1", "n11", "o8", "h4", "c2",
+                "l11", "o7", "p19", "n19", "c11", "j10", "i15", "q9", "s2",
+                "m18", "b2", "e4", "s12", "c9", "m10", "j2", "f12", "e9", "f19",
+                "s14", "i1", "s18", "o13", "n1", "i13", "k15", "j1", "l3",
+                "b10", "q7", "b11", "g8", "b6", "j11", "q11", "f14", "a2", "a11",
+                "o12", "e15", "i10", "r2", "p6", "s17", "c10", "r16", "k3", "c19",
+                "e12", "f8", "p11", "e11", "n7", "j3", "l1", "e14", "f15",
+                "l16", "d9", "r12", "r7", "d19", "f9", "s16", "r3", "c3", "o9",
+                "h18", "j18", "d1", "s8", "o15", "e18", "b8", "h17", "n5",
+                "f5", "l7", "d12", "l18", "q12", "p2", "o14", "m16", "e5",
+                "g16", "f17", "g18", "c14", "q17", "d17", "e17", "a15", "f11",
+                "e6", "o6", "d18", "s4", "m14", "q13", "g13", "e16", "h1",
+                "a3", "r18", "p3", "j14", "i17", "i5", "g5", "n3", "i12", "s7",
+                "q8", "n12", "n8", "c12", "a13", "n16", "d10", "a16", "r9",
+                "f4", "r17", "g14", "n4", "g9", "i16", "s10", "s3", "k10", "j4",
+                "m7", "b13", "o17", "n18", "c7", "m6", "f1", "g4", "r13",
+                "s13", "q10", "g10", "k19", "l15", "r8", "e7", "p7", "h7", "o1",
+                "q19", "q2", "f18", "d6", "d2", "b3", "l12", "n2", "j12", "h5",
+                "a8", "e10", "h10", "b5", "n17", "c8", "q3", "a12", "q6", "b15",
+                "i19", "m2", "p16", "j9", "a9", "s19", "l19", "k14", "p15",
+                "c13", "s5", "d11", "o4", "g12", "m8", "d3", "b4", "n15",
+                "l17", "j17", "o11", "o18", "g2", "k16", "a10", "o5", "m1",
+                "f2", "h6", "i9", "s1", "j15", "e19", "k11", "r19", "d14",
+                "h15", "b16"]
 
     sequence.each { |op| g << op }
     

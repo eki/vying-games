@@ -110,10 +110,13 @@ class TestCoord < Test::Unit::TestCase
   end
 
   def test_to_s
-    #assert_equal( "(0,0)", Coord[0,0].to_s )
-    #assert_equal( "(1,2)", Coord[1,2].to_s )
-    assert_equal( "a0", Coord[0,0].to_s )
-    assert_equal( "b2", Coord[1,2].to_s )
+    assert_equal( "a1", Coord[0,0].to_s )
+    assert_equal( "b3", Coord[1,2].to_s )
+  end
+
+  def test_from_s
+    assert_equal( Coord[0,0], Coord.from_s( 'a1' ) )
+    assert_equal( Coord[1,2], Coord.from_s( 'b3' ) )
   end
 end
 
@@ -343,8 +346,7 @@ class TestCoords < Test::Unit::TestCase
 
   def test_to_s
     coords = Coords.new( 2, 2 )
-    #assert_equal( "(0,0)(1,0)(0,1)(1,1)", coords.to_s )
-    assert_equal( "a0b0a1b1", coords.to_s )
+    assert_equal( "a1b1a2b2", coords.to_s )
   end
 end
 

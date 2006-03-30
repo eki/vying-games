@@ -14,15 +14,15 @@ class TestTicTacToe < Test::Unit::TestCase
     g = Game.new( TicTacToe )
     ops = g.ops
 
-    assert_equal( 'a0', ops[0] )
-    assert_equal( 'b0', ops[1] )
-    assert_equal( 'c0', ops[2] )
-    assert_equal( 'a1', ops[3] )
-    assert_equal( 'b1', ops[4] )
-    assert_equal( 'c1', ops[5] )
-    assert_equal( 'a2', ops[6] )
-    assert_equal( 'b2', ops[7] )
-    assert_equal( 'c2', ops[8] )
+    assert_equal( 'a1', ops[0] )
+    assert_equal( 'b1', ops[1] )
+    assert_equal( 'c1', ops[2] )
+    assert_equal( 'a2', ops[3] )
+    assert_equal( 'b2', ops[4] )
+    assert_equal( 'c2', ops[5] )
+    assert_equal( 'a3', ops[6] )
+    assert_equal( 'b3', ops[7] )
+    assert_equal( 'c3', ops[8] )
 
     while ops = g.ops do
       g << ops[0]
@@ -44,9 +44,9 @@ class TestTicTacToe < Test::Unit::TestCase
   def test_game01
     # This game is going to be a win for X (diagonal)
     g = Game.new( TicTacToe )
-    g << "c0" << "b0" << "b1" << "c1"
+    g << "c1" << "b1" << "b2" << "c2"
     assert( !g.final? )
-    g << "a2"
+    g << "a3"
     assert( g.final? )
 
     assert( !g.draw? )
@@ -62,9 +62,9 @@ class TestTicTacToe < Test::Unit::TestCase
   def test_game02
     # This game is going to be a win for X (vertical)
     g = Game.new( TicTacToe )
-    g << "c2" << "a0" << "c1" << "a1" << "b0"
+    g << "c3" << "a1" << "c2" << "a2" << "b1"
     assert( !g.final? )
-    g << "b1" << "c0"
+    g << "b2" << "c1"
     assert( g.final? )
 
     assert( !g.draw? )
@@ -80,9 +80,9 @@ class TestTicTacToe < Test::Unit::TestCase
   def test_game03
     # This game is going to be a draw
     g = Game.new( TicTacToe )
-    g << "a0" << "b0" << "a1" << "b1" << "b2" << "a2" << "c0" << "c1"
+    g << "a1" << "b1" << "a2" << "b2" << "b3" << "a3" << "c1" << "c2"
     assert( !g.final? )
-    g << "c2"
+    g << "c3"
     assert( g.final? )
 
     assert( g.draw? )
@@ -98,9 +98,9 @@ class TestTicTacToe < Test::Unit::TestCase
   def test_game04
     # This game is going to be a win for O (horizontal)
     g = Game.new( TicTacToe )
-    g << "a0" << "b0" << "a1" << "b1" << "c2"
+    g << "a1" << "b1" << "a2" << "b2" << "c3"
     assert( !g.final? )
-    g << "b2"
+    g << "b3"
     assert( g.final? )
 
     assert( !g.draw? )
@@ -116,9 +116,9 @@ class TestTicTacToe < Test::Unit::TestCase
   def test_game05
     # This game is going to be a win for O (diagonal)
     g = Game.new( TicTacToe )
-    g << "a1" << "a0" << "c1" << "b1" << "a2"
+    g << "a2" << "a1" << "c2" << "b2" << "a3"
     assert( !g.final? )
-    g << "c2"
+    g << "c3"
     assert( g.final? )
 
     assert( !g.draw? )
