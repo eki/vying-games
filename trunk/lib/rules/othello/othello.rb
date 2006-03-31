@@ -11,12 +11,17 @@ class OthelloBoard < Board
 
     op = bp == Piece.black ? Piece.white : Piece.black
 
-    directions.each do |d|
-      opc, f = 0, false
-      each_from( c, [d] ) do |p| 
-        p == op ? opc += 1 : (p == bp && opc > 0 ? f = true : nil)
+    a = directions.zip( coords.neighbors( c, directions ) )
+    a.each do |d,nc|
+      p = self[nc]
+      next if p.nil? || p == bp
+
+      i = nc
+      while (i = coords.next( i, d ))
+        p = self[i]
+        return true if p == bp 
+        break       if p.nil?
       end
-      return true if f 
     end
 
     false
@@ -72,8 +77,7 @@ class Othello < Rules
 
   def Othello.ops( position )
     b, bp, f = position.board, position.turn.current, position.frontier
-    cs = f.select { |c| b.valid?( c, bp ) }
-    a = cs.map { |c| c.to_s }
+    a = f.select { |c| b.valid?( c, bp ) }.map { |c| c.to_s }
     a == [] ? nil : a
   end
 
