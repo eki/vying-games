@@ -40,9 +40,9 @@ class OthelloBoard < Board
       i, bt = nc, [nc]
       while (i = coords.next( i, d ))
         p = self[i]
+        break                           if p.nil?
         bt << i
         bt.each { |bc| self[bc] = bp }  if p == bp 
-        break                           if p.nil?
       end
     end
 
@@ -101,11 +101,12 @@ class Othello < Rules
     pos.frontier.uniq!
     pos.frontier.delete( c )
 
+    pos.turn.next!
     pos.ops_cache = :ns
+    return pos if ops( pos )
 
     pos.turn.next!
-    return pos if ops( pos )
-    pos.turn.next!
+    pos.ops_cache = :ns
     pos
   end
 
