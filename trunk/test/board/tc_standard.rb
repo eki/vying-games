@@ -465,7 +465,7 @@ class TestBoard < Test::Unit::TestCase
     b[0,1] = '2'
     b[1,1] = '3'
    
-    assert_equal( "01\n23\n", b.to_s )
+    assert_equal( " ab \n1011\n2232\n ab \n", b.to_s )
   end
 end
 

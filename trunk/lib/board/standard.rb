@@ -213,12 +213,13 @@ class Board
   end
 
   def to_s( cs = nil )
-    coords.column( Coord[0,0] ).inject( '' ) do |s,colc|
+    letters = ' ' + 'abcdefghijklmnopqrstuvwxyz'[0..(coords.width-1)] + " \n"
+    coords.column( Coord[0,0] ).inject( letters ) do |s,colc|
       r = coords.row( colc ).inject( '' ) do |rs,c| 
         rs + (self[c].nil? ? ' ' : self[c].to_s)
       end
-      s + r + "\n" 
-    end
+      "#{s}#{colc.y+1}#{r}#{colc.y+1}\n" 
+    end + letters
   end
 end
 

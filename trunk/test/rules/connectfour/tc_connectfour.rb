@@ -5,7 +5,7 @@ require "rules/connectfour/connectfour"
 class TestConnectFourBoard < Test::Unit::TestCase
   def test_drop
     b = ConnectFourBoard.new( 3, 3 )
-    s = "rrr\nrrr\nrrr\n"
+    s = " abc \n1rrr1\n2rrr2\n3rrr3\n abc \n"
 
     3.times do |x|
       b.drop( x, Piece.red ) while b.drop?( x )
