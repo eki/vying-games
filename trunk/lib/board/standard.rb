@@ -111,7 +111,7 @@ class Coords
 
   def neighbors( coord, directions=[:n,:ne,:e,:se,:s,:sw,:w,:nw] )
     a = directions.map { |dir| coord + DIRECTIONS[dir] }
-    a.reject! { |c| ! include? c }
+    a.map { |c| (! include? c) ? nil : c }
     a
   end
 
