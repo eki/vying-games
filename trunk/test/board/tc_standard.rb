@@ -256,15 +256,25 @@ class TestCoords < Test::Unit::TestCase
     n33 = [Coord[2,3], Coord[4,3], Coord[3,2], Coord[3,4],
            Coord[2,2], Coord[4,4], Coord[2,4], Coord[4,2]]
 
-    assert_equal( n00.sort, coords.neighbors( Coord[0,0] ).sort )
-    assert_equal( n70.sort, coords.neighbors( Coord[7,0] ).sort )
-    assert_equal( n07.sort, coords.neighbors( Coord[0,7] ).sort )
-    assert_equal( n77.sort, coords.neighbors( Coord[7,7] ).sort )
-    assert_equal( n30.sort, coords.neighbors( Coord[3,0] ).sort )
-    assert_equal( n03.sort, coords.neighbors( Coord[0,3] ).sort )
-    assert_equal( n37.sort, coords.neighbors( Coord[3,7] ).sort )
-    assert_equal( n73.sort, coords.neighbors( Coord[7,3] ).sort )
-    assert_equal( n33.sort, coords.neighbors( Coord[3,3] ).sort )
+    a00 = coords.neighbors( Coord[0,0] ).reject { |c| c.nil? }
+    a70 = coords.neighbors( Coord[7,0] ).reject { |c| c.nil? }
+    a07 = coords.neighbors( Coord[0,7] ).reject { |c| c.nil? }
+    a77 = coords.neighbors( Coord[7,7] ).reject { |c| c.nil? }
+    a30 = coords.neighbors( Coord[3,0] ).reject { |c| c.nil? }
+    a03 = coords.neighbors( Coord[0,3] ).reject { |c| c.nil? }
+    a37 = coords.neighbors( Coord[3,7] ).reject { |c| c.nil? }
+    a73 = coords.neighbors( Coord[7,3] ).reject { |c| c.nil? }
+    a33 = coords.neighbors( Coord[3,3] ).reject { |c| c.nil? }
+
+    assert_equal( n00.sort, a00.sort )
+    assert_equal( n70.sort, a70.sort )
+    assert_equal( n07.sort, a07.sort )
+    assert_equal( n77.sort, a77.sort )
+    assert_equal( n30.sort, a30.sort )
+    assert_equal( n03.sort, a03.sort )
+    assert_equal( n37.sort, a37.sort )
+    assert_equal( n73.sort, a73.sort )
+    assert_equal( n33.sort, a33.sort )
 
     assert_equal( [Coord[4,3]], coords.neighbors( Coord[4,4], [:n] ) )
     assert_equal( [Coord[4,5]], coords.neighbors( Coord[4,4], [:s] ) )

@@ -11,7 +11,7 @@ class OthelloBoard < Board
 
     op = bp == Piece.black ? Piece.white : Piece.black
 
-    a = directions.zip( coords.neighbors( c, directions ) )
+    a = directions.zip( coords.neighbors_nil( c, directions ) )
     a.each do |d,nc|
       p = self[nc]
       next if p.nil? || p == bp
@@ -32,17 +32,20 @@ class OthelloBoard < Board
 
     directions = [:n,:s,:w,:e,:ne,:nw,:se,:sw]
 
-    a = directions.zip( coords.neighbors( c, directions ) )
+    a = directions.zip( coords.neighbors_nil( c, directions ) )
     a.each do |d,nc|
       p = self[nc]
       next if p.nil? || p == bp
 
-      i, bt = nc, [nc]
-      while (i = coords.next( i, d ))
-        p = self[i]
-        break                           if p.nil?
-        bt << i
-        bt.each { |bc| self[bc] = bp }  if p == bp 
+      bt = [nc]
+      while (bt << coords.next( bt.last, d ))
+        p = self[bt.last]
+        break if p.nil?
+
+        if p == bp
+          bt.each { |bc| self[bc] = bp }
+          break
+        end
       end
     end
 

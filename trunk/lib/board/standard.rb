@@ -109,9 +109,14 @@ class Coords
     coords.select { |c| slope*(coord.y-c.y) == (coord.x-c.x) }
   end
 
+  def neighbors_nil( coord, directions=[:n,:ne,:e,:se,:s,:sw,:w,:nw] )
+    a = directions.map { |dir| coord + DIRECTIONS[dir] }
+    a.map { |c| (! include?( c )) ? nil : c }
+  end
+
   def neighbors( coord, directions=[:n,:ne,:e,:se,:s,:sw,:w,:nw] )
     a = directions.map { |dir| coord + DIRECTIONS[dir] }
-    a.map { |c| (! include? c) ? nil : c }
+    a.reject! { |c| ! include?( c ) }
     a
   end
 
@@ -135,6 +140,7 @@ class Coords
   memoize :column
   memoize :diagonal
   memoize :neighbors
+  memoize :neighbors_nil
 end
 
 class Board

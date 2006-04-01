@@ -134,18 +134,22 @@ class TestOthelloBoard < Test::Unit::TestCase
   def test_place_e
     b = OthelloBoard.new( 8, 8 )
 
+    b[1,3] = Piece.black
+    b[2,3] = Piece.black
     b[3,3] = Piece.black
     b[4,3] = Piece.white
     b[5,3] = Piece.white
 
-    b.place( Coord[2,3], Piece.white )
+    b.place( Coord[0,3], Piece.white )
 
+    assert_equal( b[0,3], Piece.white )
+    assert_equal( b[1,3], Piece.white )
     assert_equal( b[2,3], Piece.white )
     assert_equal( b[3,3], Piece.white )
     assert_equal( b[4,3], Piece.white )
     assert_equal( b[5,3], Piece.white )
 
-    assert_equal( 8*8-4, b.count( nil ) )
+    assert_equal( 8*8-6, b.count( nil ) )
   end
 
   def test_place_w
