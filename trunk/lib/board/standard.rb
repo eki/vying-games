@@ -227,5 +227,18 @@ class Board
       "#{s}#{colc.y+1}#{r}#{colc.y+1}\n" 
     end + letters
   end
+
+  def Board.from_s( pieces, s )
+    lines = s.split( "\n" )
+    w,h = lines[0].length-2, lines.length-2
+    b = Board.new( w, h )
+    w.times do |i|
+      h.times do |j|
+        c = lines[j+1][(i+1)..(i+1)]
+        pieces.each { |p| b[i,j] = p if c == p.short }
+      end
+    end
+    b
+  end
 end
 
