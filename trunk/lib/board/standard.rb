@@ -219,22 +219,25 @@ class Board
   end
 
   def to_s( cs = nil )
-    letters = ' ' + 'abcdefghijklmnopqrstuvwxyz'[0..(coords.width-1)] + " \n"
+    letters = '  ' + 'abcdefghijklmnopqrstuvwxyz'[0..(coords.width-1)] + "  \n"
     coords.column( Coord[0,0] ).inject( letters ) do |s,colc|
       r = coords.row( colc ).inject( '' ) do |rs,c| 
         rs + (self[c].nil? ? ' ' : self[c].to_s)
       end
-      "#{s}#{colc.y+1}#{r}#{colc.y+1}\n" 
+      rh = sprintf( "%*d", 2, colc.y+1 )
+      re = sprintf( "%*-d", 2, colc.y+1 )
+      "#{s}#{rh}#{r}#{re}\n" 
     end + letters
   end
 
   def Board.from_s( pieces, s )
     lines = s.split( "\n" )
-    w,h = lines[0].length-2, lines.length-2
+    rh = lines.length > 10 ? 4 : 2
+    w, h = lines[0].length-rh, lines.length-2
     b = Board.new( w, h )
     w.times do |i|
       h.times do |j|
-        c = lines[j+1][(i+1)..(i+1)]
+        c = lines[j+1][(i+rh/2)..(i+rh/2)]
         pieces.each { |p| b[i,j] = p if c == p.short }
       end
     end
