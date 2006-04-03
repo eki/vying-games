@@ -70,10 +70,10 @@ class Coord
     return :w  if dy == 0 && dx > 0
     return :e  if dy == 0 && dx < 0
 
-    return :ne if dx < 0 && dy > 0
-    return :nw if dx > 0 && dy > 0
-    return :se if dx < 0 && dy < 0
-    return :sw if dx > 0 && dy < 0
+    return :ne if dx < 0 && dy > 0 && -dx == dy
+    return :nw if dx > 0 && dy > 0 &&  dx == dy
+    return :se if dx < 0 && dy < 0 &&  dx == dy
+    return :sw if dx > 0 && dy < 0 && -dx == dy
   end
 
   def to_s
