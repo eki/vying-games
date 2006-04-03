@@ -476,6 +476,56 @@ class TestBoard < Test::Unit::TestCase
     b[1,1] = '3'
    
     assert_equal( " ab \n1011\n2232\n ab \n", b.to_s )
+
+    b = Board.new( 2, 10 )
+    b[0,0], b[1,0], b[0,9], b[1,9] = 'a', 'b', 'c', 'd'
+    s = <<EOF
+  ab  
+ 1ab1 
+ 2  2 
+ 3  3 
+ 4  4 
+ 5  5 
+ 6  6 
+ 7  7 
+ 8  8 
+ 9  9 
+10cd10
+  ab  
+EOF
+
+    assert_equal( s, b.to_s )
+  end
+
+  def test_from_s
+    s = <<EOF
+ abcdefghi 
+1  x  o   1
+2a  bb   a2
+3 rr  rr  3
+ abcdefghi 
+EOF
+
+    pieces = [Piece.x, Piece.o, Piece.red, Piece.alpha, Piece.beta]
+    b = Board.from_s( pieces, s )
+
+    assert_equal( 9, b.coords.width )
+    assert_equal( 3, b.coords.height )
+
+    assert_equal( Piece.x, b[2,0] )
+    assert_equal( Piece.o, b[5,0] )
+
+    assert_equal( Piece.alpha, b[0,1] )
+    assert_equal( Piece.beta, b[3,1] )
+    assert_equal( Piece.beta, b[4,1] )
+    assert_equal( Piece.alpha, b[8,1] )
+
+    assert_equal( Piece.red, b[1,2] )
+    assert_equal( Piece.red, b[2,2] )
+    assert_equal( Piece.red, b[5,2] )
+    assert_equal( Piece.red, b[6,2] )
+
+    assert_equal( 17, b.count( nil ) )
   end
 end
 
