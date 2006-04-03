@@ -12,7 +12,7 @@ col = b.coords.column( Coord[4,4] )
 diagpos = b.coords.diagonal( Coord[4,4], 1 )
 diagneg = b.coords.diagonal( Coord[3,3], -1 )
 
-Benchmark.bm(12) do |x|
+Benchmark.bm(16) do |x|
   x.report( "new (8x8):" ) do
     n.times { Board.new( 8, 8 ) }
   end
@@ -35,6 +35,14 @@ Benchmark.bm(12) do |x|
 
   x.report( "[c new]:" ) do
     n.times { b[Coord.new(4,4)] }
+  end
+
+  x.report( "c.to_s:" ) do
+    n.times { coord.to_s }
+  end
+
+  x.report( "Coord.from_s:" ) do
+    n.times { Coord.from_s( :a3 ) }
   end
 
   x.report( "[c]:" ) do
@@ -99,14 +107,6 @@ Benchmark.bm(12) do |x|
 
   x.report( "[b.coords.row]" ) do
     n.times { b[b.coords.row( coord )] }
-  end
-
-  x.report( "b.to_s(row)" ) do
-    n.times { b.to_s( row ) }
-  end
-
-  x.report( "Board.to_s" ) do
-    n.times { Board.to_s( b[row] ) }
   end
 end
 
