@@ -61,6 +61,21 @@ class Coord
     Coord.new( x-c.x, y-c.y )
   end
 
+  def direction_to( c )
+    dx = x - c.x
+    dy = y - c.y
+
+    return :n  if dx == 0 && dy > 0
+    return :s  if dx == 0 && dy < 0
+    return :w  if dy == 0 && dx > 0
+    return :e  if dy == 0 && dx < 0
+
+    return :ne if dx < 0 && dy > 0
+    return :nw if dx > 0 && dy > 0
+    return :se if dx < 0 && dy < 0
+    return :sw if dx > 0 && dy < 0
+  end
+
   def to_s
     "#{(97+x).chr}#{y+1}"
   end
