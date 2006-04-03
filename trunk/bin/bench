@@ -1,0 +1,65 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'benchmark'
+
+RULESPATH='/home/eki/projects/vying/trunk/lib'
+
+RULESPATH.split(':').each do |directory|
+  Dir.glob( "#{directory}/rules/**/*.rb" ) { |f| require "#{f}" }
+end
+
+rules = []
+exclude = []
+n = 100
+
+opts = OptionParser.new
+opts.on( "-r", "--rules RULES"   ) { |r| rules << Kernel.const_get( r ) }
+opts.on( "-e", "--exclude RULES" ) { |r| exclude << Kernel.const_get( r ) }
+opts.on( "-n", "--number NUM"    ) { |n| n = Integer( n ) }
+
+opts.parse( ARGV )
+
+rules = Rules.list if rules.empty?
+exclude.each { |r| rules.delete( r ) }
+
+rules.each do |r|
+  pos = r.init
+  op = r.ops( pos ).first
+  p_a = Array.new( n ) { |i| pos.dup }
+
+  Benchmark.bm( 30 ) do |x|
+    x.report( "#{r} position dup" ) do
+      n.times { pos.dup }
+    end
+
+    x.report( "#{r} init" ) do
+      n.times { r.init }
+    end
+
+    x.report( "#{r} op?" ) do
+      n.times { r.op?( pos, op ) }
+    end
+
+    x.report( "#{r} ops" ) do
+      n.times { r.ops( pos ) }
+    end
+
+    x.report( "#{r} apply" ) do
+      p_a.each { |p| r.apply( p, op ) }
+    end
+
+    x.report( "#{r} final?" ) do
+      n.times { r.final?( pos ) }
+    end
+
+    x.report( "#{r} random play" ) do
+      g = Game.new( r )
+      n.times do
+        g = Game.new( r ) if g.final?
+        g << g.ops[rand(g.ops.length)]
+      end
+    end
+  end
+end
+
