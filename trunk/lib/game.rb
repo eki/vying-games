@@ -134,6 +134,16 @@ class Rules
     return  1 if winner?( position, player )
     return -1 if loser?( position, player )
   end
+
+  @@rules_list = []
+
+  def self.inherited( child )
+    @@rules_list << child
+  end
+
+  def Rules.list
+    @@rules_list
+  end
 end
 
 class Game
