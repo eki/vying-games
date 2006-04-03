@@ -55,7 +55,7 @@ end
 
 class Othello < Rules
 
-  INFO = Info.new( __FILE__ )
+  INFO = info( __FILE__ )
 
   class Position < Struct.new( :board, :turn, :occupied, :frontier, :ops_cache )
     def to_s

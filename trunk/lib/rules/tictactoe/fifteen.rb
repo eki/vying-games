@@ -44,7 +44,7 @@ end
 
 class Fifteen < Rules
 
-  INFO = Info.new( __FILE__ )
+  INFO = info( __FILE__ )
 
   class Position < Struct.new( :unused, :a_list, :b_list, :turn )
     def to_s

@@ -10,7 +10,7 @@ require 'game'
 
 class Connect6 < Rules
 
-  INFO = Info.new( __FILE__ )
+  INFO = info( __FILE__ )
 
   class Position < Struct.new( :board, :turn, :lastc, :lastp, :unused_ops )
     def to_s

@@ -95,40 +95,6 @@ class Struct
 end
 
 class Rules
-  class Info
-    attr_reader :info
-
-    def initialize( file )
-      opened = nil
-      @info = {}
-      
-      File.open( file ) do |f|
-        while line = f.gets
-          if line =~ /^#\s+([A-Z1-9 ]+)\s+$/
-            opened = $1
-          elsif opened && line =~ /^!#/
-            opened = nil
-          elsif opened && line =~ /^#(.*)$/
-            value = $1.strip
-            key = opened.downcase.strip.sub( /\s/, '_' )
-            if @info.key?( key )
-              @info[key] += " #{value}" unless value.empty?
-            else
-              @info[key] = value
-            end
-          end
-        end
-      end
-    end
-
-    def method_missing( method_id, *args )
-      if info.key?( method_id.to_s )
-        return info[method_id.to_s]
-      end
-      Kernel.method_missing( method_id, *args )
-    end
-  end
-
   def Rules.score( position, player )
     return  0 if draw?( position )
     return  1 if winner?( position, player )
@@ -143,6 +109,33 @@ class Rules
 
   def Rules.list
     @@rules_list
+  end
+
+  def Rules.info( file=nil )
+    return self::INFO if file.nil?
+
+    opened = nil
+    hash = {}
+
+    File.open( file ) do |f|
+      while line = f.gets
+        if line =~ /^#\s+([A-Z1-9 ]+)\s+$/
+          opened = $1
+        elsif opened && line !~ /^#/
+          opened = nil
+        elsif opened && line =~ /^#(.*)$/
+          value = $1.strip
+          key = opened.downcase.strip.sub( /\s/, '_' )
+          if hash.key?( key )
+            hash[key] += " #{value}" unless value.empty?
+          else
+            hash[key] = value
+          end
+        end
+      end
+    end
+
+    hash
   end
 end
 

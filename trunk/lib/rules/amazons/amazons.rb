@@ -10,7 +10,7 @@ require 'game'
 
 class Amazons < Rules
 
-  INFO = Info.new( __FILE__ )
+  INFO = info( __FILE__ )
 
   class Position < Struct.new( :board, :turn, :lastc, :wqs, :bqs )
     def to_s

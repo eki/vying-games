@@ -24,7 +24,7 @@ end
 
 class ConnectFour < Rules
 
-  INFO = Info.new( __FILE__ )
+  INFO = info( __FILE__ )
 
   class Position < Struct.new( :board, :turn, :lastc, :lastp )
     def to_s
