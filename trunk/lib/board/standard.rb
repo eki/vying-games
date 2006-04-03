@@ -144,7 +144,13 @@ class Coords
     while include?( coord = coord + DIRECTIONS[direction] )
       line << coord
     end
-    line.empty? ? nil : line
+    line
+  end
+
+  def lines( coord, directions=[:n,:ne,:e,:se,:s,:sw,:w,:nw] )
+    lines = []
+    directions.each { |d| lines += line( coord, d ) }
+    lines
   end
 
   def to_s

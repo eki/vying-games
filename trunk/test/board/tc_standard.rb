@@ -337,21 +337,43 @@ class TestCoords < Test::Unit::TestCase
     assert_equal( n44se, coords.line( Coord[4,4], :se ) )
     assert_equal( n44sw, coords.line( Coord[4,4], :sw ) )
 
-    assert_equal( nil, coords.line( Coord[0,0], :n ) )
-    assert_equal( nil, coords.line( Coord[0,0], :w ) )
-    assert_equal( nil, coords.line( Coord[0,0], :nw ) )
+    assert_equal( [], coords.line( Coord[0,0], :n ) )
+    assert_equal( [], coords.line( Coord[0,0], :w ) )
+    assert_equal( [], coords.line( Coord[0,0], :nw ) )
 
-    assert_equal( nil, coords.line( Coord[7,0], :n ) )
-    assert_equal( nil, coords.line( Coord[7,0], :e ) )
-    assert_equal( nil, coords.line( Coord[7,0], :ne ) )
+    assert_equal( [], coords.line( Coord[7,0], :n ) )
+    assert_equal( [], coords.line( Coord[7,0], :e ) )
+    assert_equal( [], coords.line( Coord[7,0], :ne ) )
 
-    assert_equal( nil, coords.line( Coord[0,7], :s ) )
-    assert_equal( nil, coords.line( Coord[0,7], :w ) )
-    assert_equal( nil, coords.line( Coord[0,7], :sw ) )
+    assert_equal( [], coords.line( Coord[0,7], :s ) )
+    assert_equal( [], coords.line( Coord[0,7], :w ) )
+    assert_equal( [], coords.line( Coord[0,7], :sw ) )
 
-    assert_equal( nil, coords.line( Coord[7,7], :s ) )
-    assert_equal( nil, coords.line( Coord[7,7], :e ) )
-    assert_equal( nil, coords.line( Coord[7,7], :se ) )
+    assert_equal( [], coords.line( Coord[7,7], :s ) )
+    assert_equal( [], coords.line( Coord[7,7], :e ) )
+    assert_equal( [], coords.line( Coord[7,7], :se ) )
+  end
+
+  def test_lines
+    coords = Coords.new( 8, 8 )
+
+    n44s = [Coord[4,5], Coord[4,6], Coord[4,7]]
+    n44n = [Coord[4,3], Coord[4,2], Coord[4,1], Coord[4,0]]
+    n44e = [Coord[5,4], Coord[6,4], Coord[7,4]]
+    n44w = [Coord[3,4], Coord[2,4], Coord[1,4], Coord[0,4]]
+
+    n44ne = [Coord[5,3], Coord[6,2], Coord[7,1]]
+    n44nw = [Coord[3,3], Coord[2,2], Coord[1,1], Coord[0,0]]
+    n44se = [Coord[5,5], Coord[6,6], Coord[7,7]]
+    n44sw = [Coord[3,5], Coord[2,6], Coord[1,7]]
+
+    assert_equal( n44s+n44n, coords.lines( Coord[4,4], [:s,:n] ) )
+    assert_equal( n44n+n44e, coords.lines( Coord[4,4], [:n,:e] ) )
+    assert_equal( n44e+n44w, coords.lines( Coord[4,4], [:e,:w] ) )
+    assert_equal( n44w+n44ne, coords.lines( Coord[4,4], [:w,:ne] ) )
+
+    assert_equal( n44ne+n44nw, coords.lines( Coord[4,4], [:ne,:nw] ) )
+    assert_equal( n44nw+n44se+n44sw, coords.lines( Coord[4,4], [:nw,:se,:sw] ) )
   end
 
   def test_to_s
