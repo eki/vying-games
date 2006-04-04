@@ -38,7 +38,7 @@ class Connect6 < Rules
   end
 
   def Connect6.apply( position, op )
-    c, pos, p = Coord.from_s( op ), position.dup, position.turn.current
+    c, pos, p = Coord[op], position.dup, position.turn.current
     pos.board[c], pos.lastc, pos.lastp = p, c, p
     pos.unused_ops.delete( c.to_s )
     pos.turn.next!

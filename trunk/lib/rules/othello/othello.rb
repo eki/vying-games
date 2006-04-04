@@ -83,7 +83,7 @@ class Othello < Rules
   end
 
   def Othello.op?( position, op )
-    position.board.valid?( Coord.from_s( op.to_s ), position.turn )
+    position.board.valid?( Coord[op], position.turn )
   end
 
   def Othello.ops( position )
@@ -95,7 +95,7 @@ class Othello < Rules
 
   def Othello.apply( position, op )
     pos = position.dup
-    b, c = pos.board, Coord.from_s( op )
+    b, c = pos.board, Coord[op]
     b.place( c, pos.turn.current )
 
     pos.occupied << c

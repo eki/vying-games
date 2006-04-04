@@ -38,8 +38,8 @@ class Amazons < Rules
 
   def Amazons.op?( position, op )
     return false unless op.to_s =~ /(\w\d+)(\w\d+)/
-    sc = Coord.from_s( $1 )
-    ec = Coord.from_s( $2 )
+    sc = Coord[$1]
+    ec = Coord[$2]
 
     queens = position.turn == Piece.white ? position.wqs : position.bqs
 
@@ -84,8 +84,8 @@ class Amazons < Rules
 
   def Amazons.apply( position, op )
     op.to_s =~ /(\w\d+)(\w\d+)/
-    sc = Coord.from_s( $1 )
-    ec = Coord.from_s( $2 )
+    sc = Coord[$1]
+    ec = Coord[$2]
 
     if position.lastc.nil? || position.board[position.lastc] == Piece.arrow
       position.board.move( sc, ec )

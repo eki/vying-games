@@ -115,8 +115,8 @@ class TestCoord < Test::Unit::TestCase
   end
 
   def test_from_s
-    assert_equal( Coord[0,0], Coord.from_s( 'a1' ) )
-    assert_equal( Coord[1,2], Coord.from_s( 'b3' ) )
+    assert_equal( Coord[0,0], Coord['a1'] )
+    assert_equal( Coord[1,2], Coord[:b3] )
   end
 end
 

@@ -31,7 +31,7 @@ class TicTacToe < Rules
   end
 
   def TicTacToe.op?( position, op )
-    c = Coord.from_s( op )
+    c = Coord[op]
     position.board.coords.include?( c ) && position.board[c].nil?
   end
 
@@ -43,7 +43,7 @@ class TicTacToe < Rules
   end
 
   def TicTacToe.apply( position, op )
-    c, pos, p = Coord.from_s( op ), position.dup, position.turn.current
+    c, pos, p = Coord[op], position.dup, position.turn.current
     pos.board[c], pos.lastc, pos.lastp = p, c, p
     pos.turn.next!
     pos

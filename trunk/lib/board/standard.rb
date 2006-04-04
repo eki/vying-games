@@ -40,13 +40,13 @@ class Coord
     @x, @y = x, y
   end
 
-  def Coord.[]( x, y )
-    Coord.new( x, y )
-  end
-
-  def Coord.from_s( s )
-    s.to_s =~ /(\w)(\d+)/
-    Coord[$1[0]-97,$2.to_i-1]
+  def Coord.[]( *args )
+    if args.length == 2
+      return Coord.new( args.first, args.last )
+    elsif args.length == 1
+      args.first.to_s =~ /(\w)(\d+)/
+      return Coord.new( $1[0]-97, $2.to_i-1 )
+    end
   end
 
   def <=>( c )
