@@ -3,8 +3,6 @@
 require 'optparse'
 require 'game'
 
-Rules.find
-
 rules = []
 key = nil
 

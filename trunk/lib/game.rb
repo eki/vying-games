@@ -102,7 +102,16 @@ class Rules
   end
 
   def Rules.find( path=$: )
-    path.each { |d| Dir.glob( "#{d}/rules/**/*.rb" ) { |f| require "#{f}" } }
+    required = []
+    path.each do |d| 
+      Dir.glob( "#{d}/rules/**/*.rb" ) do |f| 
+        f =~ /(.*)\/rules\/(.*\.rb)$/
+        if ! required.include?( $2 ) && !f["tc_"] && !f["ts_"]
+          required << $2
+          require "#{f}"
+        end
+      end
+    end 
   end
 
   @@rules_list = []
@@ -201,4 +210,7 @@ class Game
     history.last.to_s
   end
 end
+
+# Requires all files that appear to be Rules on the standard library path
+Rules.find
 

@@ -1,6 +1,6 @@
 
 require "test/unit"
-require "rules/othello/othello"
+require "game"
 
 class TestOthelloBoard < Test::Unit::TestCase
   def test_valid_ns

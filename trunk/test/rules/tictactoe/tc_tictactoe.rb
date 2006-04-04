@@ -1,7 +1,6 @@
 
 require "test/unit"
 require "game"
-require "rules/tictactoe/tictactoe"
 
 class TestTicTacToe < Test::Unit::TestCase
   def test_init

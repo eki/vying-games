@@ -1,6 +1,6 @@
 
 require "test/unit"
-require "rules/connectfour/connectfour"
+require "game"
 
 class TestConnectFourBoard < Test::Unit::TestCase
   def test_drop

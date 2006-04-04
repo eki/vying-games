@@ -4,8 +4,6 @@ require 'optparse'
 require 'benchmark'
 require 'game'
 
-Rules.find
-
 rules = []
 exclude = []
 n = 100

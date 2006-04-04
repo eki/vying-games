@@ -1,6 +1,6 @@
 
 require "test/unit"
-require "rules/connect6/connect6"
+require "game"
 
 class TestConnect6 < Test::Unit::TestCase
   def test_init
