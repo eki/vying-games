@@ -3,6 +3,8 @@
 require 'optparse'
 require 'game'
 
+Rules.find
+
 rules = []
 key = nil
 
@@ -12,7 +14,6 @@ opts.on( "-k", "--key KEY"     ) { |k| key = k }
 
 opts.parse( ARGV )
 
-Rules.find
 rules = Rules.list if rules.empty?
 
 rules.each do |r|
