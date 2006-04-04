@@ -4,6 +4,8 @@ require 'optparse'
 require 'benchmark'
 require 'game'
 
+Rules.find
+
 rules = []
 exclude = []
 n = 100
@@ -15,7 +17,6 @@ opts.on( "-n", "--number NUM"    ) { |n| n = Integer( n ) }
 
 opts.parse( ARGV )
 
-Rules.find
 rules = Rules.list if rules.empty?
 exclude.each { |r| rules.delete( r ) }
 
