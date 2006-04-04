@@ -490,6 +490,50 @@ class TestBoard < Test::Unit::TestCase
     assert_equal( 0, b.count( :b11 ) )
   end
 
+  def test_move
+    b = Board.new( 3, 3 )
+    b[0,0] = Piece.x
+    b[2,2] = Piece.o
+
+    assert_equal( Piece.x, b[0,0] )
+    assert_equal( Piece.o, b[2,2] )
+    assert_equal( nil, b[1,1] )
+
+    b.move( Coord[0,0], Coord[1,1] )
+
+    assert_equal( nil, b[0,0] )
+    assert_equal( Piece.o, b[2,2] )
+    assert_equal( Piece.x, b[1,1] )
+
+    b.move( Coord[2,2], Coord[1,1] )
+
+    assert_equal( nil, b[0,0] )
+    assert_equal( nil, b[2,2] )
+    assert_equal( Piece.o, b[1,1] )
+  end
+
+  def test_swap
+    b = Board.new( 3, 3 )
+    b[0,0] = Piece.x
+    b[2,2] = Piece.o
+
+    assert_equal( Piece.x, b[0,0] )
+    assert_equal( Piece.o, b[2,2] )
+    assert_equal( nil, b[1,1] )
+
+    b.swap( Coord[0,0], Coord[1,1] )
+
+    assert_equal( nil, b[0,0] )
+    assert_equal( Piece.o, b[2,2] )
+    assert_equal( Piece.x, b[1,1] )
+
+    b.swap( Coord[2,2], Coord[1,1] )
+
+    assert_equal( nil, b[0,0] )
+    assert_equal( Piece.x, b[2,2] )
+    assert_equal( Piece.o, b[1,1] )
+  end
+
   def test_to_s
     b = Board.new( 2, 2 )
     b[0,0] = '0'

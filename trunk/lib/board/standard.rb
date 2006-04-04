@@ -239,6 +239,16 @@ class Board
     select { |p| p == piece }.length
   end
 
+  def move( sc, ec )
+    self[sc], self[ec] = nil, self[sc]
+    self
+  end
+
+  def swap( sc, ec )
+    self[sc], self[ec] = self[ec], self[sc]
+    self
+  end
+
   def to_s( cs = nil )
     off = coords.height >= 10 ? 2 : 1
     w = coords.width
