@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'game'
+
+Rules.find
+
+rules = []
+n = 10
+
+opts = OptionParser.new
+opts.on( "-r", "--rules RULES" ) { |r| rules << Kernel.const_get( r ) }
+opts.on( "-n", "--number GAMES" ) { |num| n = Integer( num ) }
+
+opts.parse( ARGV )
+
+rules = Rules.list if rules.empty?
+
+rules.each do |r|
+  total_ops = 0
+  total_moves = 0
+
+  n.times do
+    g = Game.new( r )
+    while ops = g.ops
+      total_ops += ops.length
+      total_moves += 1
+
+      g << ops[rand(ops.length)]
+    end
+  end
+
+  puts "#{r.info["name"]}"
+  puts sprintf( "  Branching Factor: %8.2f", total_ops.to_f/total_moves.to_f )
+  puts sprintf( "  Moves per Game:   %8.2f", total_moves.to_f/n.to_f )
+end
+
