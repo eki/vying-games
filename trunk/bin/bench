@@ -18,12 +18,12 @@ opts.parse( ARGV )
 rules = Rules.list if rules.empty?
 exclude.each { |r| rules.delete( r ) }
 
-rules.each do |r|
-  pos = r.init
-  op = r.ops( pos ).first
-  p_a = Array.new( n ) { |i| pos.dup }
+Benchmark.bm( 30 ) do |x|
+  rules.each do |r|
+    pos = r.init
+    op = r.ops( pos ).first
+    p_a = Array.new( n ) { |i| pos.dup }
 
-  Benchmark.bm( 30 ) do |x|
     x.report( "#{r} position dup" ) do
       n.times { pos.dup }
     end
