@@ -41,8 +41,8 @@ Benchmark.bm(16) do |x|
     n.times { coord.to_s }
   end
 
-  x.report( "Coord.from_s:" ) do
-    n.times { Coord.from_s( :a3 ) }
+  x.report( "Coord[s]:" ) do
+    n.times { Coord[:a3] }
   end
 
   x.report( "[c]:" ) do
