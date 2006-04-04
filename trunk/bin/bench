@@ -2,12 +2,7 @@
 
 require 'optparse'
 require 'benchmark'
-
-RULESPATH='/home/eki/projects/vying/trunk/lib'
-
-RULESPATH.split(':').each do |directory|
-  Dir.glob( "#{directory}/rules/**/*.rb" ) { |f| require "#{f}" }
-end
+require 'game'
 
 rules = []
 exclude = []
@@ -20,6 +15,7 @@ opts.on( "-n", "--number NUM"    ) { |n| n = Integer( n ) }
 
 opts.parse( ARGV )
 
+Rules.find
 rules = Rules.list if rules.empty?
 exclude.each { |r| rules.delete( r ) }
 

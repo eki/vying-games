@@ -1,12 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'optparse'
-
-RULESPATH='/home/eki/projects/vying/trunk/lib'
-
-RULESPATH.split(':').each do |directory|
-  Dir.glob( "#{directory}/rules/**/*.rb" ) { |f| require "#{f}" }
-end
+require 'game'
 
 rules = []
 key = nil
@@ -17,6 +12,7 @@ opts.on( "-k", "--key KEY"     ) { |k| key = k }
 
 opts.parse( ARGV )
 
+Rules.find
 rules = Rules.list if rules.empty?
 
 rules.each do |r|

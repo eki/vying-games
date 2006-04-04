@@ -101,6 +101,10 @@ class Rules
     return -1 if loser?( position, player )
   end
 
+  def Rules.find( path=$: )
+    path.each { |d| Dir.glob( "#{d}/rules/**/*.rb" ) { |f| require "#{f}" } }
+  end
+
   @@rules_list = []
 
   def self.inherited( child )
