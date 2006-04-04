@@ -88,8 +88,7 @@ class Amazons < Rules
     ec = Coord.from_s( $2 )
 
     if position.lastc.nil? || position.board[position.lastc] == Piece.arrow
-      position.board[sc] = nil
-      position.board[ec] = position.turn.current
+      position.board.move( sc, ec )
       queens = position.turn == Piece.white ? position.wqs : position.bqs
       queens.delete( sc )
       queens << ec
