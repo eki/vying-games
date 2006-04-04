@@ -183,6 +183,10 @@ class Game
     raise "#{op} not a valid operation"
   end
 
+  def undo
+    [@history.pop,@sequence.pop]
+  end
+
   def players
     rules.players
   end
