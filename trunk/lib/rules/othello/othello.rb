@@ -100,7 +100,7 @@ class Othello < Rules
 
     pos.occupied << c
 
-    pos.frontier += b.coords.neighbors( c ).select { |c| b[c].nil? }
+    pos.frontier += b.coords.neighbors( c ).select { |nc| b[nc].nil? }
     pos.frontier.uniq!
     pos.frontier.delete( c )
 
