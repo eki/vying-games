@@ -12,7 +12,7 @@ class Amazons < Rules
 
   INFO = info( __FILE__ )
 
-  class Position < Struct.new( :board, :turn, :lastc, :wqs, :bqs )
+  class Position < Struct.new( :board, :turn, :lastc, :wqs, :bqs, :ops_cache )
     def to_s
       "Board:\n#{board}\nTurn: #{turn}\n Last: #{lastc}"
     end
@@ -29,7 +29,7 @@ class Amazons < Rules
 
     ps = PlayerSet.new( Piece.white, Piece.black )
 
-    Position.new( b, ps, nil, wqs, bqs )
+    Position.new( b, ps, nil, wqs, bqs, :ns )
   end
 
   def Amazons.players
@@ -56,6 +56,8 @@ class Amazons < Rules
   end
 
   def Amazons.ops( position )
+    return position.ops_cache if position.ops_cache != :ns
+
     a = []
     b = position.board
 
@@ -79,7 +81,7 @@ class Amazons < Rules
       end
     end
 
-    a == [] ? nil : a
+    position.ops_cache = a == [] ? nil : a
   end
 
   def Amazons.apply( position, op )
@@ -87,18 +89,21 @@ class Amazons < Rules
     sc = Coord[$1]
     ec = Coord[$2]
 
-    if position.lastc.nil? || position.board[position.lastc] == Piece.arrow
-      position.board.move( sc, ec )
-      queens = position.turn == Piece.white ? position.wqs : position.bqs
+    pos = position.dup
+
+    if pos.lastc.nil? || pos.board[pos.lastc] == Piece.arrow
+      pos.board.move( sc, ec )
+      queens = pos.turn == Piece.white ? pos.wqs : pos.bqs
       queens.delete( sc )
       queens << ec
     else
-      position.board[ec] = Piece.arrow
-      position.turn.next!
+      pos.board[ec] = Piece.arrow
+      pos.turn.next!
     end
 
-    position.lastc = ec
-    position
+    pos.lastc = ec
+    pos.ops_cache = :ns
+    pos
   end
 
   def Amazons.final?( position )
