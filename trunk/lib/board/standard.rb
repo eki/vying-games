@@ -31,11 +31,6 @@ end
 class Coord
   attr_reader :x, :y
 
-  class << self
-    extend Memoizable
-    memoize :new
-  end
-
   def initialize( x, y )
     @x, @y = x, y
   end
@@ -47,6 +42,12 @@ class Coord
       args.first.to_s =~ /(\w)(\d+)/
       return Coord.new( $1[0]-97, $2.to_i-1 )
     end
+  end
+
+  class << self
+    extend Memoizable
+    memoize :new
+    memoize :[]
   end
 
   def <=>( c )
