@@ -16,14 +16,17 @@ class TicTacToe < Rules
 
   INFO = info( __FILE__ )
 
-  class Position < Struct.new( :board, :turn, :lastc, :lastp )
+  class Position < Struct.new( :board, :turn, :lastc, :lastp, :unused_ops )
     def to_s
       "Board:\n#{board}\nTurn: #{turn}\nLast: (#{lastc}, #{lastp})"
     end
   end
 
+  @@init_ops = Coords.new( 3, 3 ).map { |c| c.to_s }
+
   def TicTacToe.init
-    Position.new( Board.new( 3, 3 ), PlayerSet.new( *players ), nil, :noone )
+    ps = PlayerSet.new( *players )
+    Position.new( Board.new( 3, 3 ), ps, nil, :noone, @@init_ops.dup )
   end
 
   def TicTacToe.players
@@ -31,42 +34,31 @@ class TicTacToe < Rules
   end
 
   def TicTacToe.op?( position, op )
-    c = Coord[op]
-    position.board.coords.include?( c ) && position.board[c].nil?
+    position.unused_ops.include?( op.to_s )
   end
 
   def TicTacToe.ops( position )
-    return nil if final?( position )
-    cs = position.board.coords.select { |c| position.board[c].nil? }
-    a = cs.map { |c| c.to_s }
-    a == [] ? nil : a
+    final?( position ) || position.unused_ops == [] ? nil : position.unused_ops
   end
 
   def TicTacToe.apply( position, op )
     c, pos, p = Coord[op], position.dup, position.turn.current
     pos.board[c], pos.lastc, pos.lastp = p, c, p
+    pos.unused_ops.delete( c.to_s )
     pos.turn.next!
     pos
   end
 
   def TicTacToe.final?( position )
-    b = position.board
-    lc = position.lastc
-    lp = position.lastp
+    return false if position.lastc.nil?
+    return true  if position.unused_ops.empty?
 
-    return false if lc.nil?
+    b, lc, lp = position.board, position.lastc, position.lastp
 
-    return true  if b.count( nil ) == 0
-    return true  if b[b.coords.row( lc )].all? { |p| p == lp }
-    return true  if b[b.coords.column( lc )].all? { |p| p == lp }
-
-    dc1 = b.coords.diagonal( lc, 1 )
-    return true  if dc1.length == 3 && b[dc1].all? { |p| p == lp }
-
-    dc2 = b.coords.diagonal( lc, -1 )
-    return true  if dc2.length == 3 && b[dc2].all? { |p| p == lp }
-
-    return false
+    b.each_from( lc, [:e,:w] ) { |p| p == lp } == 2 ||
+    b.each_from( lc, [:n,:s] ) { |p| p == lp } == 2 ||
+    b.each_from( lc, [:ne,:sw] ) { |p| p == lp } == 2 ||
+    b.each_from( lc, [:nw,:se] ) { |p| p == lp } == 2
   end
 
   def TicTacToe.winner?( position, player )
@@ -80,24 +72,13 @@ class TicTacToe < Rules
   end
 
   def TicTacToe.draw?( position )
-    b = position.board
-    lc = position.lastc
-    lp = position.lastp
+    b, lc, lp = position.board, position.lastc, position.lastp
 
-    return false if lc.nil?
-
-    return false if b.count( nil ) != 0
-
-    return false if b[b.coords.row( lc )].all? { |p| p == lp }
-    return false if b[b.coords.column( lc )].all? { |p| p == lp }
-
-    dc1 = b.coords.diagonal( lc, 1 )
-    return false if dc1.length == 3 && b[dc1].all? { |p| p == lp }
-
-    dc2 = b.coords.diagonal( lc, -1 )
-    return false if dc2.length == 3 && b[dc2].all? { |p| p == lp }
-
-    return true
+    position.unused_ops.empty? &&
+    b.each_from( lc, [:e,:w] ) { |p| p == lp } != 2 &&
+    b.each_from( lc, [:n,:s] ) { |p| p == lp } != 2 &&
+    b.each_from( lc, [:ne,:sw] ) { |p| p == lp } != 2 &&
+    b.each_from( lc, [:nw,:se] ) { |p| p == lp } != 2
   end
 end
 
