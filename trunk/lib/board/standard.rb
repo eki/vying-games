@@ -202,16 +202,8 @@ class Board
     end
   end
 
-  def eql?( o )
-    self == o
-  end
-
   def ==( o )
     board == o.board && coords == o.coords
-  end
-
-  def hash
-    @board.hash
   end
 
   def each

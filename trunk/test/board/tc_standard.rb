@@ -123,7 +123,7 @@ class TestCoord < Test::Unit::TestCase
     assert_equal( :sw, c.direction_to( Coord[0,6] ) )
 
     assert_equal( nil, c.direction_to( Coord[4,1] ) )
-    assert_equal( nil, c.direction_to( Coord[2,3] ) )
+    assert_equal( nil, c.direction_to( Coord[2,1] ) )
     assert_equal( nil, c.direction_to( Coord[5,6] ) )
     assert_equal( nil, c.direction_to( Coord[1,6] ) )
   end
@@ -426,23 +426,17 @@ class TestBoard < Test::Unit::TestCase
   def test_equal
     b = Board.new( 3, 3 )
     assert( b == b )
-    assert( b.eql?( b ) )
 
     b2 = b.dup
     assert( b == b2 )
     assert( b2 == b )
-    assert( b.eql?( b2 ) )
-    assert( b2.eql?( b ) )
 
     assert( b == Board.new( 3, 3 ) )
-    assert( b.eql?( Board.new( 3, 3 ) ) )
 
     b2[0,0] = Piece.x
     assert( b != b2 )
-    assert( ! b.eql?( b2 ) )
 
     assert( b != Board.new( 4, 4 ) )
-    assert( ! b.eql?( Board.new( 4, 4 ) ) )
   end
 
   def test_assignment
