@@ -92,23 +92,6 @@ class TestCoord < Test::Unit::TestCase
     assert_equal( c42, c21 + c21 )
   end
 
-  def test_subtraction
-    c00 = Coord[0,0]
-    c10 = Coord[1,0]
-    c01 = Coord[0,1]
-    c11 = Coord[1,1]
-    c21 = Coord[2,1]
-    c42 = Coord[4,2]
-    cminus42 = Coord[-4,-2]
-
-    assert_equal( c00, c00 - c00 )
-    assert_equal( c10, c10 - c00 )
-    assert_equal( c00, c21 - c21 )
-    assert_equal( c00, c10 - c10 )
-    assert_equal( c10, c42 - c21 - c01 - c10 )
-    assert_equal( cminus42, c00 - c42 )
-  end
-
   def test_direction_to
     c = Coord[3,3]
 
@@ -333,68 +316,6 @@ class TestCoords < Test::Unit::TestCase
     assert_equal( Coord[6,7], coords.next( Coord[7,7], :w ) )
   end
 
-  def test_line
-    coords = Coords.new( 8, 8 )
-
-    n44s = [Coord[4,5], Coord[4,6], Coord[4,7]]
-    n44n = [Coord[4,3], Coord[4,2], Coord[4,1], Coord[4,0]]
-    n44e = [Coord[5,4], Coord[6,4], Coord[7,4]]
-    n44w = [Coord[3,4], Coord[2,4], Coord[1,4], Coord[0,4]]
-
-    n44ne = [Coord[5,3], Coord[6,2], Coord[7,1]]
-    n44nw = [Coord[3,3], Coord[2,2], Coord[1,1], Coord[0,0]]
-    n44se = [Coord[5,5], Coord[6,6], Coord[7,7]]
-    n44sw = [Coord[3,5], Coord[2,6], Coord[1,7]]
-
-    assert_equal( n44s, coords.line( Coord[4,4], :s ) )
-    assert_equal( n44n, coords.line( Coord[4,4], :n ) )
-    assert_equal( n44e, coords.line( Coord[4,4], :e ) )
-    assert_equal( n44w, coords.line( Coord[4,4], :w ) )
-
-    assert_equal( n44ne, coords.line( Coord[4,4], :ne ) )
-    assert_equal( n44nw, coords.line( Coord[4,4], :nw ) )
-    assert_equal( n44se, coords.line( Coord[4,4], :se ) )
-    assert_equal( n44sw, coords.line( Coord[4,4], :sw ) )
-
-    assert_equal( [], coords.line( Coord[0,0], :n ) )
-    assert_equal( [], coords.line( Coord[0,0], :w ) )
-    assert_equal( [], coords.line( Coord[0,0], :nw ) )
-
-    assert_equal( [], coords.line( Coord[7,0], :n ) )
-    assert_equal( [], coords.line( Coord[7,0], :e ) )
-    assert_equal( [], coords.line( Coord[7,0], :ne ) )
-
-    assert_equal( [], coords.line( Coord[0,7], :s ) )
-    assert_equal( [], coords.line( Coord[0,7], :w ) )
-    assert_equal( [], coords.line( Coord[0,7], :sw ) )
-
-    assert_equal( [], coords.line( Coord[7,7], :s ) )
-    assert_equal( [], coords.line( Coord[7,7], :e ) )
-    assert_equal( [], coords.line( Coord[7,7], :se ) )
-  end
-
-  def test_lines
-    coords = Coords.new( 8, 8 )
-
-    n44s = [Coord[4,5], Coord[4,6], Coord[4,7]]
-    n44n = [Coord[4,3], Coord[4,2], Coord[4,1], Coord[4,0]]
-    n44e = [Coord[5,4], Coord[6,4], Coord[7,4]]
-    n44w = [Coord[3,4], Coord[2,4], Coord[1,4], Coord[0,4]]
-
-    n44ne = [Coord[5,3], Coord[6,2], Coord[7,1]]
-    n44nw = [Coord[3,3], Coord[2,2], Coord[1,1], Coord[0,0]]
-    n44se = [Coord[5,5], Coord[6,6], Coord[7,7]]
-    n44sw = [Coord[3,5], Coord[2,6], Coord[1,7]]
-
-    assert_equal( n44s+n44n, coords.lines( Coord[4,4], [:s,:n] ) )
-    assert_equal( n44n+n44e, coords.lines( Coord[4,4], [:n,:e] ) )
-    assert_equal( n44e+n44w, coords.lines( Coord[4,4], [:e,:w] ) )
-    assert_equal( n44w+n44ne, coords.lines( Coord[4,4], [:w,:ne] ) )
-
-    assert_equal( n44ne+n44nw, coords.lines( Coord[4,4], [:ne,:nw] ) )
-    assert_equal( n44nw+n44se+n44sw, coords.lines( Coord[4,4], [:nw,:se,:sw] ) )
-  end
-
   def test_to_s
     coords = Coords.new( 2, 2 )
     assert_equal( "a1b1a2b2", coords.to_s )
@@ -528,28 +449,6 @@ class TestBoard < Test::Unit::TestCase
 
     assert_equal( nil, b[0,0] )
     assert_equal( nil, b[2,2] )
-    assert_equal( Piece.o, b[1,1] )
-  end
-
-  def test_swap
-    b = Board.new( 3, 3 )
-    b[0,0] = Piece.x
-    b[2,2] = Piece.o
-
-    assert_equal( Piece.x, b[0,0] )
-    assert_equal( Piece.o, b[2,2] )
-    assert_equal( nil, b[1,1] )
-
-    b.swap( Coord[0,0], Coord[1,1] )
-
-    assert_equal( nil, b[0,0] )
-    assert_equal( Piece.o, b[2,2] )
-    assert_equal( Piece.x, b[1,1] )
-
-    b.swap( Coord[2,2], Coord[1,1] )
-
-    assert_equal( nil, b[0,0] )
-    assert_equal( Piece.x, b[2,2] )
     assert_equal( Piece.o, b[1,1] )
   end
 

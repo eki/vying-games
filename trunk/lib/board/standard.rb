@@ -58,10 +58,6 @@ class Coord
     Coord.new( x+c.x, y+c.y )
   end
 
-  def -( c )
-    Coord.new( x-c.x, y-c.y )
-  end
-
   def direction_to( c )
     dx = x - c.x
     dy = y - c.y
@@ -150,20 +146,6 @@ class Coords
     include?( n = coord + DIRECTIONS[direction] ) ? n : nil
   end
 
-  def line( coord, direction )
-    line = []
-    while include?( coord = coord + DIRECTIONS[direction] )
-      line << coord
-    end
-    line
-  end
-
-  def lines( coord, directions=[:n,:ne,:e,:se,:s,:sw,:w,:nw] )
-    lines = []
-    directions.each { |d| lines += line( coord, d ) }
-    lines
-  end
-
   def to_s
     inject( '' ) { |s,c| s + "#{c}" }
   end
@@ -244,11 +226,6 @@ class Board
 
   def move( sc, ec )
     self[sc], self[ec] = nil, self[sc]
-    self
-  end
-
-  def swap( sc, ec )
-    self[sc], self[ec] = self[ec], self[sc]
     self
   end
 
