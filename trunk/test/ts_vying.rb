@@ -1,13 +1,13 @@
 
 require "test/unit"
 
-require "tc_game"
+require "test_game"
 
-require "board/tc_standard.rb"
+require "board/test_standard.rb"
 
-require "rules/tictactoe/tc_tictactoe"
-require "rules/tictactoe/tc_fifteen"
-require "rules/connectfour/tc_connectfour"
-require "rules/connect6/tc_connect6"
-require "rules/othello/tc_othello"
+require "rules/tictactoe/test_tictactoe"
+require "rules/tictactoe/test_fifteen"
+require "rules/connectfour/test_connectfour"
+require "rules/connect6/test_connect6"
+require "rules/othello/test_othello"
 
