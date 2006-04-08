@@ -20,6 +20,12 @@ class TestPiece < Test::Unit::TestCase
     assert( p == Piece.blue )  # == only compare's short
     assert( p != Piece.red )
     assert( p != nil )
+
+    assert( p.eql?( p ) )
+    assert( p.eql?( Piece.black ) )
+    assert( p.eql?( Piece.blue ) )  # == only compare's short
+    assert( p.eql?( Piece.red ) )
+    assert( p.eql?( nil ) )
   end
 
   def test_to_s
