@@ -106,7 +106,7 @@ class Rules
     path.each do |d| 
       Dir.glob( "#{d}/rules/**/*.rb" ) do |f| 
         f =~ /(.*)\/rules\/(.*\.rb)$/
-        if ! required.include?( $2 ) && !f["tc_"] && !f["ts_"]
+        if ! required.include?( $2 ) && !f["test_"] && !f["ts_"]
           required << $2
           require "#{f}"
         end
