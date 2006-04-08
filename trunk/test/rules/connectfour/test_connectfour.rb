@@ -2,23 +2,10 @@
 require "test/unit"
 require "game"
 
-class TestConnectFourBoard < Test::Unit::TestCase
-  def test_drop
-    b = ConnectFourBoard.new( 3, 3 )
-    s = " abc \n1rrr1\n2rrr2\n3rrr3\n abc \n"
-
-    3.times do |x|
-      b.drop( x, Piece.red ) while b.drop?( x )
-    end
-
-    assert_equal( s, b.to_s )
-  end
-end
-
 class TestConnectFour < Test::Unit::TestCase
   def test_init
     g = Game.new( ConnectFour )
-    assert_equal( ConnectFourBoard.new( 7, 6 ), g.board )
+    assert_equal( Board.new( 7, 6 ), g.board )
     assert_equal( Player.red, g.turn )
   end
 
@@ -26,13 +13,13 @@ class TestConnectFour < Test::Unit::TestCase
     g = Game.new( ConnectFour )
     ops = g.ops
 
-    assert_equal( 'r0', ops[0] )
-    assert_equal( 'r1', ops[1] )
-    assert_equal( 'r2', ops[2] )
-    assert_equal( 'r3', ops[3] )
-    assert_equal( 'r4', ops[4] )
-    assert_equal( 'r5', ops[5] )
-    assert_equal( 'r6', ops[6] )
+    assert_equal( 'a6', ops[0] )
+    assert_equal( 'b6', ops[1] )
+    assert_equal( 'c6', ops[2] )
+    assert_equal( 'd6', ops[3] )
+    assert_equal( 'e6', ops[4] )
+    assert_equal( 'f6', ops[5] )
+    assert_equal( 'g6', ops[6] )
 
     while ops = g.ops do
       g << ops[0]
@@ -54,9 +41,9 @@ class TestConnectFour < Test::Unit::TestCase
   def test_game01
     # This game is going to be a win for Red (vertical)
     g = Game.new( ConnectFour )
-    g << "r6" << "b0" << "r6" << "b1" << "r6" << "b2"
+    g << "g6" << "a6" << "g5" << "b6" << "g4" << "c6"
     assert( !g.final? )
-    g << "r6"
+    g << "g3"
     assert( g.final? )
 
     assert( !g.draw? )
@@ -72,9 +59,9 @@ class TestConnectFour < Test::Unit::TestCase
   def test_game02
     # This game is going to be a win for Blue (diagonal)
     g = Game.new( ConnectFour )
-    g << "r1" << "b0" << "r2" << "b1" << "r2" << "b2" << "r3" << "b3" << "r3"
+    g << "b6" << "a6" << "c6" << "b5" << "c5" << "c4" << "d6" << "d5" << "d4"
     assert( !g.final? )
-    g << "b3"
+    g << "d3"
     assert( g.final? )
 
     assert( !g.draw? )
@@ -90,9 +77,9 @@ class TestConnectFour < Test::Unit::TestCase
   def test_game03
     # This game is going to be a win for Blue (diagonal)
     g = Game.new( ConnectFour )
-    g << "r3" << "b4" << "r2" << "b3" << "r2" << "b2" << "r1" << "b1" << "r1"
+    g << "d6" << "e6" << "c6" << "d5" << "c5" << "c4" << "b6" << "b5" << "b4"
     assert( !g.final? )
-    g << "b1"
+    g << "b3"
     assert( g.final? )
 
     assert( !g.draw? )
@@ -108,15 +95,15 @@ class TestConnectFour < Test::Unit::TestCase
   def test_game04
     # This game is going to be a draw
     g = Game.new( ConnectFour )
-    g << "r0" << "b0" << "r0" << "b0" << "r0" << "b0"
-    g << "r1" << "b1" << "r1" << "b1" << "r1" << "b1"
-    g << "r3" << "b2" << "r2" << "b2" << "r2" << "b2"
-    g << "r2" << "b3" << "r3" << "b3" << "r3" << "b3"
-    g << "r4" << "b4" << "r4" << "b4" << "r4" << "b4"
-    g << "r6" << "b5" << "r5" << "b5" << "r5" << "b5"
-    g << "r5" << "b6" << "r6" << "b6" << "r6"
+    g << "a6" << "a5" << "a4" << "a3" << "a2" << "a1"
+    g << "b6" << "b5" << "b4" << "b3" << "b2" << "b1"
+    g << "d6" << "c6" << "c5" << "c4" << "c3" << "c2"
+    g << "c1" << "d5" << "d4" << "d3" << "d2" << "d1"
+    g << "e6" << "e5" << "e4" << "e3" << "e2" << "e1"
+    g << "g6" << "f6" << "f5" << "f4" << "f3" << "f2"
+    g << "f1" << "g5" << "g4" << "g3" << "g2"
     assert( !g.final? )
-    g << "b6"
+    g << "g1"
     assert( g.final? )
 
     assert( g.draw? )
@@ -132,9 +119,9 @@ class TestConnectFour < Test::Unit::TestCase
   def test_game05
     # This game is going to be a win for Blue (horizontal 5-in-a-row)
     g = Game.new( ConnectFour )
-    g << "r6" << "b0" << "r0" << "b2" << "r2" << "b3" << "r3" << "b4" << "r4"
+    g << "g6" << "a6" << "a5" << "c6" << "c5" << "d6" << "d5" << "e6" << "e5"
     assert( !g.final? )
-    g << "b1"
+    g << "b6"
     assert( g.final? )
 
     assert( !g.draw? )

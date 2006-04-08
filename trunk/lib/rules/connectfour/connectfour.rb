@@ -8,33 +8,24 @@
 require 'board/standard'
 require 'game'
 
-class ConnectFourBoard < Board
-  def drop?( x )
-    self[x,0].nil?
-  end
-
-  def drop( x, piece )
-    (coords.height-1).downto( 0 ) do |y|
-      if self[x,y].nil?
-        self[x,y] = piece; return Coord[x,y]
-      end
-    end
-  end
-end
-
 class ConnectFour < Rules
 
   INFO = info( __FILE__ )
 
-  class Position < Struct.new( :board, :turn, :lastc, :lastp )
+  class Position < Struct.new( :board, :turn, :lastc, :lastp, :unused_ops )
     def to_s
       "Board:\n#{board}\nTurn: #{turn}\nLast: (#{lastc}, #{lastp})"
     end
   end
 
+  @@init_ops = Coords.new( 7, 6 ).group_by { |c| c.x }.map do |sa|
+    sa.map { |c| c.to_s }
+  end
+
   def ConnectFour.init
-    Position.new( ConnectFourBoard.new( 7, 6 ), 
-              PlayerSet.new( *players ), nil, :noone )
+    ps = PlayerSet.new( *players )
+    uo = @@init_ops.map { |a| a.dup }
+    Position.new( Board.new( 7, 6 ), ps, nil, :noone, uo )
   end
 
   def ConnectFour.players
@@ -42,36 +33,28 @@ class ConnectFour < Rules
   end
 
   def ConnectFour.op?( position, op )
-    op.to_s =~ /(r|b)(\d)/
-    position.board.drop?( $2.to_i )
+    position.unused_ops.map { |a| a.last }.include?( op.to_s )
   end
 
   def ConnectFour.ops( position )
-    return nil if final?( position )
-    xs = (0..position.board.coords.width).select { |x| position.board.drop? x }
-    a = xs.map { |x| "#{position.turn.short}#{x}" }
-    a == [] ? nil : a
+    tmp = position.unused_ops.map { |a| a.last }
+    (final?( position ) || tmp == []) ? nil : tmp
   end
 
   def ConnectFour.apply( position, op )
-    op.to_s =~ /(r|b)(\d)/
-    x, pos, p = $2.to_i, position.dup, position.turn.current
-    pos.lastc, pos.lastp = pos.board.drop( x, p ), p
+    c, pos, p = Coord[op], position.dup, position.turn.current
+    pos.board[c], pos.lastc, pos.lastp = p, c, p
+    pos.unused_ops.each { |a| a.delete( c.to_s ) }
+    pos.unused_ops.delete( [] )
     pos.turn.next!
     pos
   end
 
   def ConnectFour.final?( position )
     return false if position.lastc.nil?
+    return true  if position.unused_ops.empty?
 
-    empties = position.board.count( nil )
-
-    return true  if empties == 0
-    return false if empties >  7*6-4
-
-    b = position.board
-    lc = position.lastc
-    lp = position.lastp
+    b, lc, lp = position.board, position.lastc, position.lastp
 
     b.each_from( lc, [:e,:w] ) { |p| p == lp } >= 3 ||
     b.each_from( lc, [:n,:s] ) { |p| p == lp } >= 3 ||
@@ -80,9 +63,7 @@ class ConnectFour < Rules
   end
 
   def ConnectFour.winner?( position, player )
-    b = position.board
-    lc = position.lastc
-    lp = position.lastp
+    b, lc, lp = position.board, position.lastc, position.lastp
 
     b.each_from( lc, [:e,:w] ) { |p| p == player } >= 3 ||
     b.each_from( lc, [:n,:s] ) { |p| p == player } >= 3 ||
@@ -95,9 +76,7 @@ class ConnectFour < Rules
   end
 
   def ConnectFour.draw?( position )
-    b = position.board
-    lc = position.lastc
-    lp = position.lastp
+    b, lc, lp = position.board, position.lastc, position.lastp
 
     b.count( nil ) == 0 &&
     b.each_from( lc, [:e,:w] ) { |p| p == lp } < 3 &&
