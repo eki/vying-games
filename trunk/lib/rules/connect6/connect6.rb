@@ -74,7 +74,7 @@ class Connect6 < Rules
   def Connect6.draw?( position )
     b, lc, lp = position.board, position.lastc, position.lastp
 
-    b.count( nil ) == 0 &&
+    position.unused_ops.empty? &&
     b.each_from( lc, [:e,:w] ) { |p| p == lp } < 5 &&
     b.each_from( lc, [:n,:s] ) { |p| p == lp } < 5 &&
     b.each_from( lc, [:ne,:sw] ) { |p| p == lp } < 5 &&
