@@ -113,6 +113,16 @@ class Coords
     c.x >= 0 && c.x < width && c.y >= 0 && c.y < height
   end
 
+  def group_by
+    r, a = {}, []
+    each do |c|
+      y = yield c
+      r[y] ||= a.size
+      (a[r[y]] ||= []) << c
+    end
+    a
+  end
+
   def row( coord )
     coords.select { |c| coord.y == c.y }
   end
