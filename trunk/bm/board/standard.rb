@@ -12,7 +12,7 @@ col = b.coords.column( Coord[4,4] )
 diagpos = b.coords.diagonal( Coord[4,4], 1 )
 diagneg = b.coords.diagonal( Coord[3,3], -1 )
 
-Benchmark.bm(16) do |x|
+Benchmark.bm(24) do |x|
   x.report( "new (8x8):" ) do
     n.times { Board.new( 8, 8 ) }
   end
@@ -107,6 +107,11 @@ Benchmark.bm(16) do |x|
 
   x.report( "[b.coords.row]" ) do
     n.times { b[b.coords.row( coord )] }
+  end
+
+  x.report( "3-in-a-row each_from" ) do
+    b[0,1] = b[1,1] = b[2,1] = Piece.x
+    n.times { b.each_from( Coord[1,1], [:e,:w] ) { |p| p == Piece.x } == 3 }
   end
 end
 
