@@ -36,6 +36,16 @@ class TestCoord < Test::Unit::TestCase
     assert_equal( 0, c.x )
     assert_equal( 1, c.y )
     assert_equal( c, Coord.new( 0, 1 ) )
+
+    c = Coord[:a2]
+    assert_equal( 0, c.x )
+    assert_equal( 1, c.y )
+    assert_equal( c, Coord.new( 0, 1 ) )
+
+    c = Coord["A2"]
+    assert_equal( 0, c.x )
+    assert_equal( 1, c.y )
+    assert_equal( c, Coord.new( 0, 1 ) )
   end
 
   def test_equal

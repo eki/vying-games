@@ -39,7 +39,7 @@ class Coord
     if args.length == 2
       return Coord.new( args.first, args.last )
     elsif args.length == 1
-      args.first.to_s =~ /(\w)(\d+)/
+      args.first.to_s.downcase =~ /(\w)(\d+)/
       return Coord.new( $1[0]-97, $2.to_i-1 )
     end
   end
