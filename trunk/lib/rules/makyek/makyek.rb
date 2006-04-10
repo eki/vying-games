@@ -64,6 +64,7 @@ class Makyek < Rules
   end
 
   def Makyek.ops( position )
+    return nil                if final?( position )
     return position.ops_cache if position.ops_cache != :ns
 
     a = []
@@ -123,7 +124,8 @@ class Makyek < Rules
       end
     end
 
-    cap.each { |c| b[c] = nil }
+    opp_rooks = pos.turn == Piece.white ? pos.brs : pos.wrs
+    cap.each { |c| b[c] = nil; opp_rooks.delete( c ) }
 
     pos.turn.next!
     pos.lastc = ec
@@ -132,7 +134,8 @@ class Makyek < Rules
   end
 
   def Makyek.final?( position )
-    position.wrs.empty? || position.brs.empty?
+    position.wrs.length < 5 || position.brs.length < 5
+  #  position.wrs.empty? || position.brs.empty?   # does this get locked up?
   end
 
   def Makyek.winner?( position, player )
