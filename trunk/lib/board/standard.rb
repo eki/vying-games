@@ -50,6 +50,18 @@ class Coord
     memoize :[]
   end
 
+  def ==( c )
+    self.x == c.x && self.y == c.y
+  end
+
+  def eql?( c )
+    self == c
+  end
+
+  def hash
+    [x,y].hash
+  end
+
   def <=>( c )
     (t = y <=> c.y) != 0 ? t : x <=> c.x
   end
