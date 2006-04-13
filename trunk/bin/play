@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'game'
+require 'qt/board'
+
+rules = Othello
+
+opts = OptionParser.new
+opts.on( "-r", "--rules RULES" ) { |r| rules = Kernel.const_get( r ) }
+
+opts.parse( ARGV )
+
+app = Qt::Application.new( ARGV )
+
+g = Game.new( rules )
+qtb = QtBoard.new( g, 480, 480 )
+
+app.setMainWidget( qtb )
+
+qtb.sweep
+qtb.show
+
+app.exec
+
