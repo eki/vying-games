@@ -18,6 +18,14 @@ class Piece
     return to_s == p.to_s  
   end
 
+  def eql?( p )
+    short == p.short && name == p.name
+  end
+
+  def hash
+    short.hash ^ name.hash
+  end
+
   def to_s
     short
   end
