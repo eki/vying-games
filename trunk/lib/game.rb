@@ -152,6 +152,45 @@ class Rules
   end
 end
 
+class Bot
+  attr_reader :game, :player
+
+  def initialize( game, player )
+    @game, @player = game, player
+  end
+
+  def select
+    game.ops.first unless game.final?
+  end
+
+  def select!
+    game << select
+  end
+
+  def Bot.find( path=$: )
+    required = []
+    path.each do |d| 
+      Dir.glob( "#{d}/**/bots/*.rb" ) do |f| 
+        f =~ /(.*)\/bots\/(.*\.rb)$/
+        if ! required.include?( $2 ) && !f["test_"] && !f["ts_"]
+          required << $2
+          require "#{f}"
+        end
+      end
+    end 
+  end
+
+  @@bots_list = []
+
+  def self.inherited( child )
+    @@bots_list << child
+  end
+
+  def Bot.list
+    @@bots_list
+  end
+end
+
 class Game
   attr_reader :rules, :history, :sequence
 
@@ -197,6 +236,7 @@ class Game
   end
 end
 
-# Requires all files that appear to be Rules on the standard library path
+# Requires all files that appear to be Rules/Bot on the standard library path
 Rules.find
+Bot.find
 
