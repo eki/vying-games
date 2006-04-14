@@ -2,24 +2,86 @@
 
 require 'optparse'
 require 'game'
-require 'qt/board'
+require 'gui/qt/board'
 
 rules = Othello
+p2b = {}
+number = 1
+gui = 'console'
+
+class HumanBot < Bot
+  def initialize( game, player )
+    super( game, player )
+  end
+end
 
 opts = OptionParser.new
+
 opts.on( "-r", "--rules RULES" ) { |r| rules = Kernel.const_get( r ) }
+
+opts.on( "-p", "--player PLAYER=BOT" ) do |s|
+  s =~ /(\w*)=(\w*)/
+  p2b[Player.new($1)] = Kernel.const_get( $2 )
+end
+
+opts.on( "-n", "--number NUMBER" ) { |n| number = Integer(n) }
+opts.on( "-g", "--gui GUI" ) { |g| gui = g }
+opts.on( "-c", "--nogui" ) { gui = 'console' }
 
 opts.parse( ARGV )
 
-app = Qt::Application.new( ARGV )
+if gui == 'console'
+  class HumanBot
+    def select
+      puts game
+      puts "Ops: #{game.ops}"
+      print "Select: "
+      op = $stdin.gets.chomp
+      until game.op?( op )
+        puts "'#{op}' not a valid op!"
+        print "Select: "
+        op = $stdin.gets.chomp
+      end
+      op
+    end
+  end
+end
 
-g = Game.new( rules )
-qtb = QtBoard.new( g, 480, 480 )
+def summarize( games )
+  players = {}
+  games.each do |g|
+    g.players.each do |p|
+      players[p] ||= [0,0,0]
+      players[p][0] += 1 if g.winner?( p )
+      players[p][1] += 1 if g.loser?( p )
+      players[p][2] += 1 if g.draw?
+    end
+  end
+  players.each_pair { |k,v| puts "#{k} #{v[0]}-#{v[1]}-#{v[2]}" }
+end
 
-app.setMainWidget( qtb )
+if gui == 'qt'
+  app = Qt::Application.new( ARGV )
 
-qtb.sweep
-qtb.show
+  g = Game.new( rules )
+  qtb = QtBoard.new( g, 480, 480 )
 
-app.exec
+  app.setMainWidget( qtb )
+
+  qtb.sweep
+  qtb.show
+
+  app.exec
+elsif gui == 'console'
+  games = []
+  number.times do 
+    games << Game.new( rules )
+    bots = {}
+    p2b.each_pair { |p,b| bots[p] = b.new( games.last, p ) }
+    until games.last.final?
+      bots[games.last.turn].select!
+    end
+  end
+  summarize( games )
+end
 
