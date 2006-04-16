@@ -97,13 +97,16 @@ end
 
 class QtBoard < Qt::Widget
 
-  attr_accessor :game, :cells, :canvas, :view, :cell_width, :cell_height, :press
+  attr_accessor :game, :cells, :canvas, :view, :cell_width, :cell_height,
+                :press, :bots
 
-  def initialize( game, width, height, parent=nil )
+  def initialize( game, bots, width, height, parent=nil )
     super( parent )
 
     @game = game
     @cells = {}
+
+    @bots = bots
 
     @cell_width = width / game.board.coords.width
     @cell_height = height / game.board.coords.height
@@ -155,24 +158,31 @@ class QtBoard < Qt::Widget
 
     c = Coord[event.x/cell_width, event.y/cell_height]
 
-    puts "Trying: #{c} and #{press}#{c} as ops"
+    success = false
 
-    if game.op?( c.to_s )
-      game << c.to_s
-      puts "#{game}"
-      sweep
-      canvas.update
-    elsif game.op?( "#{press}#{c}" )
-      game << "#{press}#{c}"
-      puts "#{game}"
-      sweep
-      canvas.update
+    op = "#{c}" == "#{press}" ? "#{c}" : "#{press}#{c}"
+
+    bots.each_pair do |p,b| 
+      success = b.try( op ) if b.kind_of?( HumanBot ) && p == game.turn.current
+    end
+
+    update if success
+  end
+
+  def timerEvent( timerEvent )
+    unless (b = bots[game.turn]).kind_of?( HumanBot ) || game.final?
+      bots[game.turn].select!
+      update
     end
   end
 
   def mousePressEvent( event )
     @press = Coord[event.x/cell_width, event.y/cell_height]
-    puts "Saving press: #{press}"
+  end
+
+  def update
+    sweep
+    canvas.update
   end
 
 end
