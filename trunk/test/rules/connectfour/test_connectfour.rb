@@ -9,6 +9,12 @@ class TestConnectFour < Test::Unit::TestCase
     assert_equal( Player.red, g.turn )
   end
 
+  def test_dup
+    pos = ConnectFour.init
+    pos2 = ConnectFour.apply( pos, :a6 )
+    assert_not_equal( pos.unused_ops, pos2.unused_ops )
+  end
+
   def test_ops
     g = Game.new( ConnectFour )
     ops = g.ops
