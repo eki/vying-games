@@ -16,6 +16,12 @@ class ConnectFour < Rules
     def to_s
       "Board:\n#{board}\nTurn: #{turn}\nLast: (#{lastc}, #{lastp})"
     end
+
+    def dup
+      d = super
+      d.unused_ops = unused_ops.map { |a| a.dup }
+      d
+    end
   end
 
   @@init_ops = Coords.new( 7, 6 ).group_by { |c| c.x }.map do |sa|
