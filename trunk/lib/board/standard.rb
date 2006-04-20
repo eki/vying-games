@@ -143,12 +143,26 @@ class Coords
     coords.select { |c| coord.y == c.y }
   end
 
+  def rows
+    column( Coord[0,0] ).map { |c| row( c ) }
+  end
+
   def column( coord )
     coords.select { |c| coord.x == c.x }
   end
 
+  def columns
+    row( Coord[0,0] ).map { |c| column( c ) }
+  end
+
   def diagonal( coord, slope=1 )
     coords.select { |c| slope*(coord.y-c.y) == (coord.x-c.x) }
+  end
+
+  def diagonals( slope=1 )
+    cs = row( Coord[0,0] )
+    cs += column( slope == 1 ? Coord[0,0] : Coord[width-1,0] )
+    cs.uniq.map { |c| diagonal( c, slope ) }
   end
 
   def neighbors_nil( coord, directions=[:n,:ne,:e,:se,:s,:sw,:w,:nw] )
@@ -250,6 +264,9 @@ class Board
   end
 
   def to_s( cs = nil )
+    return to_s_coords( cs ) unless cs.nil?
+
+
     off = coords.height >= 10 ? 2 : 1
     w = coords.width
 
@@ -262,6 +279,10 @@ class Board
       re = sprintf( "%*-d", off, colc.y+1 )
       "#{s}#{rh}#{r}#{re}\n" 
     end + letters
+  end
+
+  def to_s_coords( coords )
+    coords.inject( '' ) { |s,c| "#{s}#{self[c].nil? ? ' ' : self[c].to_s}" }
   end
 
   def Board.from_s( pieces, s )
