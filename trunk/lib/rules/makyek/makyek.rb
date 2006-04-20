@@ -130,6 +130,10 @@ class Makyek < Rules
     pos.turn.next!
     pos.lastc = ec
     pos.ops_cache = :ns
+    return pos if ops( pos )
+
+    pos.turn.next!
+    pos.ops_cache = :ns
     pos
   end
 
