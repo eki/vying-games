@@ -180,6 +180,21 @@ class Coords
     include?( n = coord + DIRECTIONS[direction] ) ? n : nil
   end
 
+  def radius( coord, r )
+    directions=[:n,:ne,:e,:se,:s,:sw,:w,:nw]
+    a = directions.map do |dir|
+      sa, c, i = [], coord, 0
+      while (c = self.next( c, dir )) && i < r
+        sa << c
+        i += 1
+      end
+      sa
+    end 
+    a.flatten!
+    a.reject! { |c| ! include?( c ) }
+    a
+  end
+
   def to_s
     inject( '' ) { |s,c| s + "#{c}" }
   end
