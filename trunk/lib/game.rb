@@ -167,6 +167,25 @@ class Bot
     game << select
   end
 
+  def select
+    best( analyze )
+  end
+
+  def analyze( ops=game.ops )
+    scores = ops.map do |op|
+      evaluate( game.rules.apply( game.history.last, op ) )
+    end
+    scores.zip( ops ).sort.reverse
+  end
+
+  def best( scores, delta=0 )
+    best_ops = []
+    best_score = scores.first[0]
+
+    scores.each { |s| s[0]+delta >=  best_score ? best_ops << s[1] : break }
+    best_ops[rand(best_ops.length)]
+  end
+
   def Bot.find( path=$: )
     required = []
     path.each do |d| 

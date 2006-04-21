@@ -11,68 +11,56 @@ class LineBot < Bot
 
     p = player.short
 
-    @patterns = {
-      /#{p}/                     => 2,
-      /#{p}#{p}/                 => 4,
-      /#{p}#{p}#{p}/             => 16,
-      /#{p}#{p}#{p}#{p}/         => 32,
-      /#{p}#{p}#{p}#{p}#{p}/     => 64,
-      /#{p}#{p}#{p}#{p}#{p}#{p}/ => 128,
-      /^#{p}/                    => -1,
-      /#{p}$/                    => -1,
-    }
+    @patterns = { /(#{p}+)/ => 2 }
 
     opps.each do |opp|
       o = opp.short
-      @patterns[/#{o}#{p}/] = -1
-      @patterns[/#{o}#{p}#{p}/] = -2
-      @patterns[/#{o}#{p}#{p}#{p}/] = -3
-      @patterns[/#{o}#{p}#{p}#{p}#{p}/] = -4
-      @patterns[/#{o}#{p}#{p}#{p}#{p}#{p}/] = -5
-      @patterns[/#{p}#{o}/] = -1
-      @patterns[/#{p}#{p}#{o}/] = -2
-      @patterns[/#{p}#{p}#{p}#{o}/] = -3
-      @patterns[/#{p}#{p}#{p}#{p}#{o}/] = -4
-      @patterns[/#{p}#{p}#{p}#{p}#{p}#{o}/] = -5
-      @patterns[/#{p}#{o}/] = 4
-      @patterns[/#{p}#{o}#{o}/] = 32
-      @patterns[/#{p}#{o}#{o}#{o}/] = 64
-      @patterns[/#{p}#{o}#{o}#{o}#{o}/] = 128
-      @patterns[/#{p}#{o}#{o}#{o}#{o}#{o}/] = 256
-      @patterns[/#{o}#{p}/] = 4
-      @patterns[/#{o}#{o}#{p}/] = 32
-      @patterns[/#{o}#{o}#{o}#{p}/] = 64
-      @patterns[/#{o}#{o}#{o}#{o}#{p}/] = 128
-      @patterns[/#{o}#{o}#{o}#{o}#{o}#{p}/] = 256
+      @patterns[/(#{o}+)#{p}/] = 3
     end
-
   end
 
   def select
-    ops = game.ops
-    scores = ops.map do |op| 
-      pos = game.rules.apply( game.history.last, op )
-      opps = game.players.select { |p| p != player }
+    best( analyze( interesting_ops ) )
+  end
 
-      b = pos.board
+  def evaluate( position )
+    opps = game.players.select { |p| p != player }
 
-      score = 0
-      lines = b.coords.rows + b.coords.columns + 
-              b.coords.diagonals( 1 ) + b.coords.diagonals( -1 )
+    b = position.board
 
-      lines.each do |line| 
-        patterns.each_pair do |p,v| 
-          if b.to_s( line ) =~ p
-            score += v
-          end
+    score = 0
+    occupied_lines( b ).each do |line| 
+      patterns.each_pair do |p,v| 
+        if b.to_s( line ) =~ p
+          score += v ** ($1.length)
         end
       end
-
-      score
     end
 
-    all = scores.zip( ops ).sort
-    all.sort.last[1]
+    score
+  end
+
+  def occupied_lines( board )
+    lines = []
+    board.coords.each do |c|
+      unless board[c].nil?
+        lines << board.coords.row( c )
+        lines << board.coords.column( c )
+        lines << board.coords.diagonal( c, 1 )
+        lines << board.coords.diagonal( c, -1 )
+      end
+    end
+    lines.uniq
+  end
+
+  def interesting_ops( ops=game.ops, board=game.board )
+    cs = []
+    board.coords.each do |c|
+      cs << board.coords.radius( c, 2 ) unless board[c].nil?
+    end
+    cs.flatten!.uniq!
+    cs = cs.map { |c| c.to_s }
+    ops.select { |op| cs.include?( op ) }
   end
 
 end
