@@ -233,13 +233,26 @@ class Game
     super.respond_to?( method_id )
   end
 
-  def <<( op )
+  def append( op )
     if op?( op )
       @history << apply( op )
       @sequence << op
       return self
     end
     raise "#{op} not a valid operation"
+  end
+
+  def append_list( ops )
+    ops.each { |op| append( op ) }
+    self
+  end
+
+  def <<( ops )
+    if ops.kind_of? Enumerable
+      return append_list( ops )
+    else
+      return append( ops )
+    end
   end
 
   def undo
