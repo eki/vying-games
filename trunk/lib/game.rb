@@ -213,9 +213,9 @@ end
 class Game
   attr_reader :rules, :history, :sequence
 
-  def initialize( rules, seq=[] )
-    @rules, @history, @sequence = rules, [rules.init], []
-    seq.each { |s| self << s }
+  def initialize( rules, seed=nil )
+    @rules, @history, @sequence = rules, [rules.init( seed )], []
+    yield self
   end
 
   def method_missing( method_id, *args )
