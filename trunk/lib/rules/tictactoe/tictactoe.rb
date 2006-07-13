@@ -24,7 +24,7 @@ class TicTacToe < Rules
 
   @@init_ops = Coords.new( 3, 3 ).map { |c| c.to_s }
 
-  def TicTacToe.init
+  def TicTacToe.init( seed=nil )
     ps = PlayerSet.new( *players )
     Position.new( Board.new( 3, 3 ), ps, nil, :noone, @@init_ops.dup )
   end

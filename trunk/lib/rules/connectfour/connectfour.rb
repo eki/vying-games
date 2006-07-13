@@ -28,7 +28,7 @@ class ConnectFour < Rules
     sa.map { |c| c.to_s }
   end
 
-  def ConnectFour.init
+  def ConnectFour.init( seed=nil )
     ps = PlayerSet.new( *players )
     uo = @@init_ops.map { |a| a.dup }
     Position.new( Board.new( 7, 6 ), ps, nil, :noone, uo )

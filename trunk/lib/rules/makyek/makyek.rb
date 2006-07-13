@@ -18,7 +18,7 @@ class Makyek < Rules
     end
   end
 
-  def Makyek.init
+  def Makyek.init( seed=nil )
     b = Board.new( 8, 8 )
 
     wrs = [Coord[0,0], Coord[1,0], Coord[2,0], Coord[3,0],

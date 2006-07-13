@@ -52,7 +52,7 @@ class Fifteen < Rules
     end
   end
 
-  def Fifteen.init
+  def Fifteen.init( seed=nil )
     Position.new( (1..9).to_a, [], [], PlayerSet.new( *players ) )
   end
 

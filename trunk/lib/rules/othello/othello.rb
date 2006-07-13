@@ -66,7 +66,7 @@ class Othello < Rules
   def Othello.frontier( coords )
   end
 
-  def Othello.init
+  def Othello.init( seed=nil )
     b = OthelloBoard.new( 8, 8 )
     b[3,3] = b[4,4] = Piece.white
     b[3,4] = b[4,3] = Piece.black

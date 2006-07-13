@@ -20,7 +20,7 @@ class Connect6 < Rules
 
   @@init_ops = Coords.new( 19, 19 ).map { |c| c.to_s }
 
-  def Connect6.init
+  def Connect6.init( seed=nil )
     ps = PlayerSet.new( Piece.black, Piece.white, Piece.white, Piece.black )
     Position.new( Board.new( 19, 19 ), ps, nil, :noone, @@init_ops.dup )
   end
