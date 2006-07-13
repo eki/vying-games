@@ -215,7 +215,7 @@ class Game
 
   def initialize( rules, seed=nil )
     @rules, @history, @sequence = rules, [rules.init( seed )], []
-    yield self
+    yield self if block_given?
   end
 
   def method_missing( method_id, *args )
