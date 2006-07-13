@@ -96,6 +96,10 @@ class Coord
   def to_s
     "#{(97+x).chr}#{y+1}"
   end
+
+  def inspect
+    to_s
+  end
 end
 
 class Coords
