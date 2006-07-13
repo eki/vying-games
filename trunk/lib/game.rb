@@ -89,7 +89,7 @@ end
 
 class Struct
   def initialize_copy( original )
-    nd = [Symbol, NilClass]
+    nd = [Symbol, NilClass, Fixnum]
     original.each_pair { |k,v| self[k] = (nd.include?( v.class ) ? v : v.dup) }
   end
 end
