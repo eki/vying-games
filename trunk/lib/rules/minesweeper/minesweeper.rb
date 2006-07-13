@@ -15,9 +15,10 @@ class MinesweeperBoard < Board
     else
       n = coords.neighbors( coord )
       self[coord] = n.inject( 0 ) { |s,c| mines.include?( c ) ? s+1 : s }
-      n.each { |c| reveal( c, mines ) if self[c].nil? } if self[coord] == 0
+      p = [coord]
+      n.each { |c| p += reveal( c, mines ) if self[c].nil? } if self[coord] == 0
     end
-    self[coord]
+    p
   end
 end
 
@@ -37,7 +38,8 @@ class Minesweeper < Rules
     seed = rand 10000 if seed.nil?
     srand seed
     mines = []
-    10.times { i = rand 81; mines << Coord[i/9,i%9] }
+    a = (0..81).to_a.sort_by { rand }
+    10.times { |i| mines << Coord[a[i]/9,a[i]%9] }
     Position.new( MinesweeperBoard.new( 9, 9 ), mines, seed, @@init_ops.dup )
   end
 
@@ -57,11 +59,11 @@ class Minesweeper < Rules
     c, pos = Coord[op], position.dup
     board, mines = pos.board, pos.mines
 
-    found = board.reveal( c, mines )
-    if found == :b
+    revealed = board.reveal( c, mines )
+    if revealed.any? { |rc| board[rc] == :b }
       pos.unused_ops.clear
     else
-      pos.unused_ops.delete( c.to_s )
+      pos.unused_ops -= revealed.map { |rc| rc.to_s }
     end
 
     pos
