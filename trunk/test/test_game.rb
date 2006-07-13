@@ -123,7 +123,7 @@ class FakeRules
 
   Position = Struct.new( :fake_board, :fake_player )
 
-  def FakeRules.init
+  def FakeRules.init( seed=nil )
     Position.new( "edcba", "player1" )
   end
 
