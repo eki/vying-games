@@ -38,7 +38,7 @@ class Minesweeper < Rules
     seed = rand 10000 if seed.nil?
     srand seed
     mines = []
-    a = (0..81).to_a.sort_by { rand }
+    a = (0...81).to_a.sort_by { rand }
     10.times { |i| mines << Coord[a[i]/9,a[i]%9] }
     Position.new( MinesweeperBoard.new( 9, 9 ), mines, seed, @@init_ops.dup )
   end
@@ -74,7 +74,7 @@ class Minesweeper < Rules
   end
 
   def Minesweeper.winner?( position, player=Player.one )
-    position.unused_ops == 10
+    position.unused_ops.size == 10
   end
 
   def Minesweeper.loser?( position, player=Player.one )
