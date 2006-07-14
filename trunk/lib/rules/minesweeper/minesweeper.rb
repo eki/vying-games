@@ -41,7 +41,7 @@ class Minesweeper < Rules
     a = (0...81).to_a.sort_by { rand }
     10.times { |i| mines << Coord[a[i]/9,a[i]%9] }
     Position.new( MinesweeperBoard.new( 9, 9 ), mines, seed, @@init_ops.dup,
-                 Player.one )
+                 PlayerSet.new( Player.one ) )
   end
 
   def Minesweeper.players
