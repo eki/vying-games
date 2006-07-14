@@ -33,7 +33,16 @@ class QtPiece
   end
 
   def get_primitives( piece )
-    if COLORS.include?( piece.name )
+    if piece.instance_of?( Fixnum ) || piece.instance_of?( Symbol )
+      text = Qt::CanvasText.new( canvas )
+      text.setColor( Qt::Color.new( "black" ) )
+      text.setText( piece.to_s )
+      text.setX( x+width/2 )
+      text.setY( y+height/2 )
+      text.setZ( 2 )
+      text.show
+      return [text]
+    elsif COLORS.include?( piece.name )
       circle = Qt::CanvasEllipse.new( width, height, canvas )
       circle.setX( x+width/2 )
       circle.setY( y+height/2 )
