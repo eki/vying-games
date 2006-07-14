@@ -10,12 +10,12 @@ require 'game'
 
 class MinesweeperBoard < Board
   def reveal( coord, mines )
+    p = [coord]
     if mines.include? coord
       self[coord] = :b
     else
       n = coords.neighbors( coord )
       self[coord] = n.inject( 0 ) { |s,c| mines.include?( c ) ? s+1 : s }
-      p = [coord]
       n.each { |c| p += reveal( c, mines ) if self[c].nil? } if self[coord] == 0
     end
     p
@@ -26,7 +26,7 @@ class Minesweeper < Rules
 
   INFO = info( __FILE__ )
 
-  class Position < Struct.new( :board, :mines, :seed, :unused_ops )
+  class Position < Struct.new( :board, :mines, :seed, :unused_ops, :turn )
     def to_s
       "Seed: #{seed}\nBoard:\n#{board}"
     end
@@ -40,7 +40,8 @@ class Minesweeper < Rules
     mines = []
     a = (0...81).to_a.sort_by { rand }
     10.times { |i| mines << Coord[a[i]/9,a[i]%9] }
-    Position.new( MinesweeperBoard.new( 9, 9 ), mines, seed, @@init_ops.dup )
+    Position.new( MinesweeperBoard.new( 9, 9 ), mines, seed, @@init_ops.dup,
+                 Player.one )
   end
 
   def Minesweeper.players
