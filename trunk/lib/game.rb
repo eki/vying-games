@@ -87,14 +87,57 @@ class PlayerSet
   end
 end
 
-class Struct
+class PositionStruct < Struct
   def initialize_copy( original )
     nd = [Symbol, NilClass, Fixnum]
     original.each_pair { |k,v| self[k] = (nd.include?( v.class ) ? v : v.dup) }
   end
+
+  def to_s
+    s = ''
+    each_pair do |n,v|
+      if (vs = v.to_s) =~ /\n/
+        s << "#{n.to_s.capitalize!}:\n#{vs}\n"
+      else
+        s << "#{n.to_s.capitalize!}: #{vs}\n"
+      end
+    end
+    s
+  end
 end
 
 class Rules
+  def Rules.position( *symbols )
+    class_eval( "Position = PositionStruct.new( *symbols )" )
+    class << self
+      undef_method :position
+    end
+  end
+
+  def Rules.players( p )
+    @@players = p
+    class << self; def players; @@players; end; end
+    p
+  end
+
+  def Rules.name( str=nil )
+    @@name = str
+    class << self; def name; @@name; end; end
+    str
+  end
+
+  def Rules.aka( str=nil )
+    @@aka = str
+    class << self; def aka; @@aka; end; end
+    str
+  end
+
+  def Rules.description( str=nil )
+    @@description = str
+    class << self; def description; @@description; end; end
+    str
+  end
+
   def Rules.score( position, player )
     return  0 if draw?( position )
     return  1 if winner?( position, player )
