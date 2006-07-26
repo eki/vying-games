@@ -21,7 +21,7 @@ opts.on( "-r", "--rules RULES" ) { |r| rules = Kernel.const_get( r ) }
 
 opts.on( "-p", "--player PLAYER=BOT" ) do |s|
   s =~ /(\w*)=(\w*)/
-  p2b[Player.new($1)] = Kernel.const_get( $2 )
+  p2b[$1.downcase.intern] = Kernel.const_get( $2 )
 end
 
 opts.on( "-n", "--number NUMBER" ) { |n| number = Integer(n) }
@@ -66,7 +66,7 @@ if gui == 'console'
     bots = {}
     p2b.each_pair { |p,b| bots[p] = b.new( games.last, p ) }
     until games.last.final?
-      bots[games.last.turn].select!
+      bots[games.last.turn.now].select!
     end
   end
   summarize( games )
@@ -74,7 +74,7 @@ elsif gui == 'qt'
 
   class HumanBot
     def try( op )
-      return game << op if game.turn == player && game.op?( op )
+      return game << op if game.turn.now == player && game.op?( op )
       return nil
     end
   end
