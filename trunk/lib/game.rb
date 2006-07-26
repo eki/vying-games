@@ -107,6 +107,14 @@ class PositionStruct < Struct
 end
 
 class Rules
+  @@info = {}
+  @@players = {}
+
+  def Rules.info( i={} )
+    class_eval( "@@info[self] = i" )
+    class << self; def info; @@info[self]; end; end
+  end
+
   def Rules.position( *symbols )
     class_eval( "Position = PositionStruct.new( *symbols )" )
     class << self
@@ -115,27 +123,9 @@ class Rules
   end
 
   def Rules.players( p )
-    @@players = p
-    class << self; def players; @@players; end; end
+    class_eval( "@@players[self] = p" )
+    class << self; def players; @@players[self]; end; end
     p
-  end
-
-  def Rules.name( str=nil )
-    @@name = str
-    class << self; def name; @@name; end; end
-    str
-  end
-
-  def Rules.aka( str=nil )
-    @@aka = str
-    class << self; def aka; @@aka; end; end
-    str
-  end
-
-  def Rules.description( str=nil )
-    @@description = str
-    class << self; def description; @@description; end; end
-    str
   end
 
   def Rules.score( position, player )
@@ -167,32 +157,6 @@ class Rules
     @@rules_list
   end
 
-  def Rules.info( file=nil )
-    return self::INFO if file.nil?
-
-    opened = nil
-    hash = {}
-
-    File.open( file ) do |f|
-      while line = f.gets
-        if line =~ /^#\s+([A-Z1-9 ]+)\s+$/
-          opened = $1
-        elsif opened && line !~ /^#/
-          opened = nil
-        elsif opened && line =~ /^#(.*)$/
-          value = $1.strip
-          key = opened.downcase.strip.sub( /\s/, '_' )
-          if hash.key?( key )
-            hash[key] += " #{value}" unless value.empty?
-          else
-            hash[key] = value
-          end
-        end
-      end
-    end
-
-    hash
-  end
 end
 
 class Bot
