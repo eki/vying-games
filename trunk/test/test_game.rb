@@ -2,126 +2,44 @@
 require "test/unit"
 require "game"
 
-class TestPlayer < Test::Unit::TestCase
-  def test_initialize
-    p = Player.new( 'Alpha', 'a' )
-    assert_equal( 'Alpha', p.name )
-    assert_equal( 'a', p.short )
+class TestArray < Test::Unit::TestCase
+  def test_rotate!
+    ps = [:north, :east, :south, :west]
 
-    p = Player.new( 'Beta', 'b' )
-    assert_equal( 'Beta', p.name )
-    assert_equal( 'b', p.short )
+    assert_equal( :east,  ps.rotate!.now )
+    assert_equal( :south, ps.rotate!.now )
+    assert_equal( :west,  ps.rotate!.now )
+    assert_equal( :north, ps.rotate!.now )
+    assert_equal( :east,  ps.rotate!.now )
   end
 
-  def test_equal
-    p1 = Player.new( 'Alpha', 'a' )
-    p2 = Player.new( 'Beta', 'b' )
-    p3 = p1.dup
+  def test_now
+    ps = [:north, :east, :south, :west]
 
-    assert_equal( p1, p3 )
-    assert_not_equal( p1, p2 )
-    assert_not_equal( p2, p3 )
+    assert_equal( :north, ps.now )
 
-    assert( p1 == p3 )
-    assert( p1.eql?( p3 ) )
-    assert( p1 != p2 )
-    assert( p2 != p3 )
-  end
+    ps.rotate!
+    assert_equal( :east, ps.now )
 
-  def test_hash
-    p1 = Player.new( 'Alpha', 'a' )
-    p2 = Player.new( 'Beta', 'b' )
-    p3 = p1.dup
-
-    assert_equal( p1.hash, p3.hash )
-    assert_not_equal( p1.hash, p2.hash )
-    assert_not_equal( p2.hash, p3.hash )
-  end
-
-  def test_to_s
-    assert_equal( "Red (r)", Player.red.to_s )
-    assert_equal( "X (x)", Player.x.to_s )
-    assert_equal( "Player 1 (1)", Player.new( "Player 1", "1" ).to_s )
-  end
-
-  def test_method_missing
-    p1 = Player.new( 'Beta', 'b' )
-    p2 = Player.beta
-
-    assert_equal( p1, p2 )
-  end
-end
-
-class TestPlayerSet < Test::Unit::TestCase
-  def test_initialize
-    ps = PlayerSet.new( Player.north, Player.east, Player.south, Player.west )
-    
-    assert_equal( [Player.north, Player.east, Player.south, Player.west],
-                  ps.players )
-                  
-    assert_equal( 'North', ps.name )
-    assert_equal( 'n', ps.short )
-  end
-
-  def test_next!
-    ps = PlayerSet.new( Player.north, Player.east, Player.south, Player.west )
-
-    assert_equal( Player.east,  ps.next! )
-    assert_equal( Player.south, ps.next! )
-    assert_equal( Player.west,  ps.next! )
-    assert_equal( Player.north, ps.next! )
-    assert_equal( Player.east,  ps.next! )
-  end
-
-  def test_previous!
-    ps = PlayerSet.new( Player.north, Player.east, Player.south, Player.west )
-
-    assert_equal( Player.west,  ps.previous! )
-    assert_equal( Player.south, ps.previous! )
-    assert_equal( Player.east,  ps.previous! )
-    assert_equal( Player.north, ps.previous! )
-    assert_equal( Player.west,  ps.previous! )
-  end
-
-  def test_current
-    ps = PlayerSet.new( Player.north, Player.east, Player.south, Player.west )
-
-    assert_equal( Player.north, ps.current )
-
-    ps.next!
-    assert_equal( Player.east, ps.current )
-
-    ps.next!.next!.next!
-    assert_equal( Player.north, ps.current )
+    ps.rotate!.rotate!.rotate!
+    assert_equal( :north, ps.now )
   end
 
   def test_next
-    ps = PlayerSet.new( Player.north, Player.east, Player.south, Player.west )
+    ps = [:north, :east, :south, :west]
 
-    assert_equal( Player.east,  ps.next )
-    assert_equal( Player.north, ps.current )
+    assert_equal( :east,  ps.next )
+    assert_equal( :north, ps.now )
 
-    assert_equal( Player.west,  ps.next!.next!.next! )
-    assert_equal( Player.north, ps.next )
-    assert_equal( Player.west,  ps.current )
+    assert_equal( :west,  ps.rotate!.rotate!.rotate!.now )
+    assert_equal( :north, ps.next )
+    assert_equal( :west,  ps.now )
   end
-
-  def test_previous
-    ps = PlayerSet.new( Player.north, Player.east, Player.south, Player.west )
-
-    assert_equal( Player.west,  ps.previous )
-    assert_equal( Player.north, ps.current )
-
-    assert_equal( Player.east,  ps.previous!.previous!.previous! )
-    assert_equal( Player.north, ps.previous )
-    assert_equal( Player.east,  ps.current )
-  end
-
 end
 
-class FakeRules
+class FakeRules < Rules
 
-  Position = Struct.new( :fake_board, :fake_player )
+  position :fake_board, :fake_player
 
   def FakeRules.init( seed=nil )
     Position.new( "edcba", "player1" )
@@ -147,24 +65,6 @@ class FakeRules
       pos
     end
   end
-
-#  def FakeRules.ops( position )
-#    return nil if final?( position )
-#
-#    op1 = Op.new( "Succ!", 'r' ) do
-#      s = position.dup
-#      s.fake_board.succ!
-#      s
-#    end
-#
-#    op2 = Op.new( "Squeeze!", 's' ) do
-#      s = position.dup
-#      s.fake_board.squeeze!
-#      s
-#    end
-#
-#    [op1,op2]
-#  end
 
   def FakeRules.final?( position )
     position.fake_board.length == 1

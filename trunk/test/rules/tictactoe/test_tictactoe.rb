@@ -6,7 +6,7 @@ class TestTicTacToe < Test::Unit::TestCase
   def test_init
     g = Game.new( TicTacToe )
     assert_equal( Board.new( 3, 3 ), g.board )
-    assert_equal( Player.x, g.turn )
+    assert_equal( :x, g.turn.now )
   end
 
   def test_ops
@@ -30,104 +30,104 @@ class TestTicTacToe < Test::Unit::TestCase
     assert_not_equal( g.history[0], g.history.last )
 
     assert_equal( 2, g.board.count( nil ) )
-    assert_equal( 4, g.board.count( Piece.x ) )
-    assert_equal( 3, g.board.count( Piece.o ) )
+    assert_equal( 4, g.board.count( :x ) )
+    assert_equal( 3, g.board.count( :o ) )
   end
 
   def test_players
     g = Game.new( TicTacToe )
-    assert_equal( [Player.x,Player.o], g.players )
-    assert_equal( [Piece.x,Piece.o], g.players )
+    assert_equal( [:x,:o], g.players )
+    assert_equal( [:x,:o], g.players )
   end
 
   def test_game01
     # This game is going to be a win for X (diagonal)
     g = Game.new( TicTacToe )
-    g << "c1" << "b1" << "b2" << "c2"
+    g << [:c1,:b1,:b2,:c2]
     assert( !g.final? )
-    g << "a3"
+    g << :a3
     assert( g.final? )
 
     assert( !g.draw? )
-    assert( g.winner?( Player.x ) )
-    assert( !g.loser?( Player.x ) )
-    assert( !g.winner?( Player.o ) )
-    assert( g.loser?( Player.o ) )
+    assert( g.winner?( :x ) )
+    assert( !g.loser?( :x ) )
+    assert( !g.winner?( :o ) )
+    assert( g.loser?( :o ) )
 
-    assert_equal( 1, g.score( Player.x ) )
-    assert_equal( -1, g.score( Player.o ) )
+    assert_equal( 1, g.score( :x ) )
+    assert_equal( -1, g.score( :o ) )
   end
 
   def test_game02
     # This game is going to be a win for X (vertical)
     g = Game.new( TicTacToe )
-    g << "c3" << "a1" << "c2" << "a2" << "b1"
+    g << [:c3,:a1,:c2,:a2,:b1]
     assert( !g.final? )
-    g << "b2" << "c1"
+    g << [:b2,:c1]
     assert( g.final? )
 
     assert( !g.draw? )
-    assert( g.winner?( Player.x ) )
-    assert( !g.loser?( Player.x ) )
-    assert( !g.winner?( Player.o ) )
-    assert( g.loser?( Player.o ) )
+    assert( g.winner?( :x ) )
+    assert( !g.loser?( :x ) )
+    assert( !g.winner?( :o ) )
+    assert( g.loser?( :o ) )
 
-    assert_equal( 1, g.score( Player.x ) )
-    assert_equal( -1, g.score( Player.o ) )
+    assert_equal( 1, g.score( :x ) )
+    assert_equal( -1, g.score( :o ) )
   end
 
   def test_game03
     # This game is going to be a draw
     g = Game.new( TicTacToe )
-    g << "a1" << "b1" << "a2" << "b2" << "b3" << "a3" << "c1" << "c2"
+    g << [:a1,:b1,:a2,:b2,:b3,:a3,:c1,:c2]
     assert( !g.final? )
-    g << "c3"
+    g << :c3
     assert( g.final? )
 
     assert( g.draw? )
-    assert( !g.winner?( Player.x ) )
-    assert( !g.loser?( Player.x ) )
-    assert( !g.winner?( Player.o ) )
-    assert( !g.loser?( Player.o ) )
+    assert( !g.winner?( :x ) )
+    assert( !g.loser?( :x ) )
+    assert( !g.winner?( :o ) )
+    assert( !g.loser?( :o ) )
 
-    assert_equal( 0, g.score( Player.x ) )
-    assert_equal( 0, g.score( Player.o ) )
+    assert_equal( 0, g.score( :x ) )
+    assert_equal( 0, g.score( :o ) )
   end
 
   def test_game04
     # This game is going to be a win for O (horizontal)
     g = Game.new( TicTacToe )
-    g << "a1" << "b1" << "a2" << "b2" << "c3"
+    g << [:a1,:b1,:a2,:b2,:c3]
     assert( !g.final? )
-    g << "b3"
+    g << :b3
     assert( g.final? )
 
     assert( !g.draw? )
-    assert( !g.winner?( Player.x ) )
-    assert( g.loser?( Player.x ) )
-    assert( g.winner?( Player.o ) )
-    assert( !g.loser?( Player.o ) )
+    assert( !g.winner?( :x ) )
+    assert( g.loser?( :x ) )
+    assert( g.winner?( :o ) )
+    assert( !g.loser?( :o ) )
 
-    assert_equal( -1, g.score( Player.x ) )
-    assert_equal( 1, g.score( Player.o ) )
+    assert_equal( -1, g.score( :x ) )
+    assert_equal( 1, g.score( :o ) )
   end
 
   def test_game05
     # This game is going to be a win for O (diagonal)
     g = Game.new( TicTacToe )
-    g << "a2" << "a1" << "c2" << "b2" << "a3"
+    g << [:a2,:a1,:c2,:b2,:a3]
     assert( !g.final? )
-    g << "c3"
+    g << :c3
     assert( g.final? )
 
     assert( !g.draw? )
-    assert( !g.winner?( Player.x ) )
-    assert( g.loser?( Player.x ) )
-    assert( g.winner?( Player.o ) )
-    assert( !g.loser?( Player.o ) )
+    assert( !g.winner?( :x ) )
+    assert( g.loser?( :x ) )
+    assert( g.winner?( :o ) )
+    assert( !g.loser?( :o ) )
 
-    assert_equal( -1, g.score( Player.x ) )
-    assert_equal( 1, g.score( Player.o ) )
+    assert_equal( -1, g.score( :x ) )
+    assert_equal( 1, g.score( :o ) )
   end
 end
 

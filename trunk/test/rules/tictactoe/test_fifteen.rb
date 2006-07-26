@@ -8,7 +8,7 @@ class TestFifteen < Test::Unit::TestCase
     assert_equal( (1..9).to_a, g.unused )
     assert_equal( [], g.a_list )
     assert_equal( [], g.b_list )
-    assert_equal( Player.a, g.turn )
+    assert_equal( :a, g.turn.now )
   end
 
   def test_ops
@@ -38,61 +38,61 @@ class TestFifteen < Test::Unit::TestCase
 
   def test_players
     g = Game.new( Fifteen )
-    assert_equal( [Player.a,Player.b], g.players )
+    assert_equal( [:a,:b], g.players )
   end
 
   def test_game01
     # This game is going to be a win for A
     g = Game.new( Fifteen )
-    g << 'a2' << 'b3' << 'a7' << 'b4'
+    g << [:a2,:b3,:a7,:b4]
     assert( !g.final? )
-    g << 'a6'
+    g << :a6
     assert( g.final? )
 
     assert( !g.draw? )
-    assert( g.winner?( Player.a ) )
-    assert( !g.loser?( Player.a ) )
-    assert( !g.winner?( Player.b ) )
-    assert( g.loser?( Player.b ) )
+    assert( g.winner?( :a ) )
+    assert( !g.loser?( :a ) )
+    assert( !g.winner?( :b ) )
+    assert( g.loser?( :b ) )
 
-    assert_equal( 1, g.score( Player.a ) )
-    assert_equal( -1, g.score( Player.b ) )
+    assert_equal( 1, g.score( :a ) )
+    assert_equal( -1, g.score( :b ) )
   end
 
   def test_game02
     # This game is going to be a win for B
     g = Game.new( Fifteen )
-    g << 'a1' << 'b3' << 'a2' << 'b4' << 'a5'
+    g << [:a1,:b3,:a2,:b4,:a5]
     assert( !g.final? )
-    g << 'b8'
+    g << :b8
     assert( g.final? )
 
     assert( !g.draw? )
-    assert( !g.winner?( Player.a ) )
-    assert( g.loser?( Player.a ) )
-    assert( g.winner?( Player.b ) )
-    assert( !g.loser?( Player.b ) )
+    assert( !g.winner?( :a ) )
+    assert( g.loser?( :a ) )
+    assert( g.winner?( :b ) )
+    assert( !g.loser?( :b ) )
 
-    assert_equal( -1, g.score( Player.a ) )
-    assert_equal( 1, g.score( Player.b ) )
+    assert_equal( -1, g.score( :a ) )
+    assert_equal( 1, g.score( :b ) )
   end
 
   def test_game03
     # This game is going to be a draw
     g = Game.new( Fifteen )
-    g << 'a1' << 'b7' << 'a2' << 'b9' << 'a6' << 'b8' << 'a3' << 'b4'
+    g << [:a1,:b7,:a2,:b9,:a6,:b8,:a3,:b4]
     assert( !g.final? )
-    g << 'a5'
+    g << :a5
     assert( g.final? )
 
     assert( g.draw? )
-    assert( !g.winner?( Player.x ) )
-    assert( !g.loser?( Player.x ) )
-    assert( !g.winner?( Player.o ) )
-    assert( !g.loser?( Player.o ) )
+    assert( !g.winner?( :a ) )
+    assert( !g.loser?( :a ) )
+    assert( !g.winner?( :b ) )
+    assert( !g.loser?( :b ) )
 
-    assert_equal( 0, g.score( Player.x ) )
-    assert_equal( 0, g.score( Player.o ) )
+    assert_equal( 0, g.score( :a ) )
+    assert_equal( 0, g.score( :a ) )
   end
 end
 

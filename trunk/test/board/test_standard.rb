@@ -2,34 +2,6 @@
 require "test/unit"
 require "board/standard"
 
-class TestPiece < Test::Unit::TestCase
-  def test_initialize
-    p = Piece.new( 'Black', 'b' )
-
-    assert_equal( 'Black', p.name )
-    assert_equal( 'b', p.short )
-
-    assert_equal( 'Black', Piece.black.name )
-    assert_equal( 'b', Piece.black.short )
-  end
-
-  def test_equal
-    p = Piece.new( 'Black', 'b' )
-    assert( p == p )
-    assert( p == Piece.black )
-    assert( p == Piece.blue )  # == only compare's short
-    assert( p != Piece.red )
-    assert( p != nil )
-  end
-
-  def test_to_s
-    assert_equal( 'b', Piece.black.to_s )
-    assert_equal( 'b', Piece.blue.to_s )
-    assert_equal( 'r', Piece.red.to_s )
-    assert_equal( '@', Piece.new( 'Black', '@' ).to_s )
-  end
-end
-
 class TestCoord < Test::Unit::TestCase
   def test_initialize
     c = Coord[0,1]
@@ -364,7 +336,7 @@ class TestBoard < Test::Unit::TestCase
 
     assert( b == Board.new( 3, 3 ) )
 
-    b2[0,0] = Piece.x
+    b2[0,0] = :x
     assert( b != b2 )
 
     assert( b != Board.new( 4, 4 ) )
@@ -397,17 +369,17 @@ class TestBoard < Test::Unit::TestCase
 
   def test_each_from
     b = Board.new( 8, 8 )
-    b[3,3] = Piece.x
-    b[3,4] = Piece.x
-    b[3,6] = Piece.x
-    b[2,2] = Piece.o
-    b[1,1] = Piece.o
-    b[0,0] = Piece.o
+    b[3,3] = :x
+    b[3,4] = :x
+    b[3,6] = :x
+    b[2,2] = :o
+    b[1,1] = :o
+    b[0,0] = :o
 
     count1 = b.each_from( Coord[3,3], [:nw,:s] ) { |p| !p.nil? }
-    count2 = b.each_from( Coord[3,3], [:nw,:s] ) { |p| p == Piece.x }
-    count3 = b.each_from( Coord[3,3], [:nw] ) { |p| p == Piece.x }
-    count4 = b.each_from( Coord[3,3], [:nw,:s] ) { |p| p == Piece.o }
+    count2 = b.each_from( Coord[3,3], [:nw,:s] ) { |p| p == :x }
+    count3 = b.each_from( Coord[3,3], [:nw] ) { |p| p == :x }
+    count4 = b.each_from( Coord[3,3], [:nw,:s] ) { |p| p == :o }
     count5 = b.each_from( Coord[3,6], [:nw,:s,:e,:w] ) { |p| !p.nil? }
 
     assert_equal( 4, count1 )
@@ -434,32 +406,32 @@ class TestBoard < Test::Unit::TestCase
 
     assert_equal( 1, b.count( :b22 ) )
 
-    b[1,0] = b[1,1] = Piece.x
+    b[1,0] = b[1,1] = :x
 
-    assert_equal( 2, b.count( Piece.x ) )
+    assert_equal( 2, b.count( :x ) )
     assert_equal( 0, b.count( :b11 ) )
   end
 
   def test_move
     b = Board.new( 3, 3 )
-    b[0,0] = Piece.x
-    b[2,2] = Piece.o
+    b[0,0] = :x
+    b[2,2] = :o
 
-    assert_equal( Piece.x, b[0,0] )
-    assert_equal( Piece.o, b[2,2] )
+    assert_equal( :x, b[0,0] )
+    assert_equal( :o, b[2,2] )
     assert_equal( nil, b[1,1] )
 
     b.move( Coord[0,0], Coord[1,1] )
 
     assert_equal( nil, b[0,0] )
-    assert_equal( Piece.o, b[2,2] )
-    assert_equal( Piece.x, b[1,1] )
+    assert_equal( :o, b[2,2] )
+    assert_equal( :x, b[1,1] )
 
     b.move( Coord[2,2], Coord[1,1] )
 
     assert_equal( nil, b[0,0] )
     assert_equal( nil, b[2,2] )
-    assert_equal( Piece.o, b[1,1] )
+    assert_equal( :o, b[1,1] )
   end
 
   def test_to_s
@@ -500,24 +472,24 @@ EOF
  abcdefghi 
 EOF
 
-    pieces = [Piece.x, Piece.o, Piece.red, Piece.alpha, Piece.beta]
+    pieces = [:x, :o, :red, :alpha, :beta]
     b = Board.from_s( pieces, s )
 
     assert_equal( 9, b.coords.width )
     assert_equal( 3, b.coords.height )
 
-    assert_equal( Piece.x, b[2,0] )
-    assert_equal( Piece.o, b[5,0] )
+    assert_equal( :x, b[2,0] )
+    assert_equal( :o, b[5,0] )
 
-    assert_equal( Piece.alpha, b[0,1] )
-    assert_equal( Piece.beta, b[3,1] )
-    assert_equal( Piece.beta, b[4,1] )
-    assert_equal( Piece.alpha, b[8,1] )
+    assert_equal( :alpha, b[0,1] )
+    assert_equal( :beta, b[3,1] )
+    assert_equal( :beta, b[4,1] )
+    assert_equal( :alpha, b[8,1] )
 
-    assert_equal( Piece.red, b[1,2] )
-    assert_equal( Piece.red, b[2,2] )
-    assert_equal( Piece.red, b[5,2] )
-    assert_equal( Piece.red, b[6,2] )
+    assert_equal( :red, b[1,2] )
+    assert_equal( :red, b[2,2] )
+    assert_equal( :red, b[5,2] )
+    assert_equal( :red, b[6,2] )
 
     assert_equal( 17, b.count( nil ) )
   end
