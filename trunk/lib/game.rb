@@ -286,12 +286,23 @@ class Game
   end
 
   def append_list( ops )
-    ops.each { |op| append( op ) }
+    i = 0
+    begin
+      ops.each { |op| append( op ); i += 1 }
+    rescue
+      i.times { undo }
+    end
     self
   end
 
+  def append_string( ops, regex=/,/ )
+    append_list( ops.split( regex ) )
+  end
+
   def <<( ops )
-    if ops.kind_of? Enumerable
+    if ops.kind_of? String
+      return append_string( ops )
+    elsif ops.kind_of? Enumerable
       return append_list( ops )
     else
       return append( ops )
