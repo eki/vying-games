@@ -1,22 +1,13 @@
-# NAME
-#   Amazons
-#
-# RESOURCES
-#   Wikipedia <http://en.wikipedia.org/wiki/Amazons_(game)>
-#
-
 require 'board/standard'
 require 'game'
 
 class Amazons < Rules
 
-  INFO = info( __FILE__ )
+  info :name      => "Amazons",
+       :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Amazons_(game)>']
 
-  class Position < Struct.new( :board, :turn, :lastc, :wqs, :bqs, :ops_cache )
-    def to_s
-      "Board:\n#{board}\nTurn: #{turn}\n Last: #{lastc}"
-    end
-  end
+  position :board, :turn, :lastc, :wqs, :bqs, :ops_cache
+  players [Piece.white, Piece.black]
 
   def Amazons.init( seed=nil )
     b = Board.new( 10, 10 )
@@ -27,13 +18,9 @@ class Amazons < Rules
     wqs.each { |c| b[c] = Piece.white }
     bqs.each { |c| b[c] = Piece.black }
 
-    ps = PlayerSet.new( Piece.white, Piece.black )
+    ps = PlayerSet.new( *players )
 
     Position.new( b, ps, nil, wqs, bqs, :ns )
-  end
-
-  def Amazons.players
-    [Piece.white, Piece.black]
   end
 
   def Amazons.op?( position, op )

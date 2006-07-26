@@ -1,15 +1,3 @@
-# NAME
-#   Fifteen
-#
-# DESCRIPTION
-#   Fifteen is isomorphic to Tic Tac Toe.  Each player takes turns selecting
-# numbers between 1 and 9, with no number taken first.  The winner is the
-# first to have any combination of his selected numbers add up to 15.
-#
-# RESOURCES
-#   Wikipedia <http://en.wikipedia.org/wiki/Tic-tac-toe>
-#
-
 require 'game'
 
 # These changes to Enumerable (adding powerset and each_subset) are taken from
@@ -44,20 +32,20 @@ end
 
 class Fifteen < Rules
 
-  INFO = info( __FILE__ )
+  info :name => 'Fifteen',
+       :description => 'Fifteen is isomorphic to Tic Tac Toe.  Each player' +
+                       ' takes turns selecting numbers between 1 and 9,' +
+                       ' with no number taken first.  The winner is the' +
+                       ' first to have any combination of his selected' +
+                       ' numbers add up to 15.',
+       :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Tic-tac-toe>']
 
-  class Position < Struct.new( :unused, :a_list, :b_list, :turn )
-    def to_s
-      "Unused: #{unused}\nA: #{a_list}\nB: #{b_list}\nTurn: #{turn}"
-    end
-  end
+  position :unused, :a_list, :b_list, :turn
+
+  players [Player.a, Player.b]
 
   def Fifteen.init( seed=nil )
     Position.new( (1..9).to_a, [], [], PlayerSet.new( *players ) )
-  end
-
-  def Fifteen.players
-    [Player.a,Player.b]
   end
 
   def Fifteen.op?( position, op )

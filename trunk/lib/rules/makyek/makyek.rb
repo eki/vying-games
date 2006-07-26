@@ -1,22 +1,15 @@
-# NAME
-#   Mak-yek
-#
-# RESOURCES
-#   Wikipedia <http://en.wikipedia.org/wiki/Mak-yek>
-#
-
 require 'board/standard'
 require 'game'
 
 class Makyek < Rules
 
-  INFO = info( __FILE__ )
+  info :name      => 'Mak-yek',
+       :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Mak-yek>'],
+       :aliases   => ['Makyek']
 
-  class Position < Struct.new( :board, :turn, :lastc, :wrs, :brs, :ops_cache )
-    def to_s
-      "Board:\n#{board}\nTurn: #{turn}\n Last: #{lastc}"
-    end
-  end
+  position :board, :turn, :lastc, :wrs, :brs, :ops_cache
+
+  players [Piece.white, Piece.black]
 
   def Makyek.init( seed=nil )
     b = Board.new( 8, 8 )
@@ -34,13 +27,9 @@ class Makyek < Rules
     wrs.each { |c| b[c] = Piece.white }
     brs.each { |c| b[c] = Piece.black }
 
-    ps = PlayerSet.new( Piece.white, Piece.black )
+    ps = PlayerSet.new( *players )
 
     Position.new( b, ps, nil, wrs, brs, :ns )
-  end
-
-  def Makyek.players
-    [Piece.white, Piece.black]
   end
 
   def Makyek.op?( position, op )

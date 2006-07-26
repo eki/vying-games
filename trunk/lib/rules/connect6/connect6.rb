@@ -1,32 +1,19 @@
-# NAME
-#   Connect6
-#
-# RESOURCES
-#   Wikipedia <http://en.wikipedia.org/wiki/Connect6>
-#
-
 require 'board/standard'
 require 'game'
 
 class Connect6 < Rules
 
-  INFO = info( __FILE__ )
+  info :name      => 'Connect6',
+       :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Connect6>']
 
-  class Position < Struct.new( :board, :turn, :lastc, :lastp, :unused_ops )
-    def to_s
-      "Board:\n#{board}\nTurn: #{turn}\nLast: (#{lastc}, #{lastp})"
-    end
-  end
+  position :board, :turn, :lastc, :lastp, :unused_ops
+  players [Piece.black, Piece.white]
 
   @@init_ops = Coords.new( 19, 19 ).map { |c| c.to_s }
 
   def Connect6.init( seed=nil )
     ps = PlayerSet.new( Piece.black, Piece.white, Piece.white, Piece.black )
     Position.new( Board.new( 19, 19 ), ps, nil, :noone, @@init_ops.dup )
-  end
-
-  def Connect6.players
-    [Piece.black,Piece.white]
   end
 
   def Connect6.op?( position, op )

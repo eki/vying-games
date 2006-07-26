@@ -1,36 +1,22 @@
-# NAME
-#   Tic Tac Toe
-#
-# ALIASES
-#   Noughts and Crosses, Noughts and Crosses, X's and O's, Tick Tat Toe,
-#   Tit Tat Toe
-#
-# RESOURCES
-#   Wikipedia <http://en.wikipedia.org/wiki/Tic-tac-toe>
-#
-
 require 'board/standard'
 require 'game'
 
 class TicTacToe < Rules
 
-  INFO = info( __FILE__ )
+  info :name      => 'Tic Tac Toe',
+       :aliases   => ['Noughts and Crosses', 'Naughts and Crosses',
+                      "X's and O's", 'Tick Tat Toe', 'Tit Tat Toe'],
+       :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Tic-tac-toe>']
 
-  class Position < Struct.new( :board, :turn, :lastc, :lastp, :unused_ops )
-    def to_s
-      "Board:\n#{board}\nTurn: #{turn}\nLast: (#{lastc}, #{lastp})"
-    end
-  end
+  position :board, :turn, :lastc, :lastp, :unused_ops
+
+  players [Piece.x, Piece.o]
 
   @@init_ops = Coords.new( 3, 3 ).map { |c| c.to_s }
 
   def TicTacToe.init( seed=nil )
     ps = PlayerSet.new( *players )
     Position.new( Board.new( 3, 3 ), ps, nil, :noone, @@init_ops.dup )
-  end
-
-  def TicTacToe.players
-    [Piece.x,Piece.o]
   end
 
   def TicTacToe.op?( position, op )

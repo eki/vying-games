@@ -1,10 +1,3 @@
-# NAME
-#   Minesweeper
-#
-# RESOURCES
-#   Wikipedia <http://en.wikipedia.org/wiki/Minesweeper_(computer_game)>
-#
-
 require 'board/standard'
 require 'game'
 
@@ -24,13 +17,12 @@ end
 
 class Minesweeper < Rules
 
-  INFO = info( __FILE__ )
+  info :name        => 'Minesweeper',
+       :description => '9x9, 10 bomb Minesweeper'
 
-  class Position < Struct.new( :board, :mines, :seed, :unused_ops, :turn )
-    def to_s
-      "Seed: #{seed}\nBoard:\n#{board}"
-    end
-  end
+  position :board, :mines, :seed, :unused_ops, :turn
+
+  players [Player.one]
 
   @@init_ops = Coords.new( 9, 9 ).map { |c| c.to_s }
 
@@ -41,11 +33,7 @@ class Minesweeper < Rules
     a = (0...81).to_a.sort_by { rand }
     10.times { |i| mines << Coord[a[i]/9,a[i]%9] }
     Position.new( MinesweeperBoard.new( 9, 9 ), mines, seed, @@init_ops.dup,
-                 PlayerSet.new( Player.one ) )
-  end
-
-  def Minesweeper.players
-    [Player.one]
+                 PlayerSet.new( *players ) )
   end
 
   def Minesweeper.op?( position, op )

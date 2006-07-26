@@ -1,28 +1,22 @@
-# NAME
-#   Connect Four
-#
-# ALIASES
-#   Plot Four, The Captain's Mistress
-#
-
 require 'board/standard'
 require 'game'
 
 class ConnectFour < Rules
 
-  INFO = info( __FILE__ )
+  info :name    => 'Connect Four',
+       :aliases => ['Plot Four', 'Connect 4', "The Captain's Mistress"]
 
-  class Position < Struct.new( :board, :turn, :lastc, :lastp, :unused_ops )
-    def to_s
-      "Board:\n#{board}\nTurn: #{turn}\nLast: (#{lastc}, #{lastp})"
-    end
+  position :board, :turn, :lastc, :lastp, :unused_ops
 
+  class Position
     def dup
       d = super
       d.unused_ops = unused_ops.map { |a| a.dup }
       d
     end
   end
+
+  players [Piece.red, Piece.blue]
 
   @@init_ops = Coords.new( 7, 6 ).group_by { |c| c.x }.map do |sa|
     sa.map { |c| c.to_s }
@@ -32,10 +26,6 @@ class ConnectFour < Rules
     ps = PlayerSet.new( *players )
     uo = @@init_ops.map { |a| a.dup }
     Position.new( Board.new( 7, 6 ), ps, nil, :noone, uo )
-  end
-
-  def ConnectFour.players
-    [Piece.red,Piece.blue]
   end
 
   def ConnectFour.op?( position, op )

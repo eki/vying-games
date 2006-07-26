@@ -1,7 +1,3 @@
-# NAME
-#   Othello
-#
-
 require 'board/standard'
 require 'game'
 
@@ -55,16 +51,12 @@ end
 
 class Othello < Rules
 
-  INFO = info( __FILE__ )
+  info :name    => 'Othello',
+       :aliases => ['Reversi']
 
-  class Position < Struct.new( :board, :turn, :occupied, :frontier, :ops_cache )
-    def to_s
-      "Board:\n#{board}\nTurn: #{turn}"
-    end
-  end
+  position :board, :turn, :occupied, :frontier, :ops_cache
 
-  def Othello.frontier( coords )
-  end
+  players [Piece.black, Piece.white]
 
   def Othello.init( seed=nil )
     b = OthelloBoard.new( 8, 8 )
@@ -76,10 +68,6 @@ class Othello < Rules
     frontier = frontier.flatten.select { |c| b[c].nil? }.uniq
 
     Position.new( b, PlayerSet.new( *players ), occupied, frontier, :ns )
-  end
-
-  def Othello.players
-    [Piece.black,Piece.white]
   end
 
   def Othello.op?( position, op )
