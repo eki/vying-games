@@ -9,7 +9,7 @@ class Makyek < Rules
 
   position :board, :turn, :lastc, :wrs, :brs, :ops_cache
 
-  players [Piece.white, Piece.black]
+  players [:white, :black]
 
   def Makyek.init( seed=nil )
     b = Board.new( 8, 8 )
@@ -24,10 +24,10 @@ class Makyek < Rules
            Coord[0,5], Coord[1,5], Coord[2,5], Coord[3,5],
            Coord[4,5], Coord[5,5], Coord[6,5], Coord[7,5]]
     
-    wrs.each { |c| b[c] = Piece.white }
-    brs.each { |c| b[c] = Piece.black }
+    wrs.each { |c| b[c] = :white }
+    brs.each { |c| b[c] = :black }
 
-    ps = PlayerSet.new( *players )
+    ps = players.dup
 
     Position.new( b, ps, nil, wrs, brs, :ns )
   end
@@ -37,7 +37,7 @@ class Makyek < Rules
     sc = Coord[$1]
     ec = Coord[$2]
 
-    rooks = position.turn == Piece.white ? position.wrs : position.brs
+    rooks = position.turn.now == :white ? position.wrs : position.brs
 
     return false unless rooks.include?( sc )
     return false unless d = sc.direction_to( ec )
@@ -59,7 +59,7 @@ class Makyek < Rules
     a = []
     b = position.board
 
-    rooks = position.turn == Piece.white ? position.wrs : position.brs
+    rooks = position.turn.now == :white ? position.wrs : position.brs
 
     rooks.each do |c| 
       [:n,:e,:s,:w].each do |d|
@@ -82,11 +82,11 @@ class Makyek < Rules
     b = pos.board
 
     b.move( sc, ec )
-    rooks = pos.turn == Piece.white ? pos.wrs : pos.brs
+    rooks = pos.turn.now == :white ? pos.wrs : pos.brs
     rooks.delete( sc )
     rooks << ec
 
-    opp = pos.turn == Piece.white ? Piece.black : Piece.white
+    opp = pos.turn.now == :white ? :black : :white
 
     cap = []
 
@@ -113,15 +113,15 @@ class Makyek < Rules
       end
     end
 
-    opp_rooks = pos.turn == Piece.white ? pos.brs : pos.wrs
+    opp_rooks = pos.turn.now == :white ? pos.brs : pos.wrs
     cap.each { |c| b[c] = nil; opp_rooks.delete( c ) }
 
-    pos.turn.next!
+    pos.turn.rotate!
     pos.lastc = ec
     pos.ops_cache = :ns
     return pos if ops( pos )
 
-    pos.turn.next!
+    pos.turn.rotate!
     pos.ops_cache = :ns
     pos
   end
@@ -132,11 +132,11 @@ class Makyek < Rules
   end
 
   def Makyek.winner?( position, player )
-    position.turn != player
+    position.turn.now != player
   end
 
   def Makyek.loser?( position, player )
-    position.turn == player
+    position.turn.now == player
   end
 
   def Makyek.draw?( position )

@@ -1,89 +1,15 @@
-
-class Player
-  attr_reader :name, :short
-
-  def initialize( name, short=nil )
-    @name, @short = name, short || name.downcase[0..0]
-  end
-
-  def eql?( player )
-    name == player.name && short == player.short
-  end
-
-  def ==( player )
-    eql?( player )
-  end
-
-  def hash
-    short.hash ^ name.hash
-    #19 + short.hash * 37 +
-    #     name.hash  * 37
-  end
-
-  def to_s
-    "#{name} (#{short})"
-  end
-
-  def Player.method_missing( method_id, *args )
-    name = method_id.to_s
-    Player.new( name.capitalize, name.downcase[0..0] )
-  end
-end
-
-class PlayerSet
-  attr_reader :players
-
-  def initialize( *p )
-    @players = Array.new( p )
-    @players.freeze
-
-    @current = 0
-  end
-
-  def name
-    players[@current].name
-  end
-
-  def short
-    players[@current].short
-  end
-
-  def eql?( player )
-    name == player.name && short == player.short
-  end
-
-  def ==( player )
-    eql?( player )
-  end
-
-  def hash
-    players[@current].hash
-  end
-
-  def current
-    players[@current]
+class Array
+  def rotate!
+    self << delete_at( 0 ) if size > 0
+    self
   end
 
   def next
-    players[@current+1 < players.length ? @current+1 : 0]
+    self[1] if size > 1
   end
 
-  def next!
-    @current = @current+1 < players.length ? @current+1 : 0
-    self
-  end
-
-  def previous
-    players[@current > 0 ? @current-1 : players.length-1]
-  end
-
-  def previous!
-    @current = @current > 0 ? @current-1 : players.length-1
-    self
-  end
-
-  def to_s
-    current.to_s
+  def now
+    self[0] if size > 0
   end
 end
 

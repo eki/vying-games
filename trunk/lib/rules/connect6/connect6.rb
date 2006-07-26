@@ -7,12 +7,12 @@ class Connect6 < Rules
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Connect6>']
 
   position :board, :turn, :lastc, :lastp, :unused_ops
-  players [Piece.black, Piece.white]
+  players [:black, :white]
 
   @@init_ops = Coords.new( 19, 19 ).map { |c| c.to_s }
 
   def Connect6.init( seed=nil )
-    ps = PlayerSet.new( Piece.black, Piece.white, Piece.white, Piece.black )
+    ps = [:black, :white, :white, :black]
     Position.new( Board.new( 19, 19 ), ps, nil, :noone, @@init_ops.dup )
   end
 
@@ -25,10 +25,10 @@ class Connect6 < Rules
   end
 
   def Connect6.apply( position, op )
-    c, pos, p = Coord[op], position.dup, position.turn.current
+    c, pos, p = Coord[op], position.dup, position.turn.now
     pos.board[c], pos.lastc, pos.lastp = p, c, p
     pos.unused_ops.delete( c.to_s )
-    pos.turn.next!
+    pos.turn.rotate!
     pos
   end
 

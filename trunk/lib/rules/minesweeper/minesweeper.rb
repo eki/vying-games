@@ -22,7 +22,7 @@ class Minesweeper < Rules
 
   position :board, :mines, :seed, :unused_ops, :turn
 
-  players [Player.one]
+  players [:one]
 
   @@init_ops = Coords.new( 9, 9 ).map { |c| c.to_s }
 
@@ -33,7 +33,7 @@ class Minesweeper < Rules
     a = (0...81).to_a.sort_by { rand }
     10.times { |i| mines << Coord[a[i]/9,a[i]%9] }
     Position.new( MinesweeperBoard.new( 9, 9 ), mines, seed, @@init_ops.dup,
-                 PlayerSet.new( *players ) )
+                 players.dup )
   end
 
   def Minesweeper.op?( position, op )
@@ -62,11 +62,11 @@ class Minesweeper < Rules
     Minesweeper.winner?( position ) || Minesweeper.loser?( position )
   end
 
-  def Minesweeper.winner?( position, player=Player.one )
+  def Minesweeper.winner?( position, player=:one )
     position.unused_ops.size == 10
   end
 
-  def Minesweeper.loser?( position, player=Player.one )
+  def Minesweeper.loser?( position, player=:one )
     position.unused_ops.empty?
   end
 

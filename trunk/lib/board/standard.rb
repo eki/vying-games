@@ -1,41 +1,5 @@
 require 'memoize'
 
-class Piece
-  attr_reader :name, :short
-
-  class << self
-    extend Memoizable
-    memoize :new
-  end
-
-  def initialize( name, short )
-    @name, @short = name, short
-  end
-
-  def ==( p )
-    return nil              if p.nil?
-    return short == p.short if p.respond_to? :short
-    return to_s == p.to_s  
-  end
-
-  def eql?( p )
-    short == p.short && name == p.name
-  end
-
-  def hash
-    short.hash ^ name.hash
-  end
-
-  def to_s
-    short
-  end
-
-  def Piece.method_missing( m, *args )
-    name = m.to_s
-    Piece.new( name.capitalize, name.downcase[0..0] )
-  end
-end
-
 class Coord
   attr_reader :x, :y
 
@@ -292,7 +256,7 @@ class Board
     letters = ' '*off + 'abcdefghijklmnopqrstuvwxyz'[0..(w-1)] + ' '*off + "\n"
     coords.column( Coord[0,0] ).inject( letters ) do |s,colc|
       r = coords.row( colc ).inject( '' ) do |rs,c| 
-        rs + (self[c].nil? ? ' ' : self[c].to_s)
+        rs + (self[c].nil? ? ' ' : self[c].to_s[0..0].downcase)
       end
       rh = sprintf( "%*d", off, colc.y+1 )
       re = sprintf( "%*-d", off, colc.y+1 )
@@ -301,7 +265,9 @@ class Board
   end
 
   def to_s_coords( coords )
-    coords.inject( '' ) { |s,c| "#{s}#{self[c].nil? ? ' ' : self[c].to_s}" }
+    coords.inject( '' ) do |s,c| 
+      "#{s}#{self[c].nil? ? ' ' : self[c].to_s[0..0].downcase}"
+    end
   end
 
   def Board.from_s( pieces, s )
@@ -312,10 +278,53 @@ class Board
     w.times do |i|
       h.times do |j|
         c = lines[j+1][(i+rh/2)..(i+rh/2)]
-        pieces.each { |p| b[i,j] = p if c == p.short }
+        pieces.each { |p| b[i,j] = p if c == p.to_s[0..0].downcase }
       end
     end
     b
+  end
+
+  def to_html
+    s = '<table>'
+    rh = '<tr><td><img src="/images/board/empty.png"/></td>'
+    h = 'a'
+    coords.width.times do
+      rh << '<td class="header"><img src="/images/board/letters/'
+      rh << h
+      rh << '.png"/></td>'
+      h.succ!
+    end
+    rh << '<td><img src="/images/board/empty.png"/></td></tr>'
+
+    s << rh << '</tr>'
+
+    last = nil
+    coords.each do |c|
+      s << '</tr><tr>'                    if !last.nil? && last.y != c.y
+
+      if c.x == 0
+        s << '<td><img src="/images/board/numbers/'
+        s << (c.y + 1).to_s
+        s << '.png"/></td>'
+      end
+
+      s << '<td><img src="/images/board/'
+      s << self[c].name.downcase          if self[c].kind_of? Piece
+      s << self[c].to_s.downcase          if !self[c].kind_of? Piece
+      s << 'empty'                        if self[c].nil?
+      s << '.png"/></td>'
+
+      if c.x == coords.width-1
+        s << '<td><img src="/images/board/numbers/'
+        s << (c.y + 1).to_s
+        s << '.png"/></td>'
+      end
+
+      last = c
+    end
+
+    s << rh << '</table>'
+    s
   end
 end
 

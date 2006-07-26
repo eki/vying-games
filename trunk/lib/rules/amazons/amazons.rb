@@ -7,7 +7,7 @@ class Amazons < Rules
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Amazons_(game)>']
 
   position :board, :turn, :lastc, :wqs, :bqs, :ops_cache
-  players [Piece.white, Piece.black]
+  players [:white, :black]
 
   def Amazons.init( seed=nil )
     b = Board.new( 10, 10 )
@@ -15,10 +15,10 @@ class Amazons < Rules
     wqs = [Coord[0,3], Coord[3,0], Coord[6,0], Coord[9,3]]
     bqs = [Coord[0,6], Coord[3,9], Coord[6,9], Coord[9,6]]
     
-    wqs.each { |c| b[c] = Piece.white }
-    bqs.each { |c| b[c] = Piece.black }
+    wqs.each { |c| b[c] = :white }
+    bqs.each { |c| b[c] = :black }
 
-    ps = PlayerSet.new( *players )
+    ps = players.dup
 
     Position.new( b, ps, nil, wqs, bqs, :ns )
   end
@@ -28,7 +28,7 @@ class Amazons < Rules
     sc = Coord[$1]
     ec = Coord[$2]
 
-    queens = position.turn == Piece.white ? position.wqs : position.bqs
+    queens = position.turn.now == :white ? position.wqs : position.bqs
 
     return false unless queens.include?( sc )
     return false unless d = sc.direction_to( ec )
@@ -48,9 +48,9 @@ class Amazons < Rules
     a = []
     b = position.board
 
-    queens = position.turn == Piece.white ? position.wqs : position.bqs
+    queens = position.turn.now == :white ? position.wqs : position.bqs
 
-    if position.lastc.nil? || b[position.lastc] == Piece.arrow
+    if position.lastc.nil? || b[position.lastc] == :arrow
       queens.each do |c| 
         [:n,:e,:s,:w,:ne,:nw,:se,:sw].each do |d|
           ic = c
@@ -78,14 +78,14 @@ class Amazons < Rules
 
     pos = position.dup
 
-    if pos.lastc.nil? || pos.board[pos.lastc] == Piece.arrow
+    if pos.lastc.nil? || pos.board[pos.lastc] == :arrow
       pos.board.move( sc, ec )
-      queens = pos.turn == Piece.white ? pos.wqs : pos.bqs
+      queens = pos.turn.now == :white ? pos.wqs : pos.bqs
       queens.delete( sc )
       queens << ec
     else
-      pos.board[ec] = Piece.arrow
-      pos.turn.next!
+      pos.board[ec] = :arrow
+      pos.turn.rotate!
     end
 
     pos.lastc = ec
@@ -98,11 +98,11 @@ class Amazons < Rules
   end
 
   def Amazons.winner?( position, player )
-    position.turn != player
+    position.turn.now != player
   end
 
   def Amazons.loser?( position, player )
-    position.turn == player
+    position.turn.now == player
   end
 
   def Amazons.draw?( position )

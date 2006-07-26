@@ -16,14 +16,14 @@ class ConnectFour < Rules
     end
   end
 
-  players [Piece.red, Piece.blue]
+  players [:red, :blue]
 
   @@init_ops = Coords.new( 7, 6 ).group_by { |c| c.x }.map do |sa|
     sa.map { |c| c.to_s }
   end
 
   def ConnectFour.init( seed=nil )
-    ps = PlayerSet.new( *players )
+    ps = players.dup
     uo = @@init_ops.map { |a| a.dup }
     Position.new( Board.new( 7, 6 ), ps, nil, :noone, uo )
   end
@@ -38,11 +38,11 @@ class ConnectFour < Rules
   end
 
   def ConnectFour.apply( position, op )
-    c, pos, p = Coord[op], position.dup, position.turn.current
+    c, pos, p = Coord[op], position.dup, position.turn.now
     pos.board[c], pos.lastc, pos.lastp = p, c, p
     pos.unused_ops.each { |a| a.delete( c.to_s ) }
     pos.unused_ops.delete( [] )
-    pos.turn.next!
+    pos.turn.rotate!
     pos
   end
 

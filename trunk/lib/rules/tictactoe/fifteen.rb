@@ -42,20 +42,20 @@ class Fifteen < Rules
 
   position :unused, :a_list, :b_list, :turn
 
-  players [Player.a, Player.b]
+  players [:a, :b]
 
   def Fifteen.init( seed=nil )
-    Position.new( (1..9).to_a, [], [], PlayerSet.new( *players ) )
+    Position.new( (1..9).to_a, [], [], players.dup )
   end
 
   def Fifteen.op?( position, op )
     op.to_s =~ /(a|b)(\d)/
-    position.turn.short == $1 && position.unused.include?( $2.to_i )
+    position.turn.now.to_s == $1 && position.unused.include?( $2.to_i )
   end
 
   def Fifteen.ops( position )
     return nil if final?( position )
-    a = position.unused.map { |n| "#{position.turn.short}#{n}" }
+    a = position.unused.map { |n| "#{position.turn.now}#{n}" }
     a == [] ? nil : a
   end
 
@@ -63,9 +63,9 @@ class Fifteen < Rules
     op.to_s =~ /(a|b)(\d)/
     pos, n = position.dup, $2.to_i
     pos.unused.delete( n )
-    pos.a_list << n if position.turn == Player.a
-    pos.b_list << n if position.turn == Player.b
-    pos.turn.next!
+    pos.a_list << n if position.turn.now == :a
+    pos.b_list << n if position.turn.now == :b
+    pos.turn.rotate!
     pos
   end
 
@@ -85,14 +85,14 @@ class Fifteen < Rules
   end
 
   def Fifteen.winner?( position, player )
-    return has_15?( position.a_list ) if player == Player.a
-    return has_15?( position.b_list ) if player == Player.b
+    return has_15?( position.a_list ) if player == :a
+    return has_15?( position.b_list ) if player == :b
   end
 
   def Fifteen.loser?( position, player )
     p = position
-    return !draw?( p ) && !has_15?( p.a_list ) if player == Player.a
-    return !draw?( p ) && !has_15?( p.b_list ) if player == Player.b
+    return !draw?( p ) && !has_15?( p.a_list ) if player == :a
+    return !draw?( p ) && !has_15?( p.b_list ) if player == :b
   end
 
   def Fifteen.draw?( position )

@@ -10,12 +10,12 @@ class TicTacToe < Rules
 
   position :board, :turn, :lastc, :lastp, :unused_ops
 
-  players [Piece.x, Piece.o]
+  players [:x, :o]
 
   @@init_ops = Coords.new( 3, 3 ).map { |c| c.to_s }
 
   def TicTacToe.init( seed=nil )
-    ps = PlayerSet.new( *players )
+    ps = players.dup
     Position.new( Board.new( 3, 3 ), ps, nil, :noone, @@init_ops.dup )
   end
 
@@ -28,10 +28,10 @@ class TicTacToe < Rules
   end
 
   def TicTacToe.apply( position, op )
-    c, pos, p = Coord[op], position.dup, position.turn.current
+    c, pos, p = Coord[op], position.dup, position.turn.now
     pos.board[c], pos.lastc, pos.lastp = p, c, p
     pos.unused_ops.delete( c.to_s )
-    pos.turn.next!
+    pos.turn.rotate!
     pos
   end
 
