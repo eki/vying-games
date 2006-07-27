@@ -48,12 +48,14 @@ class Fifteen < Rules
     Position.new( (1..9).to_a, [], [], players.dup )
   end
 
-  def Fifteen.op?( position, op )
+  def Fifteen.op?( position, op, player=nil )
+    return false unless player.nil? || has_ops( position ).include?( player )
     op.to_s =~ /(a|b)(\d)/
     position.turn.now.to_s == $1 && position.unused.include?( $2.to_i )
   end
 
-  def Fifteen.ops( position )
+  def Fifteen.ops( position, player=nil )
+    return false unless player.nil? || has_ops( position ).include?( player )
     return nil if final?( position )
     a = position.unused.map { |n| "#{position.turn.now}#{n}" }
     a == [] ? nil : a

@@ -19,11 +19,13 @@ class TicTacToe < Rules
     Position.new( Board.new( 3, 3 ), ps, nil, :noone, @@init_ops.dup )
   end
 
-  def TicTacToe.op?( position, op )
+  def TicTacToe.op?( position, op, player=nil )
+    return false unless player.nil? || has_ops( position ).include?( player )
     position.unused_ops.include?( op.to_s )
   end
 
-  def TicTacToe.ops( position )
+  def TicTacToe.ops( position, player=nil )
+    return false unless player.nil? || has_ops( position ).include?( player )
     final?( position ) || position.unused_ops == [] ? nil : position.unused_ops
   end
 

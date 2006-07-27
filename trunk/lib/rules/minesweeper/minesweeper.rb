@@ -36,11 +36,11 @@ class Minesweeper < Rules
                  players.dup )
   end
 
-  def Minesweeper.op?( position, op )
+  def Minesweeper.op?( position, op, player=nil )
     position.unused_ops.include?( op.to_s )
   end
 
-  def Minesweeper.ops( position )
+  def Minesweeper.ops( position, player=nil )
     final?( position ) || position.unused_ops == [] ? nil : position.unused_ops
   end
 

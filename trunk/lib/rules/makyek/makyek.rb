@@ -32,8 +32,10 @@ class Makyek < Rules
     Position.new( b, ps, nil, wrs, brs, :ns )
   end
 
-  def Makyek.op?( position, op )
+  def Makyek.op?( position, op, player=nil )
+    return false unless player.nil? || has_ops( position ).include?( player )
     return false unless op.to_s =~ /(\w\d+)(\w\d+)/
+
     sc = Coord[$1]
     ec = Coord[$2]
 
@@ -52,7 +54,9 @@ class Makyek < Rules
     return true
   end
 
-  def Makyek.ops( position )
+  def Makyek.ops( position, player=nil )
+    return false              unless player.nil? || 
+                                     has_ops( position ).include?( player )
     return nil                if final?( position )
     return position.ops_cache if position.ops_cache != :ns
 

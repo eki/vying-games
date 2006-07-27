@@ -70,11 +70,13 @@ class Othello < Rules
     Position.new( b, players.dup, occupied, frontier, :ns )
   end
 
-  def Othello.op?( position, op )
+  def Othello.op?( position, op, player=nil )
+    return false unless player.nil? || has_ops( position ).include?( player )
     position.board.valid?( Coord[op], position.turn.now )
   end
 
-  def Othello.ops( position )
+  def Othello.ops( position, player=nil )
+    return false unless player.nil? || has_ops( position ).include?( player )
     return position.ops_cache if position.ops_cache != :ns
     b, bp, f = position.board, position.turn.now, position.frontier
     a = f.select { |c| b.valid?( c, bp ) }.map { |c| c.to_s }

@@ -23,8 +23,10 @@ class Amazons < Rules
     Position.new( b, ps, nil, wqs, bqs, :ns )
   end
 
-  def Amazons.op?( position, op )
+  def Amazons.op?( position, op, player=nil )
+    return false unless player.nil? || has_ops( position ).include?( player )
     return false unless op.to_s =~ /(\w\d+)(\w\d+)/
+
     sc = Coord[$1]
     ec = Coord[$2]
 
@@ -42,7 +44,8 @@ class Amazons < Rules
     return true
   end
 
-  def Amazons.ops( position )
+  def Amazons.ops( position, player=nil )
+    return [] unless player.nil? || has_ops( position ).include?( player )
     return position.ops_cache if position.ops_cache != :ns
 
     a = []

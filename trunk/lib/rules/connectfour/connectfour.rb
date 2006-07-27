@@ -28,11 +28,13 @@ class ConnectFour < Rules
     Position.new( Board.new( 7, 6 ), ps, nil, :noone, uo )
   end
 
-  def ConnectFour.op?( position, op )
+  def ConnectFour.op?( position, op, player=nil )
+    return false unless player.nil? || has_ops( position ).include?( player )
     position.unused_ops.map { |a| a.last }.include?( op.to_s )
   end
 
-  def ConnectFour.ops( position )
+  def ConnectFour.ops( position, player=nil )
+    return false unless player.nil? || has_ops( position ).include?( player )
     tmp = position.unused_ops.map { |a| a.last }
     (final?( position ) || tmp == []) ? nil : tmp
   end

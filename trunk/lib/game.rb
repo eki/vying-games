@@ -15,7 +15,7 @@ end
 
 class PositionStruct < Struct
   def initialize_copy( original )
-    nd = [Symbol, NilClass, Fixnum]
+    nd = [Symbol, NilClass, Fixnum, TrueClass, FalseClass]
     original.each_pair { |k,v| self[k] = (nd.include?( v.class ) ? v : v.dup) }
   end
 
@@ -58,6 +58,11 @@ class Rules
     return  0 if draw?( position )
     return  1 if winner?( position, player )
     return -1 if loser?( position, player )
+  end
+
+  def Rules.has_ops( position )
+    return [position.turn.now] if position.respond_to? :turn
+    []
   end
 
   def Rules.find( path=$: )

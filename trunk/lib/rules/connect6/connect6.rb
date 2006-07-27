@@ -16,11 +16,13 @@ class Connect6 < Rules
     Position.new( Board.new( 19, 19 ), ps, nil, :noone, @@init_ops.dup )
   end
 
-  def Connect6.op?( position, op )
+  def Connect6.op?( position, op, player=nil )
+    return false unless player.nil? || has_ops( position ).include?( player )
     position.unused_ops.include?( op.to_s )
   end
 
-  def Connect6.ops( position )
+  def Connect6.ops( position, player=nil )
+    return false unless player.nil? || has_ops( position ).include?( player )
     final?( position ) || position.unused_ops == [] ? nil : position.unused_ops
   end
 
