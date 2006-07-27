@@ -50,11 +50,11 @@ if gui == 'console'
       puts game
       puts "Ops: #{game.ops}"
       print "Select: "
-      op = $stdin.gets.chomp
+      op = $stdin.gets.chomp.intern
       until game.op?( op )
         puts "'#{op}' not a valid op!"
         print "Select: "
-        op = $stdin.gets.chomp
+        op = $stdin.gets.chomp.intern
       end
       op
     end
@@ -66,7 +66,14 @@ if gui == 'console'
     bots = {}
     p2b.each_pair { |p,b| bots[p] = b.new( games.last, p ) }
     until games.last.final?
-      bots[games.last.turn.now].select!
+      games.last.has_ops.each do |p|
+        if p == :random 
+          g, ops = games.last, games.last.ops
+          g << ops[rand(ops.size)]
+        else
+          bots[p].select!
+        end
+      end
     end
   end
   summarize( games )
