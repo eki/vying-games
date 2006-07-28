@@ -212,6 +212,7 @@ class Board
   end
 
   def ==( o )
+    o.respond_to?( :board ) && o.respond_to?( :coords ) &&
     board == o.board && coords == o.coords
   end
 
