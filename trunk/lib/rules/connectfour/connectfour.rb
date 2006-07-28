@@ -7,6 +7,7 @@ class ConnectFour < Rules
        :aliases => ['Plot Four', 'Connect 4', "The Captain's Mistress"]
 
   position :board, :turn, :lastc, :lastp, :unused_ops
+  display  :board
 
   class Position
     def dup

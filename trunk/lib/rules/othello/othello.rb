@@ -55,6 +55,7 @@ class Othello < Rules
        :aliases => ['Reversi']
 
   position :board, :turn, :occupied, :frontier, :ops_cache
+  display  :board
 
   players [:black, :white]
 

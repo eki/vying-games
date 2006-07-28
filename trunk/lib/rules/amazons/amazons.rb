@@ -7,6 +7,7 @@ class Amazons < Rules
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Amazons_(game)>']
 
   position :board, :turn, :lastc, :wqs, :bqs, :ops_cache
+  display  :board
   players [:white, :black]
 
   def Amazons.init( seed=nil )

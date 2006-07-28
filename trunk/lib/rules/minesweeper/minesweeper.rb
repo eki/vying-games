@@ -21,6 +21,8 @@ class Minesweeper < Rules
        :description => '9x9, 10 bomb Minesweeper'
 
   position :board, :mines, :seed, :unused_ops, :turn
+  display  :board, :seed
+  censor   :one => [:mines]
 
   players [:one]
 

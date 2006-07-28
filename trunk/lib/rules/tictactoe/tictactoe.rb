@@ -9,6 +9,7 @@ class TicTacToe < Rules
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Tic-tac-toe>']
 
   position :board, :turn, :lastc, :lastp, :unused_ops
+  display  :board
 
   players [:x, :o]
 

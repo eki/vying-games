@@ -8,6 +8,7 @@ class Makyek < Rules
        :aliases   => ['Makyek']
 
   position :board, :turn, :lastc, :wrs, :brs, :ops_cache
+  display  :board
 
   players [:white, :black]
 

@@ -41,6 +41,7 @@ class Fifteen < Rules
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Tic-tac-toe>']
 
   position :unused, :a_list, :b_list, :turn
+  display  :unused, :a_list, :b_list
 
   players [:a, :b]
 

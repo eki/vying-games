@@ -6,6 +6,7 @@ class Pig < Rules
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Pig_(dice)>']
 
   position :total, :score, :turn, :rolling
+  display  :total, :score
 
   players [:a, :b]
 

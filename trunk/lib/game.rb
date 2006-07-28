@@ -22,6 +22,8 @@ class PositionStruct < Struct
   def to_s
     s = ''
     each_pair do |n,v|
+      next if v == :hidden
+      next if !self.class::display.include?( n )
       if (vs = v.to_s) =~ /\n/
         s << "#{n.to_s.capitalize!}:\n#{vs}\n"
       else
@@ -35,16 +37,38 @@ end
 class Rules
   @@info = {}
   @@players = {}
+  @@censored = {}
 
   def Rules.info( i={} )
     class_eval( "@@info[self] = i" )
     class << self; def info; @@info[self]; end; end
   end
 
-  def Rules.position( *symbols )
-    class_eval( "Position = PositionStruct.new( *symbols )" )
+  def Rules.position( *fields )
+    class_eval %q{ 
+      Position = PositionStruct.new( *fields )
+      class Position
+        class << self; attr_accessor :display; end
+      end
+      Position.display = fields
+    }
     class << self
       undef_method :position
+    end
+  end
+
+  def Rules.display( *fields )
+    class_eval %q{ self::Position.display = fields }
+  end
+
+  def Rules.censor( h={}, p=nil )
+    class_eval( "@@censored[self] = h" )
+    class << self
+      def censor( position, player )
+        pos = position.dup
+        @@censored[self][player].each { |f| pos[f] = :hidden }
+        pos
+      end
     end
   end
 

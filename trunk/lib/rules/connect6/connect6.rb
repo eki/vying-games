@@ -7,6 +7,7 @@ class Connect6 < Rules
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Connect6>']
 
   position :board, :turn, :lastc, :lastp, :unused_ops
+  display  :board
   players [:black, :white]
 
   @@init_ops = Coords.new( 19, 19 ).map { |c| c.to_s }
