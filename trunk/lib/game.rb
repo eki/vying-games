@@ -14,24 +14,6 @@ class Array
 end
 
 class PositionStruct < Struct
-  def initialize_copy( original )
-    nd = [Symbol, NilClass, Fixnum, TrueClass, FalseClass]
-    original.each_pair { |k,v| self[k] = (nd.include?( v.class ) ? v : v.dup) }
-  end
-
-  def to_s
-    s = ''
-    each_pair do |n,v|
-      next if v == :hidden
-      next if !self.class::display.include?( n )
-      if (vs = v.to_s) =~ /\n/
-        s << "#{n.to_s.capitalize!}:\n#{vs}\n"
-      else
-        s << "#{n.to_s.capitalize!}: #{vs}\n"
-      end
-    end
-    s
-  end
 end
 
 class Rules
@@ -39,33 +21,38 @@ class Rules
   @@players = {}
   @@censored = {}
 
+  def initialize_copy( original )
+    nd = [Symbol, NilClass, Fixnum, TrueClass, FalseClass]
+    instance_variables.each do |iv|
+      v = instance_variable_get( iv )
+      if !nd.include?( v.class )
+        instance_variable_set( iv, v.dup )
+      end
+    end
+  end
+
+  def eql?( o )
+    return false if instance_variables != o.instance_variables
+    instance_variables.each do |iv|
+      return false if instance_variable_get(iv) != o.instance_variable_get(iv)
+    end
+    true
+  end
+
+  def ==( o )
+    eql?( o )
+  end
+
   def Rules.info( i={} )
     class_eval( "@@info[self] = i" )
     class << self; def info; @@info[self]; end; end
   end
 
-  def Rules.position( *fields )
-    class_eval %q{ 
-      Position = PositionStruct.new( *fields )
-      class Position
-        class << self; attr_accessor :display; end
-      end
-      Position.display = fields
-    }
-    class << self
-      undef_method :position
-    end
-  end
-
-  def Rules.display( *fields )
-    class_eval %q{ self::Position.display = fields }
-  end
-
   def Rules.censor( h={}, p=nil )
     class_eval( "@@censored[self] = h" )
     class << self
-      def censor( position, player )
-        pos = position.dup
+      def censor( player )
+        pos = self.dup
         @@censored[self][player].each { |f| pos[f] = :hidden }
         pos
       end
@@ -78,15 +65,23 @@ class Rules
     p
   end
 
-  def Rules.score( position, player )
-    return  0 if draw?( position )
-    return  1 if winner?( position, player )
-    return -1 if loser?( position, player )
+  def players
+    @@players[self.class]
   end
 
-  def Rules.has_ops( position )
-    return [position.turn.now] if position.respond_to? :turn
+  def score( player )
+    return  0 if draw?
+    return  1 if winner?( player )
+    return -1 if loser?( player )
+  end
+
+  def has_ops
+    return [turn.now] if respond_to? :turn
     []
+  end
+
+  def apply( op )
+    self.dup.apply!( op )
   end
 
   def Rules.find( path=$: )
@@ -111,7 +106,6 @@ class Rules
   def Rules.list
     @@rules_list
   end
-
 end
 
 class Bot
@@ -176,15 +170,13 @@ class Game
   attr_reader :rules, :history, :sequence
 
   def initialize( rules, seed=nil )
-    @rules, @history, @sequence = rules, [rules.init( seed )], []
+    @rules, @history, @sequence = rules, [rules.new( seed )], []
     yield self if block_given?
   end
 
   def method_missing( method_id, *args )
     if history.last.respond_to?( method_id )
-      return history.last.send( method_id )
-    elsif rules.respond_to?( method_id )
-      return rules.send( method_id, history.last, *args )
+      return history.last.send( method_id, *args )
     end
     super.method_missing( method_id, *args )
   end

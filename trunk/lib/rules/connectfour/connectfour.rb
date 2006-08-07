@@ -6,15 +6,11 @@ class ConnectFour < Rules
   info :name    => 'Connect Four',
        :aliases => ['Plot Four', 'Connect 4', "The Captain's Mistress"]
 
-  position :board, :turn, :lastc, :lastp, :unused_ops
-  display  :board
+  attr_reader :board, :turn, :lastc, :lastp, :unused_ops
 
-  class Position
-    def dup
-      d = super
-      d.unused_ops = unused_ops.map { |a| a.dup }
-      d
-    end
+  def initialize_copy( original )
+    super
+    @unused_ops = original.unused_ops.map { |a| a.dup }
   end
 
   players [:red, :blue]
@@ -23,65 +19,59 @@ class ConnectFour < Rules
     sa.map { |c| c.to_s }
   end
 
-  def ConnectFour.init( seed=nil )
-    ps = players.dup
-    uo = @@init_ops.map { |a| a.dup }
-    Position.new( Board.new( 7, 6 ), ps, nil, :noone, uo )
+  def initialize( seed=nil )
+    @board = Board.new( 7, 6 )
+    @lastc, @lastp = nil, :noone
+    @turn = players.dup
+    @unused_ops = @@init_ops.map { |a| a.dup }
   end
 
-  def ConnectFour.op?( position, op, player=nil )
-    return false unless player.nil? || has_ops( position ).include?( player )
-    position.unused_ops.map { |a| a.last }.include?( op.to_s )
+  def op?( op, player=nil )
+    return false unless player.nil? || has_ops.include?( player )
+    unused_ops.map { |a| a.last }.include?( op.to_s )
   end
 
-  def ConnectFour.ops( position, player=nil )
-    return false unless player.nil? || has_ops( position ).include?( player )
-    tmp = position.unused_ops.map { |a| a.last }
-    (final?( position ) || tmp == []) ? nil : tmp
+  def ops( player=nil )
+    return false unless player.nil? || has_ops.include?( player )
+    (final? || (tmp = unused_ops.map { |a| a.last }) == []) ? nil : tmp
   end
 
-  def ConnectFour.apply( position, op )
-    c, pos, p = Coord[op], position.dup, position.turn.now
-    pos.board[c], pos.lastc, pos.lastp = p, c, p
-    pos.unused_ops.each { |a| a.delete( c.to_s ) }
-    pos.unused_ops.delete( [] )
-    pos.turn.rotate!
-    pos
+  def apply!( op )
+    c, p = Coord[op], turn.now
+    board[c], @lastc, @lastp = p, c, p
+    unused_ops.each { |a| a.delete( c.to_s ) }
+    unused_ops.delete( [] )
+    turn.rotate!
+    self
   end
 
-  def ConnectFour.final?( position )
-    return false if position.lastc.nil?
-    return true  if position.unused_ops.empty?
+  def final?
+    return false if lastc.nil?
+    return true  if unused_ops.empty?
 
-    b, lc, lp = position.board, position.lastc, position.lastp
-
-    b.each_from( lc, [:e,:w] ) { |p| p == lp } >= 3 ||
-    b.each_from( lc, [:n,:s] ) { |p| p == lp } >= 3 ||
-    b.each_from( lc, [:ne,:sw] ) { |p| p == lp } >= 3 ||
-    b.each_from( lc, [:nw,:se] ) { |p| p == lp } >= 3
+    board.each_from( lastc, [:e,:w] ) { |p| p == lastp } >= 3 ||
+    board.each_from( lastc, [:n,:s] ) { |p| p == lastp } >= 3 ||
+    board.each_from( lastc, [:ne,:sw] ) { |p| p == lastp } >= 3 ||
+    board.each_from( lastc, [:nw,:se] ) { |p| p == lastp } >= 3
   end
 
-  def ConnectFour.winner?( position, player )
-    b, lc, lp = position.board, position.lastc, position.lastp
-
-    b.each_from( lc, [:e,:w] ) { |p| p == player } >= 3 ||
-    b.each_from( lc, [:n,:s] ) { |p| p == player } >= 3 ||
-    b.each_from( lc, [:ne,:sw] ) { |p| p == player } >= 3 ||
-    b.each_from( lc, [:nw,:se] ) { |p| p == player } >= 3
+  def winner?( player )
+    board.each_from( lastc, [:e,:w] ) { |p| p == player } >= 3 ||
+    board.each_from( lastc, [:n,:s] ) { |p| p == player } >= 3 ||
+    board.each_from( lastc, [:ne,:sw] ) { |p| p == player } >= 3 ||
+    board.each_from( lastc, [:nw,:se] ) { |p| p == player } >= 3
   end
 
-  def ConnectFour.loser?( position, player )
-    !draw?( position ) && player != position.lastp
+  def loser?( player )
+    !draw? && player != lastp
   end
 
-  def ConnectFour.draw?( position )
-    b, lc, lp = position.board, position.lastc, position.lastp
-
-    b.count( nil ) == 0 &&
-    b.each_from( lc, [:e,:w] ) { |p| p == lp } < 3 &&
-    b.each_from( lc, [:n,:s] ) { |p| p == lp } < 3 &&
-    b.each_from( lc, [:ne,:sw] ) { |p| p == lp } < 3 &&
-    b.each_from( lc, [:nw,:se] ) { |p| p == lp } < 3
+  def draw?
+    board.count( nil ) == 0 &&
+    board.each_from( lastc, [:e,:w] ) { |p| p == lastp } < 3 &&
+    board.each_from( lastc, [:n,:s] ) { |p| p == lastp } < 3 &&
+    board.each_from( lastc, [:ne,:sw] ) { |p| p == lastp } < 3 &&
+    board.each_from( lastc, [:nw,:se] ) { |p| p == lastp } < 3
   end
 end
 

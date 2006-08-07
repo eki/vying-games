@@ -54,72 +54,72 @@ class Othello < Rules
   info :name    => 'Othello',
        :aliases => ['Reversi']
 
-  position :board, :turn, :occupied, :frontier, :ops_cache
-  display  :board
+  attr_reader :board, :turn, :occupied, :frontier, :ops_cache
 
   players [:black, :white]
 
-  def Othello.init( seed=nil )
-    b = OthelloBoard.new( 8, 8 )
-    b[3,3] = b[4,4] = :white
-    b[3,4] = b[4,3] = :black
+  def initialize( seed=nil )
+    @board = OthelloBoard.new( 8, 8 )
+    board[3,3] = board[4,4] = :white
+    board[3,4] = board[4,3] = :black
 
-    occupied = [Coord[3,3], Coord[4,4], Coord[3,4], Coord[4,3]]
-    frontier = occupied.map { |c| b.coords.neighbors( c ) }
-    frontier = frontier.flatten.select { |c| b[c].nil? }.uniq
+    @occupied = [Coord[3,3], Coord[4,4], Coord[3,4], Coord[4,3]]
+    @frontier = occupied.map { |c| board.coords.neighbors( c ) }
+    @frontier = @frontier.flatten.select { |c| board[c].nil? }.uniq
 
-    Position.new( b, players.dup, occupied, frontier, :ns )
+    @ops_cache = :ns
+
+    @turn = players.dup
   end
 
-  def Othello.op?( position, op, player=nil )
-    return false unless player.nil? || has_ops( position ).include?( player )
-    position.board.valid?( Coord[op], position.turn.now )
+  def op?( op, player=nil )
+    return false unless player.nil? || has_ops.include?( player )
+    board.valid?( Coord[op], turn.now )
   end
 
-  def Othello.ops( position, player=nil )
-    return false unless player.nil? || has_ops( position ).include?( player )
-    return position.ops_cache if position.ops_cache != :ns
-    b, bp, f = position.board, position.turn.now, position.frontier
-    a = f.select { |c| b.valid?( c, bp ) }.map { |c| c.to_s }
-    position.ops_cache = (a == [] ? nil : a)
+  def ops( player=nil )
+    return false unless player.nil? || has_ops.include?( player )
+    return ops_cache if ops_cache != :ns
+    a = frontier.select { |c| board.valid?( c, turn.now ) }.map { |c| c.to_s }
+    ops_cache = (a == [] ? nil : a)
   end
 
-  def Othello.apply( position, op )
-    pos = position.dup
-    b, c = pos.board, Coord[op]
-    b.place( c, pos.turn.now )
+  def apply!( op )
+    c = Coord[op]
+    board.place( c, turn.now )
 
-    pos.occupied << c
+    occupied << c
 
-    pos.frontier += b.coords.neighbors( c ).select { |nc| b[nc].nil? }
-    pos.frontier.uniq!
-    pos.frontier.delete( c )
+    @frontier += board.coords.neighbors( c ).select { |nc| board[nc].nil? }
+    frontier.uniq!
+    frontier.delete( c )
 
-    pos.turn.rotate!
-    pos.ops_cache = :ns
-    return pos if ops( pos )
+    turn.rotate!
+    @ops_cache = :ns
+    return self if ops
 
-    pos.turn.rotate!
-    pos.ops_cache = :ns
-    pos
+    turn.rotate!
+    ops_cache = :ns
+
+    self
   end
 
-  def Othello.final?( position )
-    !ops( position )
+  def final?
+    !ops
   end
 
-  def Othello.winner?( position, player )
-    opp = player == Player.black ? Player.white : Player.black
-    position.board.count( player ) > position.board.count( opp )
+  def winner?( player )
+    opp = player == :black ? :white : :black
+    board.count( player ) > board.count( opp )
   end
 
-  def Othello.loser?( position, player )
-    opp = player == Player.black ? Player.white : Player.black
-    position.board.count( player ) < position.board.count( opp )
+  def loser?( player )
+    opp = player == :black ? :white : :black
+    board.count( player ) < board.count( opp )
   end
 
-  def Othello.draw?( position )
-    position.board.count( Player.white ) == position.board.count( Player.black )
+  def draw?
+    board.count( :white ) == board.count( :black )
   end
 end
 

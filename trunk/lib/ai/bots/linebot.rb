@@ -9,12 +9,12 @@ class LineBot < Bot
 
     opps = game.players.select { |p| p != player }
 
-    p = player.short
+    p = player.to_s[0..0].downcase
 
     @patterns = { /(#{p}+)/ => 2 }
 
     opps.each do |opp|
-      o = opp.short
+      o = opp.to_s[0..0].downcase
       @patterns[/(#{o}+)#{p}/] = 3
     end
   end

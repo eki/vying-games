@@ -10,8 +10,8 @@ class TestConnectFour < Test::Unit::TestCase
   end
 
   def test_dup
-    pos = ConnectFour.init
-    pos2 = ConnectFour.apply( pos, :a6 )
+    pos = ConnectFour.new
+    pos2 = pos.apply( :a6 )
     assert_not_equal( pos.unused_ops, pos2.unused_ops )
   end
 

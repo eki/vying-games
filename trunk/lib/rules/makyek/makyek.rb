@@ -7,147 +7,141 @@ class Makyek < Rules
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Mak-yek>'],
        :aliases   => ['Makyek']
 
-  position :board, :turn, :lastc, :wrs, :brs, :ops_cache
-  display  :board
+  attr_reader :board, :turn, :lastc, :wrs, :brs, :ops_cache
 
   players [:white, :black]
 
-  def Makyek.init( seed=nil )
-    b = Board.new( 8, 8 )
+  def initialize( seed=nil )
+    @board = Board.new( 8, 8 )
 
-    wrs = [Coord[0,0], Coord[1,0], Coord[2,0], Coord[3,0],
-           Coord[4,0], Coord[5,0], Coord[6,0], Coord[7,0],
-           Coord[0,2], Coord[1,2], Coord[2,2], Coord[3,2],
-           Coord[4,2], Coord[5,2], Coord[6,2], Coord[7,2]]
+    @wrs = [Coord[0,0], Coord[1,0], Coord[2,0], Coord[3,0],
+            Coord[4,0], Coord[5,0], Coord[6,0], Coord[7,0],
+            Coord[0,2], Coord[1,2], Coord[2,2], Coord[3,2],
+            Coord[4,2], Coord[5,2], Coord[6,2], Coord[7,2]]
     
-    brs = [Coord[0,7], Coord[1,7], Coord[2,7], Coord[3,7],
-           Coord[4,7], Coord[5,7], Coord[6,7], Coord[7,7],
-           Coord[0,5], Coord[1,5], Coord[2,5], Coord[3,5],
-           Coord[4,5], Coord[5,5], Coord[6,5], Coord[7,5]]
+    @brs = [Coord[0,7], Coord[1,7], Coord[2,7], Coord[3,7],
+            Coord[4,7], Coord[5,7], Coord[6,7], Coord[7,7],
+            Coord[0,5], Coord[1,5], Coord[2,5], Coord[3,5],
+            Coord[4,5], Coord[5,5], Coord[6,5], Coord[7,5]]
     
-    wrs.each { |c| b[c] = :white }
-    brs.each { |c| b[c] = :black }
+    wrs.each { |c| board[c] = :white }
+    brs.each { |c| board[c] = :black }
 
-    ps = players.dup
+    @turn = players.dup
 
-    Position.new( b, ps, nil, wrs, brs, :ns )
+    @lastc = nil
+    @ops_cache = :ns
   end
 
-  def Makyek.op?( position, op, player=nil )
-    return false unless player.nil? || has_ops( position ).include?( player )
+  def op?( op, player=nil )
+    return false unless player.nil? || has_ops.include?( player )
     return false unless op.to_s =~ /(\w\d+)(\w\d+)/
 
     sc = Coord[$1]
     ec = Coord[$2]
 
-    rooks = position.turn.now == :white ? position.wrs : position.brs
+    rooks = turn.now == :white ? wrs : brs
 
     return false unless rooks.include?( sc )
     return false unless d = sc.direction_to( ec )
     return false unless [:n,:s,:e,:w].include?( d )
 
     ic = sc
-    while (ic = position.board.coords.next( ic, d ))
-      return false if !position.board[ic].nil?
+    while (ic = board.coords.next( ic, d ))
+      return false if !board[ic].nil?
       break        if ic == ec
     end
 
     return true
   end
 
-  def Makyek.ops( position, player=nil )
-    return false              unless player.nil? || 
-                                     has_ops( position ).include?( player )
-    return nil                if final?( position )
-    return position.ops_cache if position.ops_cache != :ns
+  def ops( player=nil )
+    return false     unless player.nil? || has_ops.include?( player )
+    return nil       if final?
+    return ops_cache if ops_cache != :ns
 
     a = []
-    b = position.board
 
-    rooks = position.turn.now == :white ? position.wrs : position.brs
+    rooks = turn.now == :white ? wrs : brs
 
     rooks.each do |c| 
       [:n,:e,:s,:w].each do |d|
         ic = c
-        while (ic = b.coords.next( ic, d ))
-          b[ic].nil? ? a << "#{c}#{ic}" : break;
+        while (ic = board.coords.next( ic, d ))
+          board[ic].nil? ? a << "#{c}#{ic}" : break;
         end
       end
     end
 
-    position.ops_cache = a == [] ? nil : a
+    ops_cache = a == [] ? nil : a
   end
 
-  def Makyek.apply( position, op )
+  def apply!( op )
     op.to_s =~ /(\w\d+)(\w\d+)/
     sc = Coord[$1]
     ec = Coord[$2]
 
-    pos = position.dup
-    b = pos.board
-
-    b.move( sc, ec )
-    rooks = pos.turn.now == :white ? pos.wrs : pos.brs
+    board.move( sc, ec )
+    rooks = turn.now == :white ? wrs : brs
     rooks.delete( sc )
     rooks << ec
 
-    opp = pos.turn.now == :white ? :black : :white
+    opp = turn.now == :white ? :black : :white
 
     cap = []
 
     # Intervention capture
-    if b.coords.neighbors_nil( ec, [:n,:s] ).all? { |c| b[c] == opp }
-      cap << b.coords.next( ec, :n ) << b.coords.next( ec, :s )
-    elsif b.coords.neighbors_nil( ec, [:e,:w] ).all? { |c| b[c] == opp }
-      cap << b.coords.next( ec, :e ) << b.coords.next( ec, :w )
+    if board.coords.neighbors_nil( ec, [:n,:s] ).all? { |c| board[c] == opp }
+      cap << board.coords.next( ec, :n ) << board.coords.next( ec, :s )
+    elsif board.coords.neighbors_nil( ec, [:e,:w] ).all? { |c| board[c] == opp }
+      cap << board.coords.next( ec, :e ) << board.coords.next( ec, :w )
     end
 
     # Custodian capture
     directions = [:n,:s,:e,:w]
-    a = directions.zip( b.coords.neighbors_nil( ec, directions ) )
+    a = directions.zip( board.coords.neighbors_nil( ec, directions ) )
     a.each do |d,nc|
-      next if b[nc].nil? || b[nc] == b[ec]
+      next if board[nc].nil? || board[nc] == board[ec]
 
       bt = [nc]
-      while (bt << b.coords.next( bt.last, d ))
-        break if b[bt.last].nil?
+      while (bt << board.coords.next( bt.last, d ))
+        break if board[bt.last].nil?
 
-        if b[bt.last] == b[ec]
-          bt.each { |bc| cap << bc if b[bc] != b[ec] }
+        if board[bt.last] == board[ec]
+          bt.each { |bc| cap << bc if board[bc] != board[ec] }
         end
       end
     end
 
-    opp_rooks = pos.turn.now == :white ? pos.brs : pos.wrs
-    cap.each { |c| b[c] = nil; opp_rooks.delete( c ) }
+    opp_rooks = turn.now == :white ? brs : wrs
+    cap.each { |c| board[c] = nil; opp_rooks.delete( c ) }
 
-    pos.turn.rotate!
-    pos.lastc = ec
-    pos.ops_cache = :ns
-    return pos if ops( pos )
+    turn.rotate!
+    @lastc = ec
+    @ops_cache = :ns
+    return self if ops
 
-    pos.turn.rotate!
-    pos.ops_cache = :ns
-    pos
+    turn.rotate!
+    @ops_cache = :ns
+
+    self
   end
 
-  def Makyek.final?( position )
-    position.wrs.length < 5 || position.brs.length < 5
-  #  position.wrs.empty? || position.brs.empty?   # does this get locked up?
+  def final?
+    wrs.length < 5 || brs.length < 5
+  #  wrs.empty? || brs.empty?   # does this get locked up?
   end
 
-  def Makyek.winner?( position, player )
-    position.turn.now != player
+  def winner?( player )
+    turn.now != player
   end
 
-  def Makyek.loser?( position, player )
-    position.turn.now == player
+  def loser?( player )
+    turn.now == player
   end
 
-  def Makyek.draw?( position )
+  def draw?
     false
   end
-
-
 end
 

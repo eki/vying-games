@@ -40,39 +40,41 @@ class Fifteen < Rules
                        ' numbers add up to 15.',
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Tic-tac-toe>']
 
-  position :unused, :a_list, :b_list, :turn
-  display  :unused, :a_list, :b_list
+  attr_reader :unused, :a_list, :b_list, :turn
 
   players [:a, :b]
 
-  def Fifteen.init( seed=nil )
-    Position.new( (1..9).to_a, [], [], players.dup )
+  def initialize( seed=nil )
+    @unused = (1..9).to_a
+    @a_list = []
+    @b_list = []
+    @turn = players.dup
   end
 
-  def Fifteen.op?( position, op, player=nil )
-    return false unless player.nil? || has_ops( position ).include?( player )
+  def op?( op, player=nil )
+    return false unless player.nil? || has_ops.include?( player )
     op.to_s =~ /(a|b)(\d)/
-    position.turn.now.to_s == $1 && position.unused.include?( $2.to_i )
+    turn.now.to_s == $1 && unused.include?( $2.to_i )
   end
 
-  def Fifteen.ops( position, player=nil )
-    return false unless player.nil? || has_ops( position ).include?( player )
-    return nil if final?( position )
-    a = position.unused.map { |n| "#{position.turn.now}#{n}" }
+  def ops( player=nil )
+    return false unless player.nil? || has_ops.include?( player )
+    return nil if final?
+    a = unused.map { |n| "#{turn.now}#{n}" }
     a == [] ? nil : a
   end
 
-  def Fifteen.apply( position, op )
+  def apply!( op )
     op.to_s =~ /(a|b)(\d)/
-    pos, n = position.dup, $2.to_i
-    pos.unused.delete( n )
-    pos.a_list << n if position.turn.now == :a
-    pos.b_list << n if position.turn.now == :b
-    pos.turn.rotate!
-    pos
+    n = $2.to_i
+    unused.delete( n )
+    a_list << n if turn.now == :a
+    b_list << n if turn.now == :b
+    turn.rotate!
+    self
   end
 
-  def Fifteen.has_15?( list )
+  def has_15?( list )
     list.each_subset do |subset|
       if subset.length == 3
         return true if subset.inject(0) { |n, value| n + value } == 15
@@ -81,26 +83,24 @@ class Fifteen < Rules
     false
   end
 
-  def Fifteen.final?( position )
-    return true  if position.unused.length == 0
-    return false if position.unused.length >  4
-    has_15?( position.a_list ) || has_15?( position.b_list )
+  def final?
+    return true  if unused.length == 0
+    return false if unused.length >  4
+    has_15?( a_list ) || has_15?( b_list )
   end
 
-  def Fifteen.winner?( position, player )
-    return has_15?( position.a_list ) if player == :a
-    return has_15?( position.b_list ) if player == :b
+  def winner?( player )
+    return has_15?( a_list ) if player == :a
+    return has_15?( b_list ) if player == :b
   end
 
-  def Fifteen.loser?( position, player )
-    p = position
-    return !draw?( p ) && !has_15?( p.a_list ) if player == :a
-    return !draw?( p ) && !has_15?( p.b_list ) if player == :b
+  def loser?( player )
+    return !draw? && !has_15?( a_list ) if player == :a
+    return !draw? && !has_15?( b_list ) if player == :b
   end
 
-  def Fifteen.draw?( position )
-    p = position
-    p.unused.empty? && !has_15?( p.a_list ) && !has_15?( p.b_list )
+  def draw?
+    unused.empty? && !has_15?( a_list ) && !has_15?( b_list )
   end
 end
 

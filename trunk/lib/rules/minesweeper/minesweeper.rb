@@ -20,59 +20,59 @@ class Minesweeper < Rules
   info :name        => 'Minesweeper',
        :description => '9x9, 10 bomb Minesweeper'
 
-  position :board, :mines, :seed, :unused_ops, :turn
-  display  :board, :seed
-  censor   :one => [:mines]
+  attr_reader :board, :mines, :seed, :unused_ops, :turn
 
+  censor   :one => [:mines]
   players [:one]
 
   @@init_ops = Coords.new( 9, 9 ).map { |c| c.to_s }
 
-  def Minesweeper.init( seed=nil )
-    seed = rand 10000 if seed.nil?
-    srand seed
-    mines = []
+  def initialize( seed=nil )
+    @seed = seed.nil? ? rand( 10000 ) : seed
+    srand @seed
+    @mines = []
     a = (0...81).to_a.sort_by { rand }
-    10.times { |i| mines << Coord[a[i]/9,a[i]%9] }
-    Position.new( MinesweeperBoard.new( 9, 9 ), mines, seed, @@init_ops.dup,
-                 players.dup )
+    10.times { |i| @mines << Coord[a[i]/9,a[i]%9] }
+
+    @board = MinesweeperBoard.new( 9, 9 )
+    @unused_ops = @@init_ops.dup
+    @turn = players.dup
   end
 
-  def Minesweeper.op?( position, op, player=nil )
-    position.unused_ops.include?( op.to_s )
+  def op?( op, player=nil )
+    unused_ops.include?( op.to_s )
   end
 
-  def Minesweeper.ops( position, player=nil )
-    final?( position ) || position.unused_ops == [] ? nil : position.unused_ops
+  def ops( player=nil )
+    final? || unused_ops == [] ? nil : unused_ops
   end
 
-  def Minesweeper.apply( position, op )
-    c, pos = Coord[op], position.dup
-    board, mines = pos.board, pos.mines
+  def apply!( op )
+    c = Coord[op] 
 
     revealed = board.reveal( c, mines )
     if revealed.any? { |rc| board[rc] == :b }
-      pos.unused_ops.clear
+      unused_ops.clear
     else
-      pos.unused_ops -= revealed.map { |rc| rc.to_s }
+      @unused_ops -= revealed.map { |rc| rc.to_s }
     end
 
-    pos
+    self
   end
 
-  def Minesweeper.final?( position )
-    Minesweeper.winner?( position ) || Minesweeper.loser?( position )
+  def final?
+    winner? || loser?
   end
 
-  def Minesweeper.winner?( position, player=:one )
-    position.unused_ops.size == 10
+  def winner?( player=:one )
+    unused_ops.size == 10
   end
 
-  def Minesweeper.loser?( position, player=:one )
-    position.unused_ops.empty?
+  def loser?( player=:one )
+    unused_ops.empty?
   end
 
-  def Minesweeper.draw?( position )
+  def draw?
     false
   end
 end

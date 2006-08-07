@@ -5,67 +5,65 @@ class Pig < Rules
   info :name => 'Pig',
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Pig_(dice)>']
 
-  position :total, :score, :turn, :rolling
-  display  :total, :score
+  attr_reader :total, :score, :turn, :rolling
 
   players [:a, :b]
 
-  def Pig.init( seed=nil )
-    Position.new( Hash.new( 0 ), 0, players.dup, false )
+  def initialize( seed=nil )
+    @total = Hash.new( 0 )
+    @score = 0
+    @turn = players.dup
+    @rolling = false
   end
 
-  def Pig.op?( position, op, player=nil )
-    ops( position, player ).include?( op )
+  def op?( op, player=nil )
+    ops( player ).include?( op )
   end
 
-  def Pig.ops( position, player=nil )
-    return []            if final? position
-    return [1,2,3,4,5,6] if position.rolling == true &&
-                            (player.nil? || player == :random)
-    return [:pass,:roll] if position.rolling == false &&
-                            (player.nil? || player == position.turn.now)
+  def ops( player=nil )
+    return nil           if final?
+    return [1,2,3,4,5,6] if rolling && (player.nil? || player == :random)
+    return [:pass,:roll] if !rolling && (player.nil? || player == turn.now)
     []
   end
 
-  def Pig.has_ops( position )
-    [position.rolling ? :random : position.turn.now]
+  def has_ops
+    [rolling ? :random : turn.now]
   end
 
-  def Pig.apply( position, op )
-    pos = position.dup
-
+  def apply!( op )
     case op
       when :pass
-        pos.total[pos.turn.now] += pos.score
-        pos.score = 0
-        pos.turn.rotate!
+        total[turn.now] += score
+        @score = 0
+        turn.rotate!
       when :roll
-        pos.rolling = true
+        @rolling = true
       when 1
-        pos.score = 0
-        pos.turn.rotate!
-        pos.rolling = false
+        @score = 0
+        turn.rotate!
+        @rolling = false
       else
-        pos.score += op
-        pos.rolling = false
+        @score += op
+        @rolling = false
     end
 
-    pos
+    self
   end
 
-  def Pig.final?( position )
-    position.total.select { |k,v| v >= 100 }.size > 0
+  def final?
+    total.select { |k,v| v >= 100 }.size > 0
   end
 
-  def Pig.winner?( position, player )
-    position.total[player] >= 100
+  def winner?( player )
+    total[player] >= 100
   end
 
-  def Pig.loser?( position, player )
-    position.total[player] < 100
+  def loser?( player )
+    total[player] < 100
   end
 
-  def Pig.draw?( position )
+  def draw?
     false
   end
 end

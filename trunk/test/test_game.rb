@@ -39,35 +39,32 @@ end
 
 class FakeRules < Rules
 
-  position :fake_board, :fake_player
+  attr_reader :fake_board, :fake_player
 
-  def FakeRules.init( seed=nil )
-    Position.new( "edcba", "player1" )
+  def initialize( seed=nil )
+    @fake_board, @fake_player = "edcba", "player1"
   end
 
-  def FakeRules.op?( position, op )
+  def op?( op )
     op.to_s =~ /(r|s)/
   end
 
-  def FakeRules.ops( position )
-    return nil if final?( position )
+  def ops
+    return nil if final?
     ['r','s']
   end
 
-  def FakeRules.apply( position, op )
+  def apply!( op )
     if op.to_s =~ /r/
-      pos = position.dup
-      pos.fake_board.succ!
-      return pos
+      fake_board.succ!
     elsif op.to_s =~ /s/
-      pos = position.dup
-      pos.fake_board.squeeze!
-      pos
+      fake_board.squeeze!
     end
+    self
   end
 
-  def FakeRules.final?( position )
-    position.fake_board.length == 1
+  def final?
+    fake_board.length == 1
   end
 end
 
@@ -76,7 +73,7 @@ class TestGame < Test::Unit::TestCase
     g = Game.new( FakeRules )
     assert_equal( FakeRules, g.rules )
     assert_equal( [], g.sequence )
-    assert_equal( [FakeRules.init], g.history )
+    assert_equal( [FakeRules.new], g.history )
     assert_equal( "edcba", g.fake_board )
     assert_equal( "player1", g.fake_player )
   end

@@ -20,8 +20,8 @@ exclude.each { |r| rules.delete( r ) }
 
 Benchmark.bm( 30 ) do |x|
   rules.each do |r|
-    pos = r.init
-    op = r.ops( pos ).first
+    pos = r.new
+    op = pos.ops.first
     p_a = Array.new( n ) { |i| pos.dup }
 
     x.report( "#{r} position dup" ) do
@@ -29,23 +29,23 @@ Benchmark.bm( 30 ) do |x|
     end
 
     x.report( "#{r} init" ) do
-      n.times { r.init }
+      n.times { r.new }
     end
 
     x.report( "#{r} op?" ) do
-      n.times { r.op?( pos, op ) }
+      n.times { pos.op?( op ) }
     end
 
     x.report( "#{r} ops" ) do
-      n.times { r.ops( pos ) }
+      n.times { pos.ops }
     end
 
     x.report( "#{r} apply" ) do
-      p_a.each { |p| r.apply( p, op ) }
+      p_a.each { |p| p.apply( op ) }
     end
 
     x.report( "#{r} final?" ) do
-      n.times { r.final?( pos ) }
+      n.times { pos.final? }
     end
 
     x.report( "#{r} random play" ) do

@@ -8,66 +8,61 @@ class TicTacToe < Rules
                       "X's and O's", 'Tick Tat Toe', 'Tit Tat Toe'],
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Tic-tac-toe>']
 
-  position :board, :turn, :lastc, :lastp, :unused_ops
-  display  :board
+  attr_reader :board, :turn, :lastc, :lastp, :unused_ops
 
   players [:x, :o]
 
   @@init_ops = Coords.new( 3, 3 ).map { |c| c.to_s }
 
-  def TicTacToe.init( seed=nil )
-    ps = players.dup
-    Position.new( Board.new( 3, 3 ), ps, nil, :noone, @@init_ops.dup )
+  def initialize( seed=nil )
+    @board = Board.new( 3, 3 )
+    @turn = players.dup
+    @lastc, @lastp = nil, :noone
+    @unused_ops = @@init_ops.dup
   end
 
-  def TicTacToe.op?( position, op, player=nil )
-    return false unless player.nil? || has_ops( position ).include?( player )
-    position.unused_ops.include?( op.to_s )
+  def op?( op, player=nil )
+    return false unless player.nil? || has_ops.include?( player )
+    unused_ops.include?( op.to_s )
   end
 
-  def TicTacToe.ops( position, player=nil )
-    return false unless player.nil? || has_ops( position ).include?( player )
-    final?( position ) || position.unused_ops == [] ? nil : position.unused_ops
+  def ops( player=nil )
+    return false unless player.nil? || has_ops.include?( player )
+    final? || unused_ops == [] ? nil : unused_ops
   end
 
-  def TicTacToe.apply( position, op )
-    c, pos, p = Coord[op], position.dup, position.turn.now
-    pos.board[c], pos.lastc, pos.lastp = p, c, p
-    pos.unused_ops.delete( c.to_s )
-    pos.turn.rotate!
-    pos
+  def apply!( op )
+    c, p = Coord[op], turn.now
+    board[c], @lastc, @lastp = p, c, p
+    unused_ops.delete( c.to_s )
+    turn.rotate!
+    self
   end
 
-  def TicTacToe.final?( position )
-    return false if position.lastc.nil?
-    return true  if position.unused_ops.empty?
+  def final?
+    return false if lastc.nil?
+    return true  if unused_ops.empty?
 
-    b, lc, lp = position.board, position.lastc, position.lastp
-
-    b.each_from( lc, [:e,:w] ) { |p| p == lp } == 2 ||
-    b.each_from( lc, [:n,:s] ) { |p| p == lp } == 2 ||
-    b.each_from( lc, [:ne,:sw] ) { |p| p == lp } == 2 ||
-    b.each_from( lc, [:nw,:se] ) { |p| p == lp } == 2
+    board.each_from( lastc, [:e,:w] ) { |p| p == lastp } == 2 ||
+    board.each_from( lastc, [:n,:s] ) { |p| p == lastp } == 2 ||
+    board.each_from( lastc, [:ne,:sw] ) { |p| p == lastp } == 2 ||
+    board.each_from( lastc, [:nw,:se] ) { |p| p == lastp } == 2
   end
 
-  def TicTacToe.winner?( position, player )
-    TicTacToe.final?( position ) && !TicTacToe.draw?( position ) &&
-    position.lastp == player
+  def winner?( player )
+    final? && !draw? && lastp == player
   end
 
-  def TicTacToe.loser?( position, player )
-    TicTacToe.final?( position ) && !TicTacToe.draw?( position ) &&
-    position.lastp != player
+  def loser?( player )
+    final? && !draw? && lastp != player
   end
 
-  def TicTacToe.draw?( position )
-    b, lc, lp = position.board, position.lastc, position.lastp
-
-    position.unused_ops.empty? &&
-    b.each_from( lc, [:e,:w] ) { |p| p == lp } != 2 &&
-    b.each_from( lc, [:n,:s] ) { |p| p == lp } != 2 &&
-    b.each_from( lc, [:ne,:sw] ) { |p| p == lp } != 2 &&
-    b.each_from( lc, [:nw,:se] ) { |p| p == lp } != 2
+  def draw?
+    unused_ops.empty? &&
+    board.each_from( lastc, [:e,:w] ) { |p| p == lastp } != 2 &&
+    board.each_from( lastc, [:n,:s] ) { |p| p == lastp } != 2 &&
+    board.each_from( lastc, [:ne,:sw] ) { |p| p == lastp } != 2 &&
+    board.each_from( lastc, [:nw,:se] ) { |p| p == lastp } != 2
   end
 end
 
