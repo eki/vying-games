@@ -132,10 +132,6 @@ class Bot
     @game, @player = game, player
   end
 
-  def select
-    game.ops.first unless game.final?
-  end
-
   def select!
     game << select
   end
@@ -146,7 +142,7 @@ class Bot
 
   def analyze( ops=game.ops )
     scores = ops.map do |op|
-      evaluate( game.rules.apply( game.history.last, op ) )
+      evaluate( game.history.last.apply( op ) )
     end
     scores.zip( ops ).sort.reverse
   end
