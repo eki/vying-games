@@ -106,6 +106,23 @@ class Rules
   def Rules.list
     @@rules_list
   end
+
+  def to_s
+    s = ''
+    fs = instance_variables.map { |iv| iv.to_s.length }.max + 2
+    instance_variables.each do |iv|
+      v = instance_variable_get( iv )
+      iv = iv.sub( /@/, '' )
+      case v
+        when Hash  then s += "#{iv}:".ljust(fs) + "#{v.inspect}\n"
+        when Array then s += "#{iv}:".ljust(fs) + "#{v.inspect}\n"
+        else
+          s += "#{iv}:\n#{v}\n"               if v.to_s =~ /\n/
+          s += "#{iv}:".ljust(fs) + "#{v}\n"  if v.to_s !~ /\n/
+      end
+    end
+    s
+  end
 end
 
 class Bot
