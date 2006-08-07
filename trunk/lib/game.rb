@@ -51,12 +51,16 @@ class Rules
   def Rules.censor( h={}, p=nil )
     class_eval( "@@censored[self] = h" )
     class << self
-      def censor( player )
-        pos = self.dup
-        @@censored[self][player].each { |f| pos[f] = :hidden }
-        pos
-      end
+      undef_method :censor
     end
+  end
+
+  def censor( player )
+    pos = self.dup
+    @@censored[self.class][player].each do |f|
+      pos.instance_eval( "@#{f} = :hidden" )
+    end
+    pos
   end
 
   def Rules.players( p )
