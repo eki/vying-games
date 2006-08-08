@@ -16,10 +16,6 @@ class Pig < Rules
     @rolling = false
   end
 
-  def op?( op, player=nil )
-    ops( player ).include?( op )
-  end
-
   def ops( player=nil )
     return nil           if final?
     return [1,2,3,4,5,6] if rolling && (player.nil? || player == :random)

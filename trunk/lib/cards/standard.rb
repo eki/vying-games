@@ -165,10 +165,6 @@ class TrickTakingRules < Rules
 
   #position :dealer, :hands, :tricks, :trick, :turn
 
-  def op?( op, player=nil )
-    ops( player ).include?( op )
-  end
-
   def ops( player=nil )
     return [] unless player.nil? || has_ops.include?( player )
     return nil if final?

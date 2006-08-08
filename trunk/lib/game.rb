@@ -73,6 +73,10 @@ class Rules
     @@players[self.class]
   end
 
+  def op?( op, player=nil )
+    ops( player ).include?( op )
+  end
+
   def draw?
     false
   end
