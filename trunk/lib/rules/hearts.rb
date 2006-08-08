@@ -79,9 +79,5 @@ class Hearts < TrickTakingRules
     score.each { |k,v| lowest = [k,v] if v < lowest[1] }
     player != lowest[0]
   end
-
-  def draw?
-    false
-  end
 end
 

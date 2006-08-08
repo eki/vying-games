@@ -73,6 +73,10 @@ class Rules
     @@players[self.class]
   end
 
+  def draw?
+    false
+  end
+
   def score( player )
     return  0 if draw?
     return  1 if winner?( player )

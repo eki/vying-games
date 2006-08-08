@@ -62,9 +62,5 @@ class Pig < Rules
   def loser?( player )
     total[player] < 100
   end
-
-  def draw?
-    false
-  end
 end
 

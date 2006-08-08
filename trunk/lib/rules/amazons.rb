@@ -107,9 +107,5 @@ class Amazons < Rules
   def loser?( player )
     turn.now == player
   end
-
-  def draw?
-    false
-  end
 end
 

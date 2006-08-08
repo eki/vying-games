@@ -71,9 +71,5 @@ class Minesweeper < Rules
   def loser?( player=:one )
     unused_ops.empty?
   end
-
-  def draw?
-    false
-  end
 end
 
