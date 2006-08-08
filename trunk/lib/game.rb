@@ -32,7 +32,7 @@ class Rules
   end
 
   def eql?( o )
-    return false if instance_variables != o.instance_variables
+    return false if instance_variables.sort != o.instance_variables.sort
     instance_variables.each do |iv|
       return false if instance_variable_get(iv) != o.instance_variable_get(iv)
     end
@@ -218,7 +218,7 @@ class Game
       @sequence << op
       return self
     end
-    raise "#{op} not a valid operation"
+    raise "'#{op}' not a valid operation"
   end
 
   def append_list( ops )
