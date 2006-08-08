@@ -2,7 +2,64 @@
 require "test/unit"
 require "game"
 
+module RulesTests
+  def test_dup
+    g = Game.new( rules )
+    while ops = g.ops do                 # Take two steps forward,
+      p = g.history.last.dup             # one step back
+      g << ops.first                     # Make sure that dup'ed positions
+      assert_not_equal( p, g.undo )      # are not corrupted
+      assert_equal( p, g.history.last )
+      g << ops.last
+    end
+  end
+
+  def play_sequence( s )
+    g = Game.new( rules )
+    g << s[0,s.size-1]
+    assert( !g.final? )
+    g << s[-1]
+    assert( g.final? )
+    assert( !g.ops )
+    assert( !g.op?( s[-1] ) )
+    g
+  end
+
+  def test_op?
+    g = Game.new( rules )
+
+    g.ops.each do |op|
+      assert( g.op?( op ) )
+      g.has_ops.each { |p| assert( g.op?( op, p ) ) }
+      (g.players - g.has_ops).each { |p| assert( !g.op?( op, p ) ) }
+    end
+
+    g << g.ops.first
+
+    g.ops.each do |op|
+      assert( g.op?( op ) )
+      g.has_ops.each { |p| assert( g.op?( op, p ) ) }
+      (g.players - g.has_ops).each { |p| assert( !g.op?( op, p ) ) }
+    end
+  end
+end
+
 class TestConnect6 < Test::Unit::TestCase
+  include RulesTests
+
+  def rules
+    Connect6
+  end
+
+  def test_info
+    assert_equal( "Connect6", Connect6.info[:name] )
+  end
+
+  def test_players
+    assert_equal( [:black,:white], Connect6.players )
+    assert_equal( [:black,:white], Connect6.new.players )
+  end
+
   def test_init
     g = Game.new( Connect6 )
     assert_equal( Board.new( 19, 19 ), g.board )
@@ -10,6 +67,13 @@ class TestConnect6 < Test::Unit::TestCase
     assert_equal( 19*19, g.unused_ops.length )
     assert_equal( 'a1', g.unused_ops.first )
     assert_equal( 's19', g.unused_ops.last )
+  end
+
+  def test_has_ops
+    g = Game.new( Connect6 )
+    assert_equal( [:black], g.has_ops )
+    g << g.ops.first
+    assert_equal( [:white], g.has_ops )
   end
 
   def test_ops
@@ -36,19 +100,9 @@ class TestConnect6 < Test::Unit::TestCase
     assert_equal( (19*5-1)/2+3, g.board.count( :white ) )
   end
 
-  def test_players
-    g = Game.new( Connect6 )
-    assert_equal( [:black,:white], g.players )
-    assert_equal( [:black,:white], g.players )
-  end
-
   def test_game01
     # This game is going to be a win for White (vertical)
-    g = Game.new( Connect6 )
-    g << [:b1,:f14,:f13,:b2,:b3,:f12,:f11,:b4,:b5,:f10]
-    assert( !g.final? )
-    g << :f9
-    assert( g.final? )
+    g = play_sequence( [:b1,:f14,:f13,:b2,:b3,:f12,:f11,:b4,:b5,:f10,:f9] )
 
     assert( !g.draw? )
     assert( !g.winner?( :black ) )
@@ -62,11 +116,7 @@ class TestConnect6 < Test::Unit::TestCase
 
   def test_game02
     # This game is going to be a win for White (diagonal)(winner in middle)
-    g = Game.new( Connect6 )
-    g << [:f13,:a1,:c3,:f12,:f11,:d4,:e5,:f14,:f10,:f6]
-    assert( !g.final? )
-    g << :b2
-    assert( g.final? )
+    g = play_sequence( [:f13,:a1,:c3,:f12,:f11,:d4,:e5,:f14,:f10,:f6,:b2] )
 
     assert( !g.draw? )
     assert( !g.winner?( :black ) )
@@ -80,11 +130,7 @@ class TestConnect6 < Test::Unit::TestCase
 
   def test_game03
     # This game is going to be a win for Black (horizontal)(7-in-a-row)
-    g = Game.new( Connect6 )
-    g << [:a1,:f10,:f9,:b1,:c1,:g10,:g9,:e1,:f1,:g8,:g7,:g1]
-    assert( !g.final? )
-    g << :d1
-    assert( g.final? )
+    g = play_sequence [:a1,:f10,:f9,:b1,:c1,:g10,:g9,:e1,:f1,:g8,:g7,:g1,:d1]
 
     assert( !g.draw? )
     assert( g.winner?( :black ) )
@@ -97,13 +143,10 @@ class TestConnect6 < Test::Unit::TestCase
   end
 
   def test_game04
-    # This game is going to be a draw
-    g = Game.new( Connect6 )
-
     # This draw was generated (this is a very difficult game to intentionally
     # draw!  This hasn't been gone over in a ton of detail, but appears to
     # be correct.
-    g << ["j16", "g3", "h8", "c4", "h14", "p5", "h12", "h9", "b1", "d16",
+    s =  ["j16", "g3", "h8", "c4", "h14", "p5", "h12", "h9", "b1", "d16",
           "h2", "o2", "n14", "h11", "g6", "m17", "c17", "k17", "b14",
           "m11", "j6", "e1", "e3", "m3", "f7", "q1", "j7", "k13", "a5",
           "g19", "g15", "h16", "r14", "j19", "a1", "k9", "l2", "i7",
@@ -143,7 +186,7 @@ class TestConnect6 < Test::Unit::TestCase
           "f2", "h6", "i9", "s1", "j15", "e19", "k11", "r19", "d14",
           "h15", "b16"]
 
-    assert( g.final? )
+    g = play_sequence s
 
     assert( g.draw? )
     assert( !g.winner?( :black ) )
