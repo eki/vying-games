@@ -74,7 +74,7 @@ class Rules
   end
 
   def op?( op, player=nil )
-    ops( player ).include?( op )
+    (ops( player ) || []) .include?( op )
   end
 
   def draw?
