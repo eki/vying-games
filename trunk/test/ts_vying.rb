@@ -11,4 +11,6 @@ require "rules/test_connectfour"
 require "rules/test_connect6"
 require "rules/test_othello"
 require "rules/test_pig"
+require "rules/test_makyek"
+require "rules/test_amazons"
 

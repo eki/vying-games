@@ -1,6 +1,7 @@
 
 require "test/unit"
 require "game"
+require "rules/test_rules"
 
 class TestOthelloBoard < Test::Unit::TestCase
   def test_valid_ns
@@ -213,7 +214,13 @@ class TestOthelloBoard < Test::Unit::TestCase
 end
 
 class TestOthello < Test::Unit::TestCase
-  def test_init
+  include RulesTests
+
+  def rules
+    Othello
+  end
+
+  def test_initialize
     g = Game.new( Othello )
 
     b = OthelloBoard.new( 8, 8 )
@@ -245,102 +252,6 @@ class TestOthello < Test::Unit::TestCase
     assert_equal( [:black,:white], g.players )
     assert_equal( [:black,:white], g.players )
   end
-
-#  def test_game01
-#    # This game is going to be a win for Red (vertical)
-#    g = Game.new( Othello )
-#    g << "r6" << "b0" << "r6" << "b1" << "r6" << "b2"
-#    assert( !g.final? )
-#    g << "r6"
-#    assert( g.final? )
-#
-#    assert( !g.draw? )
-#    assert( g.winner?( :black ) )
-#    assert( !g.loser?( :black ) )
-#    assert( !g.winner?( :white ) )
-#    assert( g.loser?( :white ) )
-#
-#    assert_equal( 1, g.score( :black ) )
-#    assert_equal( -1, g.score( :white ) )
-#  end
-
-#  def test_game02
-#    # This game is going to be a win for Blue (diagonal)
-#    g = Game.new( Othello )
-#    g << "r1" << "b0" << "r2" << "b1" << "r2" << "b2" << "r3" << "b3" << "r3"
-#    assert( !g.final? )
-#    g << "b3"
-#    assert( g.final? )
-#
-#    assert( !g.draw? )
-#    assert( !g.winner?( :black ) )
-#    assert( g.loser?( :black ) )
-#    assert( g.winner?( :white ) )
-#    assert( !g.loser?( :white ) )
-#
-#    assert_equal( -1, g.score( :black ) )
-#    assert_equal( 1, g.score( :white ) )
-#  end
-
-#  def test_game03
-#    # This game is going to be a win for Blue (diagonal)
-#    g = Game.new( Othello )
-#    g << "r3" << "b4" << "r2" << "b3" << "r2" << "b2" << "r1" << "b1" << "r1"
-#    assert( !g.final? )
-#    g << "b1"
-#    assert( g.final? )
-#
-#    assert( !g.draw? )
-#    assert( !g.winner?( :black ) )
-#    assert( g.loser?( :black ) )
-#    assert( g.winner?( :white ) )
-#    assert( !g.loser?( :white ) )
-#
-#    assert_equal( -1, g.score( :black ) )
-#    assert_equal( 1, g.score( :white ) )
-#  end
-
-#  def test_game04
-#    # This game is going to be a draw
-#    g = Game.new( Othello )
-#    g << "r0" << "b0" << "r0" << "b0" << "r0" << "b0"
-#    g << "r1" << "b1" << "r1" << "b1" << "r1" << "b1"
-#    g << "r3" << "b2" << "r2" << "b2" << "r2" << "b2"
-#    g << "r2" << "b3" << "r3" << "b3" << "r3" << "b3"
-#    g << "r4" << "b4" << "r4" << "b4" << "r4" << "b4"
-#    g << "r6" << "b5" << "r5" << "b5" << "r5" << "b5"
-#    g << "r5" << "b6" << "r6" << "b6" << "r6"
-#    assert( !g.final? )
-#    g << "b6"
-#    assert( g.final? )
-#
-#    assert( g.draw? )
-#    assert( !g.winner?( :black ) )
-#    assert( !g.loser?( :black ) )
-#    assert( !g.winner?( :white ) )
-#    assert( !g.loser?( :white ) )
-#
-#    assert_equal( 0, g.score( :black ) )
-#    assert_equal( 0, g.score( :white ) )
-#  end
-
-#  def test_game05
-#    # This game is going to be a win for Blue (horizontal 5-in-a-row)
-#    g = Game.new( Othello )
-#    g << "r6" << "b0" << "r0" << "b2" << "r2" << "b3" << "r3" << "b4" << "r4"
-#    assert( !g.final? )
-#    g << "b1"
-#    assert( g.final? )
-#
-#    assert( !g.draw? )
-#    assert( !g.winner?( :black ) )
-#    assert( g.loser?( :black ) )
-#    assert( g.winner?( :white ) )
-#    assert( !g.loser?( :white ) )
-#
-#    assert_equal( -1, g.score( :black ) )
-#    assert_equal( 1, g.score( :white ) )
-#  end
 
 end
 

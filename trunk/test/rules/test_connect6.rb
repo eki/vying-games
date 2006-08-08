@@ -1,7 +1,7 @@
 
 require "test/unit"
 require "game"
-require "test_rules"
+require "rules/test_rules"
 
 class TestConnect6 < Test::Unit::TestCase
   include RulesTests

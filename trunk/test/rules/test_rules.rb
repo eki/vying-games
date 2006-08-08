@@ -15,12 +15,12 @@ module RulesTests
 
   def test_dup # This test uses rand!  This could be bad in some cases...
     g = Game.new( rules )
-    while ops = g.ops do                 # Take two steps forward,
+    30.times do                          # Take two steps forward,
       p = g.history.last.dup             # one step back
-      g << ops[rand(ops.size)]           # Make sure that dup'ed positions
+      g << g.ops[rand(g.ops.size)]       # Make sure that dup'ed positions
       assert_not_equal( p, g.undo )      # are not corrupted
       assert_equal( p, g.history.last )
-      g << ops[rand(ops.size)]
+      g << g.ops[rand(g.ops.size)]
     end
   end
 
