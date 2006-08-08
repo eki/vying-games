@@ -57,6 +57,7 @@ class Rules
 
   def censor( player )
     pos = self.dup
+    @@censored[self.class] ||= Hash.new( [] )
     @@censored[self.class][player].each do |f|
       pos.instance_eval( "@#{f} = :hidden" )
     end

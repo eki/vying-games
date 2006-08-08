@@ -42,6 +42,12 @@ class Hearts < TrickTakingRules
     @score = Hash.new( 0 )
   end
 
+  def censor( player )
+    pos = super
+    pos.hands.each { |k,v| pos.hands[k] = :hidden if k != player }
+    pos
+  end
+
   def score_hand
     tmp_scores = Hash.new( 0 )
 
