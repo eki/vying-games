@@ -5,9 +5,10 @@ require "test_game"
 
 require "board/test_standard.rb"
 
-require "rules/tictactoe/test_tictactoe"
-require "rules/tictactoe/test_fifteen"
-require "rules/connectfour/test_connectfour"
-require "rules/connect6/test_connect6"
-require "rules/othello/test_othello"
+require "rules/test_tictactoe"
+require "rules/test_fifteen"
+require "rules/test_connectfour"
+require "rules/test_connect6"
+require "rules/test_othello"
+require "rules/test_pig"
 
