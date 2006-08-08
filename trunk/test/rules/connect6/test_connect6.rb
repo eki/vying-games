@@ -3,6 +3,20 @@ require "test/unit"
 require "game"
 
 module RulesTests
+  def test_interface
+    r = rules.new
+    assert( r.respond_to?( :op? ) )
+    assert( r.respond_to?( :ops ) )
+    assert( r.respond_to?( :apply ) )
+    assert( r.respond_to?( :apply! ) )
+    assert( r.respond_to?( :has_ops ) )
+    assert( r.respond_to?( :censor ) )
+    assert( r.respond_to?( :final? ) )
+    assert( r.respond_to?( :winner? ) )
+    assert( r.respond_to?( :loser? ) )
+    assert( r.respond_to?( :draw? ) )
+  end
+
   def test_dup
     g = Game.new( rules )
     while ops = g.ops do                 # Take two steps forward,
