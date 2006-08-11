@@ -6,7 +6,7 @@ class TestTicTacToe < Test::Unit::TestCase
   def test_init
     g = Game.new( TicTacToe )
     assert_equal( Board.new( 3, 3 ), g.board )
-    assert_equal( :x, g.turn.now )
+    assert_equal( :x, g.turn )
   end
 
   def test_ops

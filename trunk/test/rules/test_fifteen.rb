@@ -8,7 +8,7 @@ class TestFifteen < Test::Unit::TestCase
     assert_equal( (1..9).to_a, g.unused )
     assert_equal( [], g.a_list )
     assert_equal( [], g.b_list )
-    assert_equal( :a, g.turn.now )
+    assert_equal( :a, g.turn )
   end
 
   def test_ops

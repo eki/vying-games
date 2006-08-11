@@ -22,7 +22,7 @@ class TestConnect6 < Test::Unit::TestCase
   def test_init
     g = Game.new( Connect6 )
     assert_equal( Board.new( 19, 19 ), g.board )
-    assert_equal( :black, g.turn.now )
+    assert_equal( :black, g.turn )
     assert_equal( 19*19, g.unused_ops.length )
     assert_equal( 'a1', g.unused_ops.first )
     assert_equal( 's19', g.unused_ops.last )

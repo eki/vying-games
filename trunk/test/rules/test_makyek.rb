@@ -21,7 +21,7 @@ class TestMakyek < Test::Unit::TestCase
 
   def test_initialize       # Need to be more thorough here
     g = Game.new( Makyek )
-    assert_equal( [:white,:black], g.turn )
+    assert_equal( :white, g.turn )
     assert_equal( nil, g.lastc )
   end
 

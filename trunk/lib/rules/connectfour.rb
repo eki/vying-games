@@ -6,7 +6,7 @@ class ConnectFour < Rules
   info :name    => 'Connect Four',
        :aliases => ['Plot Four', 'Connect 4', "The Captain's Mistress"]
 
-  attr_reader :board, :turn, :lastc, :lastp, :unused_ops
+  attr_reader :board, :lastc, :lastp, :unused_ops
 
   def initialize_copy( original )
     super
@@ -24,7 +24,6 @@ class ConnectFour < Rules
 
     @board = Board.new( 7, 6 )
     @lastc, @lastp = nil, :noone
-    @turn = players.dup
     @unused_ops = @@init_ops.map { |a| a.dup }
   end
 
@@ -39,11 +38,11 @@ class ConnectFour < Rules
   end
 
   def apply!( op )
-    c, p = Coord[op], turn.now
+    c, p = Coord[op], turn
     board[c], @lastc, @lastp = p, c, p
     unused_ops.each { |a| a.delete( c.to_s ) }
     unused_ops.delete( [] )
-    turn.rotate!
+    turn( :rotate )
     self
   end
 

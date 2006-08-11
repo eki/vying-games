@@ -6,7 +6,7 @@ class TestConnectFour < Test::Unit::TestCase
   def test_init
     g = Game.new( ConnectFour )
     assert_equal( Board.new( 7, 6 ), g.board )
-    assert_equal( :red, g.turn.now )
+    assert_equal( :red, g.turn )
   end
 
   def test_dup

@@ -20,7 +20,7 @@ class Minesweeper < Rules
   info :name        => 'Minesweeper',
        :description => '9x9, 10 bomb Minesweeper'
 
-  attr_reader :board, :mines, :unused_ops, :turn
+  attr_reader :board, :mines, :unused_ops
 
   random
 
@@ -38,7 +38,6 @@ class Minesweeper < Rules
 
     @board = MinesweeperBoard.new( 9, 9 )
     @unused_ops = @@init_ops.dup
-    @turn = players.dup
   end
 
   def op?( op, player=nil )

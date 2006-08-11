@@ -8,7 +8,7 @@ class TicTacToe < Rules
                       "X's and O's", 'Tick Tat Toe', 'Tit Tat Toe'],
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Tic-tac-toe>']
 
-  attr_reader :board, :turn, :lastc, :lastp, :unused_ops
+  attr_reader :board, :lastc, :lastp, :unused_ops
 
   players [:x, :o]
 
@@ -18,7 +18,6 @@ class TicTacToe < Rules
     super
 
     @board = Board.new( 3, 3 )
-    @turn = players.dup
     @lastc, @lastp = nil, :noone
     @unused_ops = @@init_ops.dup
   end
@@ -34,10 +33,10 @@ class TicTacToe < Rules
   end
 
   def apply!( op )
-    c, p = Coord[op], turn.now
+    c, p = Coord[op], turn
     board[c], @lastc, @lastp = p, c, p
     unused_ops.delete( c.to_s )
-    turn.rotate!
+    turn( :rotate )
     self
   end
 

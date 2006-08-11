@@ -15,21 +15,6 @@ class Random::MersenneTwister
   end
 end
 
-class Array
-  def rotate!
-    self << delete_at( 0 ) if size > 0
-    self
-  end
-
-  def next
-    self[1] if size > 1
-  end
-
-  def now
-    self[0] if size > 0
-  end
-end
-
 class Rules
   @@info = {}
   @@players = {}
@@ -50,6 +35,7 @@ class Rules
       @seed = seed.nil? ? rand( 10000 ) : seed
       @rng = Random::MersenneTwister.new( @seed )
     end
+    @turn = players.dup
   end
 
   def eql?( o )
@@ -108,6 +94,16 @@ class Rules
     @@players[self.class]
   end
 
+  def turn( action=:now )
+    case action
+      when :now    then return @turn[0]
+      when :next   then return @turn[1] if @turn.size > 1
+      when :rotate 
+        @turn << @turn.delete_at( 0 )
+    end
+    @turn[0]
+  end
+
   def op?( op, player=nil )
     (ops( player ) || []) .include?( op )
   end
@@ -123,8 +119,7 @@ class Rules
   end
 
   def has_ops
-    return [turn.now] if respond_to? :turn
-    []
+    [turn]
   end
 
   def apply( op )

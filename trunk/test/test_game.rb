@@ -2,47 +2,18 @@
 require "test/unit"
 require "game"
 
-class TestArray < Test::Unit::TestCase
-  def test_rotate!
-    ps = [:north, :east, :south, :west]
-
-    assert_equal( :east,  ps.rotate!.now )
-    assert_equal( :south, ps.rotate!.now )
-    assert_equal( :west,  ps.rotate!.now )
-    assert_equal( :north, ps.rotate!.now )
-    assert_equal( :east,  ps.rotate!.now )
-  end
-
-  def test_now
-    ps = [:north, :east, :south, :west]
-
-    assert_equal( :north, ps.now )
-
-    ps.rotate!
-    assert_equal( :east, ps.now )
-
-    ps.rotate!.rotate!.rotate!
-    assert_equal( :north, ps.now )
-  end
-
-  def test_next
-    ps = [:north, :east, :south, :west]
-
-    assert_equal( :east,  ps.next )
-    assert_equal( :north, ps.now )
-
-    assert_equal( :west,  ps.rotate!.rotate!.rotate!.now )
-    assert_equal( :north, ps.next )
-    assert_equal( :west,  ps.now )
-  end
-end
-
 class FakeRules < Rules
 
-  attr_reader :fake_board, :fake_player
+  attr_reader :fake_board, :fake_foo
+
+  info :name => "Fake Rules"
+
+  players [:a, :b, :c]
 
   def initialize( seed=nil )
-    @fake_board, @fake_player = "edcba", "player1"
+    super
+
+    @fake_board, @fake_foo = "edcba", "bar"
   end
 
   def op?( op )
@@ -75,7 +46,33 @@ class TestGame < Test::Unit::TestCase
     assert_equal( [], g.sequence )
     assert_equal( [FakeRules.new], g.history )
     assert_equal( "edcba", g.fake_board )
-    assert_equal( "player1", g.fake_player )
+    assert_equal( "bar", g.fake_foo )
+    assert_equal( :a, g.turn )
+  end
+
+  def test_turn
+    g = Game.new( FakeRules )
+    assert_equal( :a, g.turn )
+    assert_equal( :a, g.turn( :now ) )
+    assert_equal( :b, g.turn( :next ) )
+    assert_equal( :b, g.turn( :rotate ) )
+    assert_equal( :b, g.turn )
+    assert_equal( :c, g.turn( :rotate ) )
+    assert_equal( :c, g.turn )
+    assert_equal( :a, g.turn( :next ) )
+    assert_equal( :a, g.turn( :rotate ) )
+    assert_equal( :a, g.turn )
+  end
+
+  def test_has_ops
+    g = Game.new( FakeRules )
+    assert_equal( [:a], g.has_ops )
+    g.turn( :rotate )
+    assert_equal( [:b], g.has_ops )
+    g.turn( :rotate )
+    assert_equal( [:c], g.has_ops )
+    g.turn( :rotate )
+    assert_equal( [:a], g.has_ops )
   end
 
   def test_ops

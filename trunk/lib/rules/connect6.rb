@@ -6,7 +6,7 @@ class Connect6 < Rules
   info :name      => 'Connect6',
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Connect6>']
 
-  attr_reader :board, :turn, :lastc, :lastp, :unused_ops
+  attr_reader :board, :lastc, :lastp, :unused_ops
 
   players [:black, :white]
 
@@ -32,10 +32,10 @@ class Connect6 < Rules
   end
 
   def apply!( op )
-    c, p = Coord[op], turn.now
+    c, p = Coord[op], turn
     board[c], @lastc, @lastp = p, c, p
     @unused_ops.delete( c.to_s )
-    turn.rotate!
+    turn( :rotate )
     self
   end
 

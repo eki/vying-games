@@ -23,7 +23,7 @@ class Hearts < TrickTakingRules
   deal_out          13
   wait_until_broken [:HA,:HK,:HQ,:HJ,:HT,:H9,:H8,:H7,:H6,:H5,:H4,:H3,:H2]
 
-  attr_reader :hands, :tricks, :trick, :broken, :score, :turn
+  attr_reader :hands, :tricks, :trick, :broken, :score
 
   random
 
@@ -34,8 +34,7 @@ class Hearts < TrickTakingRules
     d = Deck.new( deck ).shuffle.deal( players.size, deal_out )
     d.zip( players ) { |h,p| @hands[p] = h }
 
-    @turn = players.dup
-    turn.rotate! until hands[turn.now].include?( Card[:C2] )
+    turn( :rotate ) until hands[turn].include?( Card[:C2] )
 
     @tricks = {}
     @trick = []

@@ -228,7 +228,7 @@ class TestOthello < Test::Unit::TestCase
     b[3,4] = b[4,3] = :black
 
     assert_equal( b, g.board )
-    assert_equal( :black, g.turn.now )
+    assert_equal( :black, g.turn )
   end
 
   def test_ops

@@ -54,7 +54,7 @@ class Othello < Rules
   info :name    => 'Othello',
        :aliases => ['Reversi']
 
-  attr_reader :board, :turn, :occupied, :frontier, :ops_cache
+  attr_reader :board, :occupied, :frontier, :ops_cache
 
   players [:black, :white]
 
@@ -70,25 +70,23 @@ class Othello < Rules
     @frontier = @frontier.flatten.select { |c| board[c].nil? }.uniq
 
     @ops_cache = :ns
-
-    @turn = players.dup
   end
 
   def op?( op, player=nil )
     return false unless player.nil? || has_ops.include?( player )
-    board.valid?( Coord[op], turn.now )
+    board.valid?( Coord[op], turn )
   end
 
   def ops( player=nil )
     return false unless player.nil? || has_ops.include?( player )
     return ops_cache if ops_cache != :ns
-    a = frontier.select { |c| board.valid?( c, turn.now ) }.map { |c| c.to_s }
+    a = frontier.select { |c| board.valid?( c, turn ) }.map { |c| c.to_s }
     ops_cache = (a == [] ? nil : a)
   end
 
   def apply!( op )
     c = Coord[op]
-    board.place( c, turn.now )
+    board.place( c, turn )
 
     occupied << c
 
@@ -96,11 +94,11 @@ class Othello < Rules
     frontier.uniq!
     frontier.delete( c )
 
-    turn.rotate!
+    turn( :rotate )
     @ops_cache = :ns
     return self if ops
 
-    turn.rotate!
+    turn( :rotate )
     ops_cache = :ns
 
     self

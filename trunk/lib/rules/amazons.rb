@@ -6,7 +6,7 @@ class Amazons < Rules
   info :name      => "Amazons",
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Amazons_(game)>']
 
-  attr_reader :board, :turn, :lastc, :wqs, :bqs, :ops_cache
+  attr_reader :board, :lastc, :wqs, :bqs, :ops_cache
 
   players [:white, :black]
 
@@ -21,7 +21,6 @@ class Amazons < Rules
     wqs.each { |c| board[c] = :white }
     bqs.each { |c| board[c] = :black }
 
-    @turn = players.dup
     @lastc = nil
 
     @ops_cache = :ns
@@ -34,7 +33,7 @@ class Amazons < Rules
     sc = Coord[$1]
     ec = Coord[$2]
 
-    queens = turn.now == :white ? wqs : bqs
+    queens = turn == :white ? wqs : bqs
 
     return false unless queens.include?( sc )
     return false unless d = sc.direction_to( ec )
@@ -54,7 +53,7 @@ class Amazons < Rules
 
     a = []
 
-    queens = turn.now == :white ? wqs : bqs
+    queens = turn == :white ? wqs : bqs
 
     if lastc.nil? || board[lastc] == :arrow
       queens.each do |c| 
@@ -84,12 +83,12 @@ class Amazons < Rules
 
     if lastc.nil? || board[lastc] == :arrow
       board.move( sc, ec )
-      queens = turn.now == :white ? wqs : bqs
+      queens = turn == :white ? wqs : bqs
       queens.delete( sc )
       queens << ec
     else
       board[ec] = :arrow
-      turn.rotate!
+      turn( :rotate )
     end
 
     @lastc = ec
@@ -103,11 +102,11 @@ class Amazons < Rules
   end
 
   def winner?( player )
-    turn.now != player
+    turn != player
   end
 
   def loser?( player )
-    turn.now == player
+    turn == player
   end
 end
 

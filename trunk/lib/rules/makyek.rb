@@ -7,7 +7,7 @@ class Makyek < Rules
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Mak-yek>'],
        :aliases   => ['Makyek']
 
-  attr_reader :board, :turn, :lastc, :wrs, :brs, :ops_cache
+  attr_reader :board, :lastc, :wrs, :brs, :ops_cache
 
   players [:white, :black]
 
@@ -29,8 +29,6 @@ class Makyek < Rules
     wrs.each { |c| board[c] = :white }
     brs.each { |c| board[c] = :black }
 
-    @turn = players.dup
-
     @lastc = nil
     @ops_cache = :ns
   end
@@ -42,7 +40,7 @@ class Makyek < Rules
     sc = Coord[$1]
     ec = Coord[$2]
 
-    rooks = turn.now == :white ? wrs : brs
+    rooks = turn == :white ? wrs : brs
 
     return false unless rooks.include?( sc )
     return false unless d = sc.direction_to( ec )
@@ -64,7 +62,7 @@ class Makyek < Rules
 
     a = []
 
-    rooks = turn.now == :white ? wrs : brs
+    rooks = turn == :white ? wrs : brs
 
     rooks.each do |c| 
       [:n,:e,:s,:w].each do |d|
@@ -84,11 +82,11 @@ class Makyek < Rules
     ec = Coord[$2]
 
     board.move( sc, ec )
-    rooks = turn.now == :white ? wrs : brs
+    rooks = turn == :white ? wrs : brs
     rooks.delete( sc )
     rooks << ec
 
-    opp = turn.now == :white ? :black : :white
+    opp = turn == :white ? :black : :white
 
     cap = []
 
@@ -115,15 +113,15 @@ class Makyek < Rules
       end
     end
 
-    opp_rooks = turn.now == :white ? brs : wrs
+    opp_rooks = turn == :white ? brs : wrs
     cap.each { |c| board[c] = nil; opp_rooks.delete( c ) }
 
-    turn.rotate!
+    turn( :rotate )
     @lastc = ec
     @ops_cache = :ns
     return self if ops
 
-    turn.rotate!
+    turn( :rotate )
     @ops_cache = :ns
 
     self
@@ -135,11 +133,11 @@ class Makyek < Rules
   end
 
   def winner?( player )
-    turn.now != player
+    turn != player
   end
 
   def loser?( player )
-    turn.now == player
+    turn == player
   end
 end
 

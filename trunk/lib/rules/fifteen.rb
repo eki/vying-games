@@ -40,26 +40,26 @@ class Fifteen < Rules
                        ' numbers add up to 15.',
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Tic-tac-toe>']
 
-  attr_reader :unused, :a_list, :b_list, :turn
+  attr_reader :unused, :a_list, :b_list
 
   players [:a, :b]
 
   def initialize( seed=nil )
     super
 
-    @unused, @a_list, @b_list, @turn = (1..9).to_a, [], [], players.dup
+    @unused, @a_list, @b_list = (1..9).to_a, [], []
   end
 
   def op?( op, player=nil )
     return false unless player.nil? || has_ops.include?( player )
     op.to_s =~ /(a|b)(\d)/
-    turn.now.to_s == $1 && unused.include?( $2.to_i )
+    turn.to_s == $1 && unused.include?( $2.to_i )
   end
 
   def ops( player=nil )
     return false unless player.nil? || has_ops.include?( player )
     return nil if final?
-    a = unused.map { |n| "#{turn.now}#{n}" }
+    a = unused.map { |n| "#{turn}#{n}" }
     a == [] ? nil : a
   end
 
@@ -67,9 +67,9 @@ class Fifteen < Rules
     op.to_s =~ /(a|b)(\d)/
     n = $2.to_i
     unused.delete( n )
-    a_list << n if turn.now == :a
-    b_list << n if turn.now == :b
-    turn.rotate!
+    a_list << n if turn == :a
+    b_list << n if turn == :b
+    turn( :rotate )
     self
   end
 

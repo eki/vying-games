@@ -163,13 +163,13 @@ class TrickTakingRules < Rules
     @@info[self.class][:wait_until_broken]
   end
 
-  #position :dealer, :hands, :tricks, :trick, :turn
+  #position :dealer, :hands, :tricks, :trick
 
   def ops( player=nil )
     return [] unless player.nil? || has_ops.include?( player )
     return nil if final?
 
-    hand = hands[turn.now]
+    hand = hands[turn]
 
     if trick.empty?
       lead.each do |rule|
@@ -198,10 +198,10 @@ class TrickTakingRules < Rules
   end
 
   def apply!( op )
-    hand = hands[turn.now]
+    hand = hands[turn]
     card = Card[op]
 
-    trick << [turn.now, hand.delete( card )]
+    trick << [turn, hand.delete( card )]
 
     @broken = true if wait_until_broken.include?( card )
 
@@ -237,9 +237,9 @@ class TrickTakingRules < Rules
       tricks[capture_by] ||= []
       tricks[capture_by] << trick
       @trick = []
-      turn.rotate! until turn.now == capture_by
+      turn( :rotate ) until turn == capture_by
 
-      if hands[turn.now].empty?
+      if hands[turn].empty?
         score_hand
 
         @tricks = {}
@@ -247,10 +247,10 @@ class TrickTakingRules < Rules
         d = Deck.new( deck ).shuffle.deal( players.size, deal_out )
         d.zip( players ) { |h,p| hands[p] = h }
 
-        turn.rotate! until hands[turn.now].include?( Card[:C2] )
+        turn( :rotate ) until hands[turn].include?( Card[:C2] )
       end
     else
-      turn.rotate!
+      turn( :rotate )
     end
 
     self
