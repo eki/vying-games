@@ -56,9 +56,13 @@ class Othello < Rules
 
   attr_reader :board, :turn, :occupied, :frontier, :ops_cache
 
+  random true
+
   players [:black, :white]
 
   def initialize( seed=nil )
+    super
+
     @board = OthelloBoard.new( 8, 8 )
     board[3,3] = board[4,4] = :white
     board[3,4] = board[4,3] = :black

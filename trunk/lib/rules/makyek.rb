@@ -9,9 +9,13 @@ class Makyek < Rules
 
   attr_reader :board, :turn, :lastc, :wrs, :brs, :ops_cache
 
+  random false
+
   players [:white, :black]
 
   def initialize( seed=nil )
+    super
+
     @board = Board.new( 8, 8 )
 
     @wrs = [Coord[0,0], Coord[1,0], Coord[2,0], Coord[3,0],

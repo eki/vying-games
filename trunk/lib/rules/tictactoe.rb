@@ -10,11 +10,15 @@ class TicTacToe < Rules
 
   attr_reader :board, :turn, :lastc, :lastp, :unused_ops
 
+  random false
+
   players [:x, :o]
 
   @@init_ops = Coords.new( 3, 3 ).map { |c| c.to_s }
 
   def initialize( seed=nil )
+    super
+
     @board = Board.new( 3, 3 )
     @turn = players.dup
     @lastc, @lastp = nil, :noone

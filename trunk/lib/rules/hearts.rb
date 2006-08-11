@@ -25,9 +25,10 @@ class Hearts < TrickTakingRules
 
   attr_reader :hands, :tricks, :trick, :broken, :score, :turn, :seed
 
+  random true
+
   def initialize( seed=nil )
-    @seed = seed.nil? ? rand( 10000 ) : seed
-    srand @seed
+    super
 
     @hands = {}
     d = Deck.new( deck ).shuffle.deal( players.size, deal_out )

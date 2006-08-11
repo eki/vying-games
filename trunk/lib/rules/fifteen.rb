@@ -42,13 +42,14 @@ class Fifteen < Rules
 
   attr_reader :unused, :a_list, :b_list, :turn
 
+  random false
+
   players [:a, :b]
 
   def initialize( seed=nil )
-    @unused = (1..9).to_a
-    @a_list = []
-    @b_list = []
-    @turn = players.dup
+    super
+
+    @unused, @a_list, @b_list, @turn = (1..9).to_a, [], [], players.dup
   end
 
   def op?( op, player=nil )

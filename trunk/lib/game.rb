@@ -1,3 +1,20 @@
+require "rubygems"
+require "random"
+
+class Random::MersenneTwister
+  def dup
+    Marshal.load( Marshal.dump( self ) )
+  end
+
+  def eql?( o )
+    state.eql? o.state
+  end
+
+  def ==( o )
+    eql? o
+  end
+end
+
 class Array
   def rotate!
     self << delete_at( 0 ) if size > 0
@@ -13,9 +30,6 @@ class Array
   end
 end
 
-class PositionStruct < Struct
-end
-
 class Rules
   @@info = {}
   @@players = {}
@@ -28,6 +42,13 @@ class Rules
       if !nd.include?( v.class )
         instance_variable_set( iv, v.dup )
       end
+    end
+  end
+
+  def initialize( seed=nil )
+    if info[:random]
+      @seed = seed.nil? ? rand( 10000 ) : seed
+      @rng = Random::MersenneTwister.new( @seed )
     end
   end
 
@@ -46,6 +67,16 @@ class Rules
   def Rules.info( i={} )
     class_eval( "@@info[self] = i" )
     class << self; def info; @@info[self]; end; end
+  end
+
+  def info
+    @@info[self.class]
+  end
+
+  def Rules.random( flag )
+    class_eval( "@@info[self][:random] = flag" )
+    def seed; @seed; end
+    def rng; @rng; end
   end
 
   def Rules.censor( h={}, p=nil )

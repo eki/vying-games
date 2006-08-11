@@ -10,7 +10,11 @@ class Amazons < Rules
 
   players [:white, :black]
 
+  random false
+
   def initialize( seed=nil )
+    super
+
     @board = Board.new( 10, 10 )
 
     @wqs = [Coord[0,3], Coord[3,0], Coord[6,0], Coord[9,3]]

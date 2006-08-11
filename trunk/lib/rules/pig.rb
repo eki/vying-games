@@ -7,13 +7,14 @@ class Pig < Rules
 
   attr_reader :total, :score, :turn, :rolling
 
+  random true
+
   players [:a, :b]
 
   def initialize( seed=nil )
-    @total = Hash.new( 0 )
-    @score = 0
-    @turn = players.dup
-    @rolling = false
+    super
+
+    @total, @score, @turn, @rolling = Hash.new( 0 ), 0, players.dup, false
   end
 
   def ops( player=nil )

@@ -22,16 +22,18 @@ class Minesweeper < Rules
 
   attr_reader :board, :mines, :seed, :unused_ops, :turn
 
+  random true
+
   censor   :one => [:mines]
   players [:one]
 
   @@init_ops = Coords.new( 9, 9 ).map { |c| c.to_s }
 
   def initialize( seed=nil )
-    @seed = seed.nil? ? rand( 10000 ) : seed
-    srand @seed
+    super
+
     @mines = []
-    a = (0...81).to_a.sort_by { rand }
+    a = (0...81).to_a.sort_by { rng.rand }
     10.times { |i| @mines << Coord[a[i]/9,a[i]%9] }
 
     @board = MinesweeperBoard.new( 9, 9 )
