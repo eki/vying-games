@@ -10,8 +10,6 @@ class Amazons < Rules
 
   players [:white, :black]
 
-  random false
-
   def initialize( seed=nil )
     super
 

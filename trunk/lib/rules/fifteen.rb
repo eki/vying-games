@@ -42,8 +42,6 @@ class Fifteen < Rules
 
   attr_reader :unused, :a_list, :b_list, :turn
 
-  random false
-
   players [:a, :b]
 
   def initialize( seed=nil )

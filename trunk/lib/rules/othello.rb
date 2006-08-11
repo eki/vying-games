@@ -56,8 +56,6 @@ class Othello < Rules
 
   attr_reader :board, :turn, :occupied, :frontier, :ops_cache
 
-  random true
-
   players [:black, :white]
 
   def initialize( seed=nil )

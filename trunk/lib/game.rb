@@ -46,7 +46,7 @@ class Rules
   end
 
   def initialize( seed=nil )
-    if info[:random]
+    if info[:random] ||= false
       @seed = seed.nil? ? rand( 10000 ) : seed
       @rng = Random::MersenneTwister.new( @seed )
     end
@@ -92,6 +92,9 @@ class Rules
     @@censored[self.class][player].each do |f|
       pos.instance_eval( "@#{f} = :hidden" )
     end
+
+    pos.instance_eval( "@rng = :hidden" ) if pos.info[:random]
+
     pos
   end
 

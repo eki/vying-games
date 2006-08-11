@@ -8,8 +8,6 @@ class ConnectFour < Rules
 
   attr_reader :board, :turn, :lastc, :lastp, :unused_ops
 
-  random false
-
   def initialize_copy( original )
     super
     @unused_ops = original.unused_ops.map { |a| a.dup }

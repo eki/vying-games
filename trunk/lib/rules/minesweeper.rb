@@ -20,7 +20,7 @@ class Minesweeper < Rules
   info :name        => 'Minesweeper',
        :description => '9x9, 10 bomb Minesweeper'
 
-  attr_reader :board, :mines, :seed, :unused_ops, :turn
+  attr_reader :board, :mines, :unused_ops, :turn
 
   random true
 

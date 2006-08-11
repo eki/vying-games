@@ -23,7 +23,7 @@ class Hearts < TrickTakingRules
   deal_out          13
   wait_until_broken [:HA,:HK,:HQ,:HJ,:HT,:H9,:H8,:H7,:H6,:H5,:H4,:H3,:H2]
 
-  attr_reader :hands, :tricks, :trick, :broken, :score, :turn, :seed
+  attr_reader :hands, :tricks, :trick, :broken, :score, :turn
 
   random true
 

@@ -7,8 +7,6 @@ class Pig < Rules
 
   attr_reader :total, :score, :turn, :rolling
 
-  random true
-
   players [:a, :b]
 
   def initialize( seed=nil )

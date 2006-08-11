@@ -9,8 +9,6 @@ class Makyek < Rules
 
   attr_reader :board, :turn, :lastc, :wrs, :brs, :ops_cache
 
-  random false
-
   players [:white, :black]
 
   def initialize( seed=nil )

@@ -8,8 +8,6 @@ class Connect6 < Rules
 
   attr_reader :board, :turn, :lastc, :lastp, :unused_ops
 
-  random false
-
   players [:black, :white]
 
   @@init_ops = Coords.new( 19, 19 ).map { |c| c.to_s }
