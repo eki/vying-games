@@ -73,8 +73,8 @@ class Rules
     @@info[self.class]
   end
 
-  def Rules.random( flag )
-    class_eval( "@@info[self][:random] = flag" )
+  def Rules.random
+    class_eval( "@@info[self][:random] = true" )
     def seed; @seed; end
     def rng; @rng; end
   end

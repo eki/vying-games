@@ -22,7 +22,7 @@ class Minesweeper < Rules
 
   attr_reader :board, :mines, :unused_ops, :turn
 
-  random true
+  random
 
   censor   :one => [:mines]
   players [:one]

@@ -25,7 +25,7 @@ class Hearts < TrickTakingRules
 
   attr_reader :hands, :tricks, :trick, :broken, :score, :turn
 
-  random true
+  random
 
   def initialize( seed=nil )
     super
