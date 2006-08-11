@@ -16,10 +16,6 @@ class Random::MersenneTwister
 end
 
 class Rules
-  @@info = {}
-  @@players = {}
-  @@censored = {}
-
   def initialize_copy( original )
     nd = [Symbol, NilClass, Fixnum, TrueClass, FalseClass]
     instance_variables.each do |iv|
@@ -50,48 +46,51 @@ class Rules
     eql?( o )
   end
 
-  def Rules.info( i={} )
-    class_eval( "@@info[self] = i" )
-    class << self; def info; @@info[self]; end; end
+  def self.info( i={} )
+    @info = i
+    class << self; attr_reader :info; end
   end
 
-  def info
-    @@info[self.class]
+  def self.random
+    info[:random] = true
+    attr_reader :seed, :rng
   end
 
-  def Rules.random
-    class_eval( "@@info[self][:random] = true" )
-    def seed; @seed; end
-    def rng; @rng; end
-  end
-
-  def Rules.censor( h={}, p=nil )
-    class_eval( "@@censored[self] = h" )
+  def self.censor( h={}, p=nil )
+    @censored = h
     class << self
       undef_method :censor
+      attr_reader :censored
     end
   end
 
   def censor( player )
     pos = self.dup
-    @@censored[self.class] ||= Hash.new( [] )
-    @@censored[self.class][player].each do |f|
-      pos.instance_eval( "@#{f} = :hidden" )
-    end
 
     pos.instance_eval( "@rng = :hidden" ) if pos.info[:random]
+
+    return pos unless pos.respond_to? :censored
+    return pos if     censored[player].nil?
+
+    censored[player].each do |f|
+      pos.instance_eval( "@#{f} = :hidden" )
+    end
 
     pos
   end
 
-  def Rules.players( p )
-    class_eval( "@@players[self] = p" )
-    class << self; def players; @@players[self]; end; end
+  def self.players( p )
+    @players = p
+    class << self; attr_reader :players; end
     p
   end
 
-  def players
-    @@players[self.class]
+  def method_missing( m, *args )
+    self.class.send( m, *args ) if self.class.respond_to?( m )
+  end
+
+  def respond_to?( m )
+    super || self.class.respond_to?( m )
   end
 
   def turn( action=:now )

@@ -95,72 +95,42 @@ end
 class TrickTakingRules < Rules
 
   def TrickTakingRules.trump( a )
-    a = a.map { |s| Card[s] }
-    class_eval( "@@info[self][:trump] = a" )
-    class << self; def trump; @@info[self][:trump]; end; end
-  end
-
-  def trump
-    @@info[self.class][:trump]
+    info[:trump] = a.map { |s| Card[s] }
+    class << self; def trump; @info[:trump]; end; end
   end
 
   def TrickTakingRules.suits( h )
     h.each { |k,v| h[k] = v.map { |s| Card[s] } }
-    class_eval( "@@info[self][:suits] = h" )
-    class << self; def suits; @@info[self][:suits]; end; end
-  end
-
-  def suits
-    @@info[self.class][:suits]
+    info[:suits] = h
+    class << self; def suits; @info[:suits]; end; end
   end
 
   def TrickTakingRules.deck( a )
     a = a.map { |s| Card[s] }
-    class_eval( "@@info[self][:deck] = a" )
-    class << self; def deck; @@info[self][:deck]; end; end
-  end
-
-  def deck
-    @@info[self.class][:deck]
+    info[:deck] = a
+    class << self; def deck; @info[:deck]; end; end
   end
 
   def TrickTakingRules.lead( a )
-    class_eval( "@@info[self][:lead] = a" )
-    class << self; def lead; @@info[self][:lead]; end; end
-  end
-
-  def lead
-    @@info[self.class][:lead]
+    @info[:lead] = a
+    class << self; def lead; @info[:lead]; end; end
   end
 
   def TrickTakingRules.follow( a )
-    class_eval( "@@info[self][:follow] = a" )
-    class << self; def follow; @@info[self][:follow]; end; end
-  end
-
-  def follow
-    @@info[self.class][:follow]
+    info[:follow] = a
+    class << self; def follow; @info[:follow]; end; end
   end
 
   def TrickTakingRules.deal_out( d_o )
-    class_eval( "@@info[self][:deal_out] = d_o" )
-    class << self; def deal_out; @@info[self][:deal_out]; end; end
-  end
-
-  def deal_out
-    @@info[self.class][:deal_out]
+    info[:deal_out] = d_o
+    class << self; def deal_out; @info[:deal_out]; end; end
   end
 
   def TrickTakingRules.wait_until_broken( a )
-    a = a.map { |s| Card[s] }
-    class_eval( "@@info[self][:wait_until_broken] = a" )
+    info[:wait_until_broken] = a.map { |s| Card[s] }
     class << self 
-      def wait_until_broken; @@info[self][:wait_until_broken]; end
+      def wait_until_broken; @info[:wait_until_broken]; end
     end
-  end
-
-  def wait_until_broken
-    @@info[self.class][:wait_until_broken]
   end
 
   #position :dealer, :hands, :tricks, :trick
