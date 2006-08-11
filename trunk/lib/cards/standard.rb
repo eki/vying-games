@@ -68,14 +68,15 @@ class Card
 end
 
 class Deck
-  attr_reader :cards
+  attr_reader :cards, :rng
 
-  def initialize( cards=Card::ALL.dup )
+  def initialize( cards=Card::ALL.dup, rng=Random::MersenneTwister.new )
     @cards = cards
+    @rng = rng
   end
 
   def shuffle
-    @cards = cards.sort_by { rand }
+    @cards = cards.sort_by { rng.rand }
     self
   end
 
@@ -214,7 +215,7 @@ class TrickTakingRules < Rules
 
         @tricks = {}
 
-        d = Deck.new( deck ).shuffle.deal( players.size, deal_out )
+        d = Deck.new( deck, rng ).shuffle.deal( players.size, deal_out )
         d.zip( players ) { |h,p| hands[p] = h }
 
         turn( :rotate ) until hands[turn].include?( Card[:C2] )

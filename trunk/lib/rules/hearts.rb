@@ -31,7 +31,7 @@ class Hearts < TrickTakingRules
     super
 
     @hands = {}
-    d = Deck.new( deck ).shuffle.deal( players.size, deal_out )
+    d = Deck.new( deck, rng ).shuffle.deal( players.size, deal_out )
     d.zip( players ) { |h,p| @hands[p] = h }
 
     turn( :rotate ) until hands[turn].include?( Card[:C2] )
