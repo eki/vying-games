@@ -1,12 +1,8 @@
 require 'game'
 
 class RandomBot < Bot
-  def initialize( game, player )
-    super( game, player )
-  end
-
-  def select
-    ops = game.ops
+  def select( position )
+    ops = position.ops
     ops[rand(ops.size)]
   end
 end

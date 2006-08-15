@@ -167,33 +167,24 @@ class Rules
 end
 
 class Bot
-  attr_reader :game, :player
+  attr_reader :rules, :player
 
-  def initialize( game, player )
-    @game, @player = game, player
+  def initialize( rules, player )
+    @rules, @player = rules, player
   end
 
-  def select!
-    game << select
+  def select( position )
+    best( analyze( position ) )
   end
 
-  def select
-    best( analyze )
+  def analyze( position )
+    h = {}
+    position.ops.each { |op| h[op] = evaluate( position.apply( op ) ) }
+    h
   end
 
-  def analyze( ops=game.ops )
-    scores = ops.map do |op|
-      evaluate( game.history.last.apply( op ) )
-    end
-    scores.zip( ops ).sort.reverse
-  end
-
-  def best( scores, delta=0 )
-    best_ops = []
-    best_score = scores.first[0]
-
-    scores.each { |s| s[0]+delta >=  best_score ? best_ops << s[1] : break }
-    best_ops[rand(best_ops.length)]
+  def best( scores )
+    scores.invert.max.last
   end
 
   def Bot.find( path=$: )
