@@ -1,5 +1,6 @@
 require "rubygems"
 require "random"
+require "yaml"
 
 class Random::MersenneTwister
   def dup
@@ -174,7 +175,8 @@ class Bot
   end
 
   def select( position )
-    best( analyze( position ) )
+    score, op = best( analyze( position ) )
+    op
   end
 
   def analyze( position )
@@ -184,7 +186,7 @@ class Bot
   end
 
   def best( scores )
-    scores.invert.max.last
+    scores.invert.max
   end
 
   def Bot.find( path=$: )
@@ -211,11 +213,19 @@ class Bot
   end
 end
 
+class GameResults
+  attr_reader :rules, :seed, :sequence
+  
+  def initialize( rules, seed, sequence )
+    @rules, @seed, @sequence = rules, seed, sequence
+  end
+end
+
 class Game
-  attr_reader :rules, :history, :sequence
+  attr_reader :rules, :history, :sequence, :user_map
 
   def initialize( rules, seed=nil )
-    @rules, @history, @sequence = rules, [rules.new( seed )], []
+    @rules, @history, @sequence, @user_map = rules, [rules.new( seed )], [], {}
     yield self if block_given?
   end
 
@@ -269,8 +279,31 @@ class Game
     [@history.pop,@sequence.pop]
   end
 
-  def players
-    rules.players
+  def register_users( h )
+    user_map.merge!( h )
+  end
+
+  def step
+    has_ops.each do |p|
+      u = user_map[p].new( rules, p )
+      self << u.select( history.last.dup )
+    end
+    self
+  end
+
+  def play
+    step until final?
+    results
+  end
+
+  def results
+    GameResults.new( rules.to_s, respond_to?( :seed ) ? seed : nil, sequence )
+  end
+
+  def Game.replay( results )
+    g = Game.new( Kernel.const_get( results.rules ), results.seed )
+    g << results.sequence
+    g
   end
 
   def to_s

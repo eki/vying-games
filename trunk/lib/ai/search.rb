@@ -1,23 +1,19 @@
 
 require 'game'
 
-class Minimax
+module Minimax
 
-  attr_reader :rules
-  attr_accessor :cutoff, :evaluate
-
-  def initialize( rules )
-    @rules = rules
-    @cutoff = lambda { |s,d| rules.final?( s ) }
-    @evaluate = lambda { |s,m,d| rules.score( s, m ) }
+  def analyze( position )
+    h = {}
+    position.ops.each{ |op| h[op] = search( position.apply( op ) ) }
+    h
   end
 
-  def search( state, max=nil, depth=0 )
-    max ||= state.turn.current
-    return evaluate.call( state, max, depth ) if cutoff.call( state, depth )
-    ops = rules.ops( state )
-    scores = ops.map { |op| [search( op.call, max, depth+1 )[0],op] }
-    return state.turn.current == max ? scores.max : scores.min
+  def search( position, depth=0 )
+    @nodes += 1 if respond_to? :nodes
+    return evaluate( position ) if cutoff( position, depth )
+    scores = position.ops.map { |op| search( position.apply( op ), depth+1 ) }
+    position.turn == player ? scores.max : scores.min
   end
 end
 
