@@ -8,7 +8,12 @@ class FakeRules < Rules
 
   info :name => "Fake Rules"
 
+  random
+
   players [:a, :b, :c]
+
+  censor :a => [:fake_foo],
+         :b => [:fake_board]
 
   def initialize( seed=nil )
     super
@@ -41,13 +46,28 @@ end
 
 class TestGame < Test::Unit::TestCase
   def test_initialize
-    g = Game.new( FakeRules )
+    g = Game.new( FakeRules, 1000 )
     assert_equal( FakeRules, g.rules )
     assert_equal( [], g.sequence )
-    assert_equal( [FakeRules.new], g.history )
+    assert_equal( [FakeRules.new( 1000 )], g.history )
     assert_equal( "edcba", g.fake_board )
     assert_equal( "bar", g.fake_foo )
     assert_equal( :a, g.turn )
+    assert( g.respond_to?( :seed ) )
+    assert( g.respond_to?( :rng ) )
+  end
+
+  def test_censor
+    g = Game.new( FakeRules )
+    assert_equal( :hidden, g.censor( :a ).rng )
+    assert_equal( :hidden, g.censor( :b ).rng )
+    assert_equal( :hidden, g.censor( :c ).rng )
+    assert_equal( :hidden, g.censor( :a ).fake_foo )
+    assert_equal( :hidden, g.censor( :b ).fake_board )
+    assert_not_equal( :hidden, g.censor( :a ).fake_board )
+    assert_not_equal( :hidden, g.censor( :b ).fake_foo )
+    assert_not_equal( :hidden, g.censor( :c ).fake_board )
+    assert_not_equal( :hidden, g.censor( :c ).fake_foo )
   end
 
   def test_turn
