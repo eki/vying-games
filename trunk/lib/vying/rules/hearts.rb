@@ -1,5 +1,5 @@
-require 'game'
-require 'cards/standard'
+require 'vying/rules'
+require 'vying/cards/standard'
 
 class Hearts < TrickTakingRules
 

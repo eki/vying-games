@@ -1,4 +1,4 @@
-require 'game'
+require 'vying/rules'
 
 # These changes to Enumerable (adding powerset and each_subset) are taken from
 # comp.lang.ruby.

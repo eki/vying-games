@@ -1,5 +1,5 @@
-require 'game'
-require 'ai/search'
+require 'vying/ai/bot'
+require 'vying/ai/search'
 
 class GreedyBot < Bot
   include Minimax

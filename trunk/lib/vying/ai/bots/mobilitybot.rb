@@ -1,4 +1,5 @@
-require 'game'
+require 'vying/ai/bot'
+require 'vying/ai/search'
 
 class MobilityBot < Bot
   include Minimax

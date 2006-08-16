@@ -1,5 +1,5 @@
-require 'board/standard'
-require 'game'
+require 'vying/rules'
+require 'vying/board/standard'
 
 class OthelloBoard < Board
   def valid?( c, bp, directions=[:n,:s,:e,:w,:ne,:nw,:se,:sw] )

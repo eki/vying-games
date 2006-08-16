@@ -1,5 +1,4 @@
-
-require 'game'
+require 'vying/rules'
 
 module Minimax
 

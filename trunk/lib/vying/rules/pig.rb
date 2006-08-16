@@ -1,4 +1,4 @@
-require 'game'
+require 'vying/rules'
 
 class Pig < Rules
 

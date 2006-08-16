@@ -1,5 +1,5 @@
-require 'board/standard'
-require 'game'
+require 'vying/rules'
+require 'vying/board/standard'
 
 class MinesweeperBoard < Board
   def reveal( coord, mines )

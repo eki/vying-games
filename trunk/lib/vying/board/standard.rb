@@ -1,4 +1,4 @@
-require 'memoize'
+require 'vying/memoize'
 
 class Coord
   attr_reader :x, :y

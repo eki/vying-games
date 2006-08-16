@@ -1,3 +1,4 @@
+require 'vying/rules'
 require 'vying/user'
 
 class Bot < UserDelegate

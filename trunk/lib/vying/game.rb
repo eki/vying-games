@@ -1,4 +1,3 @@
-require "yaml"
 
 class GameResults
   attr_reader :rules, :seed, :sequence, :user_map
@@ -110,8 +109,4 @@ class Game
     history.last.to_s
   end
 end
-
-# Requires all files that appear to be Rules/Bot on the standard library path
-Rules.find
-Bot.find
 
