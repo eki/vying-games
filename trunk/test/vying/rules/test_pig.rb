@@ -1,7 +1,7 @@
-
 require "test/unit"
-require "game"
-require "rules/test_rules"
+
+require "vying/rules/pig"
+require "vying/rules/test_rules"
 
 class TestPig < Test::Unit::TestCase
   include RulesTests

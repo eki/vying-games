@@ -1,16 +1,16 @@
 
 require "test/unit"
 
-require "test_game"
+require "vying/test_game"
 
-require "board/test_standard.rb"
+require "vying/board/test_standard.rb"
 
-require "rules/test_tictactoe"
-require "rules/test_fifteen"
-require "rules/test_connectfour"
-require "rules/test_connect6"
-require "rules/test_othello"
-require "rules/test_pig"
-require "rules/test_makyek"
-require "rules/test_amazons"
+require "vying/rules/test_tictactoe"
+require "vying/rules/test_fifteen"
+require "vying/rules/test_connectfour"
+require "vying/rules/test_connect6"
+require "vying/rules/test_othello"
+require "vying/rules/test_pig"
+require "vying/rules/test_makyek"
+require "vying/rules/test_amazons"
 

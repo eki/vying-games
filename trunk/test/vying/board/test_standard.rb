@@ -1,6 +1,6 @@
-
 require "test/unit"
-require "board/standard"
+
+require "vying/board/standard"
 
 class TestCoord < Test::Unit::TestCase
   def test_initialize

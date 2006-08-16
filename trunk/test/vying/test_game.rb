@@ -1,6 +1,7 @@
-
 require "test/unit"
-require "game"
+
+require "vying/rules"
+require "vying/game"
 
 class FakeRules < Rules
 

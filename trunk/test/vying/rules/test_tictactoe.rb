@@ -1,6 +1,7 @@
-
 require "test/unit"
-require "game"
+
+require "vying/rules/tictactoe"
+require "vying/rules/test_rules"
 
 class TestTicTacToe < Test::Unit::TestCase
   def test_init
