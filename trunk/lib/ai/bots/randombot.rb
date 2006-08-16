@@ -1,7 +1,7 @@
 require 'game'
 
 class RandomBot < Bot
-  def select( position )
+  def select( position, player )
     ops = position.ops
     ops[rand(ops.size)]
   end

@@ -9,6 +9,8 @@ class Pig < Rules
 
   players [:a, :b]
 
+  random
+
   def initialize( seed=nil )
     super
 

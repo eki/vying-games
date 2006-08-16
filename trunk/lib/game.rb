@@ -167,19 +167,22 @@ class Rules
   end
 end
 
-class Bot
-  attr_reader :rules, :player
+class UserDelegate
+  attr_reader :user_id, :username
 
-  def initialize( rules, player )
-    @rules, @player = rules, player
+  def initialize( user_id=0, username='anonymous' )
+    @user_id, @username = user_id, username
   end
+end
 
-  def select( position )
-    score, op = best( analyze( position ) )
+class Bot < UserDelegate
+
+  def select( position, player )
+    score, op = best( analyze( position, player ) )
     op
   end
 
-  def analyze( position )
+  def analyze( position, player )
     h = {}
     position.ops.each { |op| h[op] = evaluate( position.apply( op ) ) }
     h
@@ -214,10 +217,14 @@ class Bot
 end
 
 class GameResults
-  attr_reader :rules, :seed, :sequence
+  attr_reader :rules, :seed, :sequence, :user_map
   
-  def initialize( rules, seed, sequence )
-    @rules, @seed, @sequence = rules, seed, sequence
+  def initialize( game )
+    @rules = game.rules.to_s
+    @seed = game.respond_to?( :seed ) ? game.seed : nil
+    @sequence = game.sequence
+    @user_map = {}
+    game.user_map.each { |k,v| @user_map[k] = [v.user_id, v.username] }
   end
 end
 
@@ -285,8 +292,17 @@ class Game
 
   def step
     has_ops.each do |p|
-      u = user_map[p].new( rules, p )
-      self << u.select( history.last.dup )
+      if players.include?( p )
+        op = user_map[p].select( history.last.dup, p )
+        if op?( op, p )
+          self << user_map[p].select( history.last.dup, p )
+        else
+          raise "#{user_map[p].username} attempted invalid op: #{op}"
+        end
+      elsif p == :random
+        ops = history.last.ops
+        self << ops[history.last.rng.rand(ops.size)]
+      end
     end
     self
   end
@@ -297,7 +313,7 @@ class Game
   end
 
   def results
-    GameResults.new( rules.to_s, respond_to?( :seed ) ? seed : nil, sequence )
+    GameResults.new( self )
   end
 
   def Game.replay( results )

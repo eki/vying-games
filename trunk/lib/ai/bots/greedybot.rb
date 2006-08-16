@@ -6,20 +6,20 @@ class GreedyBot < Bot
 
   attr_reader :leaf, :nodes
 
-  def initialize( rules, player )
+  def initialize( user_id, username )
     super
     @leaf = 0
     @nodes = 0
   end
 
-  def select( position )
+  def select( position, player )
     @leaf, @nodes = 0, 0
     score, op = best( analyze( position ) )
     puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
     op
   end
 
-  def evaluate( position )
+  def evaluate( position, player )
     @leaf += 1
     opps = position.players.select { |p| p != player }
     score = position.board.count( player )
