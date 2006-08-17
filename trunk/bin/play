@@ -7,26 +7,31 @@ require 'gui/qt/board'
 rules = Othello
 p2b = {}
 number = 1
-gui = 'console'
 
 class HumanBot < Bot
-  def initialize( game, player )
-    super( game, player )
+  def select( position )
+    puts position
+    puts "Ops: #{position.ops.inspect}"
+    print "Select: "
+    op = $stdin.gets.chomp.intern
+    until position.op?( op )
+      puts "'#{op}' not a valid op!"
+      print "Select: "
+      op = $stdin.gets.chomp.intern
+    end
+    op
   end
 end
 
 opts = OptionParser.new
 
 opts.on( "-r", "--rules RULES" ) { |r| rules = Kernel.const_get( r ) }
-
+opts.on( "-n", "--number NUMBER" ) { |n| number = Integer(n) }
 opts.on( "-p", "--player PLAYER=BOT" ) do |s|
   s =~ /(\w*)=(\w*)/
   p2b[$1.downcase.intern] = Kernel.const_get( $2 )
 end
 
-opts.on( "-n", "--number NUMBER" ) { |n| number = Integer(n) }
-opts.on( "-g", "--gui GUI" ) { |g| gui = g }
-opts.on( "-c", "--nogui" ) { gui = 'console' }
 
 opts.parse( ARGV )
 
@@ -44,64 +49,17 @@ def summarize( games )
 end
 
 
-if gui == 'console'
-  class HumanBot
-    def select
-      puts game
-      puts "Ops: #{game.ops}"
-      print "Select: "
-      op = $stdin.gets.chomp.intern
-      until game.op?( op )
-        puts "'#{op}' not a valid op!"
-        print "Select: "
-        op = $stdin.gets.chomp.intern
-      end
-      op
-    end
-  end
-
-  games = []
-  number.times do 
-    games << Game.new( rules )
-    bots = {}
-    p2b.each_pair { |p,b| bots[p] = b.new( games.last, p ) }
-    until games.last.final?
-      games.last.has_ops.each do |p|
-        if p == :random 
-          g, ops = games.last, games.last.ops
-          g << ops[rand(ops.size)]
-        else
-          bots[p].select!
-        end
-      end
-    end
-  end
-  summarize( games )
-elsif gui == 'qt'
-
-  class HumanBot
-    def try( op )
-      return game << op if game.turn.now == player && game.op?( op )
-      return nil
-    end
-  end
+games = []
+number.times do |n|
 
   g = Game.new( rules )
+  g.register_users( p2b )
+  results = g.play
 
-  bots = {}
-  p2b.each_pair { |p,b| bots[p] = b.new( g, p ) }
+  games << g
 
-  app = Qt::Application.new( ARGV )
-
-  qtb = QtBoard.new( g, bots, 480, 480 )
-
-  app.setMainWidget( qtb )
-
-  qtb.sweep
-  qtb.show
-
-  qtb.startTimer( 250 )
-
-  app.exec
+  puts "completed game #{n}"
 end
+
+summarize( games )
 
