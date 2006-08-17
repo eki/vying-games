@@ -1,7 +1,8 @@
-require "test/unit"
+require 'test/unit'
 
-require "vying/rules/othello"
-require "vying/rules/test_rules"
+require 'vying/game'
+require 'vying/rules/othello'
+require 'vying/rules/test_rules'
 
 class TestOthelloBoard < Test::Unit::TestCase
   def test_valid_ns
