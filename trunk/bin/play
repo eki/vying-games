@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'optparse'
-require 'game'
-require 'gui/qt/board'
+require 'vying'
 
 rules = Othello
 p2b = {}

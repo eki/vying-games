@@ -2,7 +2,7 @@
 
 require 'optparse'
 require 'benchmark'
-require 'game'
+require 'vying'
 
 rules = []
 exclude = []
