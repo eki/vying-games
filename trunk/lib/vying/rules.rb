@@ -128,7 +128,7 @@ class Rules
   def Rules.find( path=$: )
     required = []
     path.each do |d|
-      Dir.glob( "#{d}/rules/**/*.rb" ) do |f|
+      Dir.glob( "#{d}/**/rules/*.rb" ) do |f|
         f =~ /(.*)\/rules\/(.*\.rb)$/
         if ! required.include?( $2 ) && !f["test_"] && !f["ts_"]
           required << $2
