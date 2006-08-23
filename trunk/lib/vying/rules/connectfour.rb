@@ -74,5 +74,9 @@ class ConnectFour < Rules
     board.each_from( lastc, [:ne,:sw] ) { |p| p == lastp } < 3 &&
     board.each_from( lastc, [:nw,:se] ) { |p| p == lastp } < 3
   end
+
+  def hash
+    [board, turn].hash
+  end
 end
 

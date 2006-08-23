@@ -139,5 +139,9 @@ class Makyek < Rules
   def loser?( player )
     turn == player
   end
+
+  def hash
+    [board, turn].hash
+  end
 end
 

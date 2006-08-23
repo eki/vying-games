@@ -65,5 +65,9 @@ class TicTacToe < Rules
     board.each_from( lastc, [:ne,:sw] ) { |p| p == lastp } != 2 &&
     board.each_from( lastc, [:nw,:se] ) { |p| p == lastp } != 2
   end
+
+  def hash
+    [board, turn].hash
+  end
 end
 

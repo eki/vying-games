@@ -97,6 +97,10 @@ class Coords
     c.x >= 0 && c.x < width && c.y >= 0 && c.y < height
   end
 
+  def hash
+    [width, height].hash
+  end
+
   def group_by
     r, a = {}, []
     each do |c|
@@ -214,6 +218,10 @@ class Board
   def ==( o )
     o.respond_to?( :board ) && o.respond_to?( :coords ) &&
     board == o.board && coords == o.coords
+  end
+
+  def hash
+    [coords, board.to_a].hash
   end
 
   def each

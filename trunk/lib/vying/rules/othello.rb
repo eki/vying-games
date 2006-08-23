@@ -121,5 +121,9 @@ class Othello < Rules
   def draw?
     board.count( :white ) == board.count( :black )
   end
+
+  def hash
+    [board, turn].hash
+  end
 end
 

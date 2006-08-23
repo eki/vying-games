@@ -68,5 +68,9 @@ class Connect6 < Rules
     board.each_from( lastc, [:ne,:sw] ) { |p| p == lastp } < 5 &&
     board.each_from( lastc, [:nw,:se] ) { |p| p == lastp } < 5
   end
+
+  def hash
+    [board,turn].hash
+  end
 end
 
