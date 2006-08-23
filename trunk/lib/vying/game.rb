@@ -1,13 +1,30 @@
 
 class GameResults
-  attr_reader :rules, :seed, :sequence, :user_map
+  attr_reader :rules, :seed, :sequence, :user_map, :win_lose_draw, :scores,
+              :check
   
   def initialize( game )
     @rules = game.rules.to_s
     @seed = game.respond_to?( :seed ) ? game.seed : nil
     @sequence = game.sequence
+
     @user_map = {}
     game.user_map.each { |k,v| @user_map[k] = [v.user_id, v.username] }
+
+    @win_lose_draw = {}
+    game.players.each do |p|
+      @win_lose_draw[p] = :winner if game.winner?( p )
+      @win_lose_draw[p] = :loser  if game.loser?( p )
+      @win_lose_draw[p] = :draw   if game.draw?
+    end
+
+    @scores = {}
+    game.players.each do |p|
+      @scores[p] = game.score( p )
+    end
+
+    i = rand(game.history.length-1)
+    @check = "#{i},#{game.history[i].hash},#{game.history.last.hash}"
   end
 end
 
