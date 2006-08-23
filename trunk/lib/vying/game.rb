@@ -1,3 +1,4 @@
+require 'fsdb'
 
 class GameResults
   attr_reader :rules, :seed, :sequence, :user_map, :win_lose_draw, :scores,
@@ -25,6 +26,20 @@ class GameResults
 
     i = rand(game.history.length-1)
     @check = "#{i},#{game.history[i].hash},#{game.history.last.hash}"
+  end
+
+  def save( root="#{ENV['HOME']}/.vying/games" )
+    name = "#{`uuidgen`.chomp}.yaml"
+    db = FSDB::Database.new( root )
+    db.formats = [FSDB::YAML_FORMAT] + db.formats
+    db[name] = self
+    name
+  end
+
+  def GameResults.load( name, root="#{ENV['HOME']}/.vying/games" )
+    db = FSDB::Database.new( root )
+    db.formats = [FSDB::YAML_FORMAT] + db.formats
+    db[name]
   end
 end
 
