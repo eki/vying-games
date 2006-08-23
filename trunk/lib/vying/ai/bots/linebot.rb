@@ -1,4 +1,4 @@
-require 'game'
+require 'vying/ai/bot'
 
 class LineBot < Bot
 

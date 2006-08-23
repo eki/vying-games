@@ -1,4 +1,4 @@
-require 'game'
+require 'vying/ai/bot'
 
 class ConnectedBot < Bot
   def initialize( game, player )
