@@ -293,47 +293,5 @@ class Board
     b
   end
 
-  def to_html
-    s = '<table>'
-    rh = '<tr><td><img src="/images/board/empty.png"/></td>'
-    h = 'a'
-    coords.width.times do
-      rh << '<td class="header"><img src="/images/board/letters/'
-      rh << h
-      rh << '.png"/></td>'
-      h.succ!
-    end
-    rh << '<td><img src="/images/board/empty.png"/></td></tr>'
-
-    s << rh << '</tr>'
-
-    last = nil
-    coords.each do |c|
-      s << '</tr><tr>'                    if !last.nil? && last.y != c.y
-
-      if c.x == 0
-        s << '<td><img src="/images/board/numbers/'
-        s << (c.y + 1).to_s
-        s << '.png"/></td>'
-      end
-
-      s << '<td><img src="/images/board/'
-      s << self[c].name.downcase          if self[c].kind_of? Piece
-      s << self[c].to_s.downcase          if !self[c].kind_of? Piece
-      s << 'empty'                        if self[c].nil?
-      s << '.png"/></td>'
-
-      if c.x == coords.width-1
-        s << '<td><img src="/images/board/numbers/'
-        s << (c.y + 1).to_s
-        s << '.png"/></td>'
-      end
-
-      last = c
-    end
-
-    s << rh << '</table>'
-    s
-  end
 end
 
