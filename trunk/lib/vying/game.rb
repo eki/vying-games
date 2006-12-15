@@ -62,7 +62,8 @@ class Game
   attr_reader :rules, :history, :sequence, :user_map
 
   def initialize( rules, seed=nil )
-    @rules, @history, @sequence, @user_map = rules, [rules.new( seed )], [], {}
+    @rules, @history = rules.to_s, [rules.new( seed )]
+    @sequence, @user_map = [], {}
     yield self if block_given?
   end
 
@@ -74,8 +75,8 @@ class Game
   end
 
   def respond_to?( method_id )
-    history.last.respond_to?( method_id ) ||
-    rules.respond_to?( method_id ) ||
+    (!history.nil? && history.last.respond_to?( method_id )) ||
+    (!rules.nil? && rules.respond_to?( method_id )) ||
     super.respond_to?( method_id )
   end
 
