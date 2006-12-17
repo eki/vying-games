@@ -1,5 +1,4 @@
 require 'fsdb'
-require 'json'
 
 class GameResults
   attr_reader :rules, :seed, :sequence, :user_map, :win_lose_draw, :scores,
@@ -41,20 +40,6 @@ class GameResults
     db = FSDB::Database.new( root )
     db.formats = [FSDB::YAML_FORMAT] + db.formats
     db[name]
-  end
-
-  def to_hash
-    { 'rules'         => rules,
-      'seed'          => seed,
-      'sequence'      => sequence,
-      'user_map'      => user_map,
-      'win_lose_draw' => win_lose_draw,
-      'scores'        => scores,
-      'check'         => check }
-  end
-
-  def to_json( *a )
-    { 'json_class' => self.class.name, 'data' => to_hash }.to_json( *a )
   end
 end
 

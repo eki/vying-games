@@ -23,6 +23,7 @@ class Coord
   end
 
   def ==( c )
+    c.respond_to?( :x ) && c.respond_to?( :y ) && 
     self.x == c.x && self.y == c.y
   end
 
