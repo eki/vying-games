@@ -67,7 +67,7 @@ class Rules
   def censor( player )
     pos = self.dup
 
-    pos.instance_eval( "@rng = :hidden" ) if pos.info[:random]
+    pos.instance_eval( "@rng, @seed = :hidden, :hidden" ) if pos.info[:random]
 
     return pos unless pos.respond_to? :censored
     return pos if     censored[player].nil?
