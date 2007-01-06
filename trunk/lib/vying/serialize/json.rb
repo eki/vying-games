@@ -2,7 +2,7 @@ require 'json'
 require 'vying/game'
 
 class GameResults
-  def to_hash
+  def to_json( *a )
     { 'type'          => 'GameResults',
       'rules'         => rules,
       'seed'          => seed,
@@ -15,7 +15,7 @@ class GameResults
 end
 
 class Game
-  def to_hash
+  def to_json( *a )
     { 'type'     => 'Game',
       'rules'    => rules,
       'history'  => history,
@@ -27,7 +27,7 @@ end
 class Rules
   def to_json( *a )
     h = { 'type'    => 'Position',
-          'rules'   => class.to_s,
+          'rules'   => self.class.to_s,
           'players' => players,
           'final'   => final? }
 
