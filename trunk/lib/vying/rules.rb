@@ -125,7 +125,7 @@ class Rules
     self.dup.apply!( op )
   end
 
-  def Rules.find( path=$: )
+  def Rules.require_all( path=$: )
     required = []
     path.each do |d|
       Dir.glob( "#{d}/**/rules/*.rb" ) do |f|
@@ -146,6 +146,13 @@ class Rules
 
   def Rules.list
     @@rules_list
+  end
+
+  def Rules.find( name )
+    Rules.list.each do |r|
+      return r if name.downcase == r.to_s.downcase
+    end
+    nil
   end
 
   def to_s

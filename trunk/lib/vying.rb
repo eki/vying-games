@@ -5,6 +5,6 @@ require 'vying/game'
 require 'yaml'
 require 'vying/serialize/json'
 
-Rules.find
+Rules.require_all
 #Bot.find
 
