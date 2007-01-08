@@ -15,17 +15,21 @@ class GameResults
 end
 
 class Game
-  def to_json( *a )
+  def to_hash
     { 'type'     => 'Game',
       'rules'    => rules,
       'history'  => history,
       'sequence' => sequence,
-      'user_map' => user_map }.to_json( *a )
+      'user_map' => user_map }
+  end
+
+  def to_json( *a )
+    to_hash.to_json( *a )
   end
 end
 
 class Rules
-  def to_json( *a )
+  def to_hash
     h = { 'type'    => 'Position',
           'rules'   => self.class.to_s,
           'players' => players,
@@ -42,7 +46,11 @@ class Rules
 
     h.merge!( 'board' => board ) if respond_to? :board
 
-    h.to_json( *a )
+    h
+  end
+
+  def to_json( *a )
+    to_hash.to_json( *a )
   end
 end
 
