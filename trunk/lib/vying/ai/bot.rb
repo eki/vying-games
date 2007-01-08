@@ -1,7 +1,12 @@
 require 'vying/rules'
-require 'vying/user'
 
-class Bot < UserDelegate
+class Bot
+
+  attr_reader :user_id, :username
+
+  def initialize
+    @user_id, @username = 0, self.class.to_s
+  end
 
   def select( position, player )
     score, op = best( analyze( position, player ) )
@@ -18,7 +23,7 @@ class Bot < UserDelegate
     scores.invert.max
   end
 
-  def Bot.find( path=$: )
+  def Bot.require_all( path=$: )
     required = []
     path.each do |d|
       Dir.glob( "#{d}/**/bots/*.rb" ) do |f|
