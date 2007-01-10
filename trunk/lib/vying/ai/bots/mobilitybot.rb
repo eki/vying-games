@@ -6,15 +6,10 @@ class MobilityBot < Bot
 
   attr_reader :leaf, :nodes
 
-  def initialize( user_id, username )
-    super
-    @leaf, @nodes = 0, 0
-  end
-
   def select( position, player )
     @leaf, @nodes = 0, 0
-    score, op = best( analyze( position ) )
-    puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
+    score, op = best( analyze( position, player ) )
+    #puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
     op
   end
 
