@@ -23,6 +23,10 @@ class Bot
     scores.invert.max
   end
 
+  def to_s
+    self.class.to_s
+  end
+
   def Bot.require_all( path=$: )
     required = []
     path.each do |d|
@@ -45,5 +49,13 @@ class Bot
   def Bot.list
     @@bots_list
   end
+
+  def Bot.find( name )
+    Bot.list.each do |b|
+      return b if name.downcase == b.to_s.downcase
+    end
+    nil
+  end
+
 end
 

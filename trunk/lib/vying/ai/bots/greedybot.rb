@@ -6,7 +6,7 @@ class GreedyBot < Bot
 
   attr_reader :leaf, :nodes
 
-  def initialize( user_id, username )
+  def initialize
     super
     @leaf = 0
     @nodes = 0
@@ -14,8 +14,8 @@ class GreedyBot < Bot
 
   def select( position, player )
     @leaf, @nodes = 0, 0
-    score, op = best( analyze( position ) )
-    puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
+    score, op = best( analyze( position, player ) )
+    #puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
     op
   end
 
