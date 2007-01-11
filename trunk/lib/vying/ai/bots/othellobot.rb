@@ -43,7 +43,7 @@ class OthelloBot < Bot
   def select( position, player )
     @leaf, @nodes = 0, 0
     score, op = best( analyze( position, player ) )
-    #puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
+    puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
     op
   end
 
@@ -59,12 +59,17 @@ class OthelloBot < Bot
 
     score = 0
 
-    if total < 30
+    if total < 10
       score = #eval_frontier( position, player ) +
               eval_board_early( position, player ) +
               eval_corners( position, player ) +
-              eval_edges( position, player ) +
+              #eval_edges( position, player ) +
               (opp_count - p_count) * 12
+    elsif total < 30
+      score = eval_frontier( position, player ) * 4 +
+              eval_corners( position, player ) +
+              #eval_edges( position, player ) +
+              (opp_count - p_count) * 2
     elsif total < 55
       score = eval_corners( position, player ) +
               eval_edges( position, player )
@@ -152,16 +157,16 @@ class OthelloBot < Bot
   end
 
   def eval_frontier( position, player )
+    opp = position.players.select { |p| p != player }.first
     score = 0
+
     position.frontier.each do |c|
-      if position.board[c] == player
-        score -= 5
-      elsif position.board[c].nil?
-        score += 1
-      else
-        score += 6
+      position.board.coords.neighbors( c ).each do |n|
+        score += 1 if position.board[n] == opp
+        score -= 1 if position.board[n] == player
       end
     end
+
     score
   end
 
