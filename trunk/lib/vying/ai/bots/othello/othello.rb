@@ -4,8 +4,8 @@ require 'vying/ai/search'
 module AI::Othello
 
   VYING_LIB = "/home/eki/projects/vying/trunk/lib"
-  CORNERS_YAML = "/vying/ai/bots/othello/corners.yaml"
-  EDGES_YAML = "/vying/ai/bots/othello/edge.yaml" 
+  CORNERS_YAML = VYING_LIB + "/vying/ai/bots/othello/corners.yaml"
+  EDGES_YAML = VYING_LIB + "/vying/ai/bots/othello/edge.yaml" 
 
   CORNER_COORDS = [[:a1,:b2,:a2,:a3],
                    [:a1,:b2,:b1,:c1],
@@ -99,13 +99,6 @@ module AI::Othello
     score
   end
 
-  def eval_mobility( position, player )
-    player_score = position.ops ? position.ops.length : 0
-    position.turn( :rotate )
-    opp_score = position.ops ? position.ops.length : 0
-    player_score - opp_score
-  end
-
   def eval_board_late( position, player )
     opp = position.players.select { |p| p != player }.first
 
@@ -175,6 +168,8 @@ module AI::Othello
 
     def evaluate( position, player )
       @leaf += 1
+
+      return eval_count( position, player )[3] * 1000 if position.final?
       eval( position, player )
     end
 
