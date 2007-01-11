@@ -1,5 +1,8 @@
 require 'vying/rules'
 
+module AI
+end
+
 class Bot
 
   attr_reader :user_id, :username
@@ -27,10 +30,20 @@ class Bot
     self.class.to_s
   end
 
+  def name
+    to_s =~ /(::)*(\w+)$/
+    $2
+  end
+
+  def Bot.name
+    to_s =~ /(::)*(\w+)$/
+    $2
+  end
+
   def Bot.require_all( path=$: )
     required = []
     path.each do |d|
-      Dir.glob( "#{d}/**/bots/*.rb" ) do |f|
+      Dir.glob( "#{d}/**/bots/**/*bot.rb" ) do |f|
         f =~ /(.*)\/bots\/(.*\.rb)$/
         if ! required.include?( $2 ) && !f["test_"] && !f["ts_"]
           required << $2
@@ -46,13 +59,15 @@ class Bot
     @@bots_list << child
   end
 
-  def Bot.list
+  def Bot.list( rules=nil )
+    return @@bots_list.select { |b| b.to_s[rules.to_s] } if rules
     @@bots_list
   end
 
   def Bot.find( name )
     Bot.list.each do |b|
-      return b if name.downcase == b.to_s.downcase
+      return b if name.downcase == b.to_s.downcase ||
+                  name.downcase == b.name.downcase
     end
     nil
   end

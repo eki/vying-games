@@ -1,125 +1,75 @@
 require 'vying/ai/bot'
 require 'vying/ai/search'
 
-class Corner
-  attr_reader :corner, :x, :c, :edge, :edge_array
+module AI::Othello
 
-  def initialize( a )
-    @key, @edge_array = [:empty, :black, :white], a
-    @corner, @x, @c, @edge = a.map { |i| @key[i] }
+  VYING_LIB = "/home/eki/projects/vying/trunk/lib"
+  CORNERS_YAML = "/vying/ai/bots/othello/corners.yaml"
+  EDGES_YAML = "/vying/ai/bots/othello/edge.yaml" 
+
+  CORNER_COORDS = [[:a1,:b2,:a2,:a3],
+                   [:a1,:b2,:b1,:c1],
+                   [:h1,:g2,:g1,:f1],
+                   [:h1,:g2,:h2,:h3],
+                   [:a8,:b7,:b8,:c8],
+                   [:a8,:b7,:a7,:a6],
+                   [:h8,:g7,:g8,:f8],
+                   [:h8,:g7,:h7,:h6]]
+
+  EDGE_COORDS = [[:a2,:a3,:a4,:a5,:a6,:a7],
+                 [:h2,:h3,:h4,:h5,:h6,:h7],
+                 [:b1,:c1,:d1,:e1,:f1,:g1],
+                 [:b8,:c8,:d8,:e8,:f8,:g8]]
+
+  def load_corners
+    @corners ||= YAML.load_file( CORNERS_YAML )
   end
 
-  def to_s
-    " #{x.to_s[0..0]} \n#{corner.to_s[0..0]}#{c.to_s[0..0]}#{edge.to_s[0..0]}\n"
-  end
-end
-
-
-class OthelloBot < Bot
-  include Minimax
-
-  attr_reader :leaf, :nodes
-
-  def initialize
-    super
-    @leaf = 0
-    @nodes = 0
-
-#    $:.each do |d|
-#      Dir.glob( "**/corners.yaml" ) do |fn|
-#        open( fn, "r" ) { |f| @corners = YAML.load( f ) }
-#      end
-#    end
-
-    @corners = nil
-
-    fn = "/home/eki/projects/vying/trunk/lib/vying/ai/bots/corners.yaml" 
-    @corners = YAML.load_file( fn )
-
-    fn = "/home/eki/projects/vying/trunk/lib/vying/ai/bots/edge.yaml" 
-    @edges = YAML.load_file( fn )
+  def load_edges
+    @edges ||= YAML.load_file( EDGES_YAML )
   end
 
-  def select( position, player )
-    @leaf, @nodes = 0, 0
-    score, op = best( analyze( position, player ) )
-    puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
-    op
+  def opp( position, player )
+    position.players.select { |p| p != player }.first
   end
 
-  def evaluate( position, player )
-    @leaf += 1
+  def eval_count( position, player )
+    pc = position.board.count( player )
+    oc = position.board.count( opp( position, player ) )
+    total = pc + oc
+    score = pc - oc
 
-    opp = position.players.select { |p| p != player }.first
-    p_count = count( position, player )
-    opp_count = count( position, opp )
-    total = p_count + opp_count
-
-    return (p_count - opp_count) * 1000 if position.final?
-
-    score = 0
-
-    if total < 10
-      score = #eval_frontier( position, player ) +
-              eval_board_early( position, player ) +
-              eval_corners( position, player ) +
-              #eval_edges( position, player ) +
-              (opp_count - p_count) * 12
-    elsif total < 30
-      score = eval_frontier( position, player ) * 4 +
-              eval_corners( position, player ) +
-              #eval_edges( position, player ) +
-              (opp_count - p_count) * 2
-    elsif total < 55
-      score = eval_corners( position, player ) +
-              eval_edges( position, player )
-    else
-      score = eval_corners( position, player ) +
-              eval_edges( position, player ) +
-              eval_full_edges( position, player ) * 20
-    end
-  end
-
-  def cutoff( position, depth )
-    position.final? || depth >= 1
+    [pc, oc, total, score]
   end
 
   def eval_corners( position, player )
-    opp = position.players.select { |p| p != player }.first
-
     score = 0
 
-    tmp = [[:a1,:b2,:a2,:a3],
-           [:a1,:b2,:b1,:c1],
-           [:h1,:g2,:g1,:f1],
-           [:h1,:g2,:h2,:h3],
-           [:a8,:b7,:b8,:c8],
-           [:a8,:b7,:a7,:a6],
-           [:h8,:g7,:g8,:f8],
-           [:h8,:g7,:h7,:h6]].map { |c| corner( position, player, opp, *c ) }
+    corner_arrays = CORNER_COORDS.map do |c|
+      corner( position, player, opp( position, player ), *c )
+    end
 
-    tmp.inject(0) { |m,c| m+@corners[c] }
+    corner_arrays.inject(0) { |m,c| m + @corners[c] }
   end
 
   def corner( position, player, opp, corner, x, c, edge )
     key = [nil, player, opp]
-    [corner,x,c,edge].map do |p|
-      key.index( position.board[Coord[p]] ) 
-    end
+    [corner,x,c,edge].map { |p| key.index( position.board[Coord[p]] ) }
   end
 
   def eval_edges( position, player )
     opp = position.players.select { |p| p != player }.first
 
-    @edges[edge( position, player, opp, [:a2,:a3,:a4,:a5,:a6,:a7] )] +
-    @edges[edge( position, player, opp, [:h2,:h3,:h4,:h5,:h6,:h7] )] +
-    @edges[edge( position, player, opp, [:b1,:c1,:d1,:e1,:f1,:g1] )] +
-    @edges[edge( position, player, opp, [:b8,:c8,:d8,:e8,:f8,:g8] )] 
+    edge_array = EDGE_COORDS.map do |e|
+      edge( position, player, opp( position, player ), e )
+    end
+
+    edge_array.inject(0) { |m,e| m + @edges[e] }
   end
 
   def edge( position, player, opp, pieces )
     key = [nil, player, opp]
-    pieces.map { |p| key.index( position.board[p] ) }
+    pieces.map { |p| key.index( position.board[Coord[p]] ) }
   end
 
   def eval_full_edges( position, player )
@@ -133,27 +83,6 @@ class OthelloBot < Bot
   def count_if_full( pieces, player )
     not_nil = pieces.select { |p| !p.nil? }
     not_nil.length == 8 ? not_nil.select { |p| p == player }.length : 0
-  end
-
-  def eval_count( position, player )
-    opp = position.players.select { |p| p != player }.first
-    p_count = count( position, player )
-    opp_count = count( position, opp )
-    total = p_count + opp_count
-
-    if total < 30
-      score = (opp_count - p_count) * 8
-    elsif total < 50
-      score = (opp_count - p_count) * 5
-    else
-      score = (p_count - opp_count) * 2   #notice flip
-    end
-
-    score
-  end
-
-  def count( position, player )
-    position.board.count( player )
   end
 
   def eval_frontier( position, player )
@@ -223,6 +152,35 @@ class OthelloBot < Bot
     end
 
     score
+  end
+
+  module Bot
+    include AI::Othello
+    include Minimax
+
+    attr_reader :leaf, :nodes
+
+    def initialize
+      super
+      @leaf = 0
+      @nodes = 0
+    end
+
+    def select( position, player )
+      @leaf, @nodes = 0, 0
+      score, op = best( analyze( position, player ) )
+      puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
+      op
+    end
+
+    def evaluate( position, player )
+      @leaf += 1
+      eval( position, player )
+    end
+
+    def cutoff( position, depth )
+      position.final? || depth >= 1
+    end
   end
 end
 
