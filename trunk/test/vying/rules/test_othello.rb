@@ -1,7 +1,6 @@
 require 'test/unit'
 
-require 'vying/game'
-require 'vying/rules/othello'
+require 'vying'
 require 'vying/rules/test_rules'
 
 class TestOthelloBoard < Test::Unit::TestCase

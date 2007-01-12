@@ -1,7 +1,6 @@
 require 'test/unit'
 
-require 'vying/game'
-require 'vying/rules/amazons'
+require 'vying'
 require 'vying/rules/test_rules'
 
 class TestAmazons < Test::Unit::TestCase
