@@ -1,3 +1,6 @@
+require 'vying/board/standard'
+require 'vying/board/classic'
+
 require 'vying/rules'
 require 'vying/game'
 require 'vying/ai/bot'

@@ -2,7 +2,8 @@ require 'test/unit'
 
 require 'vying/test_game'
 
-require 'vying/board/test_standard.rb'
+require 'vying/board/test_standard'
+require 'vying/board/test_classic'
 
 require 'vying/rules/test_tictactoe'
 require 'vying/rules/test_fifteen'
