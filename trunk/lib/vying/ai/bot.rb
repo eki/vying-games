@@ -26,6 +26,15 @@ class Bot
     scores.invert.max
   end
 
+  # Replace this implementation with a better one
+  def fuzzy_best( scores )
+    a = scores.invert
+    s = a.map { |score,op| score }
+    half_sd = standard_deviation( s ) / 2.0
+    a2 = a.select { |score,op| ( score - s.max ).abs < half_sd }
+    !a2.empty? ? a2[rand(a2.length)] : a.max
+  end
+
   def to_s
     self.class.to_s
   end
@@ -71,6 +80,23 @@ class Bot
     end
     nil
   end
+
+  def variance(population)
+    n = 0
+    mean = 0.0
+    s = 0.0
+    population.each do |x|
+      n = n + 1
+      delta = x - mean
+      mean = mean + (delta / n)
+      s = s + delta * (x - mean)
+    end
+    return s / n
+  end
+
+  def standard_deviation(population)
+    Math.sqrt(variance(population))
+  end 
 
 end
 

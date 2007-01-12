@@ -4,7 +4,7 @@ module Minimax
 
   def analyze( position, player )
     h = {}
-    position.ops.each{ |op| h[op] = search( position.apply( op ), player ) }
+    position.ops.each { |op| h[op] = search( position.apply( op ), player, 1 ) }
     h
   end
 

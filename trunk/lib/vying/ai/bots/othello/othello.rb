@@ -149,7 +149,7 @@ module AI::Othello
 
   module Bot
     include AI::Othello
-    include Minimax
+    include AlphaBeta
 
     attr_reader :leaf, :nodes
 
@@ -161,8 +161,8 @@ module AI::Othello
 
     def select( position, player )
       @leaf, @nodes = 0, 0
-      score, op = best( analyze( position, player ) )
-      puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
+      score, op = fuzzy_best( analyze( position, player ) )
+      #puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
       op
     end
 
@@ -174,7 +174,7 @@ module AI::Othello
     end
 
     def cutoff( position, depth )
-      position.final? || depth >= 1
+      position.final? || depth >= 2
     end
   end
 end
