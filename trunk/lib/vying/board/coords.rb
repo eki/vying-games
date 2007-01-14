@@ -1,4 +1,5 @@
 require 'vying/memoize'
+require 'vying/board/coord'
 require 'vying/board/boardext'
 
 class Coords
