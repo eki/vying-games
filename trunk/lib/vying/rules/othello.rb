@@ -1,5 +1,5 @@
 require 'vying/rules'
-require 'vying/board/standard'
+require 'vying/board/board'
 
 class OthelloBoard < Board
   def valid?( c, bp, directions=[:n,:s,:e,:w,:ne,:nw,:se,:sw] )

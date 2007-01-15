@@ -1,5 +1,5 @@
 require 'vying/rules'
-require 'vying/board/standard'
+require 'vying/board/board'
 
 class Makyek < Rules
 
