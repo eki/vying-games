@@ -2,8 +2,9 @@ require 'test/unit'
 
 require 'vying/test_game'
 
-require 'vying/board/test_standard'
-require 'vying/board/test_classic'
+require 'vying/board/test_coord'
+require 'vying/board/test_coords'
+require 'vying/board/test_board'
 
 require 'vying/rules/test_tictactoe'
 require 'vying/rules/test_fifteen'
