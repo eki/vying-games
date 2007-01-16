@@ -1,5 +1,5 @@
-require 'vying/board/standard'
-require 'vying/board/classic'
+require 'vying/board/board'
+require 'vying/board/othello'
 
 require 'vying/rules'
 require 'vying/game'
