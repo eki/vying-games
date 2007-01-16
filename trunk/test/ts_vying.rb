@@ -5,6 +5,7 @@ require 'vying/test_game'
 require 'vying/board/test_coord'
 require 'vying/board/test_coords'
 require 'vying/board/test_board'
+require 'vying/board/test_othello'
 
 require 'vying/rules/test_tictactoe'
 require 'vying/rules/test_fifteen'

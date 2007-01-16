@@ -95,6 +95,19 @@ class TestBoard < Test::Unit::TestCase
     assert_equal( [:black,:white,nil,:white], b[[3,4],:a1,:b2,Coord[2,2]] )
   end
 
+  def test_in_bounds
+    b = Board.new( 7, 6 )
+    assert( b.in_bounds?( 0, 0 ) )
+    assert( b.in_bounds?( 6, 0 ) )
+    assert( b.in_bounds?( 0, 5 ) )
+    assert( b.in_bounds?( 6, 5 ) )
+
+    assert_nil( b.in_bounds?( -1, 0 ) )
+    assert_nil( b.in_bounds?( 0, -1 ) )
+    assert_nil( b.in_bounds?( 7, 0 ) )
+    assert_nil( b.in_bounds?( 0, 6 ) )
+  end
+
   def test_equals
     b1 = Board.new( 7, 6 )
     b2 = Board.new( 7, 6 )
@@ -210,6 +223,15 @@ class TestBoard < Test::Unit::TestCase
     assert_equal( nil, b[0,0] )
     assert_equal( nil, b[2,2] )
     assert_equal( :o, b[1,1] )
+  end
+
+  def test_clear
+    b = Board.new( 4, 4 )
+    assert_equal( 16, b.count( nil ) )
+    assert_equal( :black, b[:a1,:a2,:a3] = :black )
+    assert_equal( :white, b[:b1,:b2,:b3,:b4] = :white )
+    assert_equal( 9, b.count( nil ) )
+    assert_equal( 16, b.clear.count( nil ) )
   end
 
   def test_to_s
