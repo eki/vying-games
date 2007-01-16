@@ -1,4 +1,5 @@
 #include "ruby.h"
+#include "coord.h"
 #include "board.h"
 
 /* CBoard method definitions */
@@ -104,14 +105,19 @@ VALUE board_get_coord( VALUE self, VALUE c ) {
 }
 
 VALUE board_get( VALUE self, VALUE x, VALUE y ) {
-  VALUE cells = rb_iv_get( self, "@cells" );
-  return rb_funcall( cells, rb_intern("[]"), 1, board_ci( self, x, y ) );
+  if( RTEST(board_in_bounds( self, x, y )) ) {
+    VALUE cells = rb_iv_get( self, "@cells" );
+ // return rb_ary_entry( cells, NUM2INT(board_ci( self, x, y )) );
+    return rb_funcall( cells, rb_intern("[]"), 1, board_ci( self, x, y ) );
+  }
+  return Qnil;
 }
 
 VALUE board_set( VALUE self, VALUE x, VALUE y, VALUE p ) {
   if( RTEST(board_in_bounds( self, x, y )) ) {
     VALUE cells = rb_iv_get( self, "@cells" );
-    return rb_funcall( cells, rb_intern("[]="), 2, board_ci( self, x, y ), p );
+//  rb_ary_store( cells, NUM2INT(board_ci( self, x, y )), p );
+    rb_funcall( cells, rb_intern("[]="), 2, board_ci( self, x, y ), p );
   }
   return p;
 }
@@ -145,3 +151,29 @@ VALUE board_ci( VALUE self, VALUE x, VALUE y ) {
   return INT2NUM( NUM2INT(x) + NUM2INT(y) * w );
 }
 
+VALUE board_ic( VALUE self, int i ) {
+  int w = NUM2INT(rb_iv_get( self, "@width" ));
+  rb_funcall( Coord, rb_intern( "new" ), 2, INT2NUM(i%w), INT2NUM(i/w) );
+}
+
+int board_ix( VALUE self, int i ) {
+  int w = NUM2INT(rb_iv_get( self, "@width" ));
+  return i%w;
+}
+
+int board_iy( VALUE self, int i ) {
+  int w = NUM2INT(rb_iv_get( self, "@width" ));
+  return i/w;
+}
+
+VALUE board_neighbors( VALUE self, int x, int y ) {
+  return rb_ary_new3( 8,
+    rb_funcall( Coord, rb_intern("new"), 2, INT2NUM(x+0), INT2NUM(y+1) ),
+    rb_funcall( Coord, rb_intern("new"), 2, INT2NUM(x+0), INT2NUM(y-1) ),
+    rb_funcall( Coord, rb_intern("new"), 2, INT2NUM(x+1), INT2NUM(y+0) ),
+    rb_funcall( Coord, rb_intern("new"), 2, INT2NUM(x+1), INT2NUM(y+1) ),
+    rb_funcall( Coord, rb_intern("new"), 2, INT2NUM(x+1), INT2NUM(y-1) ),
+    rb_funcall( Coord, rb_intern("new"), 2, INT2NUM(x-1), INT2NUM(y+0) ),
+    rb_funcall( Coord, rb_intern("new"), 2, INT2NUM(x-1), INT2NUM(y+1) ),
+    rb_funcall( Coord, rb_intern("new"), 2, INT2NUM(x-1), INT2NUM(y-1) ) );
+}

@@ -29,9 +29,9 @@ class Coords
     coords.each { |c| yield c }
   end
 
-  def include?( c )
-    c.x >= 0 && c.x < width && c.y >= 0 && c.y < height
-  end
+#  def include?( c )
+#    c.x >= 0 && c.x < width && c.y >= 0 && c.y < height
+#  end
 
   def hash
     [width, height].hash
@@ -84,9 +84,9 @@ class Coords
     a
   end
 
-  def next( coord, direction )
-    include?( n = coord + DIRECTIONS[direction] ) ? n : nil
-  end
+#  def next( coord, direction )
+#    include?( n = coord + DIRECTIONS[direction] ) ? n : nil
+#  end
 
   def radius( coord, r )
     directions=[:n,:ne,:e,:se,:s,:sw,:w,:nw]

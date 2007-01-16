@@ -1,6 +1,8 @@
 #include "ruby.h"
-#include "board.h"
 #include "coord.h"
+#include "coords.h"
+#include "board.h"
+#include "othello.h"
 
 void Init_boardext() {
   Coord = rb_define_class( "Coord", rb_cObject );
@@ -14,6 +16,10 @@ void Init_boardext() {
   rb_define_method( Coord, "eql?", coord_equals, 1 );
   rb_define_method( Coord, "+", coord_addition, 1 );
   rb_define_method( Coord, "direction_to", coord_direction_to, 1 );
+
+  Coords = rb_define_class( "Coords", rb_cObject );
+  rb_define_method( Coords, "include?", coords_include, 1 );
+  rb_define_method( Coords, "next", coords_next, 2 );
 
   Board = rb_define_class( "Board", rb_cObject );
 
@@ -35,5 +41,13 @@ void Init_boardext() {
   rb_define_method( Board, "ci", board_ci, 2 );
 
   rb_define_method( Board, "area", board_area, 0 );
+
+  OthelloBoard = rb_define_class( "OthelloBoard", Board );
+  rb_define_method( OthelloBoard, "initialize", othello_board_initialize, 0 );
+  rb_define_method( OthelloBoard, "initialize_copy", 
+    othello_board_initialize_copy, 1 );
+  rb_define_method( OthelloBoard, "valid?", othello_board_valid, -1 );
+  rb_define_method( OthelloBoard, "place", othello_board_place, 2 );
+  rb_define_method( OthelloBoard, "set", othello_board_set, 3 );
 }
 

@@ -47,6 +47,11 @@ class Board
     end
     i
   end
+
+  def clear
+    @cells.each_index { |i| @cells[i] = nil }
+    self
+  end
   
   def to_s
     off = height >= 10 ? 2 : 1                                
