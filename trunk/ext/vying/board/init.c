@@ -79,5 +79,18 @@ void Init_boardext() {
   id_delete = rb_intern("delete");
   id_uniq_ex = rb_intern("uniq!");
 
+  /* Look up all our symbols */
+
+  sym_white = ID2SYM(id_white);
+  sym_black = ID2SYM(id_black);
+  sym_n = ID2SYM(id_n);
+  sym_s = ID2SYM(id_s);
+  sym_w = ID2SYM(id_w);
+  sym_e = ID2SYM(id_e);
+  sym_se = ID2SYM(id_se);
+  sym_nw = ID2SYM(id_nw);
+  sym_sw = ID2SYM(id_sw);
+  sym_ne = ID2SYM(id_ne);
+
 }
 

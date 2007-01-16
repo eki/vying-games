@@ -7,10 +7,10 @@ VALUE othello_board_initialize( VALUE self ) {
   VALUE args[] = {INT2NUM(8),INT2NUM(8)};
 
   board_initialize( 2, (VALUE *)&args, self );
-  board_set( self, INT2NUM(3), INT2NUM(3), ID2SYM(id_white) );
-  board_set( self, INT2NUM(4), INT2NUM(4), ID2SYM(id_white) );
-  board_set( self, INT2NUM(3), INT2NUM(4), ID2SYM(id_black) );
-  board_set( self, INT2NUM(4), INT2NUM(3), ID2SYM(id_black) );
+  board_set( self, INT2NUM(3), INT2NUM(3), sym_white );
+  board_set( self, INT2NUM(4), INT2NUM(4), sym_white );
+  board_set( self, INT2NUM(3), INT2NUM(4), sym_black );
+  board_set( self, INT2NUM(4), INT2NUM(3), sym_black );
 
   rb_iv_set( self, "@occupied", 
     rb_ary_new3( 4,
@@ -51,14 +51,14 @@ VALUE othello_board_valid( int argc, VALUE *argv, VALUE self ) {
   VALUE dir;
 
   if( argc == 2 ) {
-    dir = rb_ary_new3( 8, ID2SYM(id_n),
-                          ID2SYM(id_s),
-                          ID2SYM(id_w),
-                          ID2SYM(id_e),
-                          ID2SYM(id_ne),
-                          ID2SYM(id_nw),
-                          ID2SYM(id_se),
-                          ID2SYM(id_sw) );
+    dir = rb_ary_new3( 8, sym_n,
+                          sym_s,
+                          sym_w,
+                          sym_e,
+                          sym_ne,
+                          sym_nw,
+                          sym_se,
+                          sym_sw );
   }
   else {
     dir = argv[2];
@@ -74,35 +74,35 @@ VALUE othello_board_valid( int argc, VALUE *argv, VALUE self ) {
     int dx, dy, nx, ny;
     VALUE np;
 
-    if( SYM2ID(d) == id_n ) {
+    if( d == sym_n ) {
       dx = 0;
       dy = -1;
     }
-    else if( SYM2ID(d) == id_s ) {
+    else if( d == sym_s ) {
       dx = 0;
       dy = 1;
     }
-    else if( SYM2ID(d) == id_w ) {
+    else if( d == sym_w ) {
       dx = -1;
       dy = 0;
     }
-    else if( SYM2ID(d) == id_e ) {
+    else if( d == sym_e ) {
       dx = 1;
       dy = 0;
     }
-    else if( SYM2ID(d) == id_ne ) {
+    else if( d == sym_ne ) {
       dx = 1;
       dy = -1;
     }
-    else if( SYM2ID(d) == id_nw ) {
+    else if( d == sym_nw ) {
       dx = -1;
       dy = -1;
     }
-    else if( SYM2ID(d) == id_se ) {
+    else if( d == sym_se ) {
       dx = 1;
       dy = 1;
     }
-    else if( SYM2ID(d) == id_sw ) {
+    else if( d == sym_sw ) {
       dx = -1;
       dy = 1;
     }
@@ -136,14 +136,14 @@ VALUE othello_board_place( VALUE self, VALUE c, VALUE p ) {
   int x = NUM2INT(rb_funcall( c, id_x, 0 ));
   int y = NUM2INT(rb_funcall( c, id_y, 0 ));
   VALUE cells = rb_iv_get( self, "@cells" );
-  VALUE dir = rb_ary_new3( 8, ID2SYM(id_n),
-                              ID2SYM(id_s),
-                              ID2SYM(id_w),
-                              ID2SYM(id_e),
-                              ID2SYM(id_ne),
-                              ID2SYM(id_nw),
-                              ID2SYM(id_se),
-                              ID2SYM(id_sw) );
+  VALUE dir = rb_ary_new3( 8, sym_n,
+                              sym_s,
+                              sym_w,
+                              sym_e,
+                              sym_ne,
+                              sym_nw,
+                              sym_se,
+                              sym_sw );
 
   VALUE bt = rb_ary_new2(10);
 
@@ -155,35 +155,35 @@ VALUE othello_board_place( VALUE self, VALUE c, VALUE p ) {
 
     rb_ary_clear( bt );
 
-    if( SYM2ID(d) == id_n ) {
+    if( d == sym_n ) {
       dx = 0;
       dy = -1;
     }
-    else if( SYM2ID(d) == id_s ) {
+    else if( d == sym_s ) {
       dx = 0;
       dy = 1;
     }
-    else if( SYM2ID(d) == id_w ) {
+    else if( d == sym_w ) {
       dx = -1;
       dy = 0;
     }
-    else if( SYM2ID(d) == id_e ) {
+    else if( d == sym_e ) {
       dx = 1;
       dy = 0;
     }
-    else if( SYM2ID(d) == id_ne ) {
+    else if( d == sym_ne ) {
       dx = 1;
       dy = -1;
     }
-    else if( SYM2ID(d) == id_nw ) {
+    else if( d == sym_nw ) {
       dx = -1;
       dy = -1;
     }
-    else if( SYM2ID(d) == id_se ) {
+    else if( d == sym_se ) {
       dx = 1;
       dy = 1;
     }
-    else if( SYM2ID(d) == id_sw ) {
+    else if( d == sym_sw ) {
       dx = -1;
       dy = 1;
     }

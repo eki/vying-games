@@ -71,3 +71,8 @@ ID id_dup, id_x, id_y, id_subscript, id_subscript_assign, id_new,
    id_hash, id_n, id_s, id_w, id_e, id_se, id_nw, id_sw, id_ne,
    id_DIRECTIONS, id_white, id_black, id_delete, id_uniq_ex;
 
+/* SYMs */
+
+VALUE sym_black, sym_white, 
+      sym_n, sym_s, sym_w, sym_e, sym_se, sym_nw, sym_sw, sym_ne;
+

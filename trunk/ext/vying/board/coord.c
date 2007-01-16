@@ -67,34 +67,34 @@ VALUE coord_direction_to( VALUE self, VALUE obj ) {
 
   if( dx == 0 ) {
     if( dy > 0 ) {
-      return ID2SYM(id_n);
+      return sym_n;
     }
     else if( dy < 0 ) {
-      return ID2SYM(id_s);
+      return sym_s;
     }
   }
   else if( dy == 0 ) {
     if( dx > 0 ) {
-      return ID2SYM(id_w);
+      return sym_w;
     }
     else if( dx < 0 ) {
-      return ID2SYM(id_e);
+      return sym_e;
     }
   }
   else if( dx == dy ) {
     if( dx < 0 && dy < 0 ) {
-      return ID2SYM(id_se);
+      return sym_se;
     }
     else if( dx > 0 && dy > 0 ) {
-      return ID2SYM(id_nw);
+      return sym_nw;
     }
   }
   else if( -dx == dy ) {
     if( dx > 0 && dy < 0 ) {
-      return ID2SYM(id_sw);
+      return sym_sw;
     }
     else if( dx < 0 && dy > 0 ) {
-      return ID2SYM(id_ne);
+      return sym_ne;
     }
   }
 
