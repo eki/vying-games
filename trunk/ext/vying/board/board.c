@@ -1,5 +1,4 @@
 #include "ruby.h"
-#include "coord.h"
 #include "board.h"
 
 /* Board method definitions */

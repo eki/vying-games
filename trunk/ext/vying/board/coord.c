@@ -1,5 +1,5 @@
 #include "ruby.h"
-#include "coord.h"
+#include "board.h"
 
 /* Coord method definitions */
 

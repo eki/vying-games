@@ -1,9 +1,16 @@
 #include "ruby.h"
 
 
-/* Board prototypes */
+/* Classes */
 
 VALUE Board;
+VALUE Coord;
+VALUE Coords;
+VALUE OthelloBoard;
+
+
+
+/* Board prototypes */
 
 VALUE board_initialize( int argc, VALUE *argv, VALUE self );
 
@@ -30,4 +37,33 @@ int board_ix( VALUE self, int i );
 int board_iy( VALUE self, int i );
 
 VALUE board_neighbors( VALUE self, int x, int y );
+
+
+/* Coord prototypes */
+
+VALUE coord_initialize( VALUE self, VALUE x, VALUE y );
+VALUE coord_x( VALUE self );
+VALUE coord_y( VALUE self );
+VALUE coord_class_subscript( int argc, VALUE *argv, VALUE self );
+VALUE coord_hash( VALUE self );
+VALUE coord_equals( VALUE self, VALUE obj );
+VALUE coord_addition( VALUE self, VALUE obj );
+VALUE coord_direction_to( VALUE self, VALUE obj );
+
+
+/* Coords prototypes */
+
+VALUE coords_include( VALUE self, VALUE c );
+VALUE coords_next( VALUE self, VALUE c, VALUE d );
+
+
+/* OthelloBoard prototypes */
+
+VALUE othello_board_initialize( VALUE self );
+VALUE othello_board_initialize_copy( VALUE self, VALUE obj );
+VALUE othello_board_valid( int argc, VALUE *argv, VALUE self );
+VALUE othello_board_place( VALUE self, VALUE c, VALUE p );
+VALUE othello_board_update_occupied( VALUE self, VALUE x, VALUE y );
+VALUE othello_board_update_frontier( VALUE self, VALUE x, VALUE y );
+VALUE othello_board_set( VALUE self, VALUE x, VALUE y, VALUE p );
 

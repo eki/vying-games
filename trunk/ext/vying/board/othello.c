@@ -1,8 +1,5 @@
 #include "ruby.h"
-#include "coord.h"
-#include "coords.h"
 #include "board.h"
-#include "othello.h"
 
 /* OthelloBoard method definitions */
 

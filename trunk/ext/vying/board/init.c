@@ -1,8 +1,5 @@
 #include "ruby.h"
-#include "coord.h"
-#include "coords.h"
 #include "board.h"
-#include "othello.h"
 
 void Init_boardext() {
   Coord = rb_define_class( "Coord", rb_cObject );
