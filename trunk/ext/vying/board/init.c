@@ -40,8 +40,6 @@ void Init_boardext() {
 
   rb_define_method( Board, "ci", board_ci, 2 );
 
-  rb_define_method( Board, "area", board_area, 0 );
-
   OthelloBoard = rb_define_class( "OthelloBoard", Board );
   rb_define_method( OthelloBoard, "initialize", othello_board_initialize, 0 );
   rb_define_method( OthelloBoard, "initialize_copy", 

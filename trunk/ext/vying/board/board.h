@@ -29,7 +29,5 @@ VALUE board_ic( VALUE self, int i );
 int board_ix( VALUE self, int i );
 int board_iy( VALUE self, int i );
 
-VALUE board_area( VALUE self );
-
 VALUE board_neighbors( VALUE self, int x, int y );
 

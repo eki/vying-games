@@ -2,7 +2,7 @@
 #include "coord.h"
 #include "board.h"
 
-/* CBoard method definitions */
+/* Board method definitions */
 
 VALUE board_initialize( int argc, VALUE *argv, VALUE self ) {
   int w, h, i;
@@ -88,13 +88,6 @@ VALUE board_subscript_assign( int argc, VALUE *argv, VALUE self ) {
   return Qnil;
 }
 
-
-VALUE board_area( VALUE self ) {
-  int w = NUM2INT(rb_funcall( self, rb_intern("width"), 0 ));
-  int h = NUM2INT(rb_funcall( self, rb_intern("height"), 0 ));
-  return INT2NUM(w*h);
-}
-
 VALUE board_get_coord( VALUE self, VALUE c ) {
   if( c == Qnil ) {
     return Qnil;
@@ -107,7 +100,6 @@ VALUE board_get_coord( VALUE self, VALUE c ) {
 VALUE board_get( VALUE self, VALUE x, VALUE y ) {
   if( RTEST(board_in_bounds( self, x, y )) ) {
     VALUE cells = rb_iv_get( self, "@cells" );
- // return rb_ary_entry( cells, NUM2INT(board_ci( self, x, y )) );
     return rb_funcall( cells, rb_intern("[]"), 1, board_ci( self, x, y ) );
   }
   return Qnil;
@@ -116,7 +108,6 @@ VALUE board_get( VALUE self, VALUE x, VALUE y ) {
 VALUE board_set( VALUE self, VALUE x, VALUE y, VALUE p ) {
   if( RTEST(board_in_bounds( self, x, y )) ) {
     VALUE cells = rb_iv_get( self, "@cells" );
-//  rb_ary_store( cells, NUM2INT(board_ci( self, x, y )), p );
     rb_funcall( cells, rb_intern("[]="), 2, board_ci( self, x, y ), p );
   }
   return p;
