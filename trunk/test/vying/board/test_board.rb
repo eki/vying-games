@@ -32,15 +32,6 @@ class TestBoard < Test::Unit::TestCase
     assert_equal( nil, b[nil] )
   end
 
-  def test_c_methods
-    b = Board.new( 7, 6 )
-    assert_equal( 42, b.area )
-    assert_equal( nil, b.get( 1, 1 ) )
-    assert_equal( nil, b[1,1] )
-    assert_equal( :black, b.set( 1, 1, :black ) )
-    assert_equal( :black, b.get( 1, 1 ) )
-  end
-
   def test_ci
     b = Board.new( 7, 6 )
     assert_equal( 0, b.ci( 0, 0 ) )
