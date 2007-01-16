@@ -223,23 +223,8 @@ VALUE othello_board_place( VALUE self, VALUE c, VALUE p ) {
   }
 
   return othello_board_set( self, INT2NUM(x), INT2NUM(y), p );
-
 }
-/*
-VALUE othello_board_occupied( VALUE self ) {
-  VALUE cells = rb_iv_get( self, "@cells" );
-  VALUE occupied = rb_ary_new();
-  int i;
- 
-  for( i = 0; i < RARRAY(cells)->len; i++ ) {
-    if( rb_ary_entry( cells, i ) != Qnil ) {
-      rb_ary_push( occupied, board_ic( self, i ) );
-    }
-  }
 
-  return occupied;
-}
-*/
 VALUE othello_board_update_occupied( VALUE self, VALUE x, VALUE y ) {
   VALUE occupied = rb_iv_get( self, "@occupied" );
   VALUE c = rb_funcall( Coord, rb_intern("new"), 2, x, y );
@@ -348,32 +333,3 @@ VALUE othello_board_set( VALUE self, VALUE x, VALUE y, VALUE p ) {
   board_set( self, x, y, p );
 }
 
-/*
-VALUE othello_board_frontier( VALUE self ) {
-  VALUE cells = rb_iv_get( self, "@cells" );
-  VALUE frontier = rb_ary_new();
-  int i;
- 
-  for( i = 0; i < RARRAY(cells)->len; i++ ) {
-    if( rb_ary_entry( cells, i ) != Qnil ) {
-      continue;
-    }
-
-    int x = board_ix( self, i );
-    int y = board_iy( self, i );
-
-    if( board_get( self, INT2NUM(x+0), INT2NUM(y+1) ) != Qnil ||
-        board_get( self, INT2NUM(x+0), INT2NUM(y-1) ) != Qnil ||
-        board_get( self, INT2NUM(x+1), INT2NUM(y+0) ) != Qnil ||
-        board_get( self, INT2NUM(x+1), INT2NUM(y+1) ) != Qnil ||
-        board_get( self, INT2NUM(x+1), INT2NUM(y-1) ) != Qnil ||
-        board_get( self, INT2NUM(x-1), INT2NUM(y+0) ) != Qnil ||
-        board_get( self, INT2NUM(x-1), INT2NUM(y+1) ) != Qnil ||
-        board_get( self, INT2NUM(x-1), INT2NUM(y-1) ) != Qnil ) {
-      rb_ary_push( frontier, board_ic( self, i ) );
-      continue;
-    }
-  }
-  return frontier;
-}
-*/
