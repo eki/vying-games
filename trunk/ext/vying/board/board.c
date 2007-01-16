@@ -33,7 +33,7 @@ VALUE board_initialize( int argc, VALUE *argv, VALUE self ) {
 
 VALUE board_initialize_copy( VALUE self, VALUE obj ) {
   rb_iv_set( self, "@cells", 
-    rb_funcall( rb_iv_get( obj, "@cells" ), rb_intern( "dup" ), 0 ) );
+    rb_funcall( rb_iv_get( obj, "@cells" ), id_dup, 0 ) );
 }
 
 VALUE board_cells( VALUE self ) {
@@ -92,14 +92,14 @@ VALUE board_get_coord( VALUE self, VALUE c ) {
     return Qnil;
   }
   
-  return board_get( self, rb_funcall( c, rb_intern("x"), 0 ),
-                          rb_funcall( c, rb_intern("y"), 0 ) );
+  return board_get( self, rb_funcall( c, id_x, 0 ),
+                          rb_funcall( c, id_y, 0 ) );
 }
 
 VALUE board_get( VALUE self, VALUE x, VALUE y ) {
   if( RTEST(board_in_bounds( self, x, y )) ) {
     VALUE cells = rb_iv_get( self, "@cells" );
-    return rb_funcall( cells, rb_intern("[]"), 1, board_ci( self, x, y ) );
+    return rb_funcall( cells, id_subscript, 1, board_ci( self, x, y ) );
   }
   return Qnil;
 }
@@ -107,7 +107,7 @@ VALUE board_get( VALUE self, VALUE x, VALUE y ) {
 VALUE board_set( VALUE self, VALUE x, VALUE y, VALUE p ) {
   if( RTEST(board_in_bounds( self, x, y )) ) {
     VALUE cells = rb_iv_get( self, "@cells" );
-    rb_funcall( cells, rb_intern("[]="), 2, board_ci( self, x, y ), p );
+    rb_funcall( cells, id_subscript_assign, 2, board_ci( self, x, y ), p );
   }
   return p;
 }
@@ -117,8 +117,8 @@ VALUE board_set_coord( VALUE self, VALUE c, VALUE p ) {
     return Qnil;
   }
   
-  return board_set( self, rb_funcall( c, rb_intern("x"), 0 ),
-                          rb_funcall( c, rb_intern("y"), 0 ), 
+  return board_set( self, rb_funcall( c, id_x, 0 ),
+                          rb_funcall( c, id_y, 0 ), 
                           p );
 }
 
@@ -143,7 +143,7 @@ VALUE board_ci( VALUE self, VALUE x, VALUE y ) {
 
 VALUE board_ic( VALUE self, int i ) {
   int w = NUM2INT(rb_iv_get( self, "@width" ));
-  rb_funcall( Coord, rb_intern( "new" ), 2, INT2NUM(i%w), INT2NUM(i/w) );
+  rb_funcall( Coord, id_new, 2, INT2NUM(i%w), INT2NUM(i/w) );
 }
 
 int board_ix( VALUE self, int i ) {
@@ -158,12 +158,12 @@ int board_iy( VALUE self, int i ) {
 
 VALUE board_neighbors( VALUE self, int x, int y ) {
   return rb_ary_new3( 8,
-    rb_funcall( Coord, rb_intern("new"), 2, INT2NUM(x+0), INT2NUM(y+1) ),
-    rb_funcall( Coord, rb_intern("new"), 2, INT2NUM(x+0), INT2NUM(y-1) ),
-    rb_funcall( Coord, rb_intern("new"), 2, INT2NUM(x+1), INT2NUM(y+0) ),
-    rb_funcall( Coord, rb_intern("new"), 2, INT2NUM(x+1), INT2NUM(y+1) ),
-    rb_funcall( Coord, rb_intern("new"), 2, INT2NUM(x+1), INT2NUM(y-1) ),
-    rb_funcall( Coord, rb_intern("new"), 2, INT2NUM(x-1), INT2NUM(y+0) ),
-    rb_funcall( Coord, rb_intern("new"), 2, INT2NUM(x-1), INT2NUM(y+1) ),
-    rb_funcall( Coord, rb_intern("new"), 2, INT2NUM(x-1), INT2NUM(y-1) ) );
+    rb_funcall( Coord, id_new, 2, INT2NUM(x+0), INT2NUM(y+1) ),
+    rb_funcall( Coord, id_new, 2, INT2NUM(x+0), INT2NUM(y-1) ),
+    rb_funcall( Coord, id_new, 2, INT2NUM(x+1), INT2NUM(y+0) ),
+    rb_funcall( Coord, id_new, 2, INT2NUM(x+1), INT2NUM(y+1) ),
+    rb_funcall( Coord, id_new, 2, INT2NUM(x+1), INT2NUM(y-1) ),
+    rb_funcall( Coord, id_new, 2, INT2NUM(x-1), INT2NUM(y+0) ),
+    rb_funcall( Coord, id_new, 2, INT2NUM(x-1), INT2NUM(y+1) ),
+    rb_funcall( Coord, id_new, 2, INT2NUM(x-1), INT2NUM(y-1) ) );
 }
