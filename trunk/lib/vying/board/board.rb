@@ -4,8 +4,16 @@ require 'vying/board/boardext'
 
 class Board
 
-  attr_reader :coords
+  attr_reader :coords, :cells, :width, :height
   protected :cells
+
+  def initialize( w=8, h=8 )
+    @width, @height, @cells = w, h, Array.new( w*h, nil )
+  end
+
+  def initialize_copy( original )
+    @cells = original.cells.dup
+  end
 
   def coords
     @coords = Coords.new( width, height )
