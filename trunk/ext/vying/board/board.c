@@ -3,34 +3,6 @@
 
 /* Board method definitions */
 
-VALUE board_initialize( int argc, VALUE *argv, VALUE self ) {
-  int w, h, i;
-  VALUE ary;
-
-  if( argc == 0 ) {
-    w = 8;
-    h = 8;
-  }
-  else if( argc == 1 ) {
-    w = NUM2INT(argv[0]);
-    h = 8;
-  }
-  else if( argc >= 2 ) {
-    w = NUM2INT(argv[0]);
-    h = NUM2INT(argv[1]);
-  }
-
-  ary = rb_ary_new2( w*h );
-
-  for( i = 0; i < w*h; i++ ) {
-    rb_ary_push( ary, Qnil );
-  }
-
-  rb_iv_set( self, "@width", INT2NUM(w) );
-  rb_iv_set( self, "@height", INT2NUM(h) );
-  rb_iv_set( self, "@cells", ary );
-}
-
 VALUE board_initialize_copy( VALUE self, VALUE obj ) {
   rb_iv_set( self, "@cells", 
     rb_funcall( rb_iv_get( obj, "@cells" ), id_dup, 0 ) );

@@ -6,7 +6,7 @@
 VALUE othello_board_initialize( VALUE self ) {
   VALUE args[] = {INT2NUM(8),INT2NUM(8)};
 
-  board_initialize( 2, (VALUE *)&args, self );
+  rb_call_super( 2, (VALUE *)&args );
   board_set( self, INT2NUM(3), INT2NUM(3), sym_white );
   board_set( self, INT2NUM(4), INT2NUM(4), sym_white );
   board_set( self, INT2NUM(3), INT2NUM(4), sym_black );

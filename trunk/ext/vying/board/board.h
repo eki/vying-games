@@ -10,8 +10,6 @@ VALUE OthelloBoard;
 
 /* Board prototypes */
 
-VALUE board_initialize( int argc, VALUE *argv, VALUE self );
-
 VALUE board_subscript( int argc, VALUE *argv, VALUE self );
 VALUE board_subscript_assign( int argc, VALUE *argv, VALUE self );
 
