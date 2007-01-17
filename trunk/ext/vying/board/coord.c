@@ -8,14 +8,6 @@ VALUE coord_initialize( VALUE self, VALUE x, VALUE y ) {
   rb_iv_set( self, "@y", y );
 }
 
-VALUE coord_x( VALUE self ) {
-  rb_iv_get( self, "@x" );
-}
-
-VALUE coord_y( VALUE self ) {
-  rb_iv_get( self, "@y" );
-}
-
 VALUE coord_class_subscript( int argc, VALUE *argv, VALUE self ) {
   if( argc == 2 && FIXNUM_P(argv[0]) && FIXNUM_P(argv[1]) ) {
     return rb_funcall( Coord, id_new, 2, argv[0], argv[1] );
@@ -41,15 +33,15 @@ VALUE coord_class_subscript( int argc, VALUE *argv, VALUE self ) {
 }
 
 VALUE coord_hash( VALUE self ) {
-  VALUE ary = rb_ary_new3( 2, coord_x( self ), coord_y( self ) );
+  VALUE ary = rb_ary_new3( 2, rb_iv_get(self, "@x"), rb_iv_get(self, "@y") );
   return rb_funcall( ary, id_hash, 0 );
 }
 
 VALUE coord_equals( VALUE self, VALUE obj ) {
   if( rb_respond_to( obj, id_x ) && 
       rb_respond_to( obj, id_y ) &&
-      coord_x( self ) == rb_funcall( obj, id_x, 0 ) &&
-      coord_y( self ) == rb_funcall( obj, id_y, 0 ) ) {
+      rb_iv_get( self, "@x" ) == rb_funcall( obj, id_x, 0 ) &&
+      rb_iv_get( self, "@y" ) == rb_funcall( obj, id_y, 0 ) ) {
     return Qtrue;
   }
   return Qfalse;
@@ -57,13 +49,13 @@ VALUE coord_equals( VALUE self, VALUE obj ) {
 
 VALUE coord_addition( VALUE self, VALUE obj ) {
   return rb_funcall( Coord, id_new, 2,
-    INT2NUM(NUM2INT(coord_x(self))+NUM2INT(rb_funcall(obj,id_x,0))),
-    INT2NUM(NUM2INT(coord_y(self))+NUM2INT(rb_funcall(obj,id_y,0))));
+    INT2NUM(NUM2INT(rb_iv_get(self, "@x"))+NUM2INT(rb_funcall(obj,id_x,0))),
+    INT2NUM(NUM2INT(rb_iv_get(self, "@y"))+NUM2INT(rb_funcall(obj,id_y,0))));
 }
 
 VALUE coord_direction_to( VALUE self, VALUE obj ) {
-  int dx = NUM2INT(coord_x(self))-NUM2INT(rb_funcall( obj, id_x, 0 ));
-  int dy = NUM2INT(coord_y(self))-NUM2INT(rb_funcall( obj, id_y, 0 ));
+  int dx = NUM2INT(rb_iv_get(self, "@x"))-NUM2INT(rb_funcall( obj, id_x, 0 ));
+  int dy = NUM2INT(rb_iv_get(self, "@y"))-NUM2INT(rb_funcall( obj, id_y, 0 ));
 
   if( dx == 0 ) {
     if( dy > 0 ) {

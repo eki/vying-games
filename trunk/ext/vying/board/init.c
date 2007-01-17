@@ -8,8 +8,6 @@ void Init_boardext() {
   Coord = rb_define_class( "Coord", rb_cObject );
 
   rb_define_method( Coord, "initialize", coord_initialize, 2 );
-  rb_define_method( Coord, "x", coord_x, 0 );
-  rb_define_method( Coord, "y", coord_x, 0 );
   rb_define_singleton_method( Coord, "[]", coord_class_subscript, -1 );
   rb_define_method( Coord, "hash", coord_hash, 0 );
   rb_define_method( Coord, "==", coord_equals, 1 );
