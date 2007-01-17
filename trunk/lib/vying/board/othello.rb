@@ -15,16 +15,6 @@ class OthelloBoard < Board
 #    @frontier = @frontier.flatten.select { |c| self[c].nil? }.uniq
 #  end
 
-#  def place( c, bp )
-#    cplace( c, bp )
-#
-#    occupied << c
-#
-#    @frontier += coords.neighbors( c ).select { |nc| self[nc].nil? }
-#    frontier.uniq!                                             
-#    frontier.delete( c )                                       
-# end
-
 #  def valid?( c, bp, directions = [:n,:s,:w,:e,:ne,:nw,:se,:sw] )
 #    return false if !self[c].nil?
 #
