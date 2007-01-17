@@ -46,7 +46,6 @@ VALUE coords_next( VALUE self, VALUE c, VALUE d );
 
 /* OthelloBoard prototypes */
 
-VALUE othello_board_initialize( VALUE self );
 VALUE othello_board_initialize_copy( VALUE self, VALUE obj );
 VALUE othello_board_valid( int argc, VALUE *argv, VALUE self );
 VALUE othello_board_place( VALUE self, VALUE c, VALUE p );

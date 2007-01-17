@@ -4,16 +4,21 @@ class OthelloBoard < Board
 
   attr_reader :occupied, :frontier
 
-#  def initialize( w=8, h=8 )
-#    super
-#
-#    self[3,3] = self[4,4] = :white
-#    self[3,4] = self[4,3] = :black
-#
-#    @occupied = [Coord[3,3], Coord[4,4], Coord[3,4], Coord[4,3]]
-#    @frontier = occupied.map { |c| coords.neighbors( c ) }
-#    @frontier = @frontier.flatten.select { |c| self[c].nil? }.uniq
-#  end
+  INITIAL_OCCUPIED = [Coord[3,3], Coord[4,4], Coord[3,4], Coord[4,3]]
+
+  INITIAL_FRONTIER = [Coord[2,2], Coord[3,2], Coord[4,2], Coord[5,2],
+                      Coord[5,3], Coord[5,4], Coord[5,5], Coord[4,5],
+                      Coord[3,5], Coord[2,5], Coord[2,4], Coord[2,3]]
+
+  def initialize
+    super( 8, 8 )
+
+    self[3,3] = self[4,4] = :white
+    self[3,4] = self[4,3] = :black
+
+    @occupied = INITIAL_OCCUPIED.dup
+    @frontier = INITIAL_FRONTIER.dup
+  end
 
 #  def valid?( c, bp, directions = [:n,:s,:w,:e,:ne,:nw,:se,:sw] )
 #    return false if !self[c].nil?

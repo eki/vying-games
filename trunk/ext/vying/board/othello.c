@@ -3,38 +3,6 @@
 
 /* OthelloBoard method definitions */
 
-VALUE othello_board_initialize( VALUE self ) {
-  VALUE args[] = {INT2NUM(8),INT2NUM(8)};
-
-  rb_call_super( 2, (VALUE *)&args );
-  board_set( self, INT2NUM(3), INT2NUM(3), sym_white );
-  board_set( self, INT2NUM(4), INT2NUM(4), sym_white );
-  board_set( self, INT2NUM(3), INT2NUM(4), sym_black );
-  board_set( self, INT2NUM(4), INT2NUM(3), sym_black );
-
-  rb_iv_set( self, "@occupied", 
-    rb_ary_new3( 4,
-      rb_funcall( Coord, id_new, 2, INT2NUM(3), INT2NUM(3) ),
-      rb_funcall( Coord, id_new, 2, INT2NUM(4), INT2NUM(4) ),
-      rb_funcall( Coord, id_new, 2, INT2NUM(3), INT2NUM(4) ),
-      rb_funcall( Coord, id_new, 2, INT2NUM(4), INT2NUM(3) ) ) );
-
-  rb_iv_set( self, "@frontier",
-    rb_ary_new3( 12,
-      rb_funcall( Coord, id_new, 2, INT2NUM(2), INT2NUM(2) ),
-      rb_funcall( Coord, id_new, 2, INT2NUM(3), INT2NUM(2) ),
-      rb_funcall( Coord, id_new, 2, INT2NUM(4), INT2NUM(2) ),
-      rb_funcall( Coord, id_new, 2, INT2NUM(5), INT2NUM(2) ),
-      rb_funcall( Coord, id_new, 2, INT2NUM(5), INT2NUM(3) ),
-      rb_funcall( Coord, id_new, 2, INT2NUM(5), INT2NUM(4) ),
-      rb_funcall( Coord, id_new, 2, INT2NUM(5), INT2NUM(5) ),
-      rb_funcall( Coord, id_new, 2, INT2NUM(4), INT2NUM(5) ),
-      rb_funcall( Coord, id_new, 2, INT2NUM(3), INT2NUM(5) ),
-      rb_funcall( Coord, id_new, 2, INT2NUM(2), INT2NUM(5) ),
-      rb_funcall( Coord, id_new, 2, INT2NUM(2), INT2NUM(4) ),
-      rb_funcall( Coord, id_new, 2, INT2NUM(2), INT2NUM(3) ) ) );
-}
-
 VALUE othello_board_initialize_copy( VALUE self, VALUE obj ) {
   VALUE args[] = {obj};
   rb_call_super( 1, (VALUE *)&args );
