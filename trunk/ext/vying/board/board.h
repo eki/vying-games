@@ -16,9 +16,6 @@ VALUE board_subscript( int argc, VALUE *argv, VALUE self );
 VALUE board_subscript_assign( int argc, VALUE *argv, VALUE self );
 
 VALUE board_initialize_copy( VALUE self, VALUE obj );
-VALUE board_cells( VALUE self );
-VALUE board_width( VALUE self );
-VALUE board_height( VALUE self );
 
 VALUE board_in_bounds( VALUE self, VALUE x, VALUE y );
 

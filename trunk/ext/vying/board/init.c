@@ -31,10 +31,6 @@ void Init_boardext() {
   rb_define_method( Board, "initialize", board_initialize, -1 );
   rb_define_method( Board, "initialize_copy", board_initialize_copy, 1 );
 
-  rb_define_method( Board, "cells", board_cells, 0 );
-  rb_define_method( Board, "width", board_width, 0 );
-  rb_define_method( Board, "height", board_height, 0 );
-
   rb_define_method( Board, "in_bounds?", board_in_bounds, 2 );
 
   rb_define_method( Board, "[]", board_subscript, -1 );
