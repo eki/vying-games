@@ -3,15 +3,6 @@
 
 /* OthelloBoard method definitions */
 
-VALUE othello_board_initialize_copy( VALUE self, VALUE obj ) {
-  VALUE args[] = {obj};
-  rb_call_super( 1, (VALUE *)&args );
-  rb_iv_set( self, "@occupied",
-    rb_funcall( rb_iv_get( obj, "@occupied" ), id_dup, 0 ) );
-  rb_iv_set( self, "@frontier",
-    rb_funcall( rb_iv_get( obj, "@frontier" ), id_dup, 0 ) );
-}
-
 VALUE othello_board_valid( int argc, VALUE *argv, VALUE self ) {
   int x = NUM2INT(rb_funcall( argv[0], id_x, 0 ));
   int y = NUM2INT(rb_funcall( argv[0], id_y, 0 ));

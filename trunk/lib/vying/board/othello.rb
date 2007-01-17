@@ -20,6 +20,12 @@ class OthelloBoard < Board
     @frontier = INITIAL_FRONTIER.dup
   end
 
+  def initialize_copy( original )
+    super
+    @occupied = original.occupied.dup
+    @frontier = original.frontier.dup
+  end
+
 #  def valid?( c, bp, directions = [:n,:s,:w,:e,:ne,:nw,:se,:sw] )
 #    return false if !self[c].nil?
 #
