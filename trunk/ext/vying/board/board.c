@@ -3,11 +3,6 @@
 
 /* Board method definitions */
 
-VALUE board_initialize_copy( VALUE self, VALUE obj ) {
-  rb_iv_set( self, "@cells", 
-    rb_funcall( rb_iv_get( obj, "@cells" ), id_dup, 0 ) );
-}
-
 VALUE board_subscript( int argc, VALUE *argv, VALUE self ) {
   if( argc == 2 && FIXNUM_P(argv[0]) && FIXNUM_P(argv[1]) ) {
     return board_get( self, argv[0], argv[1] );

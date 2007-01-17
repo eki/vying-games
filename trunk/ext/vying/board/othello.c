@@ -36,7 +36,8 @@ VALUE othello_board_initialize( VALUE self ) {
 }
 
 VALUE othello_board_initialize_copy( VALUE self, VALUE obj ) {
-  board_initialize_copy( self, obj );
+  VALUE args[] = {obj};
+  rb_call_super( 1, (VALUE *)&args );
   rb_iv_set( self, "@occupied",
     rb_funcall( rb_iv_get( obj, "@occupied" ), id_dup, 0 ) );
   rb_iv_set( self, "@frontier",

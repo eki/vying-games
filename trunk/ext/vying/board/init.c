@@ -28,8 +28,6 @@ void Init_boardext() {
 
   Board = rb_define_class( "Board", rb_cObject );
 
-  rb_define_method( Board, "initialize_copy", board_initialize_copy, 1 );
-
   rb_define_method( Board, "in_bounds?", board_in_bounds, 2 );
 
   rb_define_method( Board, "[]", board_subscript, -1 );
