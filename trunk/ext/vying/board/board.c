@@ -123,25 +123,9 @@ VALUE board_in_bounds( VALUE self, VALUE x, VALUE y ) {
   return Qtrue;
 }
 
-
 VALUE board_ci( VALUE self, VALUE x, VALUE y ) {
   int w = NUM2INT(rb_iv_get( self, "@width" ));
   return INT2NUM( NUM2INT(x) + NUM2INT(y) * w );
-}
-
-VALUE board_ic( VALUE self, int i ) {
-  int w = NUM2INT(rb_iv_get( self, "@width" ));
-  rb_funcall( Coord, id_new, 2, INT2NUM(i%w), INT2NUM(i/w) );
-}
-
-int board_ix( VALUE self, int i ) {
-  int w = NUM2INT(rb_iv_get( self, "@width" ));
-  return i%w;
-}
-
-int board_iy( VALUE self, int i ) {
-  int w = NUM2INT(rb_iv_get( self, "@width" ));
-  return i/w;
 }
 
 VALUE board_neighbors( VALUE self, int x, int y ) {
