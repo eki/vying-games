@@ -13,8 +13,8 @@ class OthelloBoard < Board
   def initialize
     super( 8, 8 )
 
-    self[3,3] = self[4,4] = :white
-    self[3,4] = self[4,3] = :black
+    @cells[27] = @cells[36] = :white
+    @cells[35] = @cells[28] = :black
 
     @occupied = INITIAL_OCCUPIED.dup
     @frontier = INITIAL_FRONTIER.dup
@@ -24,6 +24,12 @@ class OthelloBoard < Board
     super
     @occupied = original.occupied.dup
     @frontier = original.frontier.dup
+  end
+
+  def clear
+    @occupied.clear
+    @frontier.clear
+    super
   end
 
 #  def valid?( c, bp, directions = [:n,:s,:w,:e,:ne,:nw,:se,:sw] )
