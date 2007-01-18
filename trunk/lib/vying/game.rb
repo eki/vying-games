@@ -109,7 +109,7 @@ class Game
   def step
     has_ops.each do |p|
       if players.include?( p )
-        op = user_map[p].select( history.last.dup, p )
+        op = user_map[p].select( sequence, history.last.dup, p )
         if op?( op, p )
           self << op
         else

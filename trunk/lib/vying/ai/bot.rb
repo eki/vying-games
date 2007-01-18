@@ -11,7 +11,7 @@ class Bot
     @user_id, @username = 0, self.class.to_s
   end
 
-  def select( position, player )
+  def select( sequence, position, player )
     return position.ops.first if position.ops.length == 1
 
     score, op = best( analyze( position, player ) )
