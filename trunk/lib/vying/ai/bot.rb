@@ -12,6 +12,8 @@ class Bot
   end
 
   def select( position, player )
+    return position.ops.first if position.ops.length == 1
+
     score, op = best( analyze( position, player ) )
     op
   end
