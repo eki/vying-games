@@ -243,9 +243,16 @@ class TestOthelloBoard < Test::Unit::TestCase
   def test_occupied
     b = OthelloBoard.new
     o = [Coord[3,3], Coord[3,4], Coord[4,3], Coord[4,4]]
+
     assert_equal( o.sort, b.occupied.sort )
+
     b.place( Coord[3,2], :black )
     assert_equal( (o + [Coord[3,2]]).sort, b.occupied.sort )
+
+    # Commented out because only #place actually updates occupied
+#   b.clear
+#   b[0,0] = :black
+#   assert_equal( [Coord[0,0]], b.occupied )   
   end
 
   def test_frontier
@@ -261,6 +268,12 @@ class TestOthelloBoard < Test::Unit::TestCase
     f -= [Coord[3,2]]
     f += [Coord[2,1],Coord[3,1],Coord[4,1]]
     assert_equal( f.sort, b.frontier.sort )
+
+    # Commented out because only #place actually updated frontier
+#   b.clear
+#   b[0,0] = :black
+#   f = [Coord[1,0],Coord[0,1],Coord[1,1]]
+#   assert_equal( f.sort, b.frontier.sort )
   end
 end
 
