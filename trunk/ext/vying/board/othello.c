@@ -160,7 +160,8 @@ VALUE othello_board_place( VALUE self, VALUE c, VALUE p ) {
       if( np == p ) {
         int j;
         for( j = 0; j < blen; j++ ) {
-          rb_ary_store( cells, bt[j], p );
+          //rb_ary_store( cells, bt[j], p );
+          board_set( self, INT2NUM(bt[j]%w), INT2NUM(bt[j]/w), p );
         }
 
         break;
@@ -175,13 +176,6 @@ VALUE othello_board_place( VALUE self, VALUE c, VALUE p ) {
   }
 
   return othello_board_set( self, INT2NUM(x), INT2NUM(y), p );
-}
-
-VALUE othello_board_update_occupied( VALUE self, VALUE x, VALUE y ) {
-  VALUE occupied = rb_iv_get( self, "@occupied" );
-  VALUE c = rb_funcall( Coord, id_new, 2, x, y );
-  rb_ary_push( occupied, c );
-  return occupied;
 }
 
 VALUE othello_board_update_frontier( VALUE self, VALUE x, VALUE y ) {
@@ -279,7 +273,6 @@ VALUE othello_board_update_frontier( VALUE self, VALUE x, VALUE y ) {
 }
 
 VALUE othello_board_set( VALUE self, VALUE x, VALUE y, VALUE p ) {
-  othello_board_update_occupied( self, x, y );
   othello_board_update_frontier( self, x, y );
 
   board_set( self, x, y, p );

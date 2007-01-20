@@ -21,6 +21,9 @@ VALUE board_set( VALUE self, VALUE x, VALUE y, VALUE p );
 VALUE board_get_coord( VALUE self, VALUE c );
 VALUE board_set_coord( VALUE self, VALUE c, VALUE p );
 
+VALUE board_occupy( VALUE self, VALUE x, VALUE y, VALUE p );
+VALUE board_unoccupy( VALUE self, VALUE x, VALUE y, VALUE p );
+
 VALUE board_ci( VALUE self, VALUE x, VALUE y );
 
 VALUE board_neighbors( VALUE self, int x, int y );
@@ -46,7 +49,6 @@ VALUE coords_next( VALUE self, VALUE c, VALUE d );
 
 VALUE othello_board_valid( int argc, VALUE *argv, VALUE self );
 VALUE othello_board_place( VALUE self, VALUE c, VALUE p );
-VALUE othello_board_update_occupied( VALUE self, VALUE x, VALUE y );
 VALUE othello_board_update_frontier( VALUE self, VALUE x, VALUE y );
 VALUE othello_board_set( VALUE self, VALUE x, VALUE y, VALUE p );
 

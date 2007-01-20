@@ -20,7 +20,8 @@ class AI::Othello::ComboBot < Bot
   def cutoff( position, depth )
     return true if position.final?
 
-    total = position.occupied.length 
+    total = position.board.count( :black ) + 
+            position.board.count( :white )
 
     if( total - depth < 54 )
       return true if depth >= 2

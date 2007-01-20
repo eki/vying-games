@@ -4,8 +4,6 @@ class OthelloBoard < Board
 
   attr_reader :occupied, :frontier
 
-  INITIAL_OCCUPIED = [Coord[3,3], Coord[4,4], Coord[3,4], Coord[4,3]]
-
   INITIAL_FRONTIER = [Coord[2,2], Coord[3,2], Coord[4,2], Coord[5,2],
                       Coord[5,3], Coord[5,4], Coord[5,5], Coord[4,5],
                       Coord[3,5], Coord[2,5], Coord[2,4], Coord[2,3]]
@@ -16,18 +14,17 @@ class OthelloBoard < Board
     @cells[27] = @cells[36] = :white
     @cells[35] = @cells[28] = :black
 
-    @occupied = INITIAL_OCCUPIED.dup
+    @occupied = { :black => [Coord[3,4], Coord[4,3]],
+                  :white => [Coord[3,3], Coord[4,4]] }
     @frontier = INITIAL_FRONTIER.dup
   end
 
   def initialize_copy( original )
     super
-    @occupied = original.occupied.dup
     @frontier = original.frontier.dup
   end
 
   def clear
-    @occupied.clear
     @frontier.clear
     super
   end

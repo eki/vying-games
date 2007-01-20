@@ -153,6 +153,17 @@ class TestBoard < Test::Unit::TestCase
     assert_equal( 7, b.count( :white ) )
   end
 
+  def test_occupied
+    b = Board.new( 4, 4 )
+    assert_equal( nil, b.occupied[:black] )
+    b[1,1] = :black
+    assert_equal( [Coord[1,1]], b.occupied[:black] )
+    assert_equal( nil, b.occupied[:white] )
+    b[1,1] = :white
+    assert_equal( [], b.occupied[:black] )
+    assert_equal( [Coord[1,1]], b.occupied[:white] )
+  end
+
   def test_each
     b = Board.new( 2, 2 )
     b[0,0] = :b00

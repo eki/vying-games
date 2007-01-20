@@ -20,7 +20,28 @@ class TestBotsOthello < Test::Unit::TestCase
     assert( op )
 
     assert( ['c5','d6'].include?( op ) )
+  end
 
+  def test_eval_count
+    b = TestBot.new
+
+    g = Game.new( Othello )
+    while( g.ops )
+      g << g.ops.first
+    end
+
+    pc, oc, total, score = b.eval_count( g.history.first, :black )
+    assert_equal( 2, pc )
+    assert_equal( 2, oc )
+    assert_equal( 4, total )
+    assert_equal( 0, score )
+
+    b_pc, b_oc, b_total, b_score = b.eval_count( g.history.last, :black )
+    w_pc, w_oc, w_total, w_score = b.eval_count( g.history.last, :white )
+
+    #assert_equal( g.history.last.score( :black ), b_score )
+    #assert_equal( g.history.last.score( :white ), w_score )
+    assert_equal( b_total, w_total )
   end
 
 end

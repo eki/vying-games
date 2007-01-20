@@ -4,15 +4,18 @@ require 'vying/board/boardext'
 
 class Board
 
-  attr_reader :coords, :cells, :width, :height
+  attr_reader :coords, :cells, :width, :height, :occupied
   protected :cells
 
   def initialize( w=8, h=8 )
     @width, @height, @cells = w, h, Array.new( w*h, nil )
+    @occupied = {}
   end
 
   def initialize_copy( original )
     @cells = original.cells.dup
+    @occupied = {}
+    original.occupied.each { |k,v| @occupied[k] = v.dup }
   end
 
   def coords
@@ -29,7 +32,8 @@ class Board
   end
 
   def count( p )
-    cells.select { |i| i == p }.length
+    return (occupied[p] || []).length if p
+    width * height - occupied.inject(0) { |m,v| m + v[1].length }
   end
 
   def row( y )
@@ -58,6 +62,7 @@ class Board
 
   def clear
     @cells.each_index { |i| @cells[i] = nil }
+    @occupied = Hash.new { |h,k| h[k] = [] }
     self
   end
   
