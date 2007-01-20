@@ -6,6 +6,7 @@ module AI::Othello
   VYING_LIB = "/home/eki/projects/vying/trunk/lib"
   CORNERS_YAML = VYING_LIB + "/vying/ai/bots/othello/corners.yaml"
   EDGES_YAML = VYING_LIB + "/vying/ai/bots/othello/edge.yaml" 
+  OPENINGS_TXT = VYING_LIB + "/vying/ai/bots/othello/openings.txt" 
 
   CORNER_COORDS = [[:a1,:b2,:a2,:a3],
                    [:a1,:b2,:b1,:c1],
@@ -27,6 +28,28 @@ module AI::Othello
 
   def load_edges
     @edges ||= YAML.load_file( EDGES_YAML )
+  end
+
+  def load_openings
+    return @openings if @openings
+
+    @openings = []
+    File.open( OPENINGS_TXT ) do |file|
+      while line = file.gets
+        @openings << line.strip.downcase
+      end
+    end
+  end
+
+  def opening( position, sequence )
+    possible = []
+    position.ops.each do |op|
+      s = sequence.join + op.to_s
+      possible << op if @openings.select { |o| o =~ /^#{s}/ }.length > 0
+    end
+    return possible[rand(possible.length)] unless possible.empty?
+
+    nil
   end
 
   def opp( position, player )
@@ -151,18 +174,27 @@ module AI::Othello
     include AI::Othello
     include AlphaBeta
 
-    attr_reader :leaf, :nodes
+    attr_reader :leaf, :nodes, :openings
 
     def initialize
       super
       @leaf = 0
       @nodes = 0
+
+      load_openings
     end
 
-    def select( position, player )
+    def select( sequence, position, player )
+      return position.ops.first if position.ops.length == 1
+
+      if( op = opening( position, sequence ) )
+        puts "**** Taking opening #{sequence.join}:#{op}"
+        return op
+      end
+
       @leaf, @nodes = 0, 0
-      score, op = fuzzy_best( analyze( position, player ) )
-      #puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
+      score, op = best( analyze( position, player ) )
+      puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
       op
     end
 

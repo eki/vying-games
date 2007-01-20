@@ -8,21 +8,13 @@ class AI::Othello::ComboBot < Bot
   def initialize
     super
     load_corners
-    load_edges
   end
 
   def eval( position, player )
     total = position.occupied.length
 
-    if( total < 35 )
-      eval_frontier( position, player ) * 3 +
-      eval_corners( position, player ) +
-      eval_edges( position, player )
-    else
-      eval_corners( position, player ) +
-      eval_edges( position, player )
-    end
-
+    eval_frontier( position, player ) +
+    eval_corners( position, player )
   end
 
   def cutoff( position, depth )
@@ -31,7 +23,7 @@ class AI::Othello::ComboBot < Bot
     total = position.occupied.length 
 
     if( total - depth < 54 )
-      return true if depth >= 3
+      return true if depth >= 2
     end
 
     return false
