@@ -14,6 +14,9 @@ module BotTemplate
     @nodes = 0
   end
 
+  # select should also take a sequence argument, but we wouldn't have
+  # used it anyway (we're only interested in search results)
+
   def select( position, player )
     @leaf, @nodes = 0, 0
     score, op = best( analyze( position, player ) )
@@ -41,7 +44,7 @@ class AlphaBetaBot < Bot
 end
 
 class PlayFirstOpBot < Bot
-  def select( position, player )
+  def select( sequence, position, player )
     position.ops.first
   end
 end
@@ -78,7 +81,6 @@ class TestSearch < Test::Unit::TestCase
       assert_equal( m_op, a_op )
       assert( mini.leaf >= alpha.leaf )
       assert( mini.nodes >= alpha.nodes )
-
     end
   end
 
