@@ -95,25 +95,20 @@ VALUE othello_board_valid( int argc, VALUE *argv, VALUE self ) {
 VALUE othello_board_place( VALUE self, VALUE c, VALUE p ) {
   int x = NUM2INT(rb_funcall( c, id_x, 0 ));
   int y = NUM2INT(rb_funcall( c, id_y, 0 ));
+  int w = NUM2INT(rb_iv_get( self, "@width" ));
   VALUE cells = rb_iv_get( self, "@cells" );
-  VALUE dir = rb_ary_new3( 8, sym_n,
-                              sym_s,
-                              sym_w,
-                              sym_e,
-                              sym_ne,
-                              sym_nw,
-                              sym_se,
-                              sym_sw );
+  VALUE dir[] = {sym_n,sym_s,sym_w,sym_e,sym_ne,sym_nw,sym_se,sym_sw};
 
-  VALUE bt = rb_ary_new2(10);
+  int bt[20];
+  int blen = 0;
 
   int i;
-  for( i = 0; i < RARRAY(dir)->len; i++ ) {
-    VALUE d = rb_ary_entry( dir, i );
+  for( i = 0; i < 8; i++ ) {
+    VALUE d = dir[i];
     int dx, dy, nx, ny;
     VALUE np;
 
-    rb_ary_clear( bt );
+    blen = 0;
 
     if( d == sym_n ) {
       dx = 0;
@@ -156,22 +151,22 @@ VALUE othello_board_place( VALUE self, VALUE c, VALUE p ) {
       continue;
     }
 
-    rb_ary_push( bt, board_ci( self, INT2NUM(nx), INT2NUM(ny) ) );
+    bt[blen++] = nx + ny * w;
 
     nx += dx;
     ny += dy;
     np = board_get( self, INT2NUM(nx), INT2NUM(ny) );
     while( np != Qnil ) {
       if( np == p ) {
-        VALUE ci;
-        while( (ci = rb_ary_pop( bt )) != Qnil ) {
-          rb_funcall( cells, id_subscript_assign, 2, ci, p );
+        int j;
+        for( j = 0; j < blen; j++ ) {
+          rb_ary_store( cells, bt[j], p );
         }
 
         break;
       }
 
-      rb_ary_push( bt, board_ci( self, INT2NUM(nx), INT2NUM(ny) ) );
+      bt[blen++] = nx + ny * w;
 
       nx += dx;
       ny += dy;
