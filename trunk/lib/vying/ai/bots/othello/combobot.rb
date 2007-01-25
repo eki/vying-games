@@ -14,6 +14,7 @@ class AI::Othello::ComboBot < Bot
     total = position.occupied.length
 
     eval_frontier( position, player ) +
+    position.ops.length +
     eval_corners( position, player )
   end
 
@@ -23,8 +24,16 @@ class AI::Othello::ComboBot < Bot
     total = position.board.count( :black ) + 
             position.board.count( :white )
 
-    if( total - depth < 54 )
+    if( total - depth < 44 )
       return true if depth >= 2
+    end
+
+    if( total - depth < 54 )
+      return true if depth >= 3
+    end
+
+    if( total - depth < 56 )
+      return true if depth >= 4
     end
 
     return false
