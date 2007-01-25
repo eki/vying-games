@@ -54,6 +54,17 @@ class Rules
   end
 end
 
+class Othello < Rules
+  def to_hash
+    h = super
+
+    h['count'] = { 'black' => board.count( :black ),
+                   'white' => board.count( :white ) }
+
+    h
+  end
+end
+
 class Board
   def to_json( *a )
     pieces, board = self.to_a
