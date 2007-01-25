@@ -7,7 +7,7 @@ class Makyek < Rules
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Mak-yek>'],
        :aliases   => ['Makyek']
 
-  attr_reader :board, :lastc, :wrs, :brs, :ops_cache
+  attr_reader :board, :lastc, :ops_cache
 
   players [:white, :black]
 
@@ -16,15 +16,15 @@ class Makyek < Rules
 
     @board = Board.new( 8, 8 )
 
-    @wrs = [Coord[0,0], Coord[1,0], Coord[2,0], Coord[3,0],
-            Coord[4,0], Coord[5,0], Coord[6,0], Coord[7,0],
-            Coord[0,2], Coord[1,2], Coord[2,2], Coord[3,2],
-            Coord[4,2], Coord[5,2], Coord[6,2], Coord[7,2]]
+    wrs = [Coord[0,0], Coord[1,0], Coord[2,0], Coord[3,0],
+           Coord[4,0], Coord[5,0], Coord[6,0], Coord[7,0],
+           Coord[0,2], Coord[1,2], Coord[2,2], Coord[3,2],
+           Coord[4,2], Coord[5,2], Coord[6,2], Coord[7,2]]
     
-    @brs = [Coord[0,7], Coord[1,7], Coord[2,7], Coord[3,7],
-            Coord[4,7], Coord[5,7], Coord[6,7], Coord[7,7],
-            Coord[0,5], Coord[1,5], Coord[2,5], Coord[3,5],
-            Coord[4,5], Coord[5,5], Coord[6,5], Coord[7,5]]
+    brs = [Coord[0,7], Coord[1,7], Coord[2,7], Coord[3,7],
+           Coord[4,7], Coord[5,7], Coord[6,7], Coord[7,7],
+           Coord[0,5], Coord[1,5], Coord[2,5], Coord[3,5],
+           Coord[4,5], Coord[5,5], Coord[6,5], Coord[7,5]]
     
     wrs.each { |c| board[c] = :white }
     brs.each { |c| board[c] = :black }
@@ -40,7 +40,7 @@ class Makyek < Rules
     sc = Coord[$1]
     ec = Coord[$2]
 
-    rooks = turn == :white ? wrs : brs
+    rooks = board.occupied[turn]
 
     return false unless rooks.include?( sc )
     return false unless d = sc.direction_to( ec )
@@ -62,7 +62,7 @@ class Makyek < Rules
 
     a = []
 
-    rooks = turn == :white ? wrs : brs
+    rooks = board.occupied[turn]
 
     rooks.each do |c| 
       [:n,:e,:s,:w].each do |d|
@@ -82,7 +82,7 @@ class Makyek < Rules
     ec = Coord[$2]
 
     board.move( sc, ec )
-    rooks = turn == :white ? wrs : brs
+    rooks = board.occupied[turn]
     rooks.delete( sc )
     rooks << ec
 
@@ -113,7 +113,7 @@ class Makyek < Rules
       end
     end
 
-    opp_rooks = turn == :white ? brs : wrs
+    opp_rooks = board.occupied[turn == :white ? :black : :white]
     cap.each { |c| board[c] = nil; opp_rooks.delete( c ) }
 
     turn( :rotate )
@@ -128,7 +128,7 @@ class Makyek < Rules
   end
 
   def final?
-    wrs.length < 5 || brs.length < 5
+    board.count( :white ) < 5 || board.count( :black ) < 5
   #  wrs.empty? || brs.empty?   # does this get locked up?
   end
 

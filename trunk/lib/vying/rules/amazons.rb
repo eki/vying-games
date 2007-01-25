@@ -6,7 +6,7 @@ class Amazons < Rules
   info :name      => "Amazons",
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Amazons_(game)>']
 
-  attr_reader :board, :lastc, :wqs, :bqs, :ops_cache
+  attr_reader :board, :lastc, :ops_cache
 
   players [:white, :black]
 
@@ -15,8 +15,8 @@ class Amazons < Rules
 
     @board = Board.new( 10, 10 )
 
-    @wqs = [Coord[0,3], Coord[3,0], Coord[6,0], Coord[9,3]]
-    @bqs = [Coord[0,6], Coord[3,9], Coord[6,9], Coord[9,6]]
+    wqs = [Coord[0,3], Coord[3,0], Coord[6,0], Coord[9,3]]
+    bqs = [Coord[0,6], Coord[3,9], Coord[6,9], Coord[9,6]]
     
     wqs.each { |c| board[c] = :white }
     bqs.each { |c| board[c] = :black }
@@ -33,7 +33,7 @@ class Amazons < Rules
     sc = Coord[$1]
     ec = Coord[$2]
 
-    queens = turn == :white ? wqs : bqs
+    queens = board.occupied[turn]
 
     return false unless queens.include?( sc )
     return false unless d = sc.direction_to( ec )
@@ -53,7 +53,7 @@ class Amazons < Rules
 
     a = []
 
-    queens = turn == :white ? wqs : bqs
+    queens = board.occupied[turn]
 
     if lastc.nil? || board[lastc] == :arrow
       queens.each do |c| 
@@ -83,9 +83,6 @@ class Amazons < Rules
 
     if lastc.nil? || board[lastc] == :arrow
       board.move( sc, ec )
-      queens = turn == :white ? wqs : bqs
-      queens.delete( sc )
-      queens << ec
     else
       board[ec] = :arrow
       turn( :rotate )
