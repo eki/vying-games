@@ -78,12 +78,9 @@ class Board
   # Not sure this is an appropriate implementation of to_a
   def to_a
     pieces = []
-    array = coords.rows.map do |a| 
-      a.map do |c| 
-        p = self[c]
-        pieces << p unless pieces.include? p
-        pieces.index( p )
-      end 
+    array = cells.map do |c|
+      pieces << c unless pieces.include? c
+      pieces.index( c )
     end
     [pieces, array]
   end
