@@ -20,7 +20,7 @@ class Bot
 
   def analyze( position, player )
     h = {}
-    position.ops.each { |op| h[op] = evaluate( position.apply( op ) ) }
+    position.ops.each { |op| h[op] = evaluate( position.apply( op ), player ) }
     h
   end
 
