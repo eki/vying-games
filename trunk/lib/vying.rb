@@ -1,5 +1,6 @@
 require 'vying/board/board'
 require 'vying/board/othello'
+require 'vying/board/connect6'
 
 require 'vying/rules'
 require 'vying/game'

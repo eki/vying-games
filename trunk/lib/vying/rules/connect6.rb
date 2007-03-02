@@ -1,5 +1,5 @@
 require 'vying/rules'
-require 'vying/board/board'
+require 'vying/board/connect6'
 
 class Connect6 < Rules
 
@@ -15,7 +15,7 @@ class Connect6 < Rules
   def initialize( seed=nil )
     super
 
-    @board = Board.new( 19, 19 )
+    @board = Connect6Board.new
     @turn = [:black, :white, :white, :black]
     @lastc, @lastp = nil, :noone
     @unused_ops = @@init_ops.dup
@@ -34,6 +34,7 @@ class Connect6 < Rules
   def apply!( op )
     c, p = Coord[op], turn
     board[c], @lastc, @lastp = p, c, p
+    board.update_threats( c )
     @unused_ops.delete( c.to_s )
     turn( :rotate )
     self

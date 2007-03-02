@@ -3,7 +3,12 @@ require 'vying/rules'
 module AlphaBeta
   def analyze( position, player )
     h = {}
-    position.ops.each do |op|
+
+    ops = prune( position, position.ops ) if respond_to? :prune
+    ops = order( position, position.ops ) if respond_to? :order
+    ops ||= position.ops
+
+    ops.each do |op|
       h[op] = search( position.apply( op ), player, -10**10, 10**10, 1 )
     end
     h
@@ -14,7 +19,11 @@ module AlphaBeta
 
     return evaluate( position, player ) if cutoff( position, depth )
 
-    scores = position.ops.map_until do |op|
+    ops = prune( position, position.ops ) if respond_to? :prune
+    ops = order( position, position.ops ) if respond_to? :order
+    ops ||= position.ops
+
+    scores = ops.map_until do |op|
       v = search( position.apply( op ), player, a, b, depth+1 )
 
       # Check for alpha-beta cutoffs
