@@ -102,3 +102,12 @@ class Bot
 
 end
 
+# This is just a simple dummy Human bot class.  It is used as a placeholder
+# in Game#user_map
+
+class Human < Bot
+  def select( position, player )
+    throw Exception.new( "Human#select placeholder should not be called" )
+  end
+end
+
