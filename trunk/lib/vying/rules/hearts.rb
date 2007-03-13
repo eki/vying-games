@@ -1,7 +1,9 @@
 require 'vying/rules'
-require 'vying/cards/standard'
+require 'vying/cards/card'
+require 'vying/cards/trick'
 
-class Hearts < TrickTakingRules
+class Hearts < Rules
+  include TrickTaking
 
   info :name => 'Hearts'
 
