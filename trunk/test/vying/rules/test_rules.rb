@@ -60,5 +60,14 @@ module RulesTests
     #assert_equal( g, g2 ) #Game doesn't implement ==
     assert_equal( g.history.last, g2.history.last )
   end
+
+  def test_yaml
+    g = Game.new( rules )
+    g2 = nil
+    assert_nothing_raised { g2 = YAML::load( YAML::dump( g ) ) }
+    #assert_equal( g, g2 ) #Game doesn't implement ==
+    assert_equal( g.history.last, g2.history.last )
+  end
+
 end
 
