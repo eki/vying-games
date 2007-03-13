@@ -8,6 +8,8 @@ require 'vying/board/test_board'
 require 'vying/board/test_connect6'
 require 'vying/board/test_othello'
 
+require 'vying/cards/test_card'
+
 require 'vying/rules/test_tictactoe'
 require 'vying/rules/test_fifteen'
 require 'vying/rules/test_connectfour'
