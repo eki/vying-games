@@ -13,7 +13,28 @@ class Random::MersenneTwister
   def ==( o )
     eql? o
   end
+
+  def to_yaml( opts = {} )
+    @state = state   # This is uber kludgey
+    super
+  end
+
+  def to_yaml_type
+    "!vying.org,2007/MersenneTwister"
+  end
+
+  def to_yaml_properties
+    ['@state']
+  end
+
 end
+
+YAML.add_domain_type( "vying.org,2007", "MersenneTwister") do |type, val|
+  rng = Random::MersenneTwister.new( 0 )
+  rng.state = val["state"]
+  rng
+end
+
 
 class Array
   def deep_dup
