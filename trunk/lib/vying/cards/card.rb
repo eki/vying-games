@@ -48,10 +48,10 @@ class Card
   end
 
   def <=>( card )
-    tc = (color.to_i <=> card.color.to_i)
+    tc = (color.to_s <=> card.color.to_s)
     return tc if tc != 0
 
-    ts = (suit.to_i <=> card.suit.to_i)
+    ts = (suit.to_s <=> card.suit.to_s)
     return ts if ts != 0
 
     card.value? - value?
