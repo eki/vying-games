@@ -52,5 +52,13 @@ module RulesTests
       (g.players - g.has_ops).each { |p| assert( !g.op?( op, p ) ) }
     end
   end
+
+  def test_marshal
+    g = Game.new( rules )
+    g2 = nil
+    assert_nothing_raised { g2 = Marshal::load( Marshal::dump( g ) ) }
+    #assert_equal( g, g2 ) #Game doesn't implement ==
+    assert_equal( g.history.last, g2.history.last )
+  end
 end
 
