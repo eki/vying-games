@@ -15,13 +15,44 @@ class Random::MersenneTwister
   end
 end
 
+class Array
+  def deep_dup
+    nd = [Symbol, NilClass, Fixnum, TrueClass, FalseClass]
+    d = self.dup
+
+    each_index do |i|
+      if !nd.include?( self[i].class )
+        d[i] = self[i].respond_to?( :deep_dup ) ? self[i].deep_dup : self[i].dup
+      end
+    end
+
+    d
+  end
+end
+
+class Hash
+  def deep_dup
+    nd = [Symbol, NilClass, Fixnum, TrueClass, FalseClass]
+    d = self.dup
+
+    each do |k,v|
+      if !nd.include?( v.class )
+        d[k] = v.respond_to?( :deep_dup ) ? v.deep_dup : v.dup
+      end
+    end
+
+    d
+  end
+end
+
 class Rules
   def initialize_copy( original )
     nd = [Symbol, NilClass, Fixnum, TrueClass, FalseClass]
     instance_variables.each do |iv|
       v = instance_variable_get( iv )
       if !nd.include?( v.class )
-        instance_variable_set( iv, v.dup )
+        instance_variable_set( iv, 
+          v.respond_to?( :deep_dup ) ? v.deep_dup : v.dup )
       end
     end
   end

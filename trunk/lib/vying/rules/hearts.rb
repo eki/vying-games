@@ -44,13 +44,6 @@ class Hearts < Rules
     @score = Hash.new( 0 )
   end
 
-  def initialize_copy( original )
-    @hands = original.hands.dup
-    @tricks = original.tricks.dup
-    @trick = original.trick.dup
-    @score = original.score.dup
-  end
-
   def censor( player )
     pos = super
     pos.hands.each { |k,v| pos.hands[k] = :hidden if k != player }
