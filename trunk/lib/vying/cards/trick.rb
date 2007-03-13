@@ -5,13 +5,13 @@ module TrickTaking
   module Meta
     def trump( a )
       info[:trump] = a.map { |s| Card[s] }
-      class << self; def trump; @info[:trump]; end; end
+      def trump; info[:trump]; end
     end
 
     def suits( h )
       h.each { |k,v| h[k] = v.map { |s| Card[s] } }
       info[:suits] = h
-      class << self; def suits; @info[:suits]; end; end
+      def suits; info[:suits]; end
     end
 
     def deck( a )
