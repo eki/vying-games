@@ -18,6 +18,7 @@ require 'vying/rules/test_othello'
 require 'vying/rules/test_pig'
 require 'vying/rules/test_makyek'
 require 'vying/rules/test_amazons'
+require 'vying/rules/test_hearts'
 
 require 'vying/ai/search/test_search'
 require 'vying/ai/bots/othello/test_othello'
