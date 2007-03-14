@@ -1,5 +1,6 @@
 require 'rake'
 require 'rake/testtask'
+require 'rake/rdoctask'
 
 begin
   require 'rubygems'
@@ -11,6 +12,13 @@ end
 Rake::TestTask.new do |t|
   t.libs << "test"
   t.test_files = FileList['test/**/test*.rb']
+end
+
+Rake::RDocTask.new do |rd|
+  rd.main = "docs/README.rdoc"
+  rd.rdoc_dir = "docs/api"
+  rd.rdoc_files.include( "docs/README.rdoc", "lib/**/*.rb", 
+                         "ext/**/*.h", "ext/**/*.c" )
 end
 
 
