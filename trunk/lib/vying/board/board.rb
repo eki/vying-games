@@ -9,6 +9,7 @@ class Board
 
   def initialize( w=8, h=8 )
     @width, @height, @cells = w, h, Array.new( w*h, nil )
+    @coords = Coords.new( width, height )
     @occupied = {}
   end
 
@@ -16,10 +17,6 @@ class Board
     @cells = original.cells.dup
     @occupied = {}
     original.occupied.each { |k,v| @occupied[k] = v.dup }
-  end
-
-  def coords
-    @coords = Coords.new( width, height )
   end
 
   def ==( o )
