@@ -31,7 +31,7 @@ module AI::Othello
   end
 
   def load_openings
-    return @openings if @openings
+    return @openings if defined? @openings
 
     @openings = []
     File.open( OPENINGS_TXT ) do |file|
