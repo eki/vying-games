@@ -1,7 +1,13 @@
 #include "ruby.h"
 #include "board.h"
 
-/* Coords method definitions */
+/*
+ *  Returns true if this set of Coords contains the given Coord.
+ *  
+ *  call-seq:
+ *    include?( coord ) -> boolean
+ *
+ */
 
 VALUE coords_include( VALUE self, VALUE c ) {
   int w = NUM2INT(rb_iv_get( self, "@width" ));
@@ -15,6 +21,17 @@ VALUE coords_include( VALUE self, VALUE c ) {
 
   return Qtrue;
 }
+
+/*
+ *  Returns the next Coord in a given direction.  If the next Coord is not
+ *  included in the Coords, nil is returned.
+ *
+ *  call-seq:
+ *    next( coord, direction ) -> Coord or nil
+ *
+ *  The direction should be expressed as one of the keys to DIRECTIONS.
+ *
+ */
 
 VALUE coords_next( VALUE self, VALUE c, VALUE d ) {
   VALUE dir = rb_hash_aref( rb_const_get( Coords, id_DIRECTIONS ), d );

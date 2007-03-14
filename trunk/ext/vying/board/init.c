@@ -8,41 +8,47 @@ void Init_boardext() {
   Coord = rb_define_class( "Coord", rb_cObject );
 
   rb_define_method( Coord, "initialize", coord_initialize, 2 );
+                                                              /* in coord.c */
   rb_define_singleton_method( Coord, "[]", coord_class_subscript, -1 );
-  rb_define_method( Coord, "hash", coord_hash, 0 );
-  rb_define_method( Coord, "==", coord_equals, 1 );
-  rb_define_method( Coord, "eql?", coord_equals, 1 );
-  rb_define_method( Coord, "+", coord_addition, 1 );
-  rb_define_method( Coord, "direction_to", coord_direction_to, 1 );
+                                                              /* in coord.c */
+  rb_define_method( Coord, "hash", coord_hash, 0 );           /* in coord.c */
+  rb_define_method( Coord, "==", coord_equals, 1 );           /* in coord.c */
+  rb_define_method( Coord, "eql?", coord_equals, 1 );         /* in coord.c */
+  rb_define_method( Coord, "+", coord_addition, 1 );          /* in coord.c */
+  rb_define_method( Coord, "direction_to", coord_direction_to, 1 ); 
+                                                              /* in coord.c */
 
   /* Map Coords */
 
   Coords = rb_define_class( "Coords", rb_cObject );
 
-  rb_define_method( Coords, "include?", coords_include, 1 );
-  rb_define_method( Coords, "next", coords_next, 2 );
+  rb_define_method( Coords, "include?", coords_include, 1 ); /* in coords.c */
+  rb_define_method( Coords, "next", coords_next, 2 );        /* in coords.c */
 
   /* Map Board */
 
   Board = rb_define_class( "Board", rb_cObject );
 
   rb_define_method( Board, "in_bounds?", board_in_bounds, 2 );
-
-  rb_define_method( Board, "[]", board_subscript, -1 );
+                                                              /* in board.c */
+  rb_define_method( Board, "[]", board_subscript, -1 );       /* in board.c */
   rb_define_method( Board, "[]=", board_subscript_assign, -1 );
+                                                              /* in board.c */
+  rb_define_method( Board, "get", board_get, 2 );             /* in board.c */
+  rb_define_method( Board, "set", board_set, 3 );             /* in board.c */
 
-  rb_define_method( Board, "get", board_get, 2 );
-  rb_define_method( Board, "set", board_set, 3 );
-
-  rb_define_method( Board, "ci", board_ci, 2 );
+  rb_define_method( Board, "ci", board_ci, 2 );               /* in board.c */
 
   /* Map OthelloBoard */
 
   OthelloBoard = rb_define_class( "OthelloBoard", Board );
 
   rb_define_method( OthelloBoard, "valid?", othello_board_valid, -1 );
+                                                            /* in othello.c */
   rb_define_method( OthelloBoard, "place", othello_board_place, 2 );
+                                                            /* in othello.c */
   rb_define_method( OthelloBoard, "set", othello_board_set, 3 );
+                                                            /* in othello.c */
 
   /* Look up all our ids */
 

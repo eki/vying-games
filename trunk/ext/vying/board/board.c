@@ -1,7 +1,18 @@
 #include "ruby.h"
 #include "board.h"
 
-/* Board method definitions */
+/*
+ *  call-seq:
+ *    board[x,y]
+ *    board[:symbol]
+ *    board["string"]
+ *    board[coord]
+ *    board[coord1,coord2,...,coordn]
+ *
+ *  Boards can be indexed by an (x,y) pair, or any number of Coord-like
+ *  objects (ie, objects with #x and #y methods).  These Coord-like objects
+ *  include Symbol, String, Array, and, obviously, Coord.
+ */
 
 VALUE board_subscript( int argc, VALUE *argv, VALUE self ) {
   if( argc == 2 && FIXNUM_P(argv[0]) && FIXNUM_P(argv[1]) ) {
@@ -21,6 +32,17 @@ VALUE board_subscript( int argc, VALUE *argv, VALUE self ) {
 
   return Qnil;
 }
+
+/*
+ *  call-seq:
+ *    board[x,y] = :whatever
+ *    board[coord] = :whatever
+ *    board[coord1,coord2,...,coordn] = :whatever
+ *
+ *  Assign to a cell on a board.  Takes an (x,y) pair, or any number of
+ *  Coord-like objects.  If multiple coords are passed, they will all be
+ *  set to the same value.
+ */
 
 VALUE board_subscript_assign( int argc, VALUE *argv, VALUE self ) {
   if( argc == 3 && FIXNUM_P(argv[0]) && FIXNUM_P(argv[1]) ) {
@@ -42,6 +64,10 @@ VALUE board_subscript_assign( int argc, VALUE *argv, VALUE self ) {
   return Qnil;
 }
 
+/*
+ *  Returns the value at the given Coord.
+ */
+
 VALUE board_get_coord( VALUE self, VALUE c ) {
   if( c == Qnil ) {
     return Qnil;
@@ -51,6 +77,14 @@ VALUE board_get_coord( VALUE self, VALUE c ) {
                           rb_funcall( c, id_y, 0 ) );
 }
 
+/*
+ *  Returns the value at the given (x,y).
+ *
+ *  call-seq:
+ *    get( x, y ) -> p
+ *
+ */
+
 VALUE board_get( VALUE self, VALUE x, VALUE y ) {
   if( RTEST(board_in_bounds( self, x, y )) ) {
     VALUE cells = rb_iv_get( self, "@cells" );
@@ -58,6 +92,14 @@ VALUE board_get( VALUE self, VALUE x, VALUE y ) {
   }
   return Qnil;
 }
+
+/*
+ *  Assigns to the given (x,y).
+ *
+ *  call-seq:
+ *    set( x, y, p )
+ *
+ */
 
 VALUE board_set( VALUE self, VALUE x, VALUE y, VALUE p ) {
   if( RTEST(board_in_bounds( self, x, y )) ) {
@@ -72,6 +114,10 @@ VALUE board_set( VALUE self, VALUE x, VALUE y, VALUE p ) {
   return p;
 }
 
+/*
+ *  Assigns to the given Coord.
+ */
+
 VALUE board_set_coord( VALUE self, VALUE c, VALUE p ) {
   if( c == Qnil ) {
     return Qnil;
@@ -81,6 +127,14 @@ VALUE board_set_coord( VALUE self, VALUE c, VALUE p ) {
                           rb_funcall( c, id_y, 0 ), 
                           p );
 }
+
+/*
+ *  Returns true if the given (x,y) is in bounds.
+ *
+ *  call-seq:
+ *    in_bounds?( x, y ) -> boolean
+ *
+ */
 
 VALUE board_in_bounds( VALUE self, VALUE x, VALUE y ) {
   int w = NUM2INT(rb_iv_get( self, "@width" ));
@@ -95,10 +149,22 @@ VALUE board_in_bounds( VALUE self, VALUE x, VALUE y ) {
   return Qtrue;
 }
 
+/*
+ *  Translates (x,y) into i.
+ *
+ *  call-seq:
+ *    ci( x, y ) -> i
+ *
+ */
+
 VALUE board_ci( VALUE self, VALUE x, VALUE y ) {
   int w = NUM2INT(rb_iv_get( self, "@width" ));
   return INT2NUM( NUM2INT(x) + NUM2INT(y) * w );
 }
+
+/*
+ *  Updates #occupied.
+ */
 
 VALUE board_occupy( VALUE self, VALUE x, VALUE y, VALUE p ) {
   VALUE occupied = rb_iv_get( self, "@occupied" );
@@ -116,6 +182,10 @@ VALUE board_occupy( VALUE self, VALUE x, VALUE y, VALUE p ) {
   return occupied;
 }
 
+/*
+ *  Updates #occupied.
+ */
+
 VALUE board_unoccupy( VALUE self, VALUE x, VALUE y, VALUE p ) {
   VALUE occupied = rb_iv_get( self, "@occupied" );
   VALUE c = rb_funcall( Coord, id_new, 2, x, y );
@@ -123,6 +193,10 @@ VALUE board_unoccupy( VALUE self, VALUE x, VALUE y, VALUE p ) {
   rb_funcall( ary, id_delete, 1, c );
   return occupied;
 }
+
+/*
+ *  Returns the an array of neighboring Coord's.
+ */
 
 VALUE board_neighbors( VALUE self, int x, int y ) {
   return rb_ary_new3( 8,

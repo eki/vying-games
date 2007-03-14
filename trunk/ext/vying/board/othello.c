@@ -1,7 +1,15 @@
 #include "ruby.h"
 #include "board.h"
 
-/* OthelloBoard method definitions */
+/*
+ *  Tests whether placing the given piece at the given coord would result
+ *  in pieces being flipped in the given directions, in other words that
+ *  the coord represents a valid move for the given piece / player.
+ *
+ *  call-seq:
+ *    valid?( coord, piece, directions=[:n,:s,:w,:e,:ne,:nw,:se,:sw] ) -> boolean
+ *
+ */
 
 VALUE othello_board_valid( int argc, VALUE *argv, VALUE self ) {
   int x = NUM2INT(rb_funcall( argv[0], id_x, 0 ));
@@ -92,6 +100,15 @@ VALUE othello_board_valid( int argc, VALUE *argv, VALUE self ) {
   return Qfalse;
 }
 
+/*
+ *  Place the given piece at the given coord.  Flips pieces according to
+ *  typical Othello rules.
+ *
+ *  call-seq:
+ *    place( coord, piece ) -> piece
+ *
+ */
+
 VALUE othello_board_place( VALUE self, VALUE c, VALUE p ) {
   int x = NUM2INT(rb_funcall( c, id_x, 0 ));
   int y = NUM2INT(rb_funcall( c, id_y, 0 ));
@@ -177,6 +194,10 @@ VALUE othello_board_place( VALUE self, VALUE c, VALUE p ) {
 
   return othello_board_set( self, INT2NUM(x), INT2NUM(y), p );
 }
+
+/*
+ *  Updates #frontier.
+ */
 
 VALUE othello_board_update_frontier( VALUE self, VALUE x, VALUE y ) {
   VALUE frontier = rb_iv_get( self, "@frontier" );
@@ -272,9 +293,17 @@ VALUE othello_board_update_frontier( VALUE self, VALUE x, VALUE y ) {
   return frontier;
 }
 
+/*
+ *  Updates #frontier as a side effect to calling Board#set.
+ *
+ *  call-seq:
+ *    set( x, y, p ) -> p
+ *
+ */
+
 VALUE othello_board_set( VALUE self, VALUE x, VALUE y, VALUE p ) {
   othello_board_update_frontier( self, x, y );
 
-  board_set( self, x, y, p );
+  return board_set( self, x, y, p );
 }
 
