@@ -40,5 +40,14 @@ class TestOthello < Test::Unit::TestCase
     assert_equal( [:black,:white], g.players )
   end
 
+  def test_has_score
+    g = Game.new( Othello )
+    g << g.ops.first
+
+    assert( g.has_score? )
+    assert_equal( 4, g.score( :black ) )
+    assert_equal( 1, g.score( :white ) )
+  end
+
 end
 

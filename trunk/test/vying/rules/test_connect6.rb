@@ -28,6 +28,11 @@ class TestConnect6 < Test::Unit::TestCase
     assert_equal( 's19', g.unused_ops.last )
   end
 
+  def test_has_score
+    g = Game.new( Connect6 )
+    assert( !g.has_score? )
+  end
+
   def test_has_ops
     g = Game.new( Connect6 )
     assert_equal( [:black], g.has_ops )
@@ -68,9 +73,6 @@ class TestConnect6 < Test::Unit::TestCase
     assert( g.loser?( :black ) )
     assert( g.winner?( :white ) )
     assert( !g.loser?( :white ) )
-
-    assert_equal( -1, g.score( :black ) )
-    assert_equal( 1, g.score( :white ) )
   end
 
   def test_game02
@@ -82,9 +84,6 @@ class TestConnect6 < Test::Unit::TestCase
     assert( g.loser?( :black ) )
     assert( g.winner?( :white ) )
     assert( !g.loser?( :white ) )
-
-    assert_equal( -1, g.score( :black ) )
-    assert_equal( 1, g.score( :white ) )
   end
 
   def test_game03
@@ -96,9 +95,6 @@ class TestConnect6 < Test::Unit::TestCase
     assert( !g.loser?( :black ) )
     assert( !g.winner?( :white ) )
     assert( g.loser?( :white ) )
-
-    assert_equal( 1, g.score( :black ) )
-    assert_equal( -1, g.score( :white ) )
   end
 
   def test_game04
@@ -152,9 +148,6 @@ class TestConnect6 < Test::Unit::TestCase
     assert( !g.loser?( :black ) )
     assert( !g.winner?( :white ) )
     assert( !g.loser?( :white ) )
-
-    assert_equal( 0, g.score( :black ) )
-    assert_equal( 0, g.score( :white ) )
   end
 
 end

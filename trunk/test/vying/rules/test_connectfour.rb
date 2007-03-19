@@ -58,9 +58,6 @@ class TestConnectFour < Test::Unit::TestCase
     assert( !g.loser?( :red ) )
     assert( !g.winner?( :blue ) )
     assert( g.loser?( :blue ) )
-
-    assert_equal( 1, g.score( :red ) )
-    assert_equal( -1, g.score( :blue ) )
   end
 
   def test_game02
@@ -76,9 +73,6 @@ class TestConnectFour < Test::Unit::TestCase
     assert( g.loser?( :red ) )
     assert( g.winner?( :blue ) )
     assert( !g.loser?( :blue ) )
-
-    assert_equal( -1, g.score( :red ) )
-    assert_equal( 1, g.score( :blue ) )
   end
 
   def test_game03
@@ -94,9 +88,6 @@ class TestConnectFour < Test::Unit::TestCase
     assert( g.loser?( :red ) )
     assert( g.winner?( :blue ) )
     assert( !g.loser?( :blue ) )
-
-    assert_equal( -1, g.score( :red ) )
-    assert_equal( 1, g.score( :blue ) )
   end
 
   def test_game04
@@ -114,9 +105,6 @@ class TestConnectFour < Test::Unit::TestCase
     assert( !g.loser?( :red ) )
     assert( !g.winner?( :blue ) )
     assert( !g.loser?( :blue ) )
-
-    assert_equal( 0, g.score( :red ) )
-    assert_equal( 0, g.score( :blue ) )
   end
 
   def test_game05
@@ -132,9 +120,6 @@ class TestConnectFour < Test::Unit::TestCase
     assert( g.loser?( :red ) )
     assert( g.winner?( :blue ) )
     assert( !g.loser?( :blue ) )
-
-    assert_equal( -1, g.score( :red ) )
-    assert_equal( 1, g.score( :blue ) )
   end
 
 end

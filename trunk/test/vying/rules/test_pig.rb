@@ -23,7 +23,6 @@ class TestPig < Test::Unit::TestCase
     g = Game.new( Pig )
     assert_equal( Hash.new( 0 ), g.total )
     assert_equal( :a, g.turn )
-    assert_equal( 0, g.score )
     assert_equal( false, g.rolling )
   end
 

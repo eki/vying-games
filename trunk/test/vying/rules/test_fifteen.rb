@@ -55,9 +55,6 @@ class TestFifteen < Test::Unit::TestCase
     assert( !g.loser?( :a ) )
     assert( !g.winner?( :b ) )
     assert( g.loser?( :b ) )
-
-    assert_equal( 1, g.score( :a ) )
-    assert_equal( -1, g.score( :b ) )
   end
 
   def test_game02
@@ -73,9 +70,6 @@ class TestFifteen < Test::Unit::TestCase
     assert( g.loser?( :a ) )
     assert( g.winner?( :b ) )
     assert( !g.loser?( :b ) )
-
-    assert_equal( -1, g.score( :a ) )
-    assert_equal( 1, g.score( :b ) )
   end
 
   def test_game03
@@ -91,9 +85,6 @@ class TestFifteen < Test::Unit::TestCase
     assert( !g.loser?( :a ) )
     assert( !g.winner?( :b ) )
     assert( !g.loser?( :b ) )
-
-    assert_equal( 0, g.score( :a ) )
-    assert_equal( 0, g.score( :a ) )
   end
 end
 

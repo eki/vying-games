@@ -54,9 +54,6 @@ class TestTicTacToe < Test::Unit::TestCase
     assert( !g.loser?( :x ) )
     assert( !g.winner?( :o ) )
     assert( g.loser?( :o ) )
-
-    assert_equal( 1, g.score( :x ) )
-    assert_equal( -1, g.score( :o ) )
   end
 
   def test_game02
@@ -72,9 +69,6 @@ class TestTicTacToe < Test::Unit::TestCase
     assert( !g.loser?( :x ) )
     assert( !g.winner?( :o ) )
     assert( g.loser?( :o ) )
-
-    assert_equal( 1, g.score( :x ) )
-    assert_equal( -1, g.score( :o ) )
   end
 
   def test_game03
@@ -90,9 +84,6 @@ class TestTicTacToe < Test::Unit::TestCase
     assert( !g.loser?( :x ) )
     assert( !g.winner?( :o ) )
     assert( !g.loser?( :o ) )
-
-    assert_equal( 0, g.score( :x ) )
-    assert_equal( 0, g.score( :o ) )
   end
 
   def test_game04
@@ -108,9 +99,6 @@ class TestTicTacToe < Test::Unit::TestCase
     assert( g.loser?( :x ) )
     assert( g.winner?( :o ) )
     assert( !g.loser?( :o ) )
-
-    assert_equal( -1, g.score( :x ) )
-    assert_equal( 1, g.score( :o ) )
   end
 
   def test_game05
@@ -126,9 +114,6 @@ class TestTicTacToe < Test::Unit::TestCase
     assert( g.loser?( :x ) )
     assert( g.winner?( :o ) )
     assert( !g.loser?( :o ) )
-
-    assert_equal( -1, g.score( :x ) )
-    assert_equal( 1, g.score( :o ) )
   end
 end
 
