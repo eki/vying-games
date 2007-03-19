@@ -5,10 +5,10 @@ end
 
 class Bot
 
-  attr_reader :user_id, :username
+  attr_reader :id, :username
 
   def initialize
-    @user_id, @username = 0, self.class.to_s
+    @id, @username = 0, self.class.to_s
   end
 
   def select( sequence, position, player )

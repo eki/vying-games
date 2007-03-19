@@ -10,7 +10,7 @@ class GameResults
     @sequence = game.sequence
 
     @user_map = {}
-    game.user_map.each { |k,v| @user_map[k] = [v.user_id, v.username] }
+    game.user_map.each { |k,v| @user_map[k] = [v.id, v.username] }
 
     @win_lose_draw = {}
     game.players.each do |p|
