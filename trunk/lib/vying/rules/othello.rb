@@ -69,6 +69,10 @@ class Othello < Rules
     board.count( :white ) == board.count( :black )
   end
 
+  def score( player )
+    board.count( player )
+  end
+
   def hash
     [board, turn].hash
   end

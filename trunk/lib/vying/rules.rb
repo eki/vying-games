@@ -163,10 +163,8 @@ class Rules
     false
   end
 
-  def score( player )
-    return  0 if draw?
-    return  1 if winner?( player )
-    return -1 if loser?( player )
+  def has_score?
+    respond_to?( :score )
   end
 
   def has_ops
