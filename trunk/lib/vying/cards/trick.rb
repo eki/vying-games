@@ -57,6 +57,11 @@ module TrickTaking
 
   #position :dealer, :hands, :tricks, :trick
 
+  def op?( op, player=nil )
+    op = Card[op] unless op.kind_of?( Card )
+    (ops( player ) || []).include?( op )
+  end
+
   def ops( player=nil )
     return [] unless player.nil? || has_ops.include?( player )
     return nil if final?
@@ -138,6 +143,7 @@ module TrickTaking
 
         d = Deck.new( deck, rng ).shuffle.deal( players.size, deal_out )
         d.zip( players ) { |h,p| hands[p] = h }
+        hands.each { |k,v| v.sort! }
 
         turn( :rotate ) until hands[turn].include?( Card[:C2] )
       end
