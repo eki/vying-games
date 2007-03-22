@@ -10,7 +10,7 @@ rescue Exception
 end
 
 Rake::TestTask.new do |t|
-  t.libs << "test"
+  t.libs << "test" << "ext"
   t.test_files = FileList['test/**/test*.rb']
 end
 
@@ -25,10 +25,12 @@ end
 if defined?( Gem ) && ENV['PKG_VERSION']
   PKG_VERSION = ENV['PKG_VERSION']
   PKG_FILES = FileList[
-    'lib/**/*.rb',
-    'bin/**/*',
-    'test/**/*.rb',
-    '[A-Z]*']
+    'lib/**/*',
+    'bin/bench',
+    'bin/branch',
+    'test/**/*',
+    'ext/**/*',
+    'Rakefile']
 
   spec = Gem::Specification.new do |s|
     s.name = 'vying'
@@ -36,7 +38,9 @@ if defined?( Gem ) && ENV['PKG_VERSION']
     s.summary = 'Vying Game Library'
     s.description = 'Vying is a game library.'
     s.files = PKG_FILES.to_a
+    s.extensions = "ext/vying/board/extconf.rb"
     s.executables = ['branch', 'bench']
+    s.require_paths << "ext"
     s.author = 'Eric K Idema'
     s.email = 'eki@vying.org'
   end

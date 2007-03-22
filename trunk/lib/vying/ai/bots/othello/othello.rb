@@ -3,10 +3,18 @@ require 'vying/ai/search'
 
 module AI::Othello
 
-  VYING_LIB = "/home/eki/projects/vying/trunk/lib"
-  CORNERS_YAML = VYING_LIB + "/vying/ai/bots/othello/corners.yaml"
-  EDGES_YAML = VYING_LIB + "/vying/ai/bots/othello/edge.yaml" 
-  OPENINGS_TXT = VYING_LIB + "/vying/ai/bots/othello/openings.txt" 
+  $:.each do |d|
+    Dir.glob( "#{d}/**/ai/bots/othello/*" ) do |f|
+      if f =~ /corners\.yaml$/
+        CORNERS_YAML = f unless defined? CORNERS_YAML
+      elsif f=~ /edge\.yaml$/
+        EDGE_YAML = f unless defined? EDGE_YAML
+      elsif f =~ /openings\.txt$/
+        OPENINGS_TXT = f unless defined? OPENINGS_TXT
+      end
+    end
+  end
+
 
   CORNER_COORDS = [[:a1,:b2,:a2,:a3],
                    [:a1,:b2,:b1,:c1],
