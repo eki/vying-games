@@ -2,7 +2,7 @@ require 'vying/ai/bot'
 require 'vying/ai/search'
 require 'vying/ai/bots/othello/othello'
 
-class AI::Othello::ComboBot < Bot
+class AI::Othello::ComboBot < AI::Bot
   include AI::Othello::Bot
 
   def initialize

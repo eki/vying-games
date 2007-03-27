@@ -2,7 +2,7 @@ require 'test/unit'
 
 require 'vying'
 
-class TestBot < Bot
+class TestBot < AI::Bot
   include AI::Othello::Bot
 end
 

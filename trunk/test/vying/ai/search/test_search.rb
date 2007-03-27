@@ -33,17 +33,17 @@ module BotTemplate
   end
 end
 
-class MiniMaxBot < Bot
+class MiniMaxBot < AI::Bot
   include BotTemplate
   include Minimax
 end
 
-class AlphaBetaBot < Bot
+class AlphaBetaBot < AI::Bot
   include BotTemplate
   include AlphaBeta
 end
 
-class PlayFirstOpBot < Bot
+class PlayFirstOpBot < AI::Bot
   def select( sequence, position, player )
     position.ops.first
   end

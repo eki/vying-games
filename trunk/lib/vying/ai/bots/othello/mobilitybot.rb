@@ -2,7 +2,7 @@ require 'vying/ai/bot'
 require 'vying/ai/search'
 require 'vying/ai/bots/othello/othello'
 
-class AI::Othello::MobilityBot < Bot
+class AI::Othello::MobilityBot < AI::Bot
   include AI::Othello::Bot
 
   def eval( position, player )

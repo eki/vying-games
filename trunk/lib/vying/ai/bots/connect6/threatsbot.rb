@@ -1,7 +1,7 @@
 require 'vying/ai/bot'
 require 'vying/ai/bots/connect6/connect6'
 
-class AI::Connect6::ThreatsBot < Bot
+class AI::Connect6::ThreatsBot < AI::Bot
   include AI::Connect6::Bot
 
   def eval( position, player )
