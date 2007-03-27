@@ -49,7 +49,7 @@ class Connect6Board < Board
       pc = w.select { |c| self[c] == player }
       ec = w.select { |c| self[c].nil? }
 
-      if pc.length + ec.length == 6 && ec.length < 4
+      if pc.length + ec.length == 6 && ec.length < 5
         threats << Threat.new( ec.length, player, ec )
       end
     end
