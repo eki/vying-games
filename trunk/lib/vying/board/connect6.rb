@@ -1,10 +1,11 @@
 require 'vying/board/board'
 
 class Threat
-  attr_reader :degree, :player, :empty_coords
+  attr_reader :degree, :player, :empty_coords, :occupied
 
-  def initialize( degree, player, empty_coords )
-    @degree, @player, @empty_coords = degree, player, empty_coords
+  def initialize( degree, player, empty_coords, occupied )
+    @degree, @player = degree, player
+    @empty_coords, @occupied = empty_coords, occupied
   end
 
   def to_s
@@ -50,7 +51,7 @@ class Connect6Board < Board
       ec = w.select { |c| self[c].nil? }
 
       if pc.length + ec.length == 6 && ec.length < 5
-        threats << Threat.new( ec.length, player, ec )
+        threats << Threat.new( ec.length, player, ec, pc )
       end
     end
 
