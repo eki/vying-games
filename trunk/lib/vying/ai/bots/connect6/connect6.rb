@@ -59,6 +59,38 @@ module AI::Connect6
     score
   end
 
+  def eval_player_threats( position, player )
+    score = 0
+
+    threats = position.board.threats
+
+    p_fives = threats.select { |t| t.player == player && t.degree == 1 }
+    p_fours = threats.select { |t| t.player == player && t.degree == 2 }
+    p_threes = threats.select { |t| t.player == player && t.degree == 3 }
+    p_twos = threats.select { |t| t.player == player && t.degree == 4 }
+
+    score -=  60 if p_fives.length > 0
+    score += 300 if p_fours.length >= 3
+    score +=  30 if p_fours.length == 2 
+    score +=   3 * p_threes.length
+    score +=   1 * p_twos.length
+
+    opp_fours = threats.select { |t| t.player != player && t.degree == 2 }
+    opp_threes = threats.select { |t| t.player != player && t.degree == 3 }
+
+    score -= 8000 if opp_fours.length >= 3
+    score -=  800 if opp_fours.length == 2
+    score -=  400 if opp_fours.length == 1
+
+    score -= opp_threes.length
+
+    score
+  end
+
+  def eval_random( position, player )
+    rand( 100 ) - 50
+  end
+
   def score_pattern( board, c, directions )
     ns = board.coords.neighbors_nil( c, directions )
     p = [ ns.first.nil? ? nil : board[ns.first],

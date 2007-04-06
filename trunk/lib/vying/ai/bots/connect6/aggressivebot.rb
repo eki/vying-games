@@ -5,7 +5,7 @@ class AI::Connect6::AggressiveBot < AI::Bot
   include AI::Connect6::Bot
 
   def eval( position, player )
-    eval_threats( position, player )
+    eval_player_threats( position, player )
   end
 
   def prune( position, player, ops )
@@ -13,17 +13,30 @@ class AI::Connect6::AggressiveBot < AI::Bot
        original_ops = ops
        threats = position.board.threats.sort_by { |t| t.degree }
 
-       if threats.first.degree < 3
-         return threats.first.empty_coords.map { |c| c.to_s }
-       else
-         threats2 = threats.select { |t| t.player == player }
-         threats = threats2 unless threats2.empty?
-         ops = threats.map { |t| t.empty_coords.map { |c| c.to_s } }
+       important = threats.select { |t| t.degree < 3 }
+       unless important.empty?
+         ops = important.map { |t| t.empty_coords.map { |c| c.to_s } }
          ops.flatten!
-         ops = ops.sort_by { |op| ops.select { |o| o == op }.length }
-         ops = ops.uniq.reverse![0..5]
 
          return ops & original_ops
+       else
+         threats2 = threats.select { |t| t.player == player }
+
+         unless threats2.empty?
+           ops = threats2.map { |t| t.empty_coords.map { |c| c.to_s } }
+           ops.flatten!
+           ops = ops.sort_by { |op| ops.select { |o| o == op }.length }
+           ops = ops.uniq.reverse![0..2]
+
+           return ops & original_ops
+         else
+           ops = threats.map { |t| t.empty_coords.map { |c| c.to_s } }
+           ops.flatten!
+           ops = ops.sort_by { |op| ops.select { |o| o == op }.length }
+           ops = ops.uniq.reverse![0..5]
+
+           return ops & original_ops
+         end
        end
     else
       return super( position, player, ops )[0..1]

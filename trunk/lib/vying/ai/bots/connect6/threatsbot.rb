@@ -5,7 +5,7 @@ class AI::Connect6::ThreatsBot < AI::Bot
   include AI::Connect6::Bot
 
   def eval( position, player )
-    eval_threats( position, player )
+    eval_random( position, player )
   end
 
   def prune( position, player, ops )

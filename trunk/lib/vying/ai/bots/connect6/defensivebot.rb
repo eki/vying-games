@@ -16,15 +16,23 @@ class AI::Connect6::DefensiveBot < AI::Bot
        if threats.first.degree < 3
          return threats.first.empty_coords.map { |c| c.to_s }
        else
-         threats2 = threats.select { |t| t.player != player }
-         threats = threats2 unless threats2.empty?
-         ops = threats.map { |t| t.empty_coords.map { |c| c.to_s } }
-         ops.flatten!
-         ops = ops.sort_by { |op| ops.select { |o| o == op }.length }
-         ops = ops.uniq.reverse![0..5]
-         puts " ** pruned to #{ops.inspect}"
+         threats2 = threats.select { |t| t.player != player && t.degree < 4 }
 
-         return ops & original_ops
+         unless threats2.empty?
+           ops = threats2.map { |t| t.empty_coords.map { |c| c.to_s } }
+           ops.flatten!
+           ops = ops.sort_by { |op| ops.select { |o| o == op }.length }
+           ops = ops.uniq.reverse![0..1]
+
+           return ops & original_ops
+         else
+           ops = threats.map { |t| t.empty_coords.map { |c| c.to_s } }
+           ops.flatten!
+           ops = ops.sort_by { |op| ops.select { |o| o == op }.length }
+           ops = ops.uniq.reverse![0..5]
+
+           return ops & original_ops
+         end
        end
     else
       return super( position, player, ops )[0..1]
