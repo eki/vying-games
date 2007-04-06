@@ -35,7 +35,7 @@ module AI::Othello
   end
 
   def load_edges
-    @edges ||= YAML.load_file( EDGES_YAML )
+    @edges ||= YAML.load_file( EDGE_YAML )
   end
 
   def load_openings
