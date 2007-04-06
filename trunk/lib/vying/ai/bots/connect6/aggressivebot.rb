@@ -16,7 +16,8 @@ class AI::Connect6::AggressiveBot < AI::Bot
        if threats.first.degree < 3
          return threats.first.empty_coords.map { |c| c.to_s }
        else
-         threats = threats.select { |t| t.player == player }
+         threats2 = threats.select { |t| t.player == player }
+         threats = threats2 unless threats2.empty?
          ops = threats.map { |t| t.empty_coords.map { |c| c.to_s } }
          ops.flatten!
          ops = ops.sort_by { |op| ops.select { |o| o == op }.length }
@@ -25,7 +26,7 @@ class AI::Connect6::AggressiveBot < AI::Bot
          return ops & original_ops
        end
     else
-      return super( position, ops )[0..1]
+      return super( position, player, ops )[0..1]
     end
   end
 

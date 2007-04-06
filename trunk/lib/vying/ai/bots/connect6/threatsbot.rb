@@ -24,7 +24,7 @@ class AI::Connect6::ThreatsBot < AI::Bot
          return ops & original_ops
        end
     else
-      return super( position, ops )[0..2]
+      return super( position, player, ops )[0..2]
     end
   end
 
