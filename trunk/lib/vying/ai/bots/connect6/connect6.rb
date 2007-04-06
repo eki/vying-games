@@ -106,7 +106,7 @@ module AI::Connect6
       position.final? || depth >= 2
     end
 
-    def prune( position, ops )
+    def prune( position, player, ops )
       b = position.board
 
       occupied = b.occupied[:black] || []

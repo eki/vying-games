@@ -4,8 +4,8 @@ module AlphaBeta
   def analyze( position, player )
     h = {}
 
-    ops = prune( position, position.ops ) if respond_to? :prune
-    ops = order( position, position.ops ) if respond_to? :order
+    ops = prune( position, player, position.ops ) if respond_to? :prune
+    ops = order( position, player, position.ops ) if respond_to? :order
     ops ||= position.ops
 
     ops.each do |op|
@@ -19,8 +19,8 @@ module AlphaBeta
 
     return evaluate( position, player ) if cutoff( position, depth )
 
-    ops = prune( position, position.ops ) if respond_to? :prune
-    ops = order( position, position.ops ) if respond_to? :order
+    ops = prune( position, player, position.ops ) if respond_to? :prune
+    ops = order( position, player, position.ops ) if respond_to? :order
     ops ||= position.ops
 
     scores = ops.map_until do |op|

@@ -8,7 +8,7 @@ class AI::Connect6::ThreatsJrBot < AI::Bot
     eval_threats( position, player )
   end
 
-  def prune( position, ops )
+  def prune( position, player, ops )
     if position.board.threats.length > 0
        original_ops = ops
        threats = position.board.threats.sort_by { |t| t.degree }
@@ -16,6 +16,7 @@ class AI::Connect6::ThreatsJrBot < AI::Bot
        if threats.first.degree < 3
          return threats.first.empty_coords.map { |c| c.to_s }
        else
+         threats = threats.select { |t| t.player == player }
          ops = threats.map { |t| t.empty_coords.map { |c| c.to_s } }
          ops.flatten!
          ops = ops.sort_by { |op| ops.select { |o| o == op }.length }

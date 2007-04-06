@@ -8,7 +8,7 @@ class AI::Connect6::ThreatsBot < AI::Bot
     eval_threats( position, player )
   end
 
-  def prune( position, ops )
+  def prune( position, player, ops )
     if position.board.threats.length > 0
        original_ops = ops
        threats = position.board.threats.sort_by { |t| t.degree }
