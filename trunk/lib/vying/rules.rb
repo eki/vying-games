@@ -178,9 +178,9 @@ class Rules
   def Rules.require_all( path=$: )
     required = []
     path.each do |d|
-      Dir.glob( "#{d}/**/rules/*.rb" ) do |f|
-        f =~ /(.*)\/rules\/(.*\.rb)$/
-        if ! required.include?( $2 ) && !f["test_"] && !f["ts_"]
+      Dir.glob( "#{d}/**/rules/**/*.rb" ) do |f|
+        f =~ /(.*)\/rules\/.*\/([\w\d]+\.rb)$/
+        if ! required.include?( $2 ) && !f["_test"]
           required << $2
           require "#{f}"
         end

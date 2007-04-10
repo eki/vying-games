@@ -1,7 +1,7 @@
 require 'test/unit'
 
 require 'vying'
-require 'vying/rules/test_rules'
+require 'vying/rules/rules_test'
 
 class TestConnect4 < Test::Unit::TestCase
   def test_init

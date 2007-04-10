@@ -1,6 +1,4 @@
-require 'vying/rules'
 require 'vying/cards/card'
-require 'vying/cards/trick'
 
 class Hearts < Rules
   include TrickTaking
