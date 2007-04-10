@@ -1,7 +1,7 @@
 require 'vying/rules'
 require 'vying/board/board'
 
-class ConnectFour < Rules
+class Connect4 < Rules
 
   info :name    => 'Connect Four',
        :aliases => ['Plot Four', 'Connect 4', "The Captain's Mistress"]
