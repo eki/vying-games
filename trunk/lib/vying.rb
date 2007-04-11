@@ -1,4 +1,5 @@
 require 'vying/board/board'
+require 'vying/board/amazons'
 require 'vying/board/othello'
 require 'vying/board/connect6'
 require 'vying/board/mancala'

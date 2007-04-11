@@ -1,5 +1,5 @@
 require 'vying/rules'
-require 'vying/board/board'
+require 'vying/board/amazons'
 
 class Amazons < Rules
 
@@ -13,13 +13,7 @@ class Amazons < Rules
   def initialize( seed=nil )
     super
 
-    @board = Board.new( 10, 10 )
-
-    wqs = [Coord[0,3], Coord[3,0], Coord[6,0], Coord[9,3]]
-    bqs = [Coord[0,6], Coord[3,9], Coord[6,9], Coord[9,6]]
-    
-    wqs.each { |c| board[c] = :white }
-    bqs.each { |c| board[c] = :black }
+    @board = AmazonsBoard.new
 
     @lastc = nil
 
@@ -83,8 +77,10 @@ class Amazons < Rules
 
     if lastc.nil? || board[lastc] == :arrow
       board.move( sc, ec )
+      board.territories.each { |t| t.move( sc, ec ) }
     else
       board[ec] = :arrow
+      board.update_territories
       turn( :rotate )
     end
 
