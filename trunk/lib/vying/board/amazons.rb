@@ -103,16 +103,17 @@ class AmazonsBoard < Board
 
   attr_reader :territories
 
+  INIT_WQS = [Coord[0,3], Coord[3,0], Coord[6,0], Coord[9,3]]
+  INIT_BQS = [Coord[0,6], Coord[3,9], Coord[6,9], Coord[9,6]]
+
   def initialize
     super( 10, 10 )
 
-    wqs = [Coord[0,3], Coord[3,0], Coord[6,0], Coord[9,3]]
-    bqs = [Coord[0,6], Coord[3,9], Coord[6,9], Coord[9,6]]
+    self[*INIT_WQS] = :white
+    self[*INIT_BQS] = :black
 
-    wqs.each { |c| self[c] = :white }
-    bqs.each { |c| self[c] = :black }
-
-    @territories = [Territory[self]]
+    #@territories = [Territory[self]]
+    @territories = [Territory.new( self, coords.to_a, INIT_WQS + INIT_BQS )]
   end
 
   def initialize_copy( original )

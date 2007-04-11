@@ -29,6 +29,10 @@ class Coords
     coords.each { |c| yield c }
   end
 
+  def to_a
+    coords.dup
+  end
+
 #  def include?( c )
 #    c.x >= 0 && c.x < width && c.y >= 0 && c.y < height
 #  end
