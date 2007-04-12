@@ -40,12 +40,7 @@ class Territory
       @black = queens.select { |q| board[q] == :black }
     end
 
-    q = queens.first
-
-    n = board.coords.neighbors( q )
-    n = n.reject { |c| board[c] == :arrow }
-
-    queens_found, coords_found = check( board, [q], [q], n )
+    queens_found, coords_found = check( board, queens.first )
 
     if queens_found.length == queens.length
       @coords = coords_found
@@ -57,22 +52,27 @@ class Territory
 
   end
 
-  def check( board, queens_found, coords_found, todo )
-    return [queens_found, coords_found] if todo.empty?
+  def check( board, start )
+    queens_found, coords_found, all, todo = [], [], {start => start}, [start]
 
-    todo.each do |c|
-      queens_found << c if board[c] == :white || board[c] == :black
-      coords_found << c if board[c] != :arrow
+    while (c = todo.pop)
+      p = board[c]
+      if p.nil?
+        coords_found.push c
+      elsif p == :white || p == :black
+        queens_found.push c
+        coords_found.push c
+      end
+
+      board.coords.neighbors( c ).each do |nc|
+        unless board[c] == :arrow || all[nc]
+          todo.push( nc )
+          all[nc] = nc
+        end
+      end
     end
 
-    todo = todo.map { |c| board.coords.neighbors( c ) }
-    todo.flatten!
-    todo.reject! { |c| board[c] == :arrow }
-    todo.uniq!
-
-    todo -= coords_found
-
-    check( board, queens_found, coords_found, todo )
+    return [queens_found, coords_found]
   end
 
   def move( sc, ec )
