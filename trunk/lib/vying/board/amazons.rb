@@ -43,7 +43,8 @@ class Territory
     q = queens.first
 
     n = board.coords.neighbors( q )
-    n.reject! { |c| board[c] == :arrow }
+    n = n.reject { |c| board[c] == :arrow }
+
     queens_found, coords_found = check( board, [q], [q], n )
 
     if queens_found.length == queens.length
@@ -70,8 +71,6 @@ class Territory
     todo.uniq!
 
     todo -= coords_found
-
-    queens_found.uniq!
 
     check( board, queens_found, coords_found, todo )
   end
