@@ -14,6 +14,8 @@ opts.parse( ARGV )
 
 rules = Rules.list if rules.empty?
 
+puts sprintf( "%20-s %16s %16s", "rules", "branch", "moves / game" )
+
 rules.each do |r|
   total_ops = 0
   total_moves = 0
@@ -28,8 +30,9 @@ rules.each do |r|
     end
   end
 
-  puts "#{r.info["name"]}"
-  puts sprintf( "  Branching Factor: %8.2f", total_ops.to_f/total_moves.to_f )
-  puts sprintf( "  Moves per Game:   %8.2f", total_moves.to_f/n.to_f )
+  b = total_ops.to_f / total_moves.to_f
+  mg = total_moves.to_f / n.to_f
+
+  puts sprintf( "%20-s %16.2f %16.2f", r.to_s, b, mg )
 end
 
