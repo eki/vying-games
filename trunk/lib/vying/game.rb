@@ -19,8 +19,10 @@ class GameResults
     end
 
     @scores = {}
-    game.players.each do |p|
-      @scores[p] = game.score( p )
+    if game.has_score?
+      game.players.each do |p|
+        @scores[p] = game.score( p )
+      end
     end
 
     i = rand(game.history.length-1)
