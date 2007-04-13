@@ -23,7 +23,7 @@ end
 
 wd = Dir.pwd
 wd =~ /\/v([\d\.]*)$/
-pkg_version = ENV['PKG_VERSION'] || $1
+pkg_version = $1
 
 if defined?( Gem ) && pkg_version
   PKG_FILES = FileList[
