@@ -21,9 +21,11 @@ Rake::RDocTask.new do |rd|
                          "ext/**/*.h", "ext/**/*.c" )
 end
 
+wd = Dir.pwd
+wd =~ /\/([\d\.]*)$/
+pkg_version = ENV['PKG_VERSION'] || $1
 
-if defined?( Gem ) && ENV['PKG_VERSION']
-  PKG_VERSION = ENV['PKG_VERSION']
+if defined?( Gem ) && pkg_version
   PKG_FILES = FileList[
     'lib/**/*',
     'bin/bench',
@@ -34,7 +36,7 @@ if defined?( Gem ) && ENV['PKG_VERSION']
 
   spec = Gem::Specification.new do |s|
     s.name = 'vying'
-    s.version = ENV['PKG_VERSION']
+    s.version = pkg_version
     s.summary = 'Vying Game Library'
     s.description = 'Vying is a game library.'
     s.files = PKG_FILES.to_a
