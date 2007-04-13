@@ -100,10 +100,21 @@ end
 
 class AmazonsBoard < Board
 
-  attr_reader :territories
+  attr_reader :territories, :mobility
 
   INIT_WQS = [Coord[0,3], Coord[3,0], Coord[6,0], Coord[9,3]]
   INIT_BQS = [Coord[0,6], Coord[3,9], Coord[6,9], Coord[9,6]]
+
+  class << self
+    attr_reader :prototype
+
+    alias_method :old_new, :new
+
+    def new
+      @prototype ||= old_new
+      @prototype.dup
+    end
+  end
 
   def initialize
     super( 10, 10 )
@@ -111,25 +122,91 @@ class AmazonsBoard < Board
     self[*INIT_WQS] = :white
     self[*INIT_BQS] = :black
 
-    #@territories = [Territory[self]]
     @territories = [Territory.new( self, coords.to_a, INIT_WQS + INIT_BQS )]
+
+    @mobility = {}
+    update_mobility( INIT_WQS + INIT_BQS )
   end
 
   def initialize_copy( original )
     super
     @territories = []
     original.territories.each { |t| @territories << t.dup }
+
+    @mobility = {}
+    original.mobility.each { |k,v| @mobility[k] = v.dup }
   end
 
   def clear
     @territories.clear
+    @mobility.clear
     super
   end
 
-  def update_territories
+  def move( sc, ec )
+    super
+    territories.each { |t| t.move( sc, ec ) }
+
+    mobility[ec] = mobility.delete( sc )
+
+    a = []
+    mobility.each { |k,v| a << k if v.include?( ec ) }
+    update_mobility( a )
+
+    self
+  end
+
+  def arrow( *ecs )
+    self[*ecs] = :arrow
+    
     @territories = @territories.map { |t| t.update( self, t.white + t.black ) }
     @territories.flatten!
     @territories
+
+    a = []
+    ecs.each do |ec|
+      mobility.each { |k,v| a << k if v.include?( ec ) }
+    end
+    update_mobility( a.uniq )
+
+    self
+  end
+
+  def update_mobility( queens )
+    queens.each do |c|
+      mobility[c] ||= []
+      mobility[c].clear
+
+      [:n,:e,:s,:w,:ne,:nw,:se,:sw].each do |d|
+        ic = c
+        while (ic = coords.next( ic, d ))
+          self[ic].nil? ? mobility[c] << ic : break;
+        end
+      end
+    end
+  end
+
+  def territory( p )
+    a = []
+    territories.each do |t|
+      a += t.coords if p == :white && t.white.length > 0
+      a += t.coords if p == :black && t.black.length > 0
+    end
+    a
+  end
+
+  def to_yaml_properties
+    props = instance_variables
+    props.delete( "@mobility" )
+    props
+  end
+
+  def yaml_initialize( t, v )
+    v.each { |k,v| instance_variable_set( "@#{k}", v ) }
+
+    @mobility = {}
+    update_mobility( occupied[:black] )
+    update_mobility( occupied[:white] )
   end
 
 end

@@ -37,9 +37,7 @@ class TestAmazonsBoard < Test::Unit::TestCase
     assert_equal( [a4, d1, g1, j4].sort, b.territories.first.white.sort )
     assert_equal( [a7, d10, g10, j7].sort, b.territories.first.black.sort )
 
-    b[:f1,:f2,:f3,:f4,:f5,:f6,:f7,:f8,:f9,:f10] = :arrow
-
-    b.update_territories
+    b.arrow( :f1,:f2,:f3,:f4,:f5,:f6,:f7,:f8,:f9,:f10 )
 
     assert_equal( 2, b.territories.length )
     assert_equal( [a4, d1].sort, b.territories.first.white.sort )
@@ -47,9 +45,7 @@ class TestAmazonsBoard < Test::Unit::TestCase
     assert_equal( [g1, j4].sort, b.territories.last.white.sort )
     assert_equal( [g10, j7].sort, b.territories.last.black.sort )
 
-    b[:a2,:b2,:c2,:d2,:e2,:f2,:g2,:h2,:i2,:j2] = :arrow
-
-    b.update_territories
+    b.arrow( :a2,:b2,:c2,:d2,:e2,:f2,:g2,:h2,:i2,:j2 )
 
     assert_equal( 4, b.territories.length )
 
@@ -74,5 +70,59 @@ class TestAmazonsBoard < Test::Unit::TestCase
 
   end
 
+  def test_mobility_init
+    b = AmazonsBoard.new
+
+    m_d1 = [Coord[:e1], Coord[:f1], Coord[:d2], Coord[:d3], Coord[:d4], 
+            Coord[:d5], Coord[:d6], Coord[:d7], Coord[:d8], Coord[:d9], 
+            Coord[:c1], Coord[:b1], Coord[:a1], Coord[:e2], Coord[:f3],
+            Coord[:g4], Coord[:h5], Coord[:i6], Coord[:c2], Coord[:b3]]
+
+    assert_equal( m_d1.sort, b.mobility[Coord[:d1]].sort )
+  end
+
+  def test_mobility_move
+    b = AmazonsBoard.new
+
+    m_d1_b = [Coord[:e1], Coord[:f1], Coord[:d2], Coord[:d3], Coord[:d4], 
+              Coord[:d5], Coord[:d6], Coord[:d7], Coord[:d8], Coord[:d9], 
+              Coord[:c1], Coord[:b1], Coord[:a1], Coord[:e2], Coord[:f3],
+              Coord[:g4], Coord[:h5], Coord[:i6], Coord[:c2], Coord[:b3]]
+
+    m_d1_a = [Coord[:d8], Coord[:d7], Coord[:d6], Coord[:d5], Coord[:d4],
+              Coord[:d3], Coord[:d2], Coord[:d1], Coord[:e9], Coord[:f9], 
+              Coord[:g9], Coord[:h9], Coord[:i9], Coord[:j9], Coord[:c9], 
+              Coord[:b9], Coord[:a9], Coord[:e8], Coord[:f7], Coord[:g6],
+              Coord[:h5], Coord[:i4], Coord[:j3], Coord[:c8], Coord[:b7], 
+              Coord[:a6], Coord[:e10], Coord[:c10]]
+
+    m_d10_a = [Coord[:e10], Coord[:f10], Coord[:c10], Coord[:b10], Coord[:a10],
+               Coord[:e9], Coord[:f8], Coord[:g7], Coord[:h6], Coord[:i5], 
+               Coord[:c9], Coord[:b8]]
+
+    assert_equal( m_d1_b.sort, b.mobility[Coord[:d1]].sort )
+
+    b.move( Coord[:d1], Coord[:d9] )
+
+    assert_equal( m_d1_a.sort, b.mobility[Coord[:d9]].sort )
+    assert_equal( m_d10_a.sort, b.mobility[Coord[:d10]].sort )
+  end
+
+  def test_mobility_move
+    b = AmazonsBoard.new
+
+    m_d1_b = [Coord[:e1], Coord[:f1], Coord[:d2], Coord[:d3], Coord[:d4], 
+              Coord[:d5], Coord[:d6], Coord[:d7], Coord[:d8], Coord[:d9], 
+              Coord[:c1], Coord[:b1], Coord[:a1], Coord[:e2], Coord[:f3],
+              Coord[:g4], Coord[:h5], Coord[:i6], Coord[:c2], Coord[:b3]]
+
+    m_d1_a = [Coord[:e1], Coord[:f1]]
+
+    assert_equal( m_d1_b.sort, b.mobility[Coord[:d1]].sort )
+
+    b.arrow( :c1, :c2, :d2, :e2 )
+
+    assert_equal( m_d1_a.sort, b.mobility[Coord[:d1]].sort )
+  end
 end
 

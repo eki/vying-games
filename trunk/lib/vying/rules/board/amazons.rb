@@ -17,11 +17,11 @@ class Amazons < Rules
 
     @lastc = nil
 
-    @ops_cache = :ns
   end
 
   def op?( op, player=nil )
     return false unless player.nil? || has_ops.include?( player )
+    return false if final?
     return false unless op.to_s =~ /(\w\d+)(\w\d+)/
 
     sc = Coord[$1]
@@ -43,31 +43,21 @@ class Amazons < Rules
 
   def ops( player=nil )
     return [] unless player.nil? || has_ops.include?( player )
-    return ops_cache if ops_cache != :ns
+    return false if final?
 
     a = []
 
     queens = board.occupied[turn]
 
     if lastc.nil? || board[lastc] == :arrow
-      queens.each do |c| 
-        [:n,:e,:s,:w,:ne,:nw,:se,:sw].each do |d|
-          ic = c
-          while (ic = board.coords.next( ic, d ))
-            board[ic].nil? ? a << "#{c}#{ic}" : break;
-          end
-        end
+      queens.each do |q|
+        board.mobility[q].each { |ec| a << "#{q}#{ec}" }
       end
     else
-      [:n,:e,:s,:w,:ne,:nw,:se,:sw].each do |d|
-        ic = lastc
-        while (ic = board.coords.next( ic, d ))
-          board[ic].nil? ? a << "#{lastc}#{ic}" : break;
-        end
-      end
+      board.mobility[lastc].each { |ec| a << "#{lastc}#{ec}" }
     end
 
-    ops_cache = a == [] ? nil : a
+    a == [] ? nil : a
   end
 
   def apply!( op )
@@ -77,10 +67,8 @@ class Amazons < Rules
 
     if lastc.nil? || board[lastc] == :arrow
       board.move( sc, ec )
-      board.territories.each { |t| t.move( sc, ec ) }
     else
-      board[ec] = :arrow
-      board.update_territories
+      board.arrow( ec )
       turn( :rotate )
     end
 
@@ -91,15 +79,33 @@ class Amazons < Rules
   end
 
   def final?
-    !ops
+    board.territories.each do |t|
+      return false if t.white.length > 0 && t.black.length > 0
+    end
+
+    true
   end
 
   def winner?( player )
-    turn != player
+    opp = player == :black ? :white : :black
+
+    s_p = score( player )
+    s_opp = score( opp )
+
+    s_p == s_opp ? turn == opp : s_p > s_opp
   end
 
   def loser?( player )
-    turn == player
+    opp = player == :black ? :white : :black
+
+    s_p = score( player )
+    s_opp = score( opp )
+
+    s_p == s_opp ? turn == player : s_p < s_opp
+  end
+
+  def score( player )
+    board.territory( player ).length
   end
 
   def hash
