@@ -15,7 +15,7 @@ module Memoizable
       alias_method original, name
       private      original
       define_method(name) do |*args| 
-        cache[[self,args]] ||= send(original, *args)
+        cache[[self,args]] ||= send(original, *args).freeze
       end
     end
   end
