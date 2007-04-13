@@ -22,7 +22,7 @@ Rake::RDocTask.new do |rd|
 end
 
 wd = Dir.pwd
-wd =~ /\/([\d\.]*)$/
+wd =~ /\/v([\d\.]*)$/
 pkg_version = ENV['PKG_VERSION'] || $1
 
 if defined?( Gem ) && pkg_version
