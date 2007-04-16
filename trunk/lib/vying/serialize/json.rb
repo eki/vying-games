@@ -65,7 +65,7 @@ class Connect6 < Rules
     if final?
       threat = board.threats.select { |t| t.degree == 0 }.first
 
-      h.merge!( 'line' => threat.occupied )
+      h.merge!( 'line' => threat.occupied ) unless threat.nil?
     end
     h
   end
