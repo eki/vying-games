@@ -71,6 +71,18 @@ class Connect6 < Rules
   end
 end
 
+class Pente < Rules
+  def to_hash
+    h = super
+    if final?
+      threat = board.threats.select { |t| t.degree == 1 }.first
+
+      h.merge!( 'line' => threat.occupied ) unless threat.nil?
+    end
+    h
+  end
+end
+
 class Board
   def to_json( *a )
     pieces, board = self.to_a
