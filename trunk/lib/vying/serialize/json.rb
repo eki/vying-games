@@ -75,7 +75,7 @@ class Pente < Rules
   def to_hash
     h = super
     if final?
-      threat = board.threats.select { |t| t.degree == 1 }.first
+      threat = board.threats.select { |t| t.degree == 0 }.first
 
       h.merge!( 'line' => threat.occupied ) unless threat.nil?
     end

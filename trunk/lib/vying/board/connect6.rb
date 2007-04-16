@@ -19,11 +19,12 @@ end
 
 class Connect6Board < Board
 
-  attr_reader :threats
+  attr_reader :threats, :window_size
 
-  def initialize
+  def initialize( window_size=6 )
     super( 19, 19 )
     @threats = []
+    @window_size = window_size
   end
 
   def initialize_copy( original )
@@ -50,7 +51,7 @@ class Connect6Board < Board
       pc = w.select { |c| self[c] == player }
       ec = w.select { |c| self[c].nil? }
 
-      if pc.length + ec.length == 6 && ec.length < 5
+      if pc.length + ec.length == window_size && ec.length < (window_size-1)
         threats << Threat.new( ec.length, player, ec, pc )
       end
     end
@@ -59,7 +60,9 @@ class Connect6Board < Board
   end
 
   def create_windows( c, directions )
-    first = (0..5).map do |i| 
+    n = window_size - 1
+
+    first = (0..n).map do |i| 
       tmp = c
       i.times { tmp += Coords::DIRECTIONS[directions.first] }
       tmp
@@ -67,7 +70,7 @@ class Connect6Board < Board
 
     list = [first]
 
-    5.times do 
+    n.times do 
       list << list.last.map { |c| c + Coords::DIRECTIONS[directions.last] }
     end
 

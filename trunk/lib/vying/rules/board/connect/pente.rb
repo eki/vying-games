@@ -15,7 +15,7 @@ class Pente < Rules
   def initialize( seed=nil )
     super
 
-    @board = Connect6Board.new
+    @board = Connect6Board.new( 5 )
     @lastc, @lastp = nil, :noone
     @unused_ops = @@init_ops.dup
 
