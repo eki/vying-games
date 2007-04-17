@@ -21,3 +21,21 @@ module Memoizable
   end
 end
 
+class Class
+  private
+  def prototype
+    class_eval do
+      class << self
+        alias_method :old_new, :new
+
+        private :old_new
+
+        define_method( :new ) do |*args|
+          @prototype_cache ||= {}
+          (@prototype_cache[args] ||= old_new( *args ).freeze).dup
+        end
+      end
+    end
+  end
+end
+

@@ -1,4 +1,5 @@
 require 'vying/board/board'
+require 'vying/memoize'
 
 class Territory
   attr_reader :white, :black, :coords
@@ -99,22 +100,11 @@ end
 
 
 class AmazonsBoard < Board
-
   attr_reader :territories, :mobility
+  prototype
 
   INIT_WQS = [Coord[0,3], Coord[3,0], Coord[6,0], Coord[9,3]]
   INIT_BQS = [Coord[0,6], Coord[3,9], Coord[6,9], Coord[9,6]]
-
-  class << self
-    attr_reader :prototype
-
-    alias_method :old_new, :new
-
-    def new
-      @prototype ||= old_new
-      @prototype.dup
-    end
-  end
 
   def initialize
     super( 10, 10 )
