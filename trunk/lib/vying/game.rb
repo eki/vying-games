@@ -96,7 +96,8 @@ class Game
   def step
     has_ops.each do |p|
       if players.include?( p )
-        op = user_map[p].select( sequence, history.last.dup, p )
+        position = history.last.censor( p )
+        op = user_map[p].select( sequence, position, p )
         if op?( op, p )
           self << op
         else
