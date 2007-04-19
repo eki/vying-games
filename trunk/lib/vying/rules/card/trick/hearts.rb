@@ -51,6 +51,7 @@ class Hearts < Rules
   def censor( player )
     pos = super
     pos.hands.each { |k,v| pos.hands[k] = :hidden if k != player }
+    pos.selected.each { |k,v| pos.selected[k] = :hidden if k != player }
     pos
   end
 
