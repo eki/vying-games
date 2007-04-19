@@ -57,6 +57,22 @@ class Card
     card.value? - value?
   end
 
+  def eql?( o )
+    suit == o.suit && rank == o.rank
+  end
+
+  def equal?( o )
+    eql? o
+  end
+
+  def ==( o )
+    eql? o
+  end
+
+  def hash
+    [suit, rank].hash
+  end
+
   def to_s
     return "#{suit.to_s[0..0].upcase}#{rank}" if rank.kind_of? Integer
     "#{suit.to_s[0..0].upcase}#{rank.to_s[0..0].upcase}"

@@ -23,7 +23,10 @@ class Hearts < Rules
   deal_out          13
   wait_until_broken [:HA,:HK,:HQ,:HJ,:HT,:H9,:H8,:H7,:H6,:H5,:H4,:H3,:H2]
 
-  attr_reader :hands, :tricks, :trick, :broken
+  pass_before_deal  :number => 3,
+                    :directions => [:left, :right, :across, :no_pass]
+
+  attr_reader :hands, :tricks, :trick, :broken, :post_deal, :selected
 
   random
 
@@ -34,10 +37,12 @@ class Hearts < Rules
     d = Deck.new( deck, rng ).shuffle.deal( players.size, deal_out )
     d.zip( players ) { |h,p| hands[p] = h }
     hands.each { |k,v| v.sort! }
+    @post_deal = true
 
     turn( :rotate ) until hands[turn].include?( Card[:C2] )
 
     @tricks = {}
+    @selected = { :n => [], :s => [], :e => [], :w => [] }
     @trick = []
     @broken = false
     @score = Hash.new( 0 )

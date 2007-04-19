@@ -46,6 +46,12 @@ module TrickTaking
       alias_method :old_wait_until_broken, :wait_until_broken
       def wait_until_broken; info[:wait_until_broken]; end
     end
+
+    def pass_before_deal( a )
+      info[:pass_before_deal] = a
+      alias_method :old_pass_before_deal, :pass_before_deal
+      def pass_before_deal; info[:pass_before_deal]; end
+    end
   end
 
   include Meta
@@ -57,6 +63,43 @@ module TrickTaking
 
   #position :dealer, :hands, :tricks, :trick
 
+  def pass_before_deal?
+    info.key? :pass_before_deal
+  end
+
+  def no_pass?
+    pass_before_deal? && pass_before_deal[:directions].first == :no_pass
+  end
+
+  def pass?
+    pass_before_deal? && pass_before_deal[:directions].first != :no_pass
+  end
+
+  def pass_left?
+    pass_before_deal? && pass_before_deal[:directions].first == :left
+  end
+
+  def pass_right?
+    pass_before_deal? && pass_before_deal[:directions].first == :right
+  end
+
+  def pass_across?
+    pass_before_deal? && pass_before_deal[:directions].first == :across
+  end
+
+  def has_ops
+    if post_deal && pass?
+      can_pass = []
+      selected.each do |k,v|
+        can_pass << k if v.length < pass_before_deal[:number]
+      end
+
+      return can_pass
+    else
+      return [turn]
+    end
+  end
+
   def op?( op, player=nil )
     op = Card[op] unless op.kind_of?( Card )
     (ops( player ) || []).include?( op )
@@ -65,6 +108,16 @@ module TrickTaking
   def ops( player=nil )
     return [] unless player.nil? || has_ops.include?( player )
     return nil if final?
+
+    if post_deal && pass?
+      passable = {}
+      hands.each do |k,v|
+        passable[k] = v - selected[k] if has_ops.include?( k )
+      end
+
+      return passable[player] if player
+      return passable.values.flatten
+    end
 
     hand = hands[turn]
 
@@ -95,6 +148,39 @@ module TrickTaking
   end
 
   def apply!( op )
+    if post_deal && pass?
+      hands.each { |k,v| selected[k] << op if v.include?( op ) }
+      if selected.all? { |k,v| v.length == pass_before_deal[:number] }
+        if pass_left?
+          hands[:n] += selected[:w]
+          hands[:w] += selected[:s]
+          hands[:s] += selected[:e]
+          hands[:e] += selected[:n]
+        elsif pass_right?
+          hands[:n] += selected[:e]
+          hands[:w] += selected[:n]
+          hands[:s] += selected[:w]
+          hands[:e] += selected[:s]
+        elsif pass_across?
+          hands[:n] += selected[:s]
+          hands[:w] += selected[:e]
+          hands[:s] += selected[:n]
+          hands[:e] += selected[:w]
+        end
+
+        hands.each { |k,v| hands[k] -= selected[k] }
+
+        @post_deal = false
+        pass_before_deal[:directions] << 
+          pass_before_deal[:directions].delete_at( 0 )
+        @selected = { :n => [], :e => [], :w => [], :s => [] }
+        turn( :rotate ) until hands[turn].include?( Card[:C2] )
+        hands.each { |k,v| v.sort! }
+      end
+
+      return self
+    end
+
     hand = hands[turn]
     card = Card[op]
 
@@ -145,7 +231,14 @@ module TrickTaking
         d.zip( players ) { |h,p| hands[p] = h }
         hands.each { |k,v| v.sort! }
 
-        turn( :rotate ) until hands[turn].include?( Card[:C2] )
+        @post_deal = true
+
+        if no_pass?
+          pass_before_deal[:directions] << 
+            pass_before_deal[:directions].delete_at( 0 )
+          @post_deal = false
+          turn( :rotate ) until hands[turn].include?( Card[:C2] )
+        end
       end
     else
       turn( :rotate )
