@@ -5,7 +5,7 @@ class AI::Pente::AggressiveBot < AI::Bot
   include AI::Pente::Bot
 
   def eval( position, player )
-    eval_threats( position, player ) + eval_score( position, player )
+    eval_threats( position, player )
   end
 
   def prune( position, player, ops )
@@ -13,7 +13,7 @@ class AI::Pente::AggressiveBot < AI::Bot
        original_ops = ops
        threats = position.board.threats.sort_by { |t| t.degree }
 
-       important = threats.select { |t| t.degree < 3 }
+       important = threats.select { |t| t.degree == 1 }
        unless important.empty?
          ops = important.map { |t| t.empty_coords.map { |c| c.to_s } }
          ops.flatten!
