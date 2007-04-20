@@ -30,7 +30,7 @@ module AI::Pente
   def eval_score( position, player )
     opp = player == :black ? :white : :black
 
-    100 * position.score( player ) - 100 * position.score( opp )
+    2 ** (position.score( player ) / 2) - 2 ** (position.score( opp ) / 2)
   end
 
   def eval_random( position, player )
