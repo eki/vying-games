@@ -60,6 +60,7 @@ class Pente < Rules
 
     cap.each do |cc|  
       board[cc] = nil
+      board.update_threats( cc )
       captured[turn] += 1
       @unused_ops << cc.to_s
     end

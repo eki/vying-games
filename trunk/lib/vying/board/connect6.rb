@@ -38,9 +38,9 @@ class Connect6Board < Board
   end
 
   def update_threats( c )
-    player = self[c]
-
-    threats.reject! { |t| t.empty_coords.include?( c ) }
+    threats.reject! do |t|
+      t.empty_coords.include?( c ) || t.occupied.include?( c )
+    end
 
     windows = create_windows( c, [:n,:s] )
     windows += create_windows( c, [:e,:w] )
@@ -48,11 +48,16 @@ class Connect6Board < Board
     windows += create_windows( c, [:nw,:se] )
 
     windows.each do |w|
-      pc = w.select { |c| self[c] == player }
+      bc = w.select { |c| self[c] == :black }
+      wc = w.select { |c| self[c] == :white }
       ec = w.select { |c| self[c].nil? }
 
-      if pc.length + ec.length == window_size && ec.length < (window_size-1)
-        threats << Threat.new( ec.length, player, ec, pc )
+      if bc.length + ec.length == window_size && ec.length < (window_size-1)
+        threats << Threat.new( ec.length, :black, ec, bc )
+      end
+
+      if wc.length + ec.length == window_size && ec.length < (window_size-1)
+        threats << Threat.new( ec.length, :white, ec, wc )
       end
     end
 
