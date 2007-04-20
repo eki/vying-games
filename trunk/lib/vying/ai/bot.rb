@@ -102,12 +102,28 @@ module AI
 
   end
 
-# This is just a simple dummy Human bot class.  It is used as a placeholder
+# This is just a simple dummy Human bot class.  It can be used as a placeholder
 # in Game#user_map
+#
+# ops taken from whatever UI, can use << to make them available via #select
 
   class Human < Bot
-    def select( position, player )
-      throw Exception.new( "Human#select placeholder should not be called" )
+    attr_reader :queue
+
+    def initialize
+      @queue = []
+    end
+
+    def <<( op )
+      queue << op
+    end
+
+    def select( sequence, position, player )
+      queue.shift
+    end
+
+    def bot?
+      false
     end
   end
 
