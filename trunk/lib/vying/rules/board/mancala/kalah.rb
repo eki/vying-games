@@ -14,13 +14,13 @@ class Kalah < Rules
 
     @board = MancalaBoard.new( 6, 2, 4 )
     @scoring_pits = { :one => 0, :two => 0 }
-    @ops_cache = { :one => [:a1, :b1, :c1, :d1, :e1, :f1],
-                   :two => [:a2, :b2, :c2, :d2, :e2, :f2] }
+    @ops_cache = { :one => ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'],
+                   :two => ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }
   end
 
   def op?( op, player=nil )
     valid = ops( player )
-    valid && valid.include?( op )
+    valid && valid.include?( op.to_s )
   end
 
   def ops( player=nil )
