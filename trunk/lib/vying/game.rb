@@ -93,6 +93,14 @@ class Game
     user_map.merge!( h )
   end
 
+  def switch_sides
+    if players.length == 2
+      ps = players
+      user_map[ps[0]], user_map[ps[1]] = user_map[ps[1]], user_map[ps[0]]
+    end
+    user_map
+  end
+
   def step
     has_ops.each do |p|
       if players.include?( p )
