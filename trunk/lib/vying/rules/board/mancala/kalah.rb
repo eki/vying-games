@@ -5,7 +5,7 @@ class Kalah < Rules
 
   info :name  => 'Kalah'
 
-  attr_reader :board, :scoring_pits
+  attr_reader :board, :scoring_pits, :annotation
 
   players [:one, :two]
 
@@ -13,6 +13,8 @@ class Kalah < Rules
     super
 
     @board = MancalaBoard.new( 6, 2, 4 )
+    @annotation = MancalaBoard.new( 6, 2, "0" )
+
     @scoring_pits = { :one => 0, :two => 0 }
     @ops_cache = { :one => ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'],
                    :two => ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }
@@ -30,6 +32,9 @@ class Kalah < Rules
   end
 
   def apply!( op )
+    # Reset annotation
+    annotation[*annotation.coords] = "0"
+
     h = op.x
     r = op.y
 
@@ -63,6 +68,7 @@ class Kalah < Rules
       h += 1 if r == 1 && h < 6
       
       board[h,r] += 1
+      annotation[h,r] = "+"
 
       last = Coord[h,r]
     end
@@ -76,6 +82,10 @@ class Kalah < Rules
         scoring_pits[turn] += board[last.x,0]
         board[last.x,1] = 0
         board[last.x,0] = 0
+        annotation[last.x,0] = "c" if annotation[last.x,0] == "0"
+        annotation[last.x,1] = "c" if annotation[last.x,1] == "0"
+        annotation[last.x,0] = "C" if annotation[last.x,0] == "+"
+        annotation[last.x,1] = "C" if annotation[last.x,1] == "+"
       end
     end
 
