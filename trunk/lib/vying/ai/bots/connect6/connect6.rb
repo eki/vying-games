@@ -144,7 +144,7 @@ module AI::Connect6
       occupied = b.occupied[:black] || []
       occupied += b.occupied[:white] if b.occupied[:white]
 
-      return ops[rand(ops.length)] if occupied.length == 0
+      return ["j9"] if occupied.length == 0
 
       keep = []
 
