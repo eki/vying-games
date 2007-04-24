@@ -46,6 +46,8 @@ class Rules
 
     h.merge!( 'board' => board ) if respond_to? :board
 
+    h.merge!( 'annotation' => annotation) if respond_to? :annotation
+
     if has_score?
       h['score'] = {}
       players.each { |p| h['score'][p] = score( p ) }

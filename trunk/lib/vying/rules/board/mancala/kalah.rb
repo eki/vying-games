@@ -43,6 +43,8 @@ class Kalah < Rules
     seeds, board[op] = board[op], 0
     last = nil
 
+    annotation[op] = "e"
+
     seeds.times do
       if r == 0 && h == 0
         r = 1
@@ -100,6 +102,8 @@ class Kalah < Rules
         @ops_cache[p].each do |c|
           scoring_pits[p] += board[c]
           board[c] = 0
+          annotation[c] = "c" if annotation[c] == "0"
+          annotation[c] = "C" if annotation[c] == "+"
         end
       end
     end 
