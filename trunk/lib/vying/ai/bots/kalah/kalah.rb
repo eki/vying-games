@@ -22,7 +22,7 @@ module AI::Kalah
       return position.ops.first if position.ops.length == 1
 
       @leaf, @nodes = 0, 0
-      score, op = best( analyze( position, player ) )
+      score, op = fuzzy_best( analyze( position, player ), 1 )
       puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
 
       op

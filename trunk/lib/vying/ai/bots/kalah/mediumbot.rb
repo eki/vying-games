@@ -1,7 +1,7 @@
 require 'vying/ai/bot'
 require 'vying/ai/bots/kalah/kalah'
 
-class AI::Kalah::SimpleBot < AI::Bot
+class AI::Kalah::MediumBot < AI::Bot
   include AI::Kalah::Bot
 
   def eval( position, player )
@@ -9,7 +9,7 @@ class AI::Kalah::SimpleBot < AI::Bot
   end
 
   def cutoff( position, depth )
-    position.final? || depth >= 0
+    position.final? || depth >= 2
   end
 end
 

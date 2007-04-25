@@ -31,13 +31,14 @@ module AI
       m
     end
 
-    # Replace this implementation with a better one
-    def fuzzy_best( scores )
-      a = scores.invert
-      s = a.map { |score,op| score }
-      half_sd = standard_deviation( s ) / 2.0
-      a2 = a.select { |score,op| ( score - s.max ).abs < half_sd }
-      !a2.empty? ? a2[rand(a2.length)] : a.max
+    def fuzzy_best( scores, delta )
+      s = []
+      scores.each { |op,score| s << [score,op] }
+      m = s.max
+      ties = s.select { |score,op| (score - m.first).abs <= delta }
+      m = ties[rand(ties.length)]
+      puts "scores: #{s.inspect}, t: #{ties.inspect} (taking #{m.inspect})"
+      m
     end
 
     def to_s
