@@ -62,27 +62,73 @@ module AI::Connect6
   def eval_player_threats( position, player )
     score = 0
 
-    threats = position.board.threats
+    threats = position.board.threats.dup
 
-    p_fives = threats.select { |t| t.player == player && t.degree == 1 }
-    p_fours = threats.select { |t| t.player == player && t.degree == 2 }
-    p_threes = threats.select { |t| t.player == player && t.degree == 3 }
-    p_twos = threats.select { |t| t.player == player && t.degree == 4 }
+    p_fives, p_fours, p_threes, o_fives, o_fours, o_threes = 0, 0, 0, 0, 0, 0
 
-    score -=  60 if p_fives.length > 0
-    score += 300 if p_fours.length >= 3
-    score +=  30 if p_fours.length == 2 
-    score +=   3 * p_threes.length
-    score +=   1 * p_twos.length
+    while t = threats.pop
+      if t.degree == 1
+        overlap = threats.select { |t2| t.occupied == t2.occupied }
 
-    opp_fours = threats.select { |t| t.player != player && t.degree == 2 }
-    opp_threes = threats.select { |t| t.player != player && t.degree == 3 }
+        if t.player == player
+          p_fives += 1
+        else
+          o_fives += 1
+        end
 
-    score -= 8000 if opp_fours.length >= 3
-    score -=  800 if opp_fours.length == 2
-    score -=  400 if opp_fours.length == 1
+        threats -= overlap
 
-    score -= opp_threes.length
+      elsif t.degree == 2
+        overlap = threats.select { |t2| t.occupied == t2.occupied }
+
+        if t.player == player
+          p_fours += (overlap.length == 3) ? 2 : 1
+        else
+          o_fours += (overlap.length == 3) ? 2 : 1
+        end
+
+        threats -= overlap
+
+      elsif t.degree == 3
+        overlap = threats.select { |t2| t.occupied == t2.occupied }
+
+        if t.player == player
+          p_threes += (overlap.length == 4) ? 2 : 1
+        else
+          o_threes += (overlap.length == 4) ? 2 : 1
+        end
+
+        threats -= overlap
+
+      elsif t.degree == 4
+        score += (t.player == player) ? 1 : -1
+      end
+    end
+
+    opp = player == :black ? :white : :black
+
+    count = position.board.occupied[player].length -
+            position.board.occupied[opp].length
+
+    if position.turn == player
+      return 9999 if count == -1 && (p_fives >= 1 || p_fours >= 1)
+      return 9999 if count == 0  && (p_fives >= 1)
+    elsif position.turn == opp
+      return -9999 if count == 1 && (o_fives >= 1 || o_fours >= 1)
+      return -9999 if count == 0 && (o_fives >= 1)
+    end
+
+    score += 100 * p_fours   if p_fours >= 3
+    score +=  50 * p_fours   if p_fours == 2
+    score +=  51 * p_threes  if p_threes >= 2
+    score +=  10             if p_fours == 1
+    score +=  11             if p_threes == 1
+
+    score -= 100 * o_fours   if o_fours >= 3
+    score -=  50 * o_fours   if o_fours == 2
+    score -=  51 * o_threes  if o_threes >= 2
+    score -=  10             if o_fours == 1
+    score -=  11             if o_threes == 1
 
     score
   end
@@ -127,9 +173,9 @@ module AI::Connect6
     def evaluate( position, player )
       @leaf += 1
 
-      return  1000 if position.final? && position.winner?( player )
-      return -1000 if position.final? && position.loser?( player )
-      return     0 if position.final?
+      return  10000 if position.final? && position.winner?( player )
+      return -10000 if position.final? && position.loser?( player )
+      return      0 if position.final?
 
       eval( position, player )
     end

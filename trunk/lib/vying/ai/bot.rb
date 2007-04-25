@@ -25,7 +25,10 @@ module AI
     end
 
     def best( scores )
-      scores.invert.max
+      scores = scores.invert
+      m = scores.max
+      puts "scores: #{scores.inspect} (taking #{m.inspect})"
+      m
     end
 
     # Replace this implementation with a better one
