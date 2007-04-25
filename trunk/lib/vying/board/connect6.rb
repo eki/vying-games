@@ -86,5 +86,9 @@ class Connect6Board < Board
     0 <= w.first.x && w.first.x < 19 && 0 <= w.first.y && w.first.y < 19 &&
     0 <= w.last.x  && w.last.x  < 19 && 0 <= w.last.y  && w.last.y  < 19
   end
+
+  def has_neighbor?( c )
+    coords.neighbors( Coord[c] ).find { |n| ! self[n].nil? }
+  end
 end
 
