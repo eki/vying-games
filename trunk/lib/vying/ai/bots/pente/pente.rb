@@ -27,6 +27,62 @@ module AI::Pente
     score
   end
 
+  def eval_threats2( position, player )
+    score = 0
+
+    threats = position.board.threats.dup
+
+     p_fours, p_threes, p_twos, o_fours, o_threes, o_twos = 0, 0, 0, 0, 0, 0
+
+    while t = threats.pop
+      if t.degree == 1
+        overlap = threats.select { |t2| t.occupied == t2.occupied }
+
+        if t.player == player
+          p_fours += (overlap.length == 1) ? 2 : 1
+        else
+          o_fours += (overlap.length == 1) ? 2 : 1
+        end
+
+        threats -= overlap
+
+      elsif t.degree == 2
+        overlap = threats.select { |t2| t.occupied == t2.occupied }
+
+        if t.player == player
+          p_threes += (overlap.length == 2) ? 2 : 1
+        else
+          o_threes += (overlap.length == 2) ? 2 : 1
+        end
+
+        threats -= overlap
+
+      elsif t.degree == 3
+        overlap = threats.select { |t2| t.occupied == t2.occupied }
+
+        if t.player == player
+          p_twos += (overlap.length == 3) ? 2 : 1
+        else
+          o_twos += (overlap.length == 3) ? 2 : 1
+        end
+
+        threats -= overlap
+      end
+    end
+
+    score += 100 * p_fours   if p_fours >= 2
+    score +=  50             if p_fours == 1
+    score +=  51 * p_threes  if p_threes >= 2
+    score +=  10             if p_threes == 1
+    score +=   1             if p_twos > 0
+
+    score -= 200 * o_fours
+    score -= 200 * o_threes
+    score +=  20 * o_twos
+
+    score
+  end
+
   def eval_score( position, player )
     opp = player == :black ? :white : :black
 
@@ -51,7 +107,7 @@ module AI::Pente
       return position.ops.first if position.ops.length == 1
 
       @leaf, @nodes = 0, 0
-      score, op = best( analyze( position, player ) )
+      score, op = fuzzy_best( analyze( position, player ), 1 )
       puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
 
       op
@@ -77,7 +133,7 @@ module AI::Pente
       occupied = b.occupied[:black] || []
       occupied += b.occupied[:white] if b.occupied[:white]
 
-      return ops[rand(ops.length)] if occupied.length == 0
+      return ["j9"] if occupied.length == 0
 
       keep = []
 

@@ -5,10 +5,14 @@ class AI::Pente::DefensiveBot < AI::Bot
   include AI::Pente::Bot
 
   def eval( position, player )
-    eval_score( position, player ) * 10 + eval_threats( position, player )
+    eval_score( position, player ) * 10 + eval_threats2( position, player )
   end
 
   def prune( position, player, ops )
+    n = (position.board.occupied[:white] || []).length < 30 ? super : nil
+
+    return n if n
+
     if position.board.threats.length > 0
        original_ops = ops
        threats = position.board.threats.sort_by { |t| t.degree }
@@ -42,7 +46,7 @@ class AI::Pente::DefensiveBot < AI::Bot
   end
 
   def cutoff( position, depth )
-    position.final? || depth >= 1
+    position.final? || depth >= 0
   end
 end
 
