@@ -1,0 +1,130 @@
+require 'vying/rules'
+require 'vying/board/mancala'
+
+class Oware < Rules
+
+  info :name  => 'Oware'
+
+  attr_reader :board, :scoring_pits, :annotation
+
+  players [:one, :two]
+
+  def initialize( seed=nil )
+    super
+
+    @board = MancalaBoard.new( 6, 2, 4 )
+    @annotation = MancalaBoard.new( 6, 2, "0" )
+
+    @scoring_pits = { :one => 0, :two => 0 }
+    @ops_cache = { :one => ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'],
+                   :two => ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }
+  end
+
+  def op?( op, player=nil )
+    valid = ops( player )
+    valid && valid.include?( op.to_s )
+  end
+
+  def ops( player=nil )
+    return false unless player.nil? || has_ops.include?( player )
+    valid = @ops_cache[turn].select { |c| board[c] > 0 }
+    valid.empty? ? false : valid
+  end
+
+  def apply!( op )
+    # Reset annotation
+    annotation[*annotation.coords] = "0"
+
+    h = op.x
+    r = op.y
+
+    # Sowing seeds
+
+    seeds, board[op] = board[op], 0
+    last = nil
+
+    annotation[op] = "e"
+
+    while seeds > 0 
+      if r == 0 && h == 0
+        r = 1
+        h = -1
+      end
+
+      if r == 1 && h == 5
+        r = 0
+        h = 6
+      end
+
+      h -= 1 if r == 0 && h > 0
+      h += 1 if r == 1 && h < 6
+
+      next if h == op.x && r == op.y
+    
+      seeds -= 1  
+      board[h,r] += 1
+      annotation[h,r] = "+"
+
+      last = Coord[h,r]
+    end
+
+    # Capturing
+
+    h, r = last.x, last.y
+    opp_rank = turn == :one ? 1 : 0
+
+    while r == opp_rank && board[h,r] == 3 || board[h,r] == 2
+      scoring_pits[turn] += board[h,r]
+      board[h,r] = 0
+
+      annotation[h,r] = "C"
+
+      h += 1 if r == 0 && h < 6
+      h -= 1 if r == 1 && h > 0
+    end
+
+    # Clear remaining seeds if the game is over
+
+    if final?
+      players.each do |p|
+        @ops_cache[p].each do |c|
+          scoring_pits[p] += board[c]
+          board[c] = 0
+          annotation[c] = "c" if annotation[c] == "0"
+          annotation[c] = "C" if annotation[c] == "+"
+        end
+      end
+    end 
+
+    turn( :rotate )
+
+    self
+  end
+
+  def final?
+    @ops_cache[turn].inject( 0 ) { |s,c| s + board[c] } == 0
+  end
+
+  def winner?( player )
+    opp = player == :one ? :two : :one
+    score( player ) > score( opp )
+  end
+
+  def loser?( player )
+    opp = player == :one ? :two : :one
+    score( player ) < score( opp )
+  end
+
+  def draw?
+    score( :one ) == score( :two )
+  end
+
+  def score( player )
+    scoring_pits[player]
+  end
+
+  def hash
+    [board, scoring_pits, turn].hash
+  end
+
+end
