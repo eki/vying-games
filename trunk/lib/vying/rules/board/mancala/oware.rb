@@ -9,6 +9,8 @@ class Oware < Rules
 
   players [:one, :two]
 
+  no_cycles
+
   def initialize( seed=nil )
     super
 
@@ -27,6 +29,7 @@ class Oware < Rules
 
   def ops( player=nil )
     return false unless player.nil? || has_ops.include?( player )
+
     valid = @ops_cache[turn].select { |c| board[c] > 0 }
 
     # Check starvation rule
@@ -97,19 +100,13 @@ class Oware < Rules
     turn( :rotate )
 
     # Clear remaining seeds if the game is over
-
-    if final?
-      players.each do |p|
-        @ops_cache[p].each do |c|
-          scoring_pits[p] += board[c]
-          board[c] = 0
-          annotation[c] = "c" if annotation[c] == "0"
-          annotation[c] = "C" if annotation[c] == "+"
-        end
-      end
-    end 
+    clear if final?
 
     self
+  end
+
+  def cycle_found
+    clear
   end
 
   def final?
@@ -135,7 +132,19 @@ class Oware < Rules
   end
 
   def hash
-    [board, scoring_pits, turn].hash
+    [board, score( :one ), score( :two ), turn].hash
+  end
+
+  private
+  def clear
+    players.each do |p|
+      @ops_cache[p].each do |c|
+        scoring_pits[p] += board[c]
+        board[c] = 0
+        annotation[c] = "c" if annotation[c] == "0"
+        annotation[c] = "C" if annotation[c] == "+"
+      end
+    end
   end
 
 end

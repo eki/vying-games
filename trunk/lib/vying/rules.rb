@@ -137,8 +137,17 @@ class Rules
     p
   end
 
+  def self.no_cycles
+    @no_cycles = true
+  end
+
+  def self.check_cycles?
+    @no_cycles
+  end
+
   def method_missing( m, *args )
-    self.class.send( m, *args ) if self.class.respond_to?( m )
+    super unless self.class.respond_to?( m )
+    self.class.send( m, *args )
   end
 
   def respond_to?( m )

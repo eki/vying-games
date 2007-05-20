@@ -21,6 +21,17 @@ class TestHearts < Test::Unit::TestCase
 
   def test_initialize       # Need to be more thorough here
     g = Game.new( Hearts )
+
+    # Passing, so everyone has ops
+    assert( g.has_ops.include?( :n ) )
+    assert( g.has_ops.include?( :e ) )
+    assert( g.has_ops.include?( :w ) )
+    assert( g.has_ops.include?( :s ) )
+
+    # Skip past passing phase
+    12.times { g << g.ops.first }
+
+    # The 2 of Clubs is led
     assert_equal( [Card[:C2]], g.ops )
   end
 
