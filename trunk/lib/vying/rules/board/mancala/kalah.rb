@@ -70,7 +70,11 @@ class Kalah < Rules
       h += 1 if r == 1 && h < 6
       
       board[h,r] += 1
-      annotation[h,r] = "+"
+      if annotation[h,r] == 'e'
+        annotation[h,r] = 'E'
+      else
+        annotation[h,r] = (annotation[h,r].to_i + 1).to_s
+      end
 
       last = Coord[h,r]
     end
@@ -86,8 +90,8 @@ class Kalah < Rules
         board[last.x,0] = 0
         annotation[last.x,0] = "c" if annotation[last.x,0] == "0"
         annotation[last.x,1] = "c" if annotation[last.x,1] == "0"
-        annotation[last.x,0] = "C" if annotation[last.x,0] == "+"
-        annotation[last.x,1] = "C" if annotation[last.x,1] == "+"
+        annotation[last.x,0] = "C" if annotation[last.x,0] =~ /[1-9E]/
+        annotation[last.x,1] = "C" if annotation[last.x,1] =~ /[1-9E]/
       end
     end
 
@@ -103,7 +107,7 @@ class Kalah < Rules
           scoring_pits[p] += board[c]
           board[c] = 0
           annotation[c] = "c" if annotation[c] == "0"
-          annotation[c] = "C" if annotation[c] == "+"
+          annotation[c] = "C" if annotation[c] =~ /[1-9E]/
         end
       end
     end 

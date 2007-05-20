@@ -28,6 +28,17 @@ class Oware < Rules
   def ops( player=nil )
     return false unless player.nil? || has_ops.include?( player )
     valid = @ops_cache[turn].select { |c| board[c] > 0 }
+
+    # Check starvation rule
+    opp = turn == :one ? :two : :one
+    if @ops_cache[opp].all? { |c| board[c] == 0 }
+      still_valid = []
+      valid.each do |c|
+        still_valid << c unless dup.apply!( c ).final?
+      end
+      valid = still_valid unless still_valid.empty?
+    end
+
     valid.empty? ? false : valid
   end
 
@@ -63,7 +74,7 @@ class Oware < Rules
     
       seeds -= 1  
       board[h,r] += 1
-      annotation[h,r] = "+"
+      annotation[h,r] = (annotation[h,r].to_i + 1).to_s
 
       last = Coord[h,r]
     end
@@ -73,7 +84,7 @@ class Oware < Rules
     h, r = last.x, last.y
     opp_rank = turn == :one ? 1 : 0
 
-    while r == opp_rank && board[h,r] == 3 || board[h,r] == 2
+    while r == opp_rank && (board[h,r] == 3 || board[h,r] == 2)
       scoring_pits[turn] += board[h,r]
       board[h,r] = 0
 
@@ -82,6 +93,8 @@ class Oware < Rules
       h += 1 if r == 0 && h < 6
       h -= 1 if r == 1 && h > 0
     end
+
+    turn( :rotate )
 
     # Clear remaining seeds if the game is over
 
@@ -96,13 +109,11 @@ class Oware < Rules
       end
     end 
 
-    turn( :rotate )
-
     self
   end
 
   def final?
-    @ops_cache[turn].inject( 0 ) { |s,c| s + board[c] } == 0
+    !ops
   end
 
   def winner?( player )
