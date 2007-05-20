@@ -86,15 +86,23 @@ class Oware < Rules
 
     h, r = last.x, last.y
     opp_rank = turn == :one ? 1 : 0
+    cap = []
 
     while r == opp_rank && (board[h,r] == 3 || board[h,r] == 2)
-      scoring_pits[turn] += board[h,r]
-      board[h,r] = 0
+      cap << Coord[h,r]
 
-      annotation[h,r] = "C"
+      break if (h == 0 && r == 1) || (h == 5 && r == 0)
 
       h += 1 if r == 0 && h < 6
       h -= 1 if r == 1 && h > 0
+    end
+
+    cap = [] if cap.length == 6   # Grand slam forfeit
+
+    cap.each do |c|
+      scoring_pits[turn] += board[c]
+      board[c] = 0
+      annotation[c] = "C"
     end
 
     turn( :rotate )

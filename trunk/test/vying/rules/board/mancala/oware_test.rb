@@ -116,6 +116,28 @@ class TestOware < Test::Unit::TestCase
     assert_equal( 0, g.score( :two ) )
   end
 
+  def test_no_grand_slam
+    g = Game.new( Oware )
+    g.board[:a2,:b2,:c2,:d2,:e2,:f2] = 2
+    g.board[:a1] = 6
+
+    assert_equal( 0, g.score( :one ) )
+    assert_equal( 0, g.score( :two ) )
+
+    g << :a1
+
+    assert_equal( 3, g.board[:a2] )
+    assert_equal( 3, g.board[:b2] )
+    assert_equal( 3, g.board[:c2] )
+    assert_equal( 3, g.board[:d2] )
+    assert_equal( 3, g.board[:e2] )
+    assert_equal( 3, g.board[:f2] )
+    assert_equal( 4, g.board[:f1] )
+
+    assert_equal( 0, g.score( :one ) )
+    assert_equal( 0, g.score( :two ) )
+  end
+
   def test_check_cycles
     assert( Oware.check_cycles? )
   end
