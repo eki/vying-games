@@ -60,10 +60,64 @@ class TestOware < Test::Unit::TestCase
     assert( g.has_score? )
   end
 
-  def test_capture
+  def test_capture_01
+    g = Game.new( Oware )
+    g.board[:a1,:b2,:c2,:d2,:e2,:f2] = 2
+    
+    assert_equal( 0, g.score( :one ) )
+    assert_equal( 0, g.score( :two ) )
+
+    g << :b1
+
+    assert_equal( 3, g.board[:a1] )
+    assert_equal( 5, g.board[:a2] )
+    assert_equal( 0, g.board[:b2] )
+    assert_equal( 0, g.board[:c2] )
+    assert_equal( 2, g.board[:d2] )
+
+    assert_equal( 6, g.score( :one ) )
+    assert_equal( 0, g.score( :two ) )
+  end
+
+  def test_capture_02
+    g = Game.new( Oware )
+    g.board[:a1,:a2,:b2,:c2,:d2,:e2,:f2] = 2
+    
+    assert_equal( 0, g.score( :one ) )
+    assert_equal( 0, g.score( :two ) )
+
+    g << :b1
+
+    assert_equal( 3, g.board[:a1] )
+    assert_equal( 0, g.board[:a2] )
+    assert_equal( 0, g.board[:b2] )
+    assert_equal( 0, g.board[:c2] )
+    assert_equal( 2, g.board[:d2] )
+
+    assert_equal( 9, g.score( :one ) )
+    assert_equal( 0, g.score( :two ) )
   end
 
   def test_no_capture
+    g = Game.new( Oware )
+    g.board[:a1,:b1,:c1,:d1,:e1,:f1] = 2
+    
+    assert_equal( 0, g.score( :one ) )
+    assert_equal( 0, g.score( :two ) )
+
+    g << :f1
+
+    assert_equal( 0, g.board[:f1] )
+    assert_equal( 3, g.board[:e1] )
+    assert_equal( 3, g.board[:d1] )
+    assert_equal( 2, g.board[:c1] )
+
+    assert_equal( 0, g.score( :one ) )
+    assert_equal( 0, g.score( :two ) )
+  end
+
+  def test_check_cycles
+    assert( Oware.check_cycles? )
   end
 
   def test_cycle

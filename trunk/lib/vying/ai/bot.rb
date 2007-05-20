@@ -27,7 +27,7 @@ module AI
     def best( scores )
       scores = scores.invert
       m = scores.max
-      puts "scores: #{scores.inspect} (taking #{m.inspect})"
+      #puts "scores: #{scores.inspect} (taking #{m.inspect})"
       m
     end
 
@@ -37,7 +37,7 @@ module AI
       m = s.max
       ties = s.select { |score,op| (score - m.first).abs <= delta }
       m = ties[rand(ties.length)]
-      puts "scores: #{s.inspect}, t: #{ties.inspect} (taking #{m.inspect})"
+      #puts "scores: #{s.inspect}, t: #{ties.inspect} (taking #{m.inspect})"
       m
     end
 

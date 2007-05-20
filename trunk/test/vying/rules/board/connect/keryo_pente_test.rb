@@ -114,6 +114,38 @@ class TestKeryoPente < Test::Unit::TestCase
     assert( !g.op?( :d4 ) )
   end
 
+  def test_capture03
+    g = Game.new( KeryoPente )
+    g << [:b2,:b1,:b3,:a9,:b4]
+    
+    assert_equal( 0, g.score( :black ) )
+    assert_equal( 0, g.score( :white ) )
+    assert_equal( :white, g.board[:b2] )
+    assert_equal( :white, g.board[:b3] )
+    assert_equal( :black, g.board[:b1] )
+    assert( !g.op?( :b2 ) )
+    assert( !g.op?( :b3 ) )
+    assert( !g.op?( :b1 ) )
+    assert( !g.op?( :b4 ) )
+    assert( !g.op?( :a9 ) )
+
+    g << :b5
+
+    assert_equal( 3, g.score( :black ) )
+    assert_equal( 0, g.score( :white ) )
+    assert_equal( nil, g.board[:b2] )
+    assert_equal( nil, g.board[:b3] )
+    assert_equal( nil, g.board[:b4] )
+    assert_equal( :black, g.board[:b1] )
+    assert_equal( :black, g.board[:b5] )
+    assert( g.op?( :b2 ) )
+    assert( g.op?( :b3 ) )
+    assert( g.op?( :b4 ) )
+    assert( !g.op?( :b1 ) )
+    assert( !g.op?( :b5 ) )
+    assert( !g.op?( :a9 ) )
+  end
+
   def test_game01
     g = play_sequence [:a1,:b1,:a2,:b2,:a3,:b3,:a4,:b4,:a5]
 
