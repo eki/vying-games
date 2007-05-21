@@ -209,7 +209,8 @@ class Rules
 
   def Rules.find( name )
     Rules.list.each do |r|
-      return r if name.downcase == r.to_s.downcase
+      return r if name.downcase == r.to_s.downcase ||
+                  name.downcase == r.to_snake_case
     end
     nil
   end
@@ -229,6 +230,12 @@ class Rules
       end
     end
     s
+  end
+
+  def Rules.to_snake_case
+    s = to_s
+    s.gsub!( /(.)([A-Z])/ ) { "#{$1}_#{$2.downcase}" }
+    s.downcase
   end
 end
 
