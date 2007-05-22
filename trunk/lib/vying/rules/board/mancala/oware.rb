@@ -161,7 +161,7 @@ class Oware < Rules
         scoring_pits[p] += board[c]
         board[c] = 0
         annotation[c] = "c" if annotation[c] == "0"
-        annotation[c] = "C" if annotation[c] == "+"
+        annotation[c] = "C" if annotation[c] =~ /\d+/
       end
     end
   end
