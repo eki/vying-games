@@ -85,6 +85,18 @@ class Pente < Rules
   end
 end
 
+class KeryoPente < Rules
+  def to_hash
+    h = super
+    if final?
+      threat = board.threats.select { |t| t.degree == 0 }.first
+
+      h.merge!( 'line' => threat.occupied ) unless threat.nil?
+    end
+    h
+  end
+end
+
 class Board
   def to_json( *a )
     pieces, board = self.to_a
