@@ -97,7 +97,10 @@ class Oware < Rules
       h -= 1 if r == 1 && h > 0
     end
 
-    cap = [] if cap.length == 6   # Grand slam forfeit
+    opp = turn == :one ? :two : :one
+    opp_empties = @ops_cache[opp].select { |c| board[c] == 0 }
+
+    cap = [] if cap.length + opp_empties.length == 6   # Grand slam forfeit
 
     cap.each do |c|
       scoring_pits[turn] += board[c]

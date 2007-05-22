@@ -116,7 +116,7 @@ class TestOware < Test::Unit::TestCase
     assert_equal( 0, g.score( :two ) )
   end
 
-  def test_no_grand_slam
+  def test_no_grand_slam_01    # Capture all 6 cups
     g = Game.new( Oware )
     g.board[:a2,:b2,:c2,:d2,:e2,:f2] = 2
     g.board[:a1] = 6
@@ -132,6 +132,29 @@ class TestOware < Test::Unit::TestCase
     assert_equal( 3, g.board[:d2] )
     assert_equal( 3, g.board[:e2] )
     assert_equal( 3, g.board[:f2] )
+    assert_equal( 4, g.board[:f1] )
+
+    assert_equal( 0, g.score( :one ) )
+    assert_equal( 0, g.score( :two ) )
+  end
+
+  def test_no_grand_slam_02    # Capture 5 cups, 1 cup already empty
+    g = Game.new( Oware )
+    g.board[:a2,:b2,:c2,:d2,:e2] = 2
+    g.board[:f2] = 0
+    g.board[:a1] = 5
+
+    assert_equal( 0, g.score( :one ) )
+    assert_equal( 0, g.score( :two ) )
+
+    g << :a1
+
+    assert_equal( 3, g.board[:a2] )
+    assert_equal( 3, g.board[:b2] )
+    assert_equal( 3, g.board[:c2] )
+    assert_equal( 3, g.board[:d2] )
+    assert_equal( 3, g.board[:e2] )
+    assert_equal( 0, g.board[:f2] )
     assert_equal( 4, g.board[:f1] )
 
     assert_equal( 0, g.score( :one ) )
