@@ -143,6 +143,14 @@ class Oware < Rules
     [board, score( :one ), score( :two ), turn].hash
   end
 
+  def ==( o )
+    puts "#{o.class}: #{o.inspect}"  if o.class != Oware
+    turn == o.turn &&
+    score( :one ) == o.score( :one ) &&
+    score( :two ) == o.score( :two ) &&
+    board == o.board
+  end
+
   private
   def clear
     players.each do |p|

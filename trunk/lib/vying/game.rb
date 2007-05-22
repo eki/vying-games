@@ -59,7 +59,7 @@ class Game
 
       if history.last.class.check_cycles?
         history[0...(history.length-1)].each do |p|
-          history.last.cycle_found if p.hash == history.last.hash
+          history.last.cycle_found if p == history.last
         end
       end
 
