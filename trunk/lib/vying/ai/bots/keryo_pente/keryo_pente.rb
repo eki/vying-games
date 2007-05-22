@@ -116,9 +116,9 @@ module AI::KeryoPente
     def evaluate( position, player )
       @leaf += 1
 
-      return  1000 if position.final? && position.winner?( player )
-      return -1000 if position.final? && position.loser?( player )
-      return     0 if position.final?
+      return  10000 if position.final? && position.winner?( player )
+      return -10000 if position.final? && position.loser?( player )
+      return      0 if position.final?
 
       eval( position, player )
     end
