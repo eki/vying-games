@@ -18,8 +18,8 @@ module RulesTests
     30.times do                          # Take two steps forward,
       p = g.history.last.dup             # one step back, check for corruption
       break if g.final?
-      g << g.ops[rand(g.ops.size)]       
-      assert_not_equal( p, g.undo )      
+      g << g.ops[rand(g.ops.size)] 
+      assert_not_equal( p, g.undo.first )      
       assert_equal( p, g.history.last )
       break if g.final?
       g << g.ops[rand(g.ops.size)]
