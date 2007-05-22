@@ -3,7 +3,8 @@ require 'vying/board/mancala'
 
 class Oware < Rules
 
-  info :name  => 'Oware'
+  info :name    => 'Oware',
+       :related => ['Kalah']
 
   attr_reader :board, :scoring_pits, :annotation
 

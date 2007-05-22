@@ -6,7 +6,8 @@ class TicTacToe < Rules
   info :name      => 'Tic Tac Toe',
        :aliases   => ['Noughts and Crosses', 'Naughts and Crosses',
                       "X's and O's", 'Tick Tat Toe', 'Tit Tat Toe'],
-       :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Tic-tac-toe>']
+       :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Tic-tac-toe>'],
+       :related   => ['Connect6', 'Connect4', 'Pente', 'KeryoPente']
 
   attr_reader :board, :lastc, :lastp, :unused_ops
 

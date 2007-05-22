@@ -4,7 +4,8 @@ require 'vying/board/connect6'
 class Pente < Rules
 
   info :name      => 'Pente',
-       :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Pente>']
+       :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Pente>'],
+       :related   => ['Connect6', 'Connect4', 'KeryoPente', 'TicTacToe']
 
   attr_reader :board, :lastc, :lastp, :unused_ops, :captured
 

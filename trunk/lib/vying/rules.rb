@@ -215,6 +215,11 @@ class Rules
     nil
   end
 
+  def Rules.related
+    return [] unless info[:related]
+    info[:related].map { |name| Rules.find( name ) }
+  end
+
   def to_s
     s = ''
     fs = instance_variables.map { |iv| iv.to_s.length }.max + 2

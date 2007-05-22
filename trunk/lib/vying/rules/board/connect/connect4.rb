@@ -4,7 +4,8 @@ require 'vying/board/board'
 class Connect4 < Rules
 
   info :name    => 'Connect Four',
-       :aliases => ['Plot Four', 'Connect 4', "The Captain's Mistress"]
+       :aliases => ['Plot Four', 'Connect 4', "The Captain's Mistress"],
+       :related => ['Connect6', 'Pente', 'KeryoPente', 'TicTacToe']
 
   attr_reader :board, :lastc, :lastp, :unused_ops
 
