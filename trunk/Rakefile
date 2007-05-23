@@ -1,6 +1,7 @@
 require 'rake'
 require 'rake/testtask'
 require 'rake/rdoctask'
+require 'rake/clean'
 
 begin
   require 'rubygems'
@@ -8,6 +9,9 @@ begin
 rescue Exception
   nil
 end
+
+CLEAN.include( 'ext/**/*.o' )
+CLOBBER.include( 'pkg' )
 
 Rake::TestTask.new do |t|
   t.libs << "test" << "ext"
