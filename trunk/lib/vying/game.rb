@@ -40,16 +40,17 @@ class Game
   end
 
   def method_missing( method_id, *args )
-    if history.last.respond_to?( method_id )
-      return history.last.send( method_id, *args )
+    # These extra checks that history is not nil are required for yaml-ization
+    if history && history.last.respond_to?( method_id )
+      history.last.send( method_id, *args )
+    else
+      super
     end
-    super.method_missing( method_id, *args )
   end
 
   def respond_to?( method_id )
-    (!history.nil? && history.last.respond_to?( method_id )) ||
-    (!rules.nil? && rules.respond_to?( method_id )) ||
-    super.respond_to?( method_id )
+    # double !! to force false instead of nil
+    super || !!(history && history.last.respond_to?( method_id ))
   end
 
   def append( op )
