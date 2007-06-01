@@ -145,5 +145,15 @@ class Game
   def to_s
     history.last.to_s
   end
+
+  def description
+    s = user_map.map { |p,u| "#{u} (#{p})" }.join( " vs " )
+
+    if has_score?
+      s = "#{s} (#{user_map.map { |p,u| score( p ) }.join( '-' )})"
+    end
+
+    s
+  end
 end
 
