@@ -31,12 +31,19 @@ class GameResults
 end
 
 class Game
-  attr_reader :rules, :history, :sequence, :user_map
+  attr_reader :history, :sequence, :user_map
 
   def initialize( rules, seed=nil )
     @rules, @history = rules.to_s, [rules.new( seed )]
     @sequence, @user_map = [], {}
     yield self if block_given?
+  end
+
+  # For serialization purposes we can't store the Rules class constant,
+  # but it's what we actually want
+
+  def rules
+    Rules.find( @rules )
   end
 
   def method_missing( method_id, *args )

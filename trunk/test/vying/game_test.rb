@@ -48,7 +48,7 @@ end
 class TestGame < Test::Unit::TestCase
   def test_initialize
     g = Game.new( FakeRules, 1000 )
-    assert_equal( "FakeRules", g.rules )
+    assert_equal( FakeRules, g.rules )
     assert_equal( [], g.sequence )
     assert_equal( [FakeRules.new( 1000 )], g.history )
     assert_equal( "edcba", g.fake_board )
