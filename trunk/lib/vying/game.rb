@@ -1,10 +1,9 @@
 
 class GameResults
-  attr_reader :rules, :seed, :sequence, :user_map, :win_lose_draw, :scores,
-              :check
+  attr_reader :seed, :sequence, :user_map, :win_lose_draw, :scores, :check
   
   def initialize( game )
-    @rules = game.rules.to_s
+    @rules = game.rules.to_snake_case
     @seed = game.respond_to?( :seed ) ? game.seed : nil
     @sequence = game.sequence
 
@@ -27,6 +26,10 @@ class GameResults
 
     i = rand(game.history.length-1)
     @check = "#{i},#{game.history[i].hash},#{game.history.last.hash}"
+  end
+
+  def rules
+    Rules.find( @rules )
   end
 end
 
@@ -144,7 +147,7 @@ class Game
   end
 
   def Game.replay( results )
-    g = Game.new( Kernel.const_get( results.rules ), results.seed )
+    g = Game.new( results.rules, results.seed )
     g << results.sequence
     g
   end
@@ -154,13 +157,36 @@ class Game
   end
 
   def description
-    s = user_map.map { |p,u| "#{u} (#{p})" }.join( " vs " )
+    if final?
+      if draw?
+        s = user_map.map { |p,u| "#{u} (#{p})" }.join( " and " )
+        "#{s} played to a draw"
+      else
 
-    if has_score?
-      s = "#{s} (#{user_map.map { |p,u| score( p ) }.join( '-' )})"
+        winners = players.select { |p| winner?( p ) }
+        losers  = players.select { |p| loser?( p ) }
+
+        ws = winners.map { |p| "#{user_map[p]} (#{p})" }.join( " and " )
+        ls = losers.map  { |p| "#{user_map[p]} (#{p})" }.join( " and " )
+
+        s = "#{ws} defeated #{ls}"
+
+        if has_score?
+          ss = (winners+losers).map { |p| "#{score(p)}" }.join( "-" )
+          s = "#{s}, #{ss}"
+        end
+
+        s
+      end
+    else
+      s = user_map.map { |p,u| "#{u} (#{p})" }.join( " vs " )
+
+      if has_score?
+        s = "#{s} (#{user_map.map { |p,u| score( p ) }.join( '-' )})"
+      end
+
+      s
     end
-
-    s
   end
 end
 
