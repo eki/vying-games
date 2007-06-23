@@ -100,7 +100,7 @@ end
 
 
 class AmazonsBoard < Board
-  attr_reader :territories, :mobility
+  attr_reader :territories, :mobility, :blocked
   prototype
 
   INIT_WQS = [Coord[0,3], Coord[3,0], Coord[6,0], Coord[9,3]]
@@ -115,6 +115,7 @@ class AmazonsBoard < Board
     @territories = [Territory.new( self, coords.to_a, INIT_WQS + INIT_BQS )]
 
     @mobility = {}
+    @blocked = {}
     update_mobility( INIT_WQS + INIT_BQS )
   end
 
@@ -125,11 +126,15 @@ class AmazonsBoard < Board
 
     @mobility = {}
     original.mobility.each { |k,v| @mobility[k] = v.dup }
+
+    @blocked = {}
+    original.blocked.each { |k,v| @blocked[k] = v.dup }
   end
 
   def clear
     @territories.clear
     @mobility.clear
+    @blocked.clear
     super
   end
 
@@ -141,6 +146,7 @@ class AmazonsBoard < Board
 
     a = []
     mobility.each { |k,v| a << k if v.include?( ec ) }
+    blocked.each  { |k,v| a << k if v.include?( sc ) }
     update_mobility( a )
 
     self
@@ -167,10 +173,18 @@ class AmazonsBoard < Board
       mobility[c] ||= []
       mobility[c].clear
 
+      blocked[c] ||= []
+      blocked[c].clear
+
       [:n,:e,:s,:w,:ne,:nw,:se,:sw].each do |d|
         ic = c
         while (ic = coords.next( ic, d ))
-          self[ic].nil? ? mobility[c] << ic : break;
+          if self[ic].nil?
+            mobility[c] << ic
+          else
+            blocked[c] << ic if self[ic] == :white || self[ic] == :black
+            break
+          end
         end
       end
     end
@@ -188,6 +202,7 @@ class AmazonsBoard < Board
   def to_yaml_properties
     props = instance_variables
     props.delete( "@mobility" )
+    props.delete( "@blocked" )
     props
   end
 
@@ -195,6 +210,7 @@ class AmazonsBoard < Board
     v.each { |k,v| instance_variable_set( "@#{k}", v ) }
 
     @mobility = {}
+    @blocked = {}
     update_mobility( occupied[:black] )
     update_mobility( occupied[:white] )
   end

@@ -80,7 +80,8 @@ class Amazons < Rules
 
   def final?
     board.territories.each do |t|
-      return false if t.white.length > 0 && t.black.length > 0
+      return false if t.white.length > 0 && t.black.length > 0 &&
+                      t.white.length + t.black.length != t.coords.length
     end
 
     true
