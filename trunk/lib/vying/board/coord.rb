@@ -19,6 +19,10 @@ class String
     self =~ /\w(\d+)$/
     $1.to_i-1
   end
+
+  def to_coords
+    scan( /[a-z]\d+/ ).map { |s| Coord[s] }
+  end
 end
 
 class Symbol
@@ -29,6 +33,10 @@ class Symbol
   def y
     to_s =~ /\w(\d+)$/
     $1.to_i-1
+  end
+
+  def to_coords
+    to_s.scan( /[a-z]\d+/ ).map { |s| Coord[s] }
   end
 end
 
@@ -46,6 +54,10 @@ class Coord
 
   def inspect
     to_s
+  end
+
+  def to_coords
+    [self]
   end
 end
 
