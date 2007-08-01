@@ -84,7 +84,7 @@ class Phutball < Rules
 
   def final?
     c = board.occupied[:white].first
-    c.y == 0 || c.y == 1 || c.y == 19 || c.y == 20
+    c.y == 0 || c.y == 20 || (!jumping && (c.y == 1 || c.y == 19))
   end
 
   def winner?( player )
