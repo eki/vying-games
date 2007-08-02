@@ -9,6 +9,10 @@ module AI
       @id, @username = 0, self.class.to_s
     end
 
+    def ready?
+      true
+    end
+
     def select( sequence, position, player )
       return position.ops.first if position.ops.length == 1
   

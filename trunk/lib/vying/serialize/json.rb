@@ -41,7 +41,8 @@ class Rules
                 'draw'   => draw? )
     else
       h.merge!( 'ops' => ops,
-                'turn' => turn )
+                'turn' => turn,
+                'has_ops' => has_ops )
     end
 
     h.merge!( 'board' => board ) if respond_to? :board
@@ -93,6 +94,18 @@ class KeryoPente < Rules
 
       h.merge!( 'line' => threat.occupied ) unless threat.nil?
     end
+    h
+  end
+end
+
+class Footsteps < Rules
+  def to_hash
+    h = super
+
+    h.merge!( 'points' => points,
+              'bids' => bids,
+              'bid_history' => bid_history )
+
     h
   end
 end

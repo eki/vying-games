@@ -42,9 +42,10 @@ module RulesTests
 
     g.ops.each do |op|
       assert( g.op?( op ) )
-      g.has_ops.each { |p| assert( g.op?( op, p ) ) }
       (g.players - g.has_ops).each { |p| assert( !g.op?( op, p ) ) }
     end
+
+    g.has_ops.each { |p| g.ops( p ).each { |op| assert( g.op?( op, p ) ) } }
 
     g << g.ops.first
 

@@ -122,12 +122,14 @@ class Game
   def step
     has_ops.each do |p|
       if players.include?( p )
-        position = history.last.censor( p )
-        op = user_map[p].select( sequence, position, p )
-        if op?( op, p )
-          self << op
-        else
-          raise "#{user_map[p].username} attempted invalid op: #{op}"
+        if user_map[p].ready?
+          position = history.last.censor( p )
+          op = user_map[p].select( sequence, position, p )
+          if op?( op, p )
+            self << op
+          else
+            raise "#{user_map[p].username} attempted invalid op: #{op}"
+          end
         end
       elsif p == :random
         ops = history.last.ops
