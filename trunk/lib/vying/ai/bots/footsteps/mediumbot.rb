@@ -8,8 +8,8 @@ class AI::Footsteps::MediumBot < AI::Bot
 
     if (player == :left  && marker.x == 5) ||     # about to lose
        (player == :right && marker.x == 1)
-      bid = [position.points[player], position.points[opp]+1].min
-      "#{player}_#{bid}"
+      bid = [position.points[player], position.points[opp]].min
+      "#{player}_#{rand( bid ) + 1}"
     elsif (player == :left  && marker.x == 1) ||  # about to win
           (player == :right && marker.x == 5) &&
           position.points[player] > position.points[opp]
