@@ -6,9 +6,11 @@ class AI::Footsteps::MediumBot < AI::Bot
     opp = player == :left ? :right : :left
     marker = position.board.occupied[:white].first
 
-    if (player == :left  && marker.x == 5) ||     # about to lose
-       (player == :right && marker.x == 1)
-      bid = [position.points[player], position.points[opp]].min
+    if position.points[opp] == 0
+      "#{player}_1"
+    elsif (player == :left  && marker.x == 5) ||     # about to lose
+          (player == :right && marker.x == 1)
+      bid = [position.points[player], position.points[opp]+1].min
       "#{player}_#{rand( bid ) + 1}"
     elsif (player == :left  && marker.x == 1) ||  # about to win
           (player == :right && marker.x == 5) &&
