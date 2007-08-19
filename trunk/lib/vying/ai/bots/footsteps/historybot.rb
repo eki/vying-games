@@ -19,8 +19,6 @@ class AI::Footsteps::HistoryBot < AI::Bot
       opp_avg = rand( 15 )
     end
 
-    puts "******************* opp_avg, necessity: #{opp_avg}, #{necessity}"
-
     if (player == :left  && marker.x == 1) ||  # about to win
           (player == :right && marker.x == 5) &&
           position.points[player] > position.points[opp]
@@ -38,8 +36,6 @@ class AI::Footsteps::HistoryBot < AI::Bot
                        [1, position.points[opp] - opp_dist].max].min
         lower_limit = [lower_limit, 1].max
       end
-
-      puts "******************* upper, lower: #{upper_limit}, #{lower_limit}"
 
       bid = upper_limit == lower_limit ? upper_limit :
               rand( upper_limit - lower_limit ) + lower_limit
