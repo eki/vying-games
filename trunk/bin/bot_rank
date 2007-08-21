@@ -46,7 +46,7 @@ end
 matchups( @bots || AI::Bot.list( @rules ) ) do |m|
   @number.times do |n|
     g = Game.new( @rules )
-    h = Hash[*Othello.players.zip(m.map { |bc| bc.new } ).flatten]
+    h = Hash[*@rules.players.zip(m.map { |bc| bc.new } ).flatten]
     g.register_users( h )
     g.play
     @games << g

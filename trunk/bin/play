@@ -27,7 +27,7 @@ opts = OptionParser.new
 opts.on( "-r", "--rules RULES" ) { |r| rules = Kernel.const_get( r ) }
 opts.on( "-n", "--number NUMBER" ) { |n| number = Integer(n) }
 opts.on( "-p", "--player PLAYER=BOT" ) do |s|
-  s =~ /(\w*)=(\w*)/
+  s =~ /(\w*)=([\w:]*)/
   #p2b[$1.downcase.intern] = Kernel.const_get( $2 ).new
   p2b[$1.downcase.intern] = AI::Bot.find( $2 ).new
 end
