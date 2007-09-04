@@ -177,7 +177,7 @@ class Rules
   end
 
   def has_ops
-    [turn]
+    final? ? [] : [turn]
   end
 
   def apply( op )

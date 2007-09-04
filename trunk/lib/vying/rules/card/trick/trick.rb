@@ -88,7 +88,9 @@ module TrickTaking
   end
 
   def has_ops
-    if post_deal && pass?
+    if final?
+      return []
+    elsif post_deal && pass?
       can_pass = []
       selected.each do |k,v|
         can_pass << k if v.length < pass_before_deal[:number]

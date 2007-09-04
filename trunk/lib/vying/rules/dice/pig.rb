@@ -25,7 +25,7 @@ class Pig < Rules
   end
 
   def has_ops
-    [rolling ? :random : turn]
+    final? ? [] : [rolling ? :random : turn]
   end
 
   def apply!( op )
