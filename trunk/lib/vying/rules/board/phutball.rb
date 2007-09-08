@@ -45,7 +45,7 @@ class Phutball < Rules
       return self
     end
 
-    coords = op.to_s.scan( /[A-Za-z]+\d+/ )
+    coords = op.to_coords
 
     if coords.length == 1
       board[coords.first] = :black
