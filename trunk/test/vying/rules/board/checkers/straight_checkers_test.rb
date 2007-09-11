@@ -201,13 +201,7 @@ class TestStraightCheckers < Test::Unit::TestCase
 
     assert( !g.final? )
 
-    puts g
-    puts g.ops
-
     g << "f7e8"
-
-    puts g
-    puts g.ops
 
     assert( g.final? )
     assert( g.winner?( :red ) )
