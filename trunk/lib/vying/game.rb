@@ -85,6 +85,7 @@ class Game
       ops.each { |op| append( op ); i += 1 }
     rescue
       i.times { undo }
+      raise
     end
     self
   end
