@@ -25,7 +25,7 @@ class Breakthrough < Rules
 
   def op?( op, player=nil )
     return false unless player.nil? || has_ops.include?( player )
-    ops && ops.include?( op.to_s )
+    !final? && ops.include?( op.to_s )
   end
 
   def ops( player=nil )
