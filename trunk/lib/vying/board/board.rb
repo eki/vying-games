@@ -42,6 +42,10 @@ class Board
     self
   end
 
+  def unoccupied
+    coords.select { |c| self[c].nil? }
+  end
+
   def each
     coords.each { |c| yield self[c] }
   end
