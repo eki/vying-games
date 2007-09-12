@@ -44,7 +44,12 @@ class NineMensMorris < Rules
 
   def ops( player=nil )
     return false unless player.nil? || has_ops.include?( player )
-    return false if final?
+
+    if remaining[:black] == 0 && remaining[:white] == 0 &&
+       (board.occupied[:black].length == 2 || 
+        board.occupied[:white].length == 2)
+      return false
+    end
 
     found = []
 
@@ -71,15 +76,20 @@ class NineMensMorris < Rules
 
     # Moving stones
 
-    if board.occupied[turn].length > 2
+    if board.occupied[turn].length > 3
       board.occupied[turn].each do |c|
         [:n, :e, :s, :w].each do |d|
           p1 = board[c1 = board.coords.next( c, d )]
+          until p1 != :x
+            p1 = board[c1 = board.coords.next( c1, d)]
+          end
+
           found << "#{c}#{c1}" if p1.nil? && ! c1.nil?
         end
       end
 
-      return found
+      # If we couldn't find any moves, the game is over
+      return found.empty? ? false : found
     end
 
     # Flying
@@ -120,15 +130,16 @@ class NineMensMorris < Rules
 
   def final?
     remaining[:black] == 0 && remaining[:white] == 0 &&
-    (board.occupied[:black] == 2 || board.occupied[:white] == 2)
+    (board.occupied[:black].length == 2 || 
+     board.occupied[:white].length == 2 || !ops)
   end
 
   def winner?( player )
-    final? && board.occupied[player] != 2
+    final? && board.occupied[player].length != 2
   end
 
   def loser?( player )
-    final? && board.occupied[player] == 2
+    final? && board.occupied[player].length == 2
   end
 
   def draw?
