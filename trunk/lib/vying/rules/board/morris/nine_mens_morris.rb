@@ -135,11 +135,19 @@ class NineMensMorris < Rules
   end
 
   def winner?( player )
-    final? && board.occupied[player].length != 2
+    opp = player == :black ? :white : :black
+
+    final? && (
+    (board.occupied[player].length > 2 && board.occupied[player].length == 2) ||
+    (turn != player) )
   end
 
   def loser?( player )
-    final? && board.occupied[player].length == 2
+    opp = player == :black ? :white : :black
+
+    final? && (
+    (board.occupied[player].length == 2 && board.occupied[player].length > 2) ||
+    (turn == player) )
   end
 
   def draw?
