@@ -23,8 +23,8 @@ class NineMensMorris < Rules
            :b3,:b5,
            :c2,:e2,
            :c6,:e6,
-           :f3,:f5,
-           :d4] = :x
+           :f3,:f5] = :x
+    @board[:d4] = :X
 
     @remaining = { :black => 9, :white => 9 }
     @removing = false
@@ -152,6 +152,12 @@ class NineMensMorris < Rules
 
   def draw?
     false
+  end
+
+  def score( player )
+    opp = player == :black ? :white : :black
+    opp_p = board.occupied[opp]
+    9 - remaining[opp] - (opp_p ? opp_p.length : 0)
   end
 
   def hash
