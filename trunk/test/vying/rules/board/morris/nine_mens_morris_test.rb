@@ -31,8 +31,8 @@ class TestNineMensMorris < Test::Unit::TestCase
       :b3,:b5,
       :c2,:e2,
       :c6,:e6,
-      :f3,:f5,
-      :d4] = :x
+      :f3,:f5] = :x
+    b[:d4] = :X
 
     assert_equal( b, g.board )
 
@@ -47,7 +47,7 @@ class TestNineMensMorris < Test::Unit::TestCase
 
   def test_has_score
     g = Game.new( NineMensMorris )
-    assert( !g.has_score? )
+    assert( g.has_score? )
   end
 
   def test_has_ops

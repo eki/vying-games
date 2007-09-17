@@ -90,21 +90,21 @@ class TestStraightCheckers < Test::Unit::TestCase
     g.board[:g4] = :white
     g.board[:f7] = nil
 
-    assert_equal( ["f3g4h5", "h3g4f5"], g.ops )
+    assert_equal( ["f3h5", "h3f5"], g.ops )
 
-    g << "f3g4h5"
+    g << "f3h5"
 
     assert_equal( :red, g.turn )
     assert( g.jumping )
-    assert_equal( ["h5g6f7"], g.ops )
+    assert_equal( ["h5f7"], g.ops )
 
-    g << "h5g6f7"
+    g << "h5f7"
 
     assert_equal( :white, g.turn )
     assert( ! g.jumping )
-    assert_equal( ["e8f7g6"], g.ops )
+    assert_equal( ["e8g6"], g.ops )
 
-    g << "e8f7g6"
+    g << "e8g6"
 
     assert_equal( :red, g.turn )
     assert( ! g.jumping )
@@ -116,9 +116,9 @@ class TestStraightCheckers < Test::Unit::TestCase
     g.board[:c6] = :red
     g.board[:g6,:e8] = nil
 
-    assert_equal( ["c6d7e8"], g.ops )
+    assert_equal( ["c6e8"], g.ops )
     
-    g << "c6d7e8"
+    g << "c6e8"
 
     assert_equal( :white, g.turn )
     assert( ! g.jumping )
@@ -128,15 +128,15 @@ class TestStraightCheckers < Test::Unit::TestCase
 
     assert_equal( :red, g.turn )
     assert( ! g.jumping )
-    assert_equal( ["e8f7g6"], g.ops )
+    assert_equal( ["e8g6"], g.ops )
 
-    g << "e8f7g6"
+    g << "e8g6"
 
     assert_equal( :white, g.turn )
     assert( ! g.jumping )
-    assert_equal( ["h7g6f5"], g.ops )
+    assert_equal( ["h7f5"], g.ops )
 
-    g << "h7g6f5"
+    g << "h7f5"
 
     assert_equal( nil, g.board[:g6] )
   end
@@ -151,6 +151,27 @@ class TestStraightCheckers < Test::Unit::TestCase
     g << "a2b1"
 
     assert_equal( :WHITE, g.board[:b1] )
+  end
+
+  def test_jumping_backwards
+    g = Game.new( StraightCheckers )
+
+    g.board[:c8] = :RED
+    g.board[:e6] = nil
+    g.board[:d5] = :white
+
+    assert_equal( ["c8e6"], g.ops )
+
+    g << "c8e6"
+
+    assert_equal( :red, g.turn )
+    assert_equal( ["e6c4"], g.ops )
+    assert( g.jumping )
+
+    g << "e6c4"
+
+    assert_equal( :white, g.turn )
+    assert( !g.jumping )
   end
 
   def test_final_01
