@@ -42,11 +42,11 @@ class StraightCheckers < Rules
     if jumping
       c = jumping
 
-      jd.each do |d|
+      (board[c] == k ? kjd : jd).each do |d|
         p1 = board[c1 = board.coords.next( c, d )]
         p2 = board[c2 = board.coords.next( c1, d )] if c1
         if (p1 == opp || p1 == oppk) && p2.nil? && !c2.nil?
-          found << "#{c}#{c1}#{c2}"
+          found << "#{c}#{c2}"
         end
       end
 
@@ -58,7 +58,7 @@ class StraightCheckers < Rules
         p1 = board[c1 = board.coords.next( c, d )]
         p2 = board[c2 = board.coords.next( c1, d )] if c1
         if (p1 == opp || p1 == oppk) && p2.nil? && !c2.nil?
-          found << "#{c}#{c1}#{c2}"
+          found << "#{c}#{c2}"
         end
       end
     end if board.occupied[p]
@@ -68,7 +68,7 @@ class StraightCheckers < Rules
         p1 = board[c1 = board.coords.next( c, d )]
         p2 = board[c2 = board.coords.next( c1, d )] if c1
         if (p1 == opp || p1 == oppk) && p2.nil? && !c2.nil?
-          found << "#{c}#{c1}#{c2}"
+          found << "#{c}#{c2}"
         end
       end
     end if board.occupied[k]
@@ -95,7 +95,7 @@ class StraightCheckers < Rules
   end
 
   def apply!( op )
-    coords, p = op.to_coords, turn
+    coords, p = Coord.expand( op.to_coords ), turn
 
     board.move( coords.first, coords.last )
 

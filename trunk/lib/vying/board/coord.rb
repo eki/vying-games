@@ -59,5 +59,33 @@ class Coord
   def to_coords
     [self]
   end
+
+  def next( d )
+    return Coord[x+1,y] if d == :e
+    return Coord[x-1,y] if d == :w
+    return Coord[x,y-1] if d == :n
+    return Coord[x,y+1] if d == :s
+    return Coord[x+1,y-1] if d == :ne
+    return Coord[x+1,y+1] if d == :se
+    return Coord[x-1,y-1] if d == :nw
+    return Coord[x-1,y+1] if d == :sw
+    nil
+  end
+
+  def self.expand( coords )
+    d = coords.first.direction_to( coords.last )
+    return coords unless d
+
+    expanded = [coords.first]
+    c1 = coords.first.next( d )
+    until c1 == coords.last
+      expanded << c1
+      c1 = c1.next( d )
+    end
+
+    expanded << coords.last
+
+    expanded
+  end
 end
 
