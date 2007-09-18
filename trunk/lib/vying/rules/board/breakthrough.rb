@@ -30,10 +30,7 @@ class Breakthrough < Rules
 
   def ops( player=nil )
     return false unless player.nil? || has_ops.include?( player )
-    if board[:a1, :b1, :c1, :d1, :e1, :f1, :g1, :h1].include?( :white ) || 
-       board[:a8, :b8, :c8, :d8, :e8, :f8, :g8, :h8].include?( :black ) 
-      return false
-    end
+    return false if final?
 
     opp  = (turn == :black) ? :white : :black
 
@@ -50,7 +47,7 @@ class Breakthrough < Rules
 
       cds[turn].each do |d|
         p1 = board[c1 = board.coords.next( c, d )]
-        found << "#{c}#{c1}" if p1 == opp && ! c1.nil?
+        found << "#{c}#{c1}" unless c1.nil?
       end
     end
 
@@ -66,15 +63,12 @@ class Breakthrough < Rules
 
     turn( :rotate )
 
-    turn( :rotate ) unless ops
-
     self
   end
 
   def final?
     board[:a1, :b1, :c1, :d1, :e1, :f1, :g1, :h1].include?( :white ) ||
-    board[:a8, :b8, :c8, :d8, :e8, :f8, :g8, :h8].include?( :black ) ||
-    ! ops
+    board[:a8, :b8, :c8, :d8, :e8, :f8, :g8, :h8].include?( :black ) 
   end
 
   def winner?( player )
@@ -92,7 +86,7 @@ class Breakthrough < Rules
   end
 
   def draw?
-    final? && ! players.any? { |p| winner?( p ) }
+    false
   end
 
   def hash
