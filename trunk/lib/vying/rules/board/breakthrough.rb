@@ -47,7 +47,7 @@ class Breakthrough < Rules
 
       cds[turn].each do |d|
         p1 = board[c1 = board.coords.next( c, d )]
-        found << "#{c}#{c1}" unless c1.nil?
+        found << "#{c}#{c1}" unless c1.nil? || p1 == turn
       end
     end
 
