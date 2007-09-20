@@ -48,20 +48,13 @@ class TestBreakthrough < Test::Unit::TestCase
 
   def test_ops
     g = Game.new( Breakthrough )
-    ops = g.ops
 
-    assert_equal( 'a2a3', ops[0] )
-    assert_equal( 'b2b3', ops[1] )
-    assert_equal( 'c2c3', ops[2] )
-    assert_equal( 'd2d3', ops[3] )
-    assert_equal( 'e2e3', ops[4] )
-    assert_equal( 'f2f3', ops[5] )
-    assert_equal( 'g2g3', ops[6] )
-    assert_equal( 'h2h3', ops.last )
+    assert_equal( ["a2a3", "a2b3", "b2b3", "b2c3", "b2a3", "c2c3", "c2d3",
+                   "c2b3", "d2d3", "d2e3", "d2c3", "e2e3", "e2f3", "e2d3",
+                   "f2f3", "f2g3", "f2e3", "g2g3", "g2h3", "g2f3", "h2h3", 
+                   "h2g3"], g.ops )
 
-    while ops = g.ops do
-      g << ops[0]
-    end
+    g << g.ops.first until g.final?
 
     assert_not_equal( g.history.first, g.history.last )
   end
@@ -76,16 +69,16 @@ class TestBreakthrough < Test::Unit::TestCase
             :a8,:b8,:c8,:d8,:e8,:f8,:g8,:h8] = nil
 
     g.board[:e4] = :black
-    assert_equal( ["e4e5"], g.ops )
+    assert_equal( ["e4e5", "e4f5", "e4d5"], g.ops )
 
     g.board[:e5] = :white
-    assert_not_equal( ["e4e5"], g.ops )
+    assert_equal( ["e4f5", "e4d5"], g.ops )
     
     g.board[:e5] = :black
-    assert_not_equal( ["e4e5"], g.ops )
+    assert_equal( ["e4f5", "e4d5", "e5e6", "e5f6", "e5d6"], g.ops )
    
     g.board[:e5] = nil
-    assert_equal( ["e4e5"], g.ops )
+    assert_equal( ["e4e5", "e4f5", "e4d5"], g.ops )
 
     g << "e4e5"
 
@@ -94,13 +87,15 @@ class TestBreakthrough < Test::Unit::TestCase
    
     g.board[:e4] = :black 
     g.board[:e5] = :white
+    g.turn( :rotate ) until g.turn == :white
+
     assert_not_equal( ["e5e4"], g.ops )
     
     g.board[:e4] = nil
-    assert_equal( ["e5e4"], g.ops )
+    assert_equal( ["e5e4", "e5f4", "e5d4"], g.ops )
     
     g.board[:e4] = :white
-    assert_not_equal( ["e5e4"], g.ops )
+    assert_equal( ["e5f4", "e5d4", "e4e3", "e4f3", "e4d3"], g.ops )
 
     g.board[:e4] = nil
 
@@ -122,7 +117,8 @@ class TestBreakthrough < Test::Unit::TestCase
     g.board[:a2, :b2, :c2] = :black
     g.board[:b3] = :white
 
-    assert_equal( ["a2a3", "a2b3", "c2c3", "c2b3"], g.ops )
+    assert_equal( ["a2a3", "a2b3", "b2c3", "b2a3", 
+                   "c2c3", "c2d3", "c2b3"], g.ops )
 
     g.turn( :rotate )
 
