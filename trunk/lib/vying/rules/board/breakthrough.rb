@@ -63,6 +63,8 @@ class Breakthrough < Rules
 
     turn( :rotate )
 
+    turn( :rotate ) unless ops
+
     self
   end
 

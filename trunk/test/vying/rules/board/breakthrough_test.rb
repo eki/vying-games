@@ -130,6 +130,26 @@ class TestBreakthrough < Test::Unit::TestCase
     assert_equal( :white, g.board[:c2] )
   end
 
+  def test_pass
+    g = Game.new( Breakthrough )
+
+    # Clear out the board
+    g.board[:a1,:b1,:c1,:d1,:e1,:f1,:g1,:h1,
+            :a2,:b2,:c2,:d2,:e2,:f2,:g2,:h2,
+            :a7,:b7,:c7,:d7,:e7,:f7,:g7,:h7,
+            :a8,:b8,:c8,:d8,:e8,:f8,:g8,:h8] = nil
+
+    g.board[:a2, :b2, :c2] = :black
+
+    g << g.ops.first until g.final?
+
+    assert( ! g.draw? )
+    assert( g.winner?( :black ) )
+    assert( g.loser?( :white ) )
+    assert( !g.winner?( :white ) )
+    assert( !g.loser?( :black ) )
+  end
+
   def test_game01
     # This game is going to be a win for Black
     g = play_sequence( ["b2b3", "c7c6", "b3b4", "c6c5", "b4b5", "c5c4",
