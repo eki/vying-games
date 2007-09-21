@@ -49,7 +49,7 @@ class Phutball < Rules
 
     if coords.length == 1
       board[coords.first] = :black
-      @unused_ops.delete( coords.first )
+      @unused_ops.delete( coords.first.to_s )
       turn( :rotate )
     else
       sc = coords.shift
