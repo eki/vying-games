@@ -221,25 +221,31 @@ class TestPhutball < Test::Unit::TestCase
     assert( g.ops.include?( "h10" ) )
   end
 
- def test_game01
-   g = play_sequence( [:h10,:h9,:h8,:h7,:h6,:h5,:h4,:h3,:h2,:h11h1] )
+  def test_unused_ops
+    g = Game.new Phutball
+    g << "k14"
+    assert( ! g.ops.include?( "k14" ) )
+  end
 
-   assert( !g.draw? )
-   assert( !g.winner?( :eks ) )
-   assert( g.loser?( :eks ) )
-   assert( g.winner?( :ohs ) )
-   assert( !g.loser?( :ohs ) )
- end
+  def test_game01
+    g = play_sequence( [:h10,:h9,:h8,:h7,:h6,:h5,:h4,:h3,:h2,:h11h1] )
 
- def test_game02
-   g = play_sequence( [:h12,:h13,:h14,:h15,:h16,:h17,:h18,:h19,:h11h20] )
+    assert( !g.draw? )
+    assert( !g.winner?( :eks ) )
+    assert( g.loser?( :eks ) )
+    assert( g.winner?( :ohs ) )
+    assert( !g.loser?( :ohs ) )
+  end
 
-   assert( !g.draw? )
-   assert( g.winner?( :eks ) )
-   assert( !g.loser?( :eks ) )
-   assert( !g.winner?( :ohs ) )
-   assert( g.loser?( :ohs ) )
- end
+  def test_game02
+    g = play_sequence( [:h12,:h13,:h14,:h15,:h16,:h17,:h18,:h19,:h11h20] )
+
+    assert( !g.draw? )
+    assert( g.winner?( :eks ) )
+    assert( !g.loser?( :eks ) )
+    assert( !g.winner?( :ohs ) )
+    assert( g.loser?( :ohs ) )
+  end
 
 # def test_game02
 #   # This game is going to be a win for White (diagonal)(winner in middle)
