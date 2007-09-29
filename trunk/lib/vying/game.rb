@@ -121,10 +121,39 @@ class Game
   end
 
   def step
+
+    # Accept or reject offered draw
+    if allow_draws_by_agreement? && offered_by = draw_offered_by
+      accepted = user_map.all? do |p,u| 
+        position = history.last.censor( p )
+        p == offered_by || u.accept_draw?( sequence, position, p )
+      end
+
+      sequence.pop
+      sequence << "draw" if accepted
+
+      return self
+    end
+
     has_ops.each do |p|
       if players.include?( p )
         if user_map[p].ready?
           position = history.last.censor( p )
+
+          # Handle draw offers
+          if allow_draws_by_agreement? && 
+             user_map[p].offer_draw?( sequence, position, p )
+            sequence << "draw_offered_by_#{p}"
+            return self
+          end
+
+          # Ask for forfeit
+          if user_map[p].forfeit?( sequence, position, p )
+            sequence << "forfeit_by_#{p}"
+            return self
+          end
+
+          # Ask for an op
           op = user_map[p].select( sequence, position, p )
           if op?( op, p )
             self << op
@@ -143,6 +172,52 @@ class Game
   def play
     step until final?
     results
+  end
+
+  def final?
+    forfeit? || draw_by_agreement? || history.last.final?
+  end
+
+  def winner?( player )
+    (forfeit? && forfeit_by != player) || 
+    (!draw_by_agreement? && history.last.winner?( player ))
+  end
+
+  def loser?( player )
+    (forfeit? && forfeit_by == player) || 
+    (!draw_by_agreement? && history.last.loser?( player ))
+  end
+
+  def draw?
+    draw_by_agreement? || history.last.draw?
+  end
+
+  def op?( op, player=nil )
+    history.last.op?( op, player ) unless draw_by_agreement? || forfeit?
+  end
+
+  def ops( player=nil )
+    history.last.ops( player ) unless draw_by_agreement? || forfeit?
+  end
+
+  def forfeit?
+    forfeit_by
+  end
+
+  def forfeit_by
+    if sequence.last =~ /^forfeit_by_(\w+)$/
+      $1.intern
+    end
+  end
+
+  def draw_by_agreement?
+    sequence.last == "draw"
+  end
+
+  def draw_offered_by
+    if sequence.last =~ /draw_offered_by_(\w+)/
+      $1.intern
+    end
   end
 
   def results

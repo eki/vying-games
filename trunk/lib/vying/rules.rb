@@ -103,6 +103,14 @@ class Rules
     class << self; attr_reader :info; end
   end
 
+  def self.allow_draws_by_agreement
+    info[:allow_draws_by_agreement] = true
+  end
+
+  def allow_draws_by_agreement?
+    info[:allow_draws_by_agreement]
+  end
+
   def self.random
     info[:random] = true
     attr_reader :seed, :rng
@@ -241,6 +249,10 @@ class Rules
     s = to_s
     s.gsub!( /(.)([A-Z])/ ) { "#{$1}_#{$2.downcase}" }
     s.downcase
+  end
+
+  class << self
+    private :allow_draws_by_agreement
   end
 end
 

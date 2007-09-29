@@ -20,6 +20,18 @@ module AI
       op
     end
 
+    def forfeit?( sequence, position, player )
+      false
+    end
+
+    def offer_draw?( sequence, position, player )
+      false
+    end
+
+    def accept_draw?( sequence, position, player )
+      false
+    end
+
     def analyze( position, player )
       h = {}
       position.ops.each do |op|
@@ -128,6 +140,18 @@ module AI
 
     def select( sequence, position, player )
       queue.shift
+    end
+
+    def forfeit?( sequence, position, player )
+      queue.shift if queue.first == "forfeit"
+    end
+
+    def offer_draw?( sequence, position, player )
+      queue.shift if queue.first == "offer_draw"
+    end
+
+    def accept_draw?( sequence, position, player )
+      queue.shift if queue.first == "accept_draw"
     end
 
     def bot?

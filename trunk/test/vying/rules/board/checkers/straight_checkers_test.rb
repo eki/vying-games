@@ -33,6 +33,11 @@ class TestStraightCheckers < Test::Unit::TestCase
     assert_equal( false, g.jumping )
   end
 
+  def test_allow_draws_by_agreement
+    g = Game.new( StraightCheckers )
+    assert( g.allow_draws_by_agreement? )
+  end
+
   def test_has_score
     g = Game.new( StraightCheckers )
     assert( !g.has_score? )

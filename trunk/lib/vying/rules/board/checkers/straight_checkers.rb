@@ -6,6 +6,8 @@ class StraightCheckers < Rules
   info :name      => 'Straight Checkers',
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Checkers>']
 
+  allow_draws_by_agreement
+
   attr_reader :board, :jumping
 
   players [:red, :white]

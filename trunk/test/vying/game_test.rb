@@ -2,6 +2,7 @@ require 'test/unit'
 
 require 'vying/rules'
 require 'vying/game'
+require 'vying/ai/bot'
 
 class FakeRules < Rules
 
@@ -10,6 +11,8 @@ class FakeRules < Rules
   info :name => "Fake Rules"
 
   random
+
+  allow_draws_by_agreement
 
   players [:a, :b, :c]
 
@@ -22,11 +25,11 @@ class FakeRules < Rules
     @fake_board, @fake_foo = "edcba", "bar"
   end
 
-  def op?( op )
+  def op?( op, player=nil )
     op.to_s =~ /(r|s)/
   end
 
-  def ops
+  def ops( player=nil )
     return nil if final?
     ['r','s']
   end
@@ -42,6 +45,18 @@ class FakeRules < Rules
 
   def final?
     fake_board.length == 1
+  end
+
+  def winner?( player )
+    final? && player != turn
+  end
+
+  def loser?( player )
+    final? && player == turn
+  end
+
+  def draw?
+    false
   end
 end
 
@@ -138,6 +153,115 @@ class TestGame < Test::Unit::TestCase
     g << g.ops[1] # e
     assert( g.final? )
     assert( g.ops.nil? )
+  end
+
+  def test_forfeit
+    g = Game.new( FakeRules )
+
+    g.players.each do |p|
+      g.register_users p => AI::Human.new
+    end 
+
+    assert( !g.final? )
+    assert( !g.draw? )
+
+    g.players.each do |p|
+      assert( !g.winner?( p ) )
+      assert( !g.loser?( p ) )
+    end 
+
+    ops = g.ops
+   
+    g.user_map[g.players.first] << "forfeit"
+    g.step
+
+    assert( g.final? )
+    assert( !g.draw? )
+    assert( !g.winner?( g.players.first ) )
+    assert( g.loser?( g.players.first ) )
+    assert( g.winner?( g.players.last ) )
+    assert( !g.loser?( g.players.last ) )
+
+    assert( ! g.ops )
+
+    ops.each do |op|
+      assert( ! g.op?( op ) )
+    end
+
+    assert_equal( "forfeit_by_#{g.players.first}", g.sequence.last )
+  end
+
+  def test_human
+    u = AI::Human.new
+    
+    assert( ! u.accept_draw?( nil, nil, nil ) )
+
+    u << "accept_draw"
+
+    assert( u.accept_draw?( nil, nil, nil ) )
+    assert( ! u.accept_draw?( nil, nil, nil ) )
+
+    u << "blah"
+
+    assert( ! u.accept_draw?( nil, nil, nil ) )
+    assert_equal( "blah", u.select( nil, nil, nil ) )
+
+    u << "offer_draw"
+
+    assert( u.offer_draw?( nil, nil, nil ) )
+    assert( ! u.offer_draw?( nil, nil, nil ) )
+
+    u << "forfeit"
+
+    assert( u.forfeit?( nil, nil, nil ) )
+    assert( ! u.forfeit?( nil, nil, nil ) )
+  end
+
+  def test_draw
+    g = Game.new FakeRules
+
+    g.players.each do |p|
+      g.register_users p => AI::Human.new
+    end 
+
+    assert( !g.final? )
+    assert( !g.draw? )
+
+    g.players.each do |p|
+      assert( !g.winner?( p ) )
+      assert( !g.loser?( p ) )
+    end 
+
+    ops = g.ops
+   
+    g.user_map[g.players.first] << "offer_draw"
+
+    g.players.each do |p|
+      g.user_map[p] << "accept_draw"
+    end 
+
+    g.step
+
+    assert_equal( g.players.first, g.draw_offered_by )
+
+    g.step
+
+    assert( g.final? )
+    assert( g.draw? )
+    assert( !g.winner?( g.players.first ) )
+    assert( !g.loser?( g.players.first ) )
+    assert( !g.winner?( g.players.last ) )
+    assert( !g.loser?( g.players.last ) )
+
+    assert( ! g.ops )
+
+    ops.each do |op|
+      assert( ! g.op?( op ) )
+    end
+
+    assert( ! g.user_map[g.players.first].queue.empty? )
+
+    assert_equal( "draw", g.sequence.last )
   end
 end
 
