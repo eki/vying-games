@@ -30,7 +30,7 @@ class Footsteps < Rules
   end
 
   def has_ops
-    final? ? [] : bids.keys.select { |p| ! bids[p] && points[p] > 0 }
+    final? ? [] : players.select { |p| ! bids[p] && points[p] > 0 }
   end
 
   def op?( op, player=nil )
