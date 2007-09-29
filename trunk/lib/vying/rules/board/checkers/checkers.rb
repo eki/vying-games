@@ -1,9 +1,9 @@
 require 'vying/rules'
 require 'vying/board/board'
 
-class StraightCheckers < Rules
+class Checkers < Rules
 
-  info :name      => 'Straight Checkers',
+  info :name      => 'Checkers',
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Checkers>']
 
   allow_draws_by_agreement
