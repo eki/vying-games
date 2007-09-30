@@ -1,8 +1,13 @@
 
 class GameResults
-  attr_reader :seed, :sequence, :user_map, :win_lose_draw, :scores, :check
+  attr_reader :seed, :sequence, :win_lose_draw, :scores, :check
+
+  def initialize( rules, seed, sequence, win_lose_draw, scores, check )
+    @rules, @seed, @sequence, @win_lose_draw, @scores, @check =
+      rules, seed, sequence, win_lose_draw, scores, check
+  end
   
-  def initialize( game )
+  def self.from_game( game )
     @rules = game.rules.to_snake_case
     @seed = game.respond_to?( :seed ) ? game.seed : nil
     @sequence = game.sequence
@@ -24,12 +29,18 @@ class GameResults
       end
     end
 
-    i = rand(game.history.length-1)
+    i = rand( game.history.length )
     @check = "#{i},#{game.history[i].hash},#{game.history.last.hash}"
   end
 
   def rules
     Rules.find( @rules )
+  end
+
+  def verify
+    i, h1, h2 = check.split( /,/ ).map { |n| n.to_i }
+    game = Game.replay( self )
+    game.history[i].hash == h1 && game.history.last.hash == h2
   end
 end
 
@@ -221,12 +232,22 @@ class Game
   end
 
   def results
-    GameResults.new( self )
+    GameResults.from_game( self )
   end
 
   def Game.replay( results )
+    special_ops = [/^forfeit_by_(\w+)$/, /draw_offered_by_(\w+)/,
+                   /^draw$/]
+
     g = Game.new( results.rules, results.seed )
-    g << results.sequence
+
+    s = results.sequence.dup
+
+    if special_ops.any? { |so| s.last =~ so }
+      s.pop
+    end
+
+    g << s
     g
   end
 
