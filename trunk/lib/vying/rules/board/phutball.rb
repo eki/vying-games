@@ -99,10 +99,6 @@ class Phutball < Rules
     (player == :eks && (c.y == 1 || c.y == 0))
   end
 
-  def draw?
-    false
-  end
-
   def hash
     [board,turn].hash
   end

@@ -141,10 +141,6 @@ class InternationalCheckers < Rules
     player == turn
   end
 
-  def draw?
-    false
-  end
-
   def hash
     [board,turn].hash
   end

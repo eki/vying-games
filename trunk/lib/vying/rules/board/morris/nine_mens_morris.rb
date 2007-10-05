@@ -150,10 +150,6 @@ class NineMensMorris < Rules
     (turn == player) )
   end
 
-  def draw?
-    false
-  end
-
   def score( player )
     opp = player == :black ? :white : :black
     opp_p = board.occupied[opp]
