@@ -32,7 +32,7 @@ class TestHearts < Test::Unit::TestCase
     12.times { g << g.moves.first }
 
     # The 2 of Clubs is led
-    assert_equal( [Card[:C2]], g.moves )
+    assert_equal( ['C2'], g.moves )
   end
 
   def test_has_moves
@@ -40,7 +40,7 @@ class TestHearts < Test::Unit::TestCase
 
   def test_moves
     g = Game.new( Hearts )
-    assert_equal( Card[:C2], g.moves.first )
+    assert_equal( 'C2', g.moves.first )
     assert( g.move?( Card[:C2] ) )
     assert( g.move?( :C2 ) )
   end

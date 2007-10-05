@@ -26,9 +26,7 @@ class TestFifteen < Test::Unit::TestCase
     assert_equal( 'a8', moves[7] )
     assert_equal( 'a9', moves[8] )
 
-    while moves = g.moves do
-      g << moves[0]
-    end
+    g << g.moves.first until g.final?
 
     assert_not_equal( g.history[0], g.history.last )
 

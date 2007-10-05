@@ -10,13 +10,28 @@ number = 1
 class HumanBot < AI::Bot
   def select( sequence, position, player )
     puts position
+
     puts "Ops: #{position.moves.inspect}"
     print "Select: "
-    move = $stdin.gets.chomp.intern
+
+    move = $stdin.gets.chomp
+
+    if move == ""
+      puts "exiting..."
+      exit
+    end
+
     until position.move?( move )
       puts "'#{move}' not a valid move!"
+
       print "Select: "
-      move = $stdin.gets.chomp.intern
+
+      move = $stdin.gets.chomp
+
+      if move == ""
+        puts "exiting..."
+        exit
+      end
     end
     move 
   end

@@ -173,7 +173,7 @@ class Rules
   end
 
   def move?( move, player=nil )
-    (moves( player ) || []) .include?( move )
+    moves( player ).include?( move.to_s )
   end
 
   def draw?

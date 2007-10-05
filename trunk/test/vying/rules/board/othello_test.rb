@@ -27,9 +27,7 @@ class TestOthello < Test::Unit::TestCase
 
     assert_equal( ['d3','c4','f5','e6'].sort, moves.sort )
 
-    while moves = g.moves do
-      g << moves[0]
-    end
+    g << g.moves.first until g.final?
 
     assert_not_equal( g.history[0], g.history.last )
   end

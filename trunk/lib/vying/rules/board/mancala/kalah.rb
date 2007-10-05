@@ -21,15 +21,9 @@ class Kalah < Rules
                      :two => ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }
   end
 
-  def move?( move, player=nil )
-    valid = moves( player )
-    valid && valid.include?( move.to_s )
-  end
-
   def moves( player=nil )
-    return false unless player.nil? || has_moves.include?( player )
-    valid = @moves_cache[turn].select { |c| board[c] > 0 }
-    valid.empty? ? false : valid
+    return [] unless player.nil? || has_moves.include?( player )
+    @moves_cache[turn].select { |c| board[c] > 0 }
   end
 
   def apply!( move )
@@ -117,7 +111,7 @@ class Kalah < Rules
   end
 
   def final?
-    @moves_cache[turn].inject( 0 ) { |s,c| s + board[c] } == 0
+    @moves_cache[turn].all? { |c| board[c] == 0 }
   end
 
   def winner?( player )

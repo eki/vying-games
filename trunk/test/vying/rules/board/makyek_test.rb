@@ -41,9 +41,7 @@ class TestMakyek < Test::Unit::TestCase
     assert_equal( "c1c2", moves[2] )
     assert_equal( "h3h5", moves[-1] )
 
-    while moves = g.moves do
-      g << g.moves.first
-    end
+    g << g.moves.first until g.final?
 
     assert_not_equal( g.history[0], g.history.last )
   end

@@ -62,9 +62,7 @@ class TestCheckers < Test::Unit::TestCase
     assert_equal( 'f3e4', moves[5] )
     assert_equal( 'h3g4', moves.last )
 
-    while moves = g.moves do
-      g << moves.first
-    end
+    g << g.moves.first until g.final?
 
     assert_not_equal( g.history.first, g.history.last )
   end

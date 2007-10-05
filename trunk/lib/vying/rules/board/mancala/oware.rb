@@ -23,13 +23,8 @@ class Oware < Rules
                      :two => ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }
   end
 
-  def move?( move, player=nil )
-    valid = moves( player )
-    valid && valid.include?( move.to_s )
-  end
-
   def moves( player=nil )
-    return false unless player.nil? || has_moves.include?( player )
+    return [] unless player.nil? || has_moves.include?( player )
 
     valid = @moves_cache[turn].select { |c| board[c] > 0 }
 
@@ -43,7 +38,7 @@ class Oware < Rules
       valid = still_valid unless still_valid.empty?
     end
 
-    valid.empty? ? false : valid
+    valid
   end
 
   def apply!( move )
@@ -122,7 +117,7 @@ class Oware < Rules
   end
 
   def final?
-    !moves
+    moves.empty?
   end
 
   def winner?( player )

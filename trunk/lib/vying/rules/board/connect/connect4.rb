@@ -28,14 +28,10 @@ class Connect4 < Rules
     @unused_moves = @@init_moves.map { |a| a.dup }
   end
 
-  def move?( move, player=nil )
-    return false unless player.nil? || has_moves.include?( player )
-    unused_moves.map { |a| a.last }.include?( move.to_s )
-  end
-
   def moves( player=nil )
-    return false unless player.nil? || has_moves.include?( player )
-    (final? || (tmp = unused_moves.map { |a| a.last }) == []) ? nil : tmp
+    return [] unless player.nil? || has_moves.include?( player )
+    return [] if final?
+    unused_moves.map { |a| a.last }
   end
 
   def apply!( move )

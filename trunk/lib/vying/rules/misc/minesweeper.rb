@@ -40,12 +40,9 @@ class Minesweeper < Rules
     @unused_moves = @@init_moves.dup
   end
 
-  def move?( move, player=nil )
-    unused_moves.include?( move.to_s )
-  end
-
   def moves( player=nil )
-    final? || unused_moves == [] ? nil : unused_moves
+    return [] if final?
+    unused_moves
   end
 
   def apply!( move )

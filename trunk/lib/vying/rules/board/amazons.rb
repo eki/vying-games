@@ -16,7 +16,6 @@ class Amazons < Rules
     @board = AmazonsBoard.new
 
     @lastc = nil
-
   end
 
   def move?( move, player=nil )
@@ -43,7 +42,7 @@ class Amazons < Rules
 
   def moves( player=nil )
     return [] unless player.nil? || has_moves.include?( player )
-    return false if final?
+    return [] if final?
 
     a = []
 
@@ -57,7 +56,7 @@ class Amazons < Rules
       board.mobility[lastc].each { |ec| a << "#{lastc}#{ec}" }
     end
 
-    a == [] ? nil : a
+    a
   end
 
   def apply!( move )

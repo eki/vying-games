@@ -23,14 +23,9 @@ class Breakthrough < Rules
            :a8,:b8,:c8,:d8,:e8,:f8,:g8,:h8] = :white
   end
 
-  def move?( move, player=nil )
-    return false unless player.nil? || has_moves.include?( player )
-    !final? && moves.include?( move.to_s )
-  end
-
   def moves( player=nil )
-    return false unless player.nil? || has_moves.include?( player )
-    return false if final?
+    return [] unless player.nil? || has_moves.include?( player )
+    return [] if final?
 
     opp  = (turn == :black) ? :white : :black
 
@@ -51,9 +46,7 @@ class Breakthrough < Rules
       end
     end
 
-    return found unless found.empty?
-
-    false
+    found
   end
 
   def apply!( move )
@@ -63,7 +56,7 @@ class Breakthrough < Rules
 
     turn( :rotate )
 
-    turn( :rotate ) unless moves
+    turn( :rotate ) if moves.empty?
 
     self
   end

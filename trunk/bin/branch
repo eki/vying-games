@@ -22,7 +22,9 @@ rules.each do |r|
 
   n.times do
     g = Game.new( r )
-    while moves = g.moves
+    until g.final?
+      moves = g.moves
+
       total_spread += moves.length
       total_moves += 1
 

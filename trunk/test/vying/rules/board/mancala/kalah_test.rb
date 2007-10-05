@@ -42,11 +42,9 @@ class TestKalah < Test::Unit::TestCase
     assert_equal( :one, g.turn )
     assert_equal( ['a1', 'b1', 'c1', 'd1', 'f1'], g.moves )
 
-    while moves = g.moves do
-      g << moves[0]
-    end
+    g << g.moves.first until g.final?
 
-    assert_not_equal( g.history[0], g.history.last )
+    assert_not_equal( g.history.first, g.history.last )
   end
 
   def test_players

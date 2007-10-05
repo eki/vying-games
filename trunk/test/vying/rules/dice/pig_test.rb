@@ -41,11 +41,9 @@ class TestPig < Test::Unit::TestCase
     g = Game.new( Pig )
     moves = g.moves
 
-    assert_equal( [:pass,:roll], moves )
+    assert_equal( ['pass','roll'], moves )
 
-    while moves = g.moves do
-      g << [:roll, 1, :roll, 6, :roll, 5, :pass]
-    end
+    g << [:roll, 1, :roll, 6, :roll, 5, :pass] until g.final?
 
     assert_not_equal( g.history[0], g.history.last )
   end

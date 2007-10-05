@@ -56,8 +56,8 @@ class Makyek < Rules
   end
 
   def moves( player=nil )
-    return false     unless player.nil? || has_moves.include?( player )
-    return nil       if final?
+    return []          unless player.nil? || has_moves.include?( player )
+    return []          if final?
     return moves_cache if moves_cache != :ns
 
     a = []
@@ -73,7 +73,7 @@ class Makyek < Rules
       end
     end
 
-    moves_cache = a == [] ? nil : a
+    moves_cache = a
   end
 
   def apply!( move )
@@ -119,7 +119,7 @@ class Makyek < Rules
     turn( :rotate )
     @lastc = ec
     @moves_cache = :ns
-    return self if moves
+    return self unless moves.empty?
 
     turn( :rotate )
     @moves_cache = :ns

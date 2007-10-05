@@ -102,14 +102,9 @@ module TrickTaking
     end
   end
 
-  def move?( move, player=nil )
-    move = Card[move] unless move.kind_of?( Card )
-    (moves( player ) || []).include?( move )
-  end
-
   def moves( player=nil )
     return [] unless player.nil? || has_moves.include?( player )
-    return nil if final?
+    return [] if final?
 
     if post_deal && pass?
       passable = {}
@@ -117,8 +112,8 @@ module TrickTaking
         passable[k] = v - selected[k] if has_moves.include?( k )
       end
 
-      return passable[player] if player
-      return passable.values.flatten
+      a = player ? passable[player] : passable.values.flatten
+      return a.map { |c| c.to_s }
     end
 
     hand = hands[turn]
@@ -126,9 +121,9 @@ module TrickTaking
     if trick.empty?
       lead.each do |rule|
         if rule.kind_of?( Card )
-          return [rule] if hand.include?( rule )
+          return [rule.to_s] if hand.include?( rule )
         elsif rule == :any
-          return broken ? hand : hand - wait_until_broken 
+          return (broken ? hand : hand - wait_until_broken).map { |c| c.to_s }
         end
       end
     else
@@ -138,18 +133,20 @@ module TrickTaking
         case rule
           when :must_follow_suit
             on_suit = hand.select { |c| c.suit == led }
-            return on_suit unless on_suit.empty?
+            return on_suit.map { |c| c.to_s } unless on_suit.empty?
           when :must_trump
             in_trump = hand & trump
-            return in_trump unless in_trump.empty?
+            return in_trump.map { |c| c.to_s } unless in_trump.empty?
         end
       end
     end
 
-    hand
+    hand.map { |c| c.to_s }
   end
 
   def apply!( move )
+    move = Card[move]
+
     if post_deal && pass?
       hands.each { |k,v| selected[k] << move if v.include?( move ) }
       if selected.all? { |k,v| v.length == pass_before_deal[:number] }

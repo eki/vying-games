@@ -32,7 +32,7 @@ module RulesTests
     assert( !g.final? )
     g << s[-1]
     assert( g.final? )
-    assert( !g.moves )
+    assert( g.moves.empty? )
     assert( !g.move?( s[-1] ) )
     g
   end

@@ -24,14 +24,9 @@ class Phutball < Rules
     @jumping = false
   end
 
-  def move?( move, player=nil )
-    return false unless player.nil? || has_moves.include?( player )
-    !final? && moves.include?( move.to_s )
-  end
-
   def moves( player=nil )
-    return false unless player.nil? || has_moves.include?( player )
-    return false if final?
+    return []    unless player.nil? || has_moves.include?( player )
+    return []    if final?
 
     return jumping_moves + ["pass"] if jumping
 

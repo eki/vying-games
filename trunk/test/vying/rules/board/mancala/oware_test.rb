@@ -42,11 +42,9 @@ class TestOware < Test::Unit::TestCase
     assert_equal( :two, g.turn )
     assert_equal( ['a2', 'b2', 'c2', 'd2', 'e2'], g.moves )
 
-    while moves = g.moves do
-      g << moves[0]
-    end
+    g << g.moves.first until g.final?
 
-    assert_not_equal( g.history[0], g.history.last )
+    assert_not_equal( g.history.first, g.history.last )
   end
 
   def test_players
@@ -177,7 +175,7 @@ class TestOware < Test::Unit::TestCase
     g << g.moves.first
 
     assert( g.final? )
-    assert( !g.moves )
+    assert( g.moves.empty? )
     assert_equal( 1, g.score( :one ) )
     assert_equal( 1, g.score( :two ) )
   end

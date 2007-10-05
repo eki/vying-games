@@ -31,10 +31,10 @@ class Othello < Rules
   end
 
   def moves( player=nil )
-    return false unless player.nil? || has_moves.include?( player )
+    return []          unless player.nil? || has_moves.include?( player )
     return moves_cache if moves_cache != :ns
     a = frontier.select { |c| board.valid?( c, turn ) }.map { |c| c.to_s }
-    moves_cache = (a == [] ? nil : a)
+    moves_cache = a
   end
 
   def apply!( move )
@@ -43,7 +43,7 @@ class Othello < Rules
 
     turn( :rotate )
     @moves_cache = :ns
-    return self if moves
+    return self unless moves.empty?
 
     turn( :rotate )
     moves_cache = :ns
@@ -52,7 +52,7 @@ class Othello < Rules
   end
 
   def final?
-    !moves
+    moves.empty?
   end
 
   def winner?( player )

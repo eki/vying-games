@@ -28,9 +28,7 @@ class TestConnect4 < Test::Unit::TestCase
     assert_equal( 'f6', moves[5] )
     assert_equal( 'g6', moves[6] )
 
-    while moves = g.moves do
-      g << moves[0]
-    end
+    g << g.moves.first until g.final?
 
     assert_not_equal( g.history[0], g.history.last )
 

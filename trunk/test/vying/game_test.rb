@@ -30,7 +30,7 @@ class FakeRules < Rules
   end
 
   def moves( player=nil )
-    return nil if final?
+    return [] if final?
     ['r','s']
   end
 
@@ -152,7 +152,7 @@ class TestGame < Test::Unit::TestCase
     assert( !g.final? )
     g << g.moves[1] # e
     assert( g.final? )
-    assert( g.moves.nil? )
+    assert( g.moves.empty? )
   end
 
   def test_forfeit
@@ -182,7 +182,7 @@ class TestGame < Test::Unit::TestCase
     assert( g.winner?( g.players.last ) )
     assert( !g.loser?( g.players.last ) )
 
-    assert( ! g.moves )
+    assert( g.moves.empty? )
 
     moves.each do |move|
       assert( ! g.move?( move ) )
@@ -253,7 +253,7 @@ class TestGame < Test::Unit::TestCase
     assert( !g.winner?( g.players.last ) )
     assert( !g.loser?( g.players.last ) )
 
-    assert( ! g.moves )
+    assert( g.moves.empty? )
 
     moves.each do |move|
       assert( ! g.move?( move ) )

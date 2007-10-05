@@ -26,9 +26,7 @@ class TestBotsOthello < Test::Unit::TestCase
     b = TestBot.new
 
     g = Game.new( Othello )
-    while( g.moves )
-      g << g.moves.first
-    end
+    g << g.moves.first until g.final?
 
     pc, oc, total, score = b.eval_count( g.history.first, :black )
     assert_equal( 2, pc )

@@ -29,14 +29,8 @@ class InternationalCheckers < Rules
     @jumping = false
   end
 
-  def move?( move, player=nil )
-    return false unless player.nil? || has_moves.include?( player )
-    tmp = moves || []
-    tmp.include?( move.to_s )
-  end
-
   def moves( player=nil )
-    return false unless player.nil? || has_moves.include?( player )
+    return [] unless player.nil? || has_moves.include?( player )
 
     p    = turn
     opp  = (p    == :red) ? :white : :red
@@ -112,7 +106,7 @@ class InternationalCheckers < Rules
       board[coords[1]] = nil
       @jumping = coords.last
 
-      unless moves
+      if moves.empty?
         turn( :rotate )
         @jumping = false
       end
@@ -130,7 +124,7 @@ class InternationalCheckers < Rules
   end
 
   def final?
-    ! moves
+    moves.empty?
   end
 
   def winner?( player )

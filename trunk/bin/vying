@@ -21,7 +21,8 @@ class HumanBot < AI::Bot
     $scr.addstr( "Ops: #{position.moves.inspect}" )
     $scr.setpos( h-1, 0 )
     $scr.addstr( "Select: " );
-    move = $scr.getstr.intern
+    move = $scr.getstr
+    exit if move == ""
     $scr.refresh
     until position.move?( move )
       $scr.setpos( 0, 0 )
@@ -30,7 +31,8 @@ class HumanBot < AI::Bot
       $scr.addstr( "Ops: #{position.moves.inspect}" )
       $scr.setpos( h-1, 0 )
       $scr.addstr( "Select: " );
-      move = $scr.getstr.intern
+      move = $scr.getstr
+      exit if move == ""
       $scr.refresh
     end
     move 

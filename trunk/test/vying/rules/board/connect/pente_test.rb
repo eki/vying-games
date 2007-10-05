@@ -53,9 +53,7 @@ class TestPente < Test::Unit::TestCase
     assert_equal( 'g1', moves[6] )
     assert_equal( 's19', moves[19*19-1] )
 
-    while moves = g.moves do
-      g << moves[0]
-    end
+    g << g.moves.first until g.final?
 
     assert_not_equal( g.history[0], g.history.last )
   end

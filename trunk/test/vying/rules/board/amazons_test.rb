@@ -49,9 +49,7 @@ class TestAmazons < Test::Unit::TestCase
     assert_equal( "j4f8", moves[-2] )
     assert_equal( "j4e9", moves[-1] )
 
-    while moves = g.moves do
-      g << g.moves.first
-    end
+    g << g.moves.first until g.final?
 
     assert_not_equal( g.history[0], g.history.last )
   end

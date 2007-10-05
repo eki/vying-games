@@ -22,14 +22,8 @@ class Checkers < Rules
     @jumping = false
   end
 
-  def move?( move, player=nil )
-    return false unless player.nil? || has_moves.include?( player )
-    tmp = moves || []
-    tmp.include?( move.to_s )
-  end
-
   def moves( player=nil )
-    return false unless player.nil? || has_moves.include?( player )
+    return [] unless player.nil? || has_moves.include?( player )
 
     p    = turn
     opp  = (p    == :red) ? :white : :red
@@ -52,7 +46,7 @@ class Checkers < Rules
         end
       end
 
-      return found.empty? ? nil : found
+      return found
     end
 
     board.occupied[p].each do |c|
@@ -91,9 +85,7 @@ class Checkers < Rules
       end
     end if board.occupied[k]
 
-    return found unless found.empty?
-
-    false
+    found
   end
 
   def apply!( move )
@@ -105,7 +97,7 @@ class Checkers < Rules
       board[coords[1]] = nil
       @jumping = coords.last
 
-      unless moves
+      if moves.empty?
         turn( :rotate )
         @jumping = false
       end
@@ -123,7 +115,7 @@ class Checkers < Rules
   end
 
   def final?
-    ! moves
+    moves.empty?
   end
 
   def winner?( player )

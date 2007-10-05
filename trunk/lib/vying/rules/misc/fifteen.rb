@@ -50,17 +50,10 @@ class Fifteen < Rules
     @unused, @a_list, @b_list = (1..9).to_a, [], []
   end
 
-  def move?( move, player=nil )
-    return false unless player.nil? || has_moves.include?( player )
-    move.to_s =~ /(a|b)(\d)/
-    turn.to_s == $1 && unused.include?( $2.to_i )
-  end
-
   def moves( player=nil )
-    return false unless player.nil? || has_moves.include?( player )
-    return nil if final?
-    a = unused.map { |n| "#{turn}#{n}" }
-    a == [] ? nil : a
+    return [] unless player.nil? || has_moves.include?( player )
+    return [] if final?
+    unused.map { |n| "#{turn}#{n}" }
   end
 
   def apply!( move )

@@ -33,14 +33,9 @@ class Footsteps < Rules
     final? ? [] : players.select { |p| ! bids[p] && points[p] > 0 }
   end
 
-  def move?( move, player=nil )
-    return false unless player.nil? || has_moves.include?( player )
-    !final? && moves( player ).include?( move.to_s )
-  end
-
   def moves( player=nil )
-    return false unless player.nil? || has_moves.include?( player )
-    return false if final?
+    return [] unless player.nil? || has_moves.include?( player )
+    return [] if final?
 
     return unused_moves_left.map  { |i| "left_#{i}" }  if player == :left
     return unused_moves_right.map { |i| "right_#{i}" } if player == :right

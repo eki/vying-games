@@ -75,6 +75,8 @@ class Game
   end
 
   def append( move )
+    move = move.to_s
+
     if move?( move )
       @history << apply( move )
       @sequence << move 
@@ -208,7 +210,7 @@ class Game
   end
 
   def moves( player=nil )
-    history.last.moves( player ) unless draw_by_agreement? || forfeit?
+    draw_by_agreement? || forfeit? ? [] : history.last.moves( player )
   end
 
   def forfeit?

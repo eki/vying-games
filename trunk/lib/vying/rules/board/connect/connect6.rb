@@ -22,14 +22,10 @@ class Connect6 < Rules
     @unused_moves = @@init_moves.dup
   end
 
-  def move?( move, player=nil )
-    return false unless player.nil? || has_moves.include?( player )
-    unused_moves.include?( move.to_s )
-  end
-
   def moves( player=nil )
-    return false unless player.nil? || has_moves.include?( player )
-    final? || unused_moves == [] ? nil : unused_moves
+    return [] unless player.nil? || has_moves.include?( player )
+    return [] if final?
+    unused_moves
   end
 
   def apply!( move )

@@ -60,10 +60,6 @@ class TestPhutball < Test::Unit::TestCase
     assert_equal( 'g2', moves[6] )
     assert_equal( 'o20', moves.last )
 
-#    while moves = g.moves do
-#      g << moves[0]
-#    end
-
     g << g.moves.first
 
     assert_not_equal( g.history[0], g.history.last )
