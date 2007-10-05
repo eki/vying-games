@@ -51,9 +51,9 @@ module AI::Othello
 
   def opening( position, sequence )
     possible = []
-    position.ops.each do |op|
-      s = sequence.join + op.to_s
-      possible << op if @openings.select { |o| o =~ /^#{s}/ }.length > 0
+    position.moves.each do |move|
+      s = sequence.join + move.to_s
+      possible << move if @openings.select { |o| o =~ /^#{s}/ }.length > 0
     end
     return possible[rand(possible.length)] unless possible.empty?
 
@@ -193,17 +193,17 @@ module AI::Othello
     end
 
     def select( sequence, position, player )
-      return position.ops.first if position.ops.length == 1
+      return position.moves.first if position.moves.length == 1
 
-      if( op = opening( position, sequence ) )
-        puts "**** Taking opening #{sequence.join}:#{op}"
-        return op
+      if( move = opening( position, sequence ) )
+        puts "**** Taking opening #{sequence.join}:#{move}"
+        return move 
       end
 
       @leaf, @nodes = 0, 0
-      score, op = best( analyze( position, player ) )
+      score, move = best( analyze( position, player ) )
       puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
-      op
+      move
     end
 
     def evaluate( position, player )

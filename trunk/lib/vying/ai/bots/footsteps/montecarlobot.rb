@@ -4,7 +4,7 @@ require 'vying/ai/bots/footsteps/footsteps'
 class AI::Footsteps::MonteCarloBot < AI::Bot
   def select( sequence, position, player )
     n = 500
-    ops = Hash.new( 0 )
+    moves = Hash.new( 0 )
 
     n.times do 
       p = position.dup
@@ -15,24 +15,24 @@ class AI::Footsteps::MonteCarloBot < AI::Bot
         end
       end
 
-      first_op = p.ops( player )[rand( p.ops( player ).length )]
+      first_move = p.moves( player )[rand( p.moves( player ).length )]
 
-      p.apply!( first_op )
+      p.apply!( first_move )
 
       until p.final?
-        p.apply!( p.ops[rand( p.ops.length )] )
+        p.apply!( p.moves[rand( p.moves.length )] )
       end
 
-      ops[first_op] += 4 if p.winner?( player )
-      ops[first_op] -= 3 if p.loser?( player )
-      ops[first_op] =  1 if p.draw?
+      moves[first_move] += 4 if p.winner?( player )
+      moves[first_move] -= 3 if p.loser?( player )
+      moves[first_move] =  1 if p.draw?
     end
 
-    #puts ops.inspect
+    #puts moves.inspect
 
     a = []
-    ops.each do |op, score|
-      a << [op] * score if score > 0
+    moves.each do |move, score|
+      a << [move] * score if score > 0
     end
 
     a.flatten!
@@ -40,8 +40,8 @@ class AI::Footsteps::MonteCarloBot < AI::Bot
     if a.length > 0
       a[rand( a.length )]
     else
-      ops_invert = ops.invert
-      ops_invert[ops_invert.keys.max]
+      moves_invert = moves.invert
+      moves_invert[moves_invert.keys.max]
     end
   end
 end

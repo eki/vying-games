@@ -4,12 +4,12 @@ module AlphaBeta
   def analyze( position, player )
     h = {}
 
-    ops = prune( position, player, position.ops ) if respond_to? :prune
-    ops = order( position, player, position.ops ) if respond_to? :order
-    ops ||= position.ops
+    moves = prune( position, player, position.moves ) if respond_to? :prune
+    moves = order( position, player, position.moves ) if respond_to? :order
+    moves ||= position.moves
 
-    ops.each do |op|
-      h[op] = search( position.apply( op ), player, -10**10, 10**10, 1 )
+    moves.each do |move|
+      h[move] = search( position.apply( move ), player, -10**10, 10**10, 1 )
     end
     h
   end
@@ -19,12 +19,12 @@ module AlphaBeta
 
     return evaluate( position, player ) if cutoff( position, depth )
 
-    ops = prune( position, player, position.ops ) if respond_to? :prune
-    ops = order( position, player, position.ops ) if respond_to? :order
-    ops ||= position.ops
+    moves = prune( position, player, position.moves ) if respond_to? :prune
+    moves = order( position, player, position.moves ) if respond_to? :order
+    moves ||= position.moves
 
-    scores = ops.map_until do |op|
-      v = search( position.apply( op ), player, a, b, depth+1 )
+    scores = moves.map_until do |move|
+      v = search( position.apply( move ), player, a, b, depth+1 )
 
       # Check for alpha-beta cutoffs
       if position.turn == player

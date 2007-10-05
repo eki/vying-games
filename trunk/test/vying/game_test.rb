@@ -25,19 +25,19 @@ class FakeRules < Rules
     @fake_board, @fake_foo = "edcba", "bar"
   end
 
-  def op?( op, player=nil )
-    op.to_s =~ /(r|s)/
+  def move?( move, player=nil )
+    move.to_s =~ /(r|s)/
   end
 
-  def ops( player=nil )
+  def moves( player=nil )
     return nil if final?
     ['r','s']
   end
 
-  def apply!( op )
-    if op.to_s =~ /r/
+  def apply!( move )
+    if move.to_s =~ /r/
       fake_board.succ!
-    elsif op.to_s =~ /s/
+    elsif move.to_s =~ /s/
       fake_board.squeeze!
     end
     self
@@ -100,32 +100,32 @@ class TestGame < Test::Unit::TestCase
     assert_equal( :a, g.turn )
   end
 
-  def test_has_ops
+  def test_has_moves
     g = Game.new( FakeRules )
-    assert_equal( [:a], g.has_ops )
+    assert_equal( [:a], g.has_moves )
     g.turn( :rotate )
-    assert_equal( [:b], g.has_ops )
+    assert_equal( [:b], g.has_moves )
     g.turn( :rotate )
-    assert_equal( [:c], g.has_ops )
+    assert_equal( [:c], g.has_moves )
     g.turn( :rotate )
-    assert_equal( [:a], g.has_ops )
+    assert_equal( [:a], g.has_moves )
   end
 
-  def test_ops
+  def test_moves
     g = Game.new( FakeRules )
-    ops = g.ops
+    moves = g.moves
 
-    assert_equal( "r", ops[0] )
-    assert_equal( "s", ops[1] )
+    assert_equal( "r", moves[0] )
+    assert_equal( "s", moves[1] )
 
-    g << ops[0]
+    g << moves[0]
 
-    assert_equal( [ops[0]], g.sequence )
+    assert_equal( [moves[0]], g.sequence )
     assert_equal( "edcbb", g.fake_board )
 
-    g << (op = g.ops[1])
+    g << (move = g.moves[1])
 
-    assert_equal( op, g.sequence.last )
+    assert_equal( move, g.sequence.last )
     assert_equal( "edcb", g.fake_board )
 
     g << 'r'
@@ -136,23 +136,23 @@ class TestGame < Test::Unit::TestCase
 
   def test_final
     g = Game.new( FakeRules ) # edcba
-    g << g.ops[0] # edcbb
+    g << g.moves[0] # edcbb
     assert( !g.final? )
-    g << g.ops[1] # edcb
+    g << g.moves[1] # edcb
     assert( !g.final? )
-    g << g.ops[0] # edcc
+    g << g.moves[0] # edcc
     assert( !g.final? )
-    g << g.ops[1] # edc
+    g << g.moves[1] # edc
     assert( !g.final? )
-    g << g.ops[0] # edd
+    g << g.moves[0] # edd
     assert( !g.final? )
-    g << g.ops[1] # ed
+    g << g.moves[1] # ed
     assert( !g.final? )
-    g << g.ops[0] # ee
+    g << g.moves[0] # ee
     assert( !g.final? )
-    g << g.ops[1] # e
+    g << g.moves[1] # e
     assert( g.final? )
-    assert( g.ops.nil? )
+    assert( g.moves.nil? )
   end
 
   def test_forfeit
@@ -170,7 +170,7 @@ class TestGame < Test::Unit::TestCase
       assert( !g.loser?( p ) )
     end 
 
-    ops = g.ops
+    moves = g.moves
    
     g.user_map[g.players.first] << "forfeit"
     g.step
@@ -182,10 +182,10 @@ class TestGame < Test::Unit::TestCase
     assert( g.winner?( g.players.last ) )
     assert( !g.loser?( g.players.last ) )
 
-    assert( ! g.ops )
+    assert( ! g.moves )
 
-    ops.each do |op|
-      assert( ! g.op?( op ) )
+    moves.each do |move|
+      assert( ! g.move?( move ) )
     end
 
     assert_equal( "forfeit_by_#{g.players.first}", g.sequence.last )
@@ -232,7 +232,7 @@ class TestGame < Test::Unit::TestCase
       assert( !g.loser?( p ) )
     end 
 
-    ops = g.ops
+    moves = g.moves
    
     g.user_map[g.players.first] << "offer_draw"
 
@@ -253,10 +253,10 @@ class TestGame < Test::Unit::TestCase
     assert( !g.winner?( g.players.last ) )
     assert( !g.loser?( g.players.last ) )
 
-    assert( ! g.ops )
+    assert( ! g.moves )
 
-    ops.each do |op|
-      assert( ! g.op?( op ) )
+    moves.each do |move|
+      assert( ! g.move?( move ) )
     end
 
     assert( ! g.user_map[g.players.first].queue.empty? )

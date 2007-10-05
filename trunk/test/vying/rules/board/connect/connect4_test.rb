@@ -13,23 +13,23 @@ class TestConnect4 < Test::Unit::TestCase
   def test_dup
     pos = Connect4.new
     pos2 = pos.apply( :a6 )
-    assert_not_equal( pos.unused_ops, pos2.unused_ops )
+    assert_not_equal( pos.unused_moves, pos2.unused_moves )
   end
 
-  def test_ops
+  def test_moves
     g = Game.new( Connect4 )
-    ops = g.ops
+    moves = g.moves
 
-    assert_equal( 'a6', ops[0] )
-    assert_equal( 'b6', ops[1] )
-    assert_equal( 'c6', ops[2] )
-    assert_equal( 'd6', ops[3] )
-    assert_equal( 'e6', ops[4] )
-    assert_equal( 'f6', ops[5] )
-    assert_equal( 'g6', ops[6] )
+    assert_equal( 'a6', moves[0] )
+    assert_equal( 'b6', moves[1] )
+    assert_equal( 'c6', moves[2] )
+    assert_equal( 'd6', moves[3] )
+    assert_equal( 'e6', moves[4] )
+    assert_equal( 'f6', moves[5] )
+    assert_equal( 'g6', moves[6] )
 
-    while ops = g.ops do
-      g << ops[0]
+    while moves = g.moves do
+      g << moves[0]
     end
 
     assert_not_equal( g.history[0], g.history.last )

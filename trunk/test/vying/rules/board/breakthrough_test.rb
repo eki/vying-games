@@ -39,22 +39,22 @@ class TestBreakthrough < Test::Unit::TestCase
     assert( !g.has_score? )
   end
 
-  def test_has_ops
+  def test_has_moves
     g = Game.new( Breakthrough )
-    assert_equal( [:black], g.has_ops )
-    g << g.ops.first
-    assert_equal( [:white], g.has_ops )
+    assert_equal( [:black], g.has_moves )
+    g << g.moves.first
+    assert_equal( [:white], g.has_moves )
   end
 
-  def test_ops
+  def test_moves
     g = Game.new( Breakthrough )
 
     assert_equal( ["a2a3", "a2b3", "b2b3", "b2c3", "b2a3", "c2c3", "c2d3",
                    "c2b3", "d2d3", "d2e3", "d2c3", "e2e3", "e2f3", "e2d3",
                    "f2f3", "f2g3", "f2e3", "g2g3", "g2h3", "g2f3", "h2h3", 
-                   "h2g3"], g.ops )
+                   "h2g3"], g.moves )
 
-    g << g.ops.first until g.final?
+    g << g.moves.first until g.final?
 
     assert_not_equal( g.history.first, g.history.last )
   end
@@ -69,16 +69,16 @@ class TestBreakthrough < Test::Unit::TestCase
             :a8,:b8,:c8,:d8,:e8,:f8,:g8,:h8] = nil
 
     g.board[:e4] = :black
-    assert_equal( ["e4e5", "e4f5", "e4d5"], g.ops )
+    assert_equal( ["e4e5", "e4f5", "e4d5"], g.moves )
 
     g.board[:e5] = :white
-    assert_equal( ["e4f5", "e4d5"], g.ops )
+    assert_equal( ["e4f5", "e4d5"], g.moves )
     
     g.board[:e5] = :black
-    assert_equal( ["e4f5", "e4d5", "e5e6", "e5f6", "e5d6"], g.ops )
+    assert_equal( ["e4f5", "e4d5", "e5e6", "e5f6", "e5d6"], g.moves )
    
     g.board[:e5] = nil
-    assert_equal( ["e4e5", "e4f5", "e4d5"], g.ops )
+    assert_equal( ["e4e5", "e4f5", "e4d5"], g.moves )
 
     g << "e4e5"
 
@@ -89,13 +89,13 @@ class TestBreakthrough < Test::Unit::TestCase
     g.board[:e5] = :white
     g.turn( :rotate ) until g.turn == :white
 
-    assert_not_equal( ["e5e4"], g.ops )
+    assert_not_equal( ["e5e4"], g.moves )
     
     g.board[:e4] = nil
-    assert_equal( ["e5e4", "e5f4", "e5d4"], g.ops )
+    assert_equal( ["e5e4", "e5f4", "e5d4"], g.moves )
     
     g.board[:e4] = :white
-    assert_equal( ["e5f4", "e5d4", "e4e3", "e4f3", "e4d3"], g.ops )
+    assert_equal( ["e5f4", "e5d4", "e4e3", "e4f3", "e4d3"], g.moves )
 
     g.board[:e4] = nil
 
@@ -118,11 +118,11 @@ class TestBreakthrough < Test::Unit::TestCase
     g.board[:b3] = :white
 
     assert_equal( ["a2a3", "a2b3", "b2c3", "b2a3", 
-                   "c2c3", "c2d3", "c2b3"], g.ops )
+                   "c2c3", "c2d3", "c2b3"], g.moves )
 
     g.turn( :rotate )
 
-    assert_equal( ["b3c2", "b3a2"], g.ops )
+    assert_equal( ["b3c2", "b3a2"], g.moves )
 
     g << "b3c2"
 
@@ -141,7 +141,7 @@ class TestBreakthrough < Test::Unit::TestCase
 
     g.board[:a2, :b2, :c2] = :black
 
-    g << g.ops.first until g.final?
+    g << g.moves.first until g.final?
 
     assert( ! g.draw? )
     assert( g.winner?( :black ) )

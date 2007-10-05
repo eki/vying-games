@@ -8,23 +8,23 @@ class AI::KeryoPente::ThreatsBot < AI::Bot
     eval_random( position, player )
   end
 
-  def prune( position, player, ops )
+  def prune( position, player, moves )
     if position.board.threats.length > 0
-       original_ops = ops
+       original_moves = moves
        threats = position.board.threats.sort_by { |t| t.degree }
 
        if threats.first.degree < 3
          return threats.first.empty_coords.map { |c| c.to_s }
        else
-         ops = threats.map { |t| t.empty_coords.map { |c| c.to_s } }
-         ops.flatten!
-         ops = ops.sort_by { |op| ops.select { |o| o == op }.length }
-         ops = ops.uniq.reverse![0..2]
+         moves = threats.map { |t| t.empty_coords.map { |c| c.to_s } }
+         moves.flatten!
+         moves = moves.sort_by { |move| moves.select { |m| m == move }.length }
+         moves = moves.uniq.reverse![0..2]
 
-         return ops & original_ops
+         return moves & original_moves
        end
     else
-      return super( position, player, ops )[0..2]
+      return super( position, player, moves )[0..2]
     end
   end
 

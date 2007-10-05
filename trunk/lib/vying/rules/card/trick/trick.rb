@@ -87,7 +87,7 @@ module TrickTaking
     pass_before_deal? && pass_before_deal[:directions].first == :across
   end
 
-  def has_ops
+  def has_moves
     if final?
       return []
     elsif post_deal && pass?
@@ -102,19 +102,19 @@ module TrickTaking
     end
   end
 
-  def op?( op, player=nil )
-    op = Card[op] unless op.kind_of?( Card )
-    (ops( player ) || []).include?( op )
+  def move?( move, player=nil )
+    move = Card[move] unless move.kind_of?( Card )
+    (moves( player ) || []).include?( move )
   end
 
-  def ops( player=nil )
-    return [] unless player.nil? || has_ops.include?( player )
+  def moves( player=nil )
+    return [] unless player.nil? || has_moves.include?( player )
     return nil if final?
 
     if post_deal && pass?
       passable = {}
       hands.each do |k,v|
-        passable[k] = v - selected[k] if has_ops.include?( k )
+        passable[k] = v - selected[k] if has_moves.include?( k )
       end
 
       return passable[player] if player
@@ -149,9 +149,9 @@ module TrickTaking
     hand
   end
 
-  def apply!( op )
+  def apply!( move )
     if post_deal && pass?
-      hands.each { |k,v| selected[k] << op if v.include?( op ) }
+      hands.each { |k,v| selected[k] << move if v.include?( move ) }
       if selected.all? { |k,v| v.length == pass_before_deal[:number] }
         if pass_left?
           hands[:n] += selected[:w]
@@ -184,7 +184,7 @@ module TrickTaking
     end
 
     hand = hands[turn]
-    card = Card[op]
+    card = Card[move]
 
     trick << [turn, hand.delete( card )]
 

@@ -7,11 +7,11 @@ class Connect6 < Rules
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Connect6>'],
        :related   => ["Pente", "KeryoPente", "Connect4", "TicTacToe"]
 
-  attr_reader :board, :lastc, :lastp, :unused_ops
+  attr_reader :board, :lastc, :lastp, :unused_moves
 
   players [:black, :white]
 
-  @@init_ops = Coords.new( 19, 19 ).map { |c| c.to_s }
+  @@init_moves = Coords.new( 19, 19 ).map { |c| c.to_s }
 
   def initialize( seed=nil )
     super
@@ -19,31 +19,31 @@ class Connect6 < Rules
     @board = Connect6Board.new
     @turn = [:black, :white, :white, :black]
     @lastc, @lastp = nil, :noone
-    @unused_ops = @@init_ops.dup
+    @unused_moves = @@init_moves.dup
   end
 
-  def op?( op, player=nil )
-    return false unless player.nil? || has_ops.include?( player )
-    unused_ops.include?( op.to_s )
+  def move?( move, player=nil )
+    return false unless player.nil? || has_moves.include?( player )
+    unused_moves.include?( move.to_s )
   end
 
-  def ops( player=nil )
-    return false unless player.nil? || has_ops.include?( player )
-    final? || unused_ops == [] ? nil : unused_ops
+  def moves( player=nil )
+    return false unless player.nil? || has_moves.include?( player )
+    final? || unused_moves == [] ? nil : unused_moves
   end
 
-  def apply!( op )
-    c, p = Coord[op], turn
+  def apply!( move )
+    c, p = Coord[move], turn
     board[c], @lastc, @lastp = p, c, p
     board.update_threats( c )
-    @unused_ops.delete( c.to_s )
+    @unused_moves.delete( c.to_s )
     turn( :rotate )
     self
   end
 
   def final?
     return false if lastc.nil?
-    return true  if unused_ops.empty?
+    return true  if unused_moves.empty?
 
     board.each_from( lastc, [:e,:w] ) { |p| p == lastp } >= 5 ||
     board.each_from( lastc, [:n,:s] ) { |p| p == lastp } >= 5 ||
@@ -64,7 +64,7 @@ class Connect6 < Rules
   end
 
   def draw?
-    unused_ops.empty? &&
+    unused_moves.empty? &&
     board.each_from( lastc, [:e,:w] ) { |p| p == lastp } < 5 &&
     board.each_from( lastc, [:n,:s] ) { |p| p == lastp } < 5 &&
     board.each_from( lastc, [:ne,:sw] ) { |p| p == lastp } < 5 &&

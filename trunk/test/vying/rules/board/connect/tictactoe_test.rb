@@ -10,22 +10,22 @@ class TestTicTacToe < Test::Unit::TestCase
     assert_equal( :x, g.turn )
   end
 
-  def test_ops
+  def test_moves
     g = Game.new( TicTacToe )
-    ops = g.ops
+    moves = g.moves
 
-    assert_equal( 'a1', ops[0] )
-    assert_equal( 'b1', ops[1] )
-    assert_equal( 'c1', ops[2] )
-    assert_equal( 'a2', ops[3] )
-    assert_equal( 'b2', ops[4] )
-    assert_equal( 'c2', ops[5] )
-    assert_equal( 'a3', ops[6] )
-    assert_equal( 'b3', ops[7] )
-    assert_equal( 'c3', ops[8] )
+    assert_equal( 'a1', moves[0] )
+    assert_equal( 'b1', moves[1] )
+    assert_equal( 'c1', moves[2] )
+    assert_equal( 'a2', moves[3] )
+    assert_equal( 'b2', moves[4] )
+    assert_equal( 'c2', moves[5] )
+    assert_equal( 'a3', moves[6] )
+    assert_equal( 'b3', moves[7] )
+    assert_equal( 'c3', moves[8] )
 
-    while ops = g.ops do
-      g << ops[0]
+    while moves = g.moves do
+      g << moves[0]
     end
 
     assert_not_equal( g.history[0], g.history.last )

@@ -43,27 +43,27 @@ class TestCheckers < Test::Unit::TestCase
     assert( !g.has_score? )
   end
 
-  def test_has_ops
+  def test_has_moves
     g = Game.new( Checkers )
-    assert_equal( [:red], g.has_ops )
-    g << g.ops.first
-    assert_equal( [:white], g.has_ops )
+    assert_equal( [:red], g.has_moves )
+    g << g.moves.first
+    assert_equal( [:white], g.has_moves )
   end
 
-  def test_ops
+  def test_moves
     g = Game.new( Checkers )
-    ops = g.ops
+    moves = g.moves
 
-    assert_equal( 'b3c4', ops[0] )
-    assert_equal( 'b3a4', ops[1] )
-    assert_equal( 'd3e4', ops[2] )
-    assert_equal( 'd3c4', ops[3] )
-    assert_equal( 'f3g4', ops[4] )
-    assert_equal( 'f3e4', ops[5] )
-    assert_equal( 'h3g4', ops.last )
+    assert_equal( 'b3c4', moves[0] )
+    assert_equal( 'b3a4', moves[1] )
+    assert_equal( 'd3e4', moves[2] )
+    assert_equal( 'd3c4', moves[3] )
+    assert_equal( 'f3g4', moves[4] )
+    assert_equal( 'f3e4', moves[5] )
+    assert_equal( 'h3g4', moves.last )
 
-    while ops = g.ops do
-      g << ops.first
+    while moves = g.moves do
+      g << moves.first
     end
 
     assert_not_equal( g.history.first, g.history.last )
@@ -95,19 +95,19 @@ class TestCheckers < Test::Unit::TestCase
     g.board[:g4] = :white
     g.board[:f7] = nil
 
-    assert_equal( ["f3h5", "h3f5"], g.ops )
+    assert_equal( ["f3h5", "h3f5"], g.moves )
 
     g << "f3h5"
 
     assert_equal( :red, g.turn )
     assert( g.jumping )
-    assert_equal( ["h5f7"], g.ops )
+    assert_equal( ["h5f7"], g.moves )
 
     g << "h5f7"
 
     assert_equal( :white, g.turn )
     assert( ! g.jumping )
-    assert_equal( ["e8g6"], g.ops )
+    assert_equal( ["e8g6"], g.moves )
 
     g << "e8g6"
 
@@ -121,7 +121,7 @@ class TestCheckers < Test::Unit::TestCase
     g.board[:c6] = :red
     g.board[:g6,:e8] = nil
 
-    assert_equal( ["c6e8"], g.ops )
+    assert_equal( ["c6e8"], g.moves )
     
     g << "c6e8"
 
@@ -133,13 +133,13 @@ class TestCheckers < Test::Unit::TestCase
 
     assert_equal( :red, g.turn )
     assert( ! g.jumping )
-    assert_equal( ["e8g6"], g.ops )
+    assert_equal( ["e8g6"], g.moves )
 
     g << "e8g6"
 
     assert_equal( :white, g.turn )
     assert( ! g.jumping )
-    assert_equal( ["h7f5"], g.ops )
+    assert_equal( ["h7f5"], g.moves )
 
     g << "h7f5"
 
@@ -165,12 +165,12 @@ class TestCheckers < Test::Unit::TestCase
     g.board[:e6] = nil
     g.board[:d5] = :white
 
-    assert_equal( ["c8e6"], g.ops )
+    assert_equal( ["c8e6"], g.moves )
 
     g << "c8e6"
 
     assert_equal( :red, g.turn )
-    assert_equal( ["e6c4"], g.ops )
+    assert_equal( ["e6c4"], g.moves )
     assert( g.jumping )
 
     g << "e6c4"
@@ -203,7 +203,7 @@ class TestCheckers < Test::Unit::TestCase
 
     assert( !g.final? )
 
-    g << g.ops.first
+    g << g.moves.first
 
     assert( g.final? )
     assert( g.winner?( :red ) )

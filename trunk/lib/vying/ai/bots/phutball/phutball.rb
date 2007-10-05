@@ -62,13 +62,13 @@ module AI::Phutball
     end
 
     def select( sequence, position, player )
-      return position.ops.first if position.ops.length == 1
+      return position.moves.first if position.moves.length == 1
 
       @leaf, @nodes = 0, 0
-      score, op = fuzzy_best( analyze( position, player ), 1 )
+      score, move = fuzzy_best( analyze( position, player ), 1 )
       puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
 
-      op
+      move 
     end
 
     def evaluate( position, player )
@@ -85,7 +85,7 @@ module AI::Phutball
       position.final? || depth >= 2
     end
 
-    def prune( position, player, ops )
+    def prune( position, player, moves )
       b = position.board
 
 
@@ -94,7 +94,7 @@ module AI::Phutball
 
       keep = []
 
-      unless ops.include?( "pass" )
+      unless moves.include?( "pass" )
         b.coords.neighbors( ball ).each do |nc|
           if b[nc].nil? && ( (player == :ohs && nc.y < ball.y) ||
                              (player == :eks && nc.y > ball.y) )
@@ -118,8 +118,8 @@ module AI::Phutball
 
       keep.map! { |c| c.to_s }
 
-      ops.each do |op|
-        keep << op if op.to_coords.length == 2
+      moves.each do |move|
+        keep << move if move.to_coords.length == 2
       end
 
       keep

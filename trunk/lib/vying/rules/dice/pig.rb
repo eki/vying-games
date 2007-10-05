@@ -17,19 +17,19 @@ class Pig < Rules
     @total, @score, @rolling = Hash.new( 0 ), 0, false
   end
 
-  def ops( player=nil )
+  def moves( player=nil )
     return nil           if final?
     return [1,2,3,4,5,6] if rolling && (player.nil? || player == :random)
     return [:pass,:roll] if !rolling && (player.nil? || player == turn)
     []
   end
 
-  def has_ops
+  def has_moves
     final? ? [] : [rolling ? :random : turn]
   end
 
-  def apply!( op )
-    case op
+  def apply!( move )
+    case move 
       when :pass
         total[turn] += score
         @score = 0
@@ -41,7 +41,7 @@ class Pig < Rules
         turn( :rotate )
         @rolling = false
       else
-        @score += op
+        @score += move 
         @rolling = false
     end
 

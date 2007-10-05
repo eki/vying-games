@@ -4,7 +4,9 @@ module Minimax
 
   def analyze( position, player )
     h = {}
-    position.ops.each { |op| h[op] = search( position.apply( op ), player, 1 ) }
+    position.moves.each do |move| 
+      h[move] = search( position.apply( move ), player, 1 )
+    end
     h
   end
 
@@ -13,8 +15,8 @@ module Minimax
 
     return evaluate( position, player ) if cutoff( position, depth )
 
-    scores = position.ops.map do |op|
-      search( position.apply( op ), player, depth+1 )
+    scores = position.moves.map do |move|
+      search( position.apply( move ), player, depth+1 )
     end
 
     position.turn == player ? scores.max : scores.min

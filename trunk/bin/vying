@@ -18,22 +18,22 @@ class HumanBot < AI::Bot
     $scr.setpos( 0, 0 )
     $scr.addstr( position.to_s )
     $scr.setpos( h-2, 0 )
-    $scr.addstr( "Ops: #{position.ops.inspect}" )
+    $scr.addstr( "Ops: #{position.moves.inspect}" )
     $scr.setpos( h-1, 0 )
     $scr.addstr( "Select: " );
-    op = $scr.getstr.intern
+    move = $scr.getstr.intern
     $scr.refresh
-    until position.op?( op )
+    until position.move?( move )
       $scr.setpos( 0, 0 )
       $scr.addstr( position.to_s )
       $scr.setpos( h-2, 0 )
-      $scr.addstr( "Ops: #{position.ops.inspect}" )
+      $scr.addstr( "Ops: #{position.moves.inspect}" )
       $scr.setpos( h-1, 0 )
       $scr.addstr( "Select: " );
-      op = $scr.getstr.intern
+      move = $scr.getstr.intern
       $scr.refresh
     end
-    op
+    move 
   end
 end
 

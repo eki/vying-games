@@ -12,22 +12,22 @@ class TestFifteen < Test::Unit::TestCase
     assert_equal( :a, g.turn )
   end
 
-  def test_ops
+  def test_moves
     g = Game.new( Fifteen )
-    ops = g.ops
+    moves = g.moves
 
-    assert_equal( 'a1', ops[0] )
-    assert_equal( 'a2', ops[1] )
-    assert_equal( 'a3', ops[2] )
-    assert_equal( 'a4', ops[3] )
-    assert_equal( 'a5', ops[4] )
-    assert_equal( 'a6', ops[5] )
-    assert_equal( 'a7', ops[6] )
-    assert_equal( 'a8', ops[7] )
-    assert_equal( 'a9', ops[8] )
+    assert_equal( 'a1', moves[0] )
+    assert_equal( 'a2', moves[1] )
+    assert_equal( 'a3', moves[2] )
+    assert_equal( 'a4', moves[3] )
+    assert_equal( 'a5', moves[4] )
+    assert_equal( 'a6', moves[5] )
+    assert_equal( 'a7', moves[6] )
+    assert_equal( 'a8', moves[7] )
+    assert_equal( 'a9', moves[8] )
 
-    while ops = g.ops do
-      g << ops[0]
+    while moves = g.moves do
+      g << moves[0]
     end
 
     assert_not_equal( g.history[0], g.history.last )

@@ -6,7 +6,7 @@ class Othello < Rules
   info :name    => 'Othello',
        :aliases => ['Reversi']
 
-  attr_reader :board, :ops_cache
+  attr_reader :board, :moves_cache
 
   players [:black, :white]
 
@@ -14,7 +14,7 @@ class Othello < Rules
     super
 
     @board = OthelloBoard.new
-    @ops_cache = :ns
+    @moves_cache = :ns
   end
 
   def frontier
@@ -25,34 +25,34 @@ class Othello < Rules
     @board.occupied
   end
 
-  def op?( op, player=nil )
-    return false unless player.nil? || has_ops.include?( player )
-    board.valid?( Coord[op], turn )
+  def move?( move, player=nil )
+    return false unless player.nil? || has_moves.include?( player )
+    board.valid?( Coord[move], turn )
   end
 
-  def ops( player=nil )
-    return false unless player.nil? || has_ops.include?( player )
-    return ops_cache if ops_cache != :ns
+  def moves( player=nil )
+    return false unless player.nil? || has_moves.include?( player )
+    return moves_cache if moves_cache != :ns
     a = frontier.select { |c| board.valid?( c, turn ) }.map { |c| c.to_s }
-    ops_cache = (a == [] ? nil : a)
+    moves_cache = (a == [] ? nil : a)
   end
 
-  def apply!( op )
-    c = Coord[op]
+  def apply!( move )
+    c = Coord[move]
     board.place( c, turn )
 
     turn( :rotate )
-    @ops_cache = :ns
-    return self if ops
+    @moves_cache = :ns
+    return self if moves
 
     turn( :rotate )
-    ops_cache = :ns
+    moves_cache = :ns
 
     self
   end
 
   def final?
-    !ops
+    !moves
   end
 
   def winner?( player )

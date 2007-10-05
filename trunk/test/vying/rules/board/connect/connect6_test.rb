@@ -23,9 +23,9 @@ class TestConnect6 < Test::Unit::TestCase
     g = Game.new( Connect6 )
     assert_equal( Board.new( 19, 19 ), g.board )
     assert_equal( :black, g.turn )
-    assert_equal( 19*19, g.unused_ops.length )
-    assert_equal( 'a1', g.unused_ops.first )
-    assert_equal( 's19', g.unused_ops.last )
+    assert_equal( 19*19, g.unused_moves.length )
+    assert_equal( 'a1', g.unused_moves.first )
+    assert_equal( 's19', g.unused_moves.last )
   end
 
   def test_has_score
@@ -33,28 +33,28 @@ class TestConnect6 < Test::Unit::TestCase
     assert( !g.has_score? )
   end
 
-  def test_has_ops
+  def test_has_moves
     g = Game.new( Connect6 )
-    assert_equal( [:black], g.has_ops )
-    g << g.ops.first
-    assert_equal( [:white], g.has_ops )
+    assert_equal( [:black], g.has_moves )
+    g << g.moves.first
+    assert_equal( [:white], g.has_moves )
   end
 
-  def test_ops
+  def test_moves
     g = Game.new( Connect6 )
-    ops = g.ops
+    moves = g.moves
 
-    assert_equal( 'a1', ops[0] )
-    assert_equal( 'b1', ops[1] )
-    assert_equal( 'c1', ops[2] )
-    assert_equal( 'd1', ops[3] )
-    assert_equal( 'e1', ops[4] )
-    assert_equal( 'f1', ops[5] )
-    assert_equal( 'g1', ops[6] )
-    assert_equal( 's19', ops[19*19-1] )
+    assert_equal( 'a1', moves[0] )
+    assert_equal( 'b1', moves[1] )
+    assert_equal( 'c1', moves[2] )
+    assert_equal( 'd1', moves[3] )
+    assert_equal( 'e1', moves[4] )
+    assert_equal( 'f1', moves[5] )
+    assert_equal( 'g1', moves[6] )
+    assert_equal( 's19', moves[19*19-1] )
 
-    while ops = g.ops do
-      g << ops[0]
+    while moves = g.moves do
+      g << moves[0]
     end
 
     assert_not_equal( g.history[0], g.history.last )

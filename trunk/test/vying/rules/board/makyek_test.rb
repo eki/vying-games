@@ -25,24 +25,24 @@ class TestMakyek < Test::Unit::TestCase
     assert_equal( nil, g.lastc )
   end
 
-  def test_has_ops
+  def test_has_moves
     g = Game.new( Makyek )
-    assert_equal( [:white], g.has_ops )
-    g << g.ops.first
-    assert_equal( [:black], g.has_ops )
+    assert_equal( [:white], g.has_moves )
+    g << g.moves.first
+    assert_equal( [:black], g.has_moves )
   end
 
-  def test_ops
+  def test_moves
     g = Game.new( Makyek )
-    ops = g.ops
+    moves = g.moves
 
-    assert_equal( "a1a2", ops[0] )
-    assert_equal( "b1b2", ops[1] )
-    assert_equal( "c1c2", ops[2] )
-    assert_equal( "h3h5", ops[-1] )
+    assert_equal( "a1a2", moves[0] )
+    assert_equal( "b1b2", moves[1] )
+    assert_equal( "c1c2", moves[2] )
+    assert_equal( "h3h5", moves[-1] )
 
-    while ops = g.ops do
-      g << g.ops.first
+    while moves = g.moves do
+      g << g.moves.first
     end
 
     assert_not_equal( g.history[0], g.history.last )

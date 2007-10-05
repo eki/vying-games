@@ -17,34 +17,34 @@ class Kalah < Rules
     @annotation = MancalaBoard.new( 6, 2, "0" )
 
     @scoring_pits = { :one => 0, :two => 0 }
-    @ops_cache = { :one => ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'],
-                   :two => ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }
+    @moves_cache = { :one => ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'],
+                     :two => ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }
   end
 
-  def op?( op, player=nil )
-    valid = ops( player )
-    valid && valid.include?( op.to_s )
+  def move?( move, player=nil )
+    valid = moves( player )
+    valid && valid.include?( move.to_s )
   end
 
-  def ops( player=nil )
-    return false unless player.nil? || has_ops.include?( player )
-    valid = @ops_cache[turn].select { |c| board[c] > 0 }
+  def moves( player=nil )
+    return false unless player.nil? || has_moves.include?( player )
+    valid = @moves_cache[turn].select { |c| board[c] > 0 }
     valid.empty? ? false : valid
   end
 
-  def apply!( op )
+  def apply!( move )
     # Reset annotation
     annotation[*annotation.coords] = "0"
 
-    h = op.x
-    r = op.y
+    h = move.x
+    r = move.y
 
     # Sowing seeds
 
-    seeds, board[op] = board[op], 0
+    seeds, board[move] = board[move], 0
     last = nil
 
-    annotation[op] = "e"
+    annotation[move] = "e"
 
     seeds.times do
       if r == 0 && h == 0
@@ -104,7 +104,7 @@ class Kalah < Rules
 
     if final?
       players.each do |p|
-        @ops_cache[p].each do |c|
+        @moves_cache[p].each do |c|
           scoring_pits[p] += board[c]
           board[c] = 0
           annotation[c] = "c" if annotation[c] == "0"
@@ -117,7 +117,7 @@ class Kalah < Rules
   end
 
   def final?
-    @ops_cache[turn].inject( 0 ) { |s,c| s + board[c] } == 0
+    @moves_cache[turn].inject( 0 ) { |s,c| s + board[c] } == 0
   end
 
   def winner?( player )

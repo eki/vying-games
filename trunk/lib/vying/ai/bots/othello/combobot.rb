@@ -14,7 +14,7 @@ class AI::Othello::ComboBot < AI::Bot
     total = position.occupied.length
 
     eval_frontier( position, player ) +
-    position.ops.length +
+    position.moves.length +
     eval_corners( position, player )
   end
 

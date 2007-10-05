@@ -172,8 +172,8 @@ class Rules
     @turn[0]
   end
 
-  def op?( op, player=nil )
-    (ops( player ) || []) .include?( op )
+  def move?( move, player=nil )
+    (moves( player ) || []) .include?( move )
   end
 
   def draw?
@@ -184,12 +184,12 @@ class Rules
     respond_to?( :score )
   end
 
-  def has_ops
+  def has_moves
     final? ? [] : [turn]
   end
 
-  def apply( op )
-    self.dup.apply!( op )
+  def apply( move )
+    self.dup.apply!( move )
   end
 
   def Rules.require_all( path=$: )

@@ -25,8 +25,8 @@ module AI::NineMensMorris
   end
 
   def eval_mobility( position, player )
-    ops = position.ops
-    ops ? ops.length : 0
+    moves = position.moves
+    moves ? moves.length : 0
   end
 
   module Bot
@@ -40,13 +40,13 @@ module AI::NineMensMorris
     end
 
     def select( sequence, position, player )
-      return position.ops.first if position.ops.length == 1
+      return position.moves.first if position.moves.length == 1
 
       @leaf, @nodes = 0, 0
-      score, op = fuzzy_best( analyze( position, player ), 1 )
+      score, move = fuzzy_best( analyze( position, player ), 1 )
       puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
 
-      op
+      move
     end
 
     def evaluate( position, player )

@@ -13,11 +13,11 @@ class AI::NineMensMorris::DeepBot < AI::Bot
   def cutoff( position, depth )
     return true if position.final?
 
-    if position.ops.length < 2
+    if position.moves.length < 2
       depth >= 5
-    elsif position.ops.length < 4
+    elsif position.moves.length < 4
       depth >= 4
-    elsif position.ops.length > 12
+    elsif position.moves.length > 12
       depth >= 1
     else
       depth >= 2

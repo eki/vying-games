@@ -33,15 +33,15 @@ class TestFootsteps < Test::Unit::TestCase
     assert( !g.has_score? )
   end
 
-  def test_has_ops
+  def test_has_moves
     g = Game.new( Footsteps )
-    assert_equal( [:left, :right], g.has_ops )
+    assert_equal( [:left, :right], g.has_moves )
     g << "left_1"
-    assert_equal( [:right], g.has_ops )
+    assert_equal( [:right], g.has_moves )
     g << "right_1"
-    assert_equal( [:left, :right], g.has_ops )
+    assert_equal( [:left, :right], g.has_moves )
     g << "right_2"
-    assert_equal( [:left], g.has_ops )
+    assert_equal( [:left], g.has_moves )
   end
 
 

@@ -19,8 +19,8 @@ module BotTemplate
 
   def select( position, player )
     @leaf, @nodes = 0, 0
-    score, op = best( analyze( position, player ) )
-    [score, op]             #This should just return op in a real Bot
+    score, move = best( analyze( position, player ) )
+    [score, move]           #This should just return move in a real Bot
   end                       #But we're only interested search results
   
   def evaluate( position, player )
@@ -45,7 +45,7 @@ end
 
 class PlayFirstOpBot < AI::Bot
   def select( sequence, position, player )
-    position.ops.first
+    position.moves.first
   end
 end
 
@@ -74,11 +74,11 @@ class TestSearch < Test::Unit::TestCase
       mini.depth = depth
       alpha.depth = depth
 
-      m_score, m_op = mini.select( position, position.turn )
-      a_score, a_op = alpha.select( position, position.turn )
+      m_score, m_move = mini.select( position, position.turn )
+      a_score, a_move = alpha.select( position, position.turn )
 
       assert_equal( m_score, a_score )
-      assert_equal( m_op, a_op )
+      assert_equal( m_move, a_move )
       assert( mini.leaf >= alpha.leaf )
       assert( mini.nodes >= alpha.nodes )
     end

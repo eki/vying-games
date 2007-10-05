@@ -28,9 +28,9 @@ class TestPhutball < Test::Unit::TestCase
     assert_equal( b, g.board )
 
     assert_equal( :ohs, g.turn )
-    assert_equal( 15*19-1, g.unused_ops.length )
-    assert_equal( 'a2', g.unused_ops.first )
-    assert_equal( 'o20', g.unused_ops.last )
+    assert_equal( 15*19-1, g.unused_moves.length )
+    assert_equal( 'a2', g.unused_moves.first )
+    assert_equal( 'o20', g.unused_moves.last )
     assert_equal( [Coord[:h11]], g.board.occupied[:white] )
     assert_equal( nil, g.board.occupied[:black] )
   end
@@ -40,61 +40,61 @@ class TestPhutball < Test::Unit::TestCase
     assert( !g.has_score? )
   end
 
-  def test_has_ops
+  def test_has_moves
     g = Game.new( Phutball )
-    assert_equal( [:ohs], g.has_ops )
-    g << g.ops.first
-    assert_equal( [:eks], g.has_ops )
+    assert_equal( [:ohs], g.has_moves )
+    g << g.moves.first
+    assert_equal( [:eks], g.has_moves )
   end
 
-  def test_ops
+  def test_moves
     g = Game.new( Phutball )
-    ops = g.ops
+    moves = g.moves
 
-    assert_equal( 'a2', ops[0] )
-    assert_equal( 'b2', ops[1] )
-    assert_equal( 'c2', ops[2] )
-    assert_equal( 'd2', ops[3] )
-    assert_equal( 'e2', ops[4] )
-    assert_equal( 'f2', ops[5] )
-    assert_equal( 'g2', ops[6] )
-    assert_equal( 'o20', ops.last )
+    assert_equal( 'a2', moves[0] )
+    assert_equal( 'b2', moves[1] )
+    assert_equal( 'c2', moves[2] )
+    assert_equal( 'd2', moves[3] )
+    assert_equal( 'e2', moves[4] )
+    assert_equal( 'f2', moves[5] )
+    assert_equal( 'g2', moves[6] )
+    assert_equal( 'o20', moves.last )
 
-#    while ops = g.ops do
-#      g << ops[0]
+#    while moves = g.moves do
+#      g << moves[0]
 #    end
 
-    g << g.ops.first
+    g << g.moves.first
 
     assert_not_equal( g.history[0], g.history.last )
   end
 
-  def test_jumping_ops
+  def test_jumping_moves
     g = Game.new( Phutball )
     g << :h10
 
-    assert( g.ops.include?( "h11h9" ) )
+    assert( g.moves.include?( "h11h9" ) )
 
     g << :h9
 
-    assert( g.ops.include?( "h11h8" ) )
+    assert( g.moves.include?( "h11h8" ) )
 
     g << :i11 << :j11 << :k11
 
-    assert( g.ops.include?( "h11l11" ) )
+    assert( g.moves.include?( "h11l11" ) )
 
     g << [:h12, :h13, :h14, :h15, :h16, :h17, :h18, :h19, :h20]
 
-    assert( !g.ops.include?( "h21" ) )
-    assert( g.ops.include?( "h11h21" ) )
+    assert( !g.moves.include?( "h21" ) )
+    assert( g.moves.include?( "h11h21" ) )
 
     g << [:i10, :i12, :g10, :g11, :g12, :e14]
 
-    assert( g.ops.include?( "h11j9" ) )
-    assert( g.ops.include?( "h11j13" ) )
-    assert( g.ops.include?( "h11f9" ) )
-    assert( g.ops.include?( "h11f11" ) )
-    assert( g.ops.include?( "h11f13" ) )
+    assert( g.moves.include?( "h11j9" ) )
+    assert( g.moves.include?( "h11j13" ) )
+    assert( g.moves.include?( "h11f9" ) )
+    assert( g.moves.include?( "h11f11" ) )
+    assert( g.moves.include?( "h11f13" ) )
   end
 
   def test_jumping_01
@@ -102,7 +102,7 @@ class TestPhutball < Test::Unit::TestCase
 
     g << :h10
 
-    assert( g.ops.include?( "h11h9" ) )
+    assert( g.moves.include?( "h11h9" ) )
 
     g << "h11h9"
 
@@ -110,9 +110,9 @@ class TestPhutball < Test::Unit::TestCase
     assert_equal( nil, g.board[:h10] )
     assert_equal( :white, g.board[:h9] )
 
-    assert( g.ops.include?( "h11" ) )
-    assert( g.ops.include?( "h10" ) )
-    assert( !g.ops.include?( "h9" ) )
+    assert( g.moves.include?( "h11" ) )
+    assert( g.moves.include?( "h10" ) )
+    assert( !g.moves.include?( "h9" ) )
     assert( !g.jumping )
   end
 
@@ -121,7 +121,7 @@ class TestPhutball < Test::Unit::TestCase
 
     g << [:i10, :j9, :k8, :l7, :m6, :n5]
 
-    assert( g.ops.include?( "h11o4" ) )
+    assert( g.moves.include?( "h11o4" ) )
 
     g << "h11o4"
 
@@ -140,8 +140,8 @@ class TestPhutball < Test::Unit::TestCase
 
     g << [:i10, :j9, :k8, :l7, :m6, :n5, :o4]
 
-    assert( !g.ops.include?( "h11o4" ) )
-    assert( !g.ops.include?( "h11p3" ) )
+    assert( !g.moves.include?( "h11o4" ) )
+    assert( !g.moves.include?( "h11p3" ) )
   end
 
   def test_jumping_04
@@ -149,9 +149,9 @@ class TestPhutball < Test::Unit::TestCase
 
     g << [:h10, :h8, :h7]
 
-    assert( g.ops.include?( "h11h9" ) )
-    assert( !g.ops.include?( "h11h8" ) )
-    assert( !g.ops.include?( "h11h7" ) )
+    assert( g.moves.include?( "h11h9" ) )
+    assert( !g.moves.include?( "h11h8" ) )
+    assert( !g.moves.include?( "h11h7" ) )
 
     assert( g.turn == :eks )
 
@@ -164,9 +164,9 @@ class TestPhutball < Test::Unit::TestCase
     assert( g.jumping )
     assert( g.turn == :eks )
 
-    assert( g.ops.include?( "h9h6" ) )
-    assert( g.ops.include?( "pass" ) )
-    assert( g.ops.length == 2 )
+    assert( g.moves.include?( "h9h6" ) )
+    assert( g.moves.include?( "pass" ) )
+    assert( g.moves.length == 2 )
 
     g << :h9h6
 
@@ -175,10 +175,10 @@ class TestPhutball < Test::Unit::TestCase
     assert_equal( nil, g.board[:h7] )
     assert_equal( :white, g.board[:h6] )
     
-    assert( g.ops.include?( "h9" ) )
-    assert( g.ops.include?( "h8" ) )
-    assert( g.ops.include?( "h7" ) )
-    assert( !g.ops.include?( "h6" ) )
+    assert( g.moves.include?( "h9" ) )
+    assert( g.moves.include?( "h8" ) )
+    assert( g.moves.include?( "h7" ) )
+    assert( !g.moves.include?( "h6" ) )
 
     assert( !g.jumping )
     assert( g.turn == :ohs )
@@ -189,9 +189,9 @@ class TestPhutball < Test::Unit::TestCase
 
     g << [:h10, :h8, :h7]
 
-    assert( g.ops.include?( "h11h9" ) )
-    assert( !g.ops.include?( "h11h8" ) )
-    assert( !g.ops.include?( "h11h7" ) )
+    assert( g.moves.include?( "h11h9" ) )
+    assert( !g.moves.include?( "h11h8" ) )
+    assert( !g.moves.include?( "h11h7" ) )
 
     assert( g.turn == :eks )
 
@@ -204,27 +204,27 @@ class TestPhutball < Test::Unit::TestCase
     assert( g.jumping )
     assert( g.turn == :eks )
 
-    assert( g.ops.include?( "h9h6" ) )
-    assert( g.ops.include?( "pass" ) )
-    assert( g.ops.length == 2 )
+    assert( g.moves.include?( "h9h6" ) )
+    assert( g.moves.include?( "pass" ) )
+    assert( g.moves.length == 2 )
 
     g << :pass
 
     assert( !g.jumping )
     assert( g.turn == :ohs )
 
-    assert( g.ops.include?( "h9h6" ) )
-    assert( !g.ops.include?( :pass ) )
-    assert( g.ops.length > 2 )
+    assert( g.moves.include?( "h9h6" ) )
+    assert( !g.moves.include?( :pass ) )
+    assert( g.moves.length > 2 )
 
-    assert( g.ops.include?( "h11" ) )
-    assert( g.ops.include?( "h10" ) )
+    assert( g.moves.include?( "h11" ) )
+    assert( g.moves.include?( "h10" ) )
   end
 
-  def test_unused_ops
+  def test_unused_moves
     g = Game.new Phutball
     g << "k14"
-    assert( ! g.ops.include?( "k14" ) )
+    assert( ! g.moves.include?( "k14" ) )
   end
 
   def test_game01

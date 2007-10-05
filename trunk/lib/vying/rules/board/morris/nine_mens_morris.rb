@@ -37,13 +37,13 @@ class NineMensMorris < Rules
     @remaining = { :black => r[:black], :white => r[:white] }
   end
 
-  def op?( op, player=nil )
-    return false unless player.nil? || has_ops.include?( player )
-    !final? && ops.include?( op.to_s )
+  def move?( move, player=nil )
+    return false unless player.nil? || has_moves.include?( player )
+    !final? && moves.include?( move.to_s )
   end
 
-  def ops( player=nil )
-    return false unless player.nil? || has_ops.include?( player )
+  def moves( player=nil )
+    return false unless player.nil? || has_moves.include?( player )
 
     if remaining[:black] == 0 && remaining[:white] == 0 &&
        (board.occupied[:black].length == 2 || 
@@ -103,8 +103,8 @@ class NineMensMorris < Rules
     return found
   end
 
-  def apply!( op )
-    coords, c = op.to_coords, nil
+  def apply!( move )
+    coords, c = move.to_coords, nil
 
     if removing
       board[coords.first], @removing = nil, false
@@ -131,7 +131,7 @@ class NineMensMorris < Rules
   def final?
     remaining[:black] == 0 && remaining[:white] == 0 &&
     (board.occupied[:black].length == 2 || 
-     board.occupied[:white].length == 2 || !ops)
+     board.occupied[:white].length == 2 || !moves)
   end
 
   def winner?( player )

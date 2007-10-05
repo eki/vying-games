@@ -14,10 +14,10 @@ module AI
     end
 
     def select( sequence, position, player )
-      return position.ops.first if position.ops.length == 1
+      return position.moves.first if position.moves.length == 1
   
-      score, op = best( analyze( position, player ) )
-      op
+      score, move = best( analyze( position, player ) )
+      move 
     end
 
     def forfeit?( sequence, position, player )
@@ -34,8 +34,8 @@ module AI
 
     def analyze( position, player )
       h = {}
-      position.ops.each do |op|
-        h[op] = evaluate( position.apply( op ), player )
+      position.moves.each do |move|
+        h[move] = evaluate( position.apply( move ), player )
       end
       h
     end
@@ -49,9 +49,9 @@ module AI
 
     def fuzzy_best( scores, delta )
       s = []
-      scores.each { |op,score| s << [score,op] }
+      scores.each { |move,score| s << [score,move] }
       m = s.max
-      ties = s.select { |score,op| (score - m.first).abs <= delta }
+      ties = s.select { |score,move| (score - m.first).abs <= delta }
       m = ties[rand(ties.length)]
       #puts "scores: #{s.inspect}, t: #{ties.inspect} (taking #{m.inspect})"
       m
@@ -125,7 +125,7 @@ module AI
 # This is just a simple dummy Human bot class.  It can be used as a placeholder
 # in Game#user_map
 #
-# ops taken from whatever UI, can use << to make them available via #select
+# moves taken from whatever UI, can use << to make them available via #select
 
   class Human < Bot
     attr_reader :queue
@@ -134,8 +134,8 @@ module AI
       @queue = []
     end
 
-    def <<( op )
-      queue << op
+    def <<( move )
+      queue << move 
     end
 
     def select( sequence, position, player )

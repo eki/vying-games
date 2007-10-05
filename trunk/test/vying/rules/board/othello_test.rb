@@ -21,14 +21,14 @@ class TestOthello < Test::Unit::TestCase
     assert_equal( :black, g.turn )
   end
 
-  def test_ops
+  def test_moves
     g = Game.new( Othello )
-    ops = g.ops
+    moves = g.moves
 
-    assert_equal( ['d3','c4','f5','e6'].sort, ops.sort )
+    assert_equal( ['d3','c4','f5','e6'].sort, moves.sort )
 
-    while ops = g.ops do
-      g << ops[0]
+    while moves = g.moves do
+      g << moves[0]
     end
 
     assert_not_equal( g.history[0], g.history.last )
@@ -42,7 +42,7 @@ class TestOthello < Test::Unit::TestCase
 
   def test_has_score
     g = Game.new( Othello )
-    g << g.ops.first
+    g << g.moves.first
 
     assert( g.has_score? )
     assert_equal( 4, g.score( :black ) )

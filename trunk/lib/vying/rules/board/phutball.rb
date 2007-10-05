@@ -6,13 +6,13 @@ class Phutball < Rules
   info :name      => 'Phutball',
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Phutball>']
 
-  attr_reader :board, :jumping, :unused_ops
+  attr_reader :board, :jumping, :unused_moves
 
   players [:ohs, :eks]
 
-  @@init_ops = Coords.new( 15, 21 ).select { |c| c.y != 0 && c.y != 20 }
-  @@init_ops.map! { |c| c.to_s }
-  @@init_ops.delete( "h11" )
+  @@init_moves = Coords.new( 15, 21 ).select { |c| c.y != 0 && c.y != 20 }
+  @@init_moves.map! { |c| c.to_s }
+  @@init_moves.delete( "h11" )
 
   def initialize( seed=nil )
     super
@@ -20,40 +20,40 @@ class Phutball < Rules
     @board = Board.new( 15, 21 )
     @board[:h11] = :white
 
-    @unused_ops = @@init_ops.dup
+    @unused_moves = @@init_moves.dup
     @jumping = false
   end
 
-  def op?( op, player=nil )
-    return false unless player.nil? || has_ops.include?( player )
-    !final? && ops.include?( op.to_s )
+  def move?( move, player=nil )
+    return false unless player.nil? || has_moves.include?( player )
+    !final? && moves.include?( move.to_s )
   end
 
-  def ops( player=nil )
-    return false unless player.nil? || has_ops.include?( player )
+  def moves( player=nil )
+    return false unless player.nil? || has_moves.include?( player )
     return false if final?
 
-    return jumping_ops + ["pass"] if jumping
+    return jumping_moves + ["pass"] if jumping
 
-    unused_ops + jumping_ops
+    unused_moves + jumping_moves
   end
 
-  def apply!( op )
-    if op.to_s == "pass"
+  def apply!( move )
+    if move.to_s == "pass"
       @jumping = false
       turn( :rotate )
       return self
     end
 
-    coords = op.to_coords
+    coords = move.to_coords
 
     if coords.length == 1
       board[coords.first] = :black
-      @unused_ops.delete( coords.first.to_s )
+      @unused_moves.delete( coords.first.to_s )
       turn( :rotate )
     else
       sc = coords.shift
-      @unused_ops << sc
+      @unused_moves << sc
 
       sc = Coord[sc]
       board[sc] = nil
@@ -63,15 +63,15 @@ class Phutball < Rules
         d = sc.direction_to ec
         while (c = board.coords.next( c, d )) != ec
           board[c] = nil
-          @unused_ops << c
+          @unused_moves << c
         end
         sc = ec
       end
 
       board[sc] = :white
-      @unused_ops.delete( sc.to_s )
+      @unused_moves.delete( sc.to_s )
 
-      if jumping_ops.empty?
+      if jumping_moves.empty?
         @jumping = false
         turn( :rotate )
       else
@@ -107,9 +107,9 @@ class Phutball < Rules
     [board,turn].hash
   end
 
-  def jumping_ops
+  def jumping_moves
     sc = board.occupied[:white].first
-    jops = []
+    jmoves = []
 
     [:n,:s,:w,:e,:ne,:nw,:se,:sw].each do |d|
       c = board.coords.next( sc, d )
@@ -121,10 +121,10 @@ class Phutball < Rules
         ec = c 
         break if board[c].nil?
       end
-      jops << "#{sc}#{ec}" if ec && board[ec].nil?
+      jmoves << "#{sc}#{ec}" if ec && board[ec].nil?
     end
 
-    jops
+    jmoves
   end
 end
 

@@ -23,13 +23,13 @@ class Breakthrough < Rules
            :a8,:b8,:c8,:d8,:e8,:f8,:g8,:h8] = :white
   end
 
-  def op?( op, player=nil )
-    return false unless player.nil? || has_ops.include?( player )
-    !final? && ops.include?( op.to_s )
+  def move?( move, player=nil )
+    return false unless player.nil? || has_moves.include?( player )
+    !final? && moves.include?( move.to_s )
   end
 
-  def ops( player=nil )
-    return false unless player.nil? || has_ops.include?( player )
+  def moves( player=nil )
+    return false unless player.nil? || has_moves.include?( player )
     return false if final?
 
     opp  = (turn == :black) ? :white : :black
@@ -56,14 +56,14 @@ class Breakthrough < Rules
     false
   end
 
-  def apply!( op )
-    coords = op.to_coords
+  def apply!( move )
+    coords = move.to_coords
 
     board.move( coords.first, coords.last )
 
     turn( :rotate )
 
-    turn( :rotate ) unless ops
+    turn( :rotate ) unless moves
 
     self
   end

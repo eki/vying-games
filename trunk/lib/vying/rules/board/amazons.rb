@@ -6,7 +6,7 @@ class Amazons < Rules
   info :name      => "Amazons",
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Amazons_(game)>']
 
-  attr_reader :board, :lastc, :ops_cache
+  attr_reader :board, :lastc, :moves_cache
 
   players [:white, :black]
 
@@ -19,10 +19,10 @@ class Amazons < Rules
 
   end
 
-  def op?( op, player=nil )
-    return false unless player.nil? || has_ops.include?( player )
+  def move?( move, player=nil )
+    return false unless player.nil? || has_moves.include?( player )
     return false if final?
-    return false unless op.to_s =~ /(\w\d+)(\w\d+)/
+    return false unless move.to_s =~ /(\w\d+)(\w\d+)/
 
     sc = Coord[$1]
     ec = Coord[$2]
@@ -41,8 +41,8 @@ class Amazons < Rules
     return true
   end
 
-  def ops( player=nil )
-    return [] unless player.nil? || has_ops.include?( player )
+  def moves( player=nil )
+    return [] unless player.nil? || has_moves.include?( player )
     return false if final?
 
     a = []
@@ -60,19 +60,17 @@ class Amazons < Rules
     a == [] ? nil : a
   end
 
-  def apply!( op )
-    op.to_s =~ /(\w\d+)(\w\d+)/
-    sc = Coord[$1]
-    ec = Coord[$2]
+  def apply!( move )
+    coords = move.to_coords
 
     if lastc.nil? || board[lastc] == :arrow
-      board.move( sc, ec )
+      board.move( coords.first, coords.last )
     else
-      board.arrow( ec )
+      board.arrow( coords.last )
       turn( :rotate )
     end
 
-    @lastc = ec
+    @lastc = coords.last 
     @ops_cache = :ns
 
     self

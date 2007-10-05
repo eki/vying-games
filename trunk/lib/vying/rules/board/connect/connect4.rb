@@ -7,16 +7,16 @@ class Connect4 < Rules
        :aliases => ['Plot Four', 'Connect 4', "The Captain's Mistress"],
        :related => ['Connect6', 'Pente', 'KeryoPente', 'TicTacToe']
 
-  attr_reader :board, :lastc, :lastp, :unused_ops
+  attr_reader :board, :lastc, :lastp, :unused_moves
 
   def initialize_copy( original )
     super
-    @unused_ops = original.unused_ops.map { |a| a.dup }
+    @unused_moves = original.unused_moves.map { |a| a.dup }
   end
 
   players [:red, :blue]
 
-  @@init_ops = Coords.new( 7, 6 ).group_by { |c| c.x }.map do |sa|
+  @@init_moves = Coords.new( 7, 6 ).group_by { |c| c.x }.map do |sa|
     sa.map { |c| c.to_s }
   end
 
@@ -25,31 +25,31 @@ class Connect4 < Rules
 
     @board = Board.new( 7, 6 )
     @lastc, @lastp = nil, :noone
-    @unused_ops = @@init_ops.map { |a| a.dup }
+    @unused_moves = @@init_moves.map { |a| a.dup }
   end
 
-  def op?( op, player=nil )
-    return false unless player.nil? || has_ops.include?( player )
-    unused_ops.map { |a| a.last }.include?( op.to_s )
+  def move?( move, player=nil )
+    return false unless player.nil? || has_moves.include?( player )
+    unused_moves.map { |a| a.last }.include?( move.to_s )
   end
 
-  def ops( player=nil )
-    return false unless player.nil? || has_ops.include?( player )
-    (final? || (tmp = unused_ops.map { |a| a.last }) == []) ? nil : tmp
+  def moves( player=nil )
+    return false unless player.nil? || has_moves.include?( player )
+    (final? || (tmp = unused_moves.map { |a| a.last }) == []) ? nil : tmp
   end
 
-  def apply!( op )
-    c, p = Coord[op], turn
+  def apply!( move )
+    c, p = Coord[move], turn
     board[c], @lastc, @lastp = p, c, p
-    unused_ops.each { |a| a.delete( c.to_s ) }
-    unused_ops.delete( [] )
+    unused_moves.each { |a| a.delete( c.to_s ) }
+    unused_moves.delete( [] )
     turn( :rotate )
     self
   end
 
   def final?
     return false if lastc.nil?
-    return true  if unused_ops.empty?
+    return true  if unused_moves.empty?
 
     board.each_from( lastc, [:e,:w] ) { |p| p == lastp } >= 3 ||
     board.each_from( lastc, [:n,:s] ) { |p| p == lastp } >= 3 ||

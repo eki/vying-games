@@ -50,11 +50,11 @@ class TestNineMensMorris < Test::Unit::TestCase
     assert( g.has_score? )
   end
 
-  def test_has_ops
+  def test_has_moves
     g = Game.new( NineMensMorris )
-    assert_equal( [:black], g.has_ops )
-    g << g.ops.first
-    assert_equal( [:white], g.has_ops )
+    assert_equal( [:black], g.has_moves )
+    g << g.moves.first
+    assert_equal( [:white], g.has_moves )
   end
 
   def test_placement_phase
@@ -64,22 +64,22 @@ class TestNineMensMorris < Test::Unit::TestCase
     g.remaining[:white] = 3
 
     until g.remaining[:white] == 0
-      g.ops.each do |op|
-        assert_equal( nil, g.board[op] )
-        assert_equal( 1, op.to_coords.length )
+      g.moves.each do |move|
+        assert_equal( nil, g.board[move] )
+        assert_equal( 1, move.to_coords.length )
       end
 
-      # This test is a little flawed, if the ops fall out right we'd "capture"
+      # This test is a little flawed, if the moves fall out right we'd "capture"
       # which we don't want to do.
-      g << g.ops.first
+      g << g.moves.first
     end
 
     assert_equal( 3, g.board.occupied[:black].length )
     assert_equal( 3, g.board.occupied[:white].length )
     assert_equal( 18, g.board.unoccupied.length )
 
-    g.ops.each do |op|
-      assert_equal( 2, op.to_coords.length )
+    g.moves.each do |move|
+      assert_equal( 2, move.to_coords.length )
     end
   end
 
@@ -93,15 +93,15 @@ class TestNineMensMorris < Test::Unit::TestCase
 
     assert_equal( :black, g.turn )
     assert( g.removing )
-    assert_equal( 2, g.ops.length )
-    assert( g.op?( "d1" ) )
-    assert( g.op?( "d2" ) )
+    assert_equal( 2, g.moves.length )
+    assert( g.move?( "d1" ) )
+    assert( g.move?( "d2" ) )
 
     g << "d2"
 
     assert_equal( :white, g.turn )
     assert( ! g.removing )
-    assert( g.op?( "d2" ) )
+    assert( g.move?( "d2" ) )
   end
 
   def test_movement_phase
@@ -113,8 +113,8 @@ class TestNineMensMorris < Test::Unit::TestCase
     g.board[:a1,:a4,:a7,:g1,:g7] = :black
     g.board[:d1,:d2,:d3,:e4,:e5,:d6] = :white
 
-    g.ops.each do |op|
-      assert_equal( 2, op.to_coords.length )
+    g.moves.each do |move|
+      assert_equal( 2, move.to_coords.length )
     end
 
     assert_equal( :black, g.turn )
@@ -125,8 +125,8 @@ class TestNineMensMorris < Test::Unit::TestCase
     assert_equal( nil, g.board[:g1] )
     assert_equal( :black, g.board[:g4] )
 
-    g.ops.each do |op|
-      assert_equal( 2, op.to_coords.length )
+    g.moves.each do |move|
+      assert_equal( 2, move.to_coords.length )
     end
 
     g << "d3e3"
@@ -136,11 +136,11 @@ class TestNineMensMorris < Test::Unit::TestCase
     assert_equal( :white, g.board[:e3] )
     assert( g.removing )
 
-    assert( g.op?( "g4" ) )
-    assert( g.op?( "g7" ) )
-    assert( ! g.op?( "a1" ) )
-    assert( ! g.op?( "a4" ) )
-    assert( ! g.op?( "a7" ) )
+    assert( g.move?( "g4" ) )
+    assert( g.move?( "g7" ) )
+    assert( ! g.move?( "a1" ) )
+    assert( ! g.move?( "a4" ) )
+    assert( ! g.move?( "a7" ) )
 
     g << "g4"
 
@@ -148,8 +148,8 @@ class TestNineMensMorris < Test::Unit::TestCase
     assert_equal( nil, g.board[:g4] )
     assert( ! g.removing )
     
-    g.ops.each do |op|
-      assert_equal( 2, op.to_coords.length )
+    g.moves.each do |move|
+      assert_equal( 2, move.to_coords.length )
     end
 
     g << "a4b4"
@@ -159,8 +159,8 @@ class TestNineMensMorris < Test::Unit::TestCase
     assert_equal( :black, g.board[:b4] )
     assert( ! g.removing )
 
-    g.ops.each do |op|
-      assert_equal( 2, op.to_coords.length )
+    g.moves.each do |move|
+      assert_equal( 2, move.to_coords.length )
     end
 
     g << "e3d3"
@@ -170,10 +170,10 @@ class TestNineMensMorris < Test::Unit::TestCase
     assert_equal( :white, g.board[:d3] )
     assert( g.removing )
 
-    assert( g.op?( "g7" ) )
-    assert( g.op?( "a1" ) )
-    assert( g.op?( "b4" ) )
-    assert( g.op?( "a7" ) )
+    assert( g.move?( "g7" ) )
+    assert( g.move?( "a1" ) )
+    assert( g.move?( "b4" ) )
+    assert( g.move?( "a7" ) )
 
     g << "b4"
 
@@ -183,12 +183,12 @@ class TestNineMensMorris < Test::Unit::TestCase
     assert_equal( nil, g.board[:b4] )
     assert( ! g.removing )
 
-    assert_equal( 3 * g.board.unoccupied.length, g.ops.uniq.length )
+    assert_equal( 3 * g.board.unoccupied.length, g.moves.uniq.length )
     
-    g.ops.each do |op|
-      assert_equal( 2, op.to_coords.length )
+    g.moves.each do |move|
+      assert_equal( 2, move.to_coords.length )
 
-      coords = op.to_coords
+      coords = move.to_coords
 
       assert_equal( :black, g.board[coords.first] )
       assert_equal( nil, g.board[coords.last] )
@@ -201,12 +201,12 @@ class TestNineMensMorris < Test::Unit::TestCase
     assert_equal( :black, g.board[:a4] )
     assert( g.removing )
 
-    assert( g.op?( "d6" ) )
-    assert( g.op?( "e4" ) )
-    assert( g.op?( "e5" ) )
-    assert( ! g.op?( "d1" ) )
-    assert( ! g.op?( "d2" ) )
-    assert( ! g.op?( "d3" ) )
+    assert( g.move?( "d6" ) )
+    assert( g.move?( "e4" ) )
+    assert( g.move?( "e5" ) )
+    assert( ! g.move?( "d1" ) )
+    assert( ! g.move?( "d2" ) )
+    assert( ! g.move?( "d3" ) )
 
     g << "d6"
 
@@ -214,8 +214,8 @@ class TestNineMensMorris < Test::Unit::TestCase
     assert_equal( nil, g.board[:d6] )
     assert( ! g.removing )
     
-    g.ops.each do |op|
-      assert_equal( 2, op.to_coords.length )
+    g.moves.each do |move|
+      assert_equal( 2, move.to_coords.length )
     end
 
     g << "d3e3"
@@ -225,9 +225,9 @@ class TestNineMensMorris < Test::Unit::TestCase
     assert_equal( :white, g.board[:e3] )
     assert( g.removing )
 
-    assert( g.op?( "a1" ) )
-    assert( g.op?( "a4" ) )
-    assert( g.op?( "a7" ) )
+    assert( g.move?( "a1" ) )
+    assert( g.move?( "a4" ) )
+    assert( g.move?( "a7" ) )
 
     g << "a4"
     

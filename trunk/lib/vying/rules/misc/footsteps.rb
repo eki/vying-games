@@ -7,13 +7,13 @@ class Footsteps < Rules
        :resources => 
          ['Everything2 <http://www.everything2.com/index.pl?node=Footsteps>']
 
-  attr_reader :board, :points, :bids, :unused_ops_left, :unused_ops_right,
+  attr_reader :board, :points, :bids, :unused_moves_left, :unused_moves_right,
               :bid_history
 
   players [:left, :right]
 
-  @@init_ops_left  = (1..50).to_a
-  @@init_ops_right = (1..50).to_a
+  @@init_moves_left  = (1..50).to_a
+  @@init_moves_right = (1..50).to_a
 
   def initialize( seed=nil )
     super
@@ -25,37 +25,37 @@ class Footsteps < Rules
     @bids = { :left => nil, :right => nil }
     @bid_history = { :left => [], :right => [] }
 
-    @unused_ops_left  = @@init_ops_left.dup
-    @unused_ops_right = @@init_ops_right.dup
+    @unused_moves_left  = @@init_moves_left.dup
+    @unused_moves_right = @@init_moves_right.dup
   end
 
-  def has_ops
+  def has_moves
     final? ? [] : players.select { |p| ! bids[p] && points[p] > 0 }
   end
 
-  def op?( op, player=nil )
-    return false unless player.nil? || has_ops.include?( player )
-    !final? && ops( player ).include?( op.to_s )
+  def move?( move, player=nil )
+    return false unless player.nil? || has_moves.include?( player )
+    !final? && moves( player ).include?( move.to_s )
   end
 
-  def ops( player=nil )
-    return false unless player.nil? || has_ops.include?( player )
+  def moves( player=nil )
+    return false unless player.nil? || has_moves.include?( player )
     return false if final?
 
-    return unused_ops_left.map  { |i| "left_#{i}" }  if player == :left
-    return unused_ops_right.map { |i| "right_#{i}" } if player == :right
+    return unused_moves_left.map  { |i| "left_#{i}" }  if player == :left
+    return unused_moves_right.map { |i| "right_#{i}" } if player == :right
 
-    has_ops.map do |p|
+    has_moves.map do |p|
       if p == :left
-        unused_ops_left.map  { |i| "left_#{i}" }  if p == :left
+        unused_moves_left.map  { |i| "left_#{i}" }  if p == :left
       elsif p == :right
-        unused_ops_right.map { |i| "right_#{i}" } if p == :right
+        unused_moves_right.map { |i| "right_#{i}" } if p == :right
       end
     end.flatten
   end
 
-  def apply!( op )
-    p, bid = op.to_s.split( /_/ )
+  def apply!( move )
+    p, bid = move.to_s.split( /_/ )
     p = p.intern
     bid = bid.to_i
 
@@ -79,8 +79,8 @@ class Footsteps < Rules
         bids[p] = nil 
       end
 
-      unused_ops_left.reject!  { |op| op > points[:left] }
-      unused_ops_right.reject! { |op| op > points[:right] }
+      unused_moves_left.reject!  { |move| move > points[:left] }
+      unused_moves_right.reject! { |move| move > points[:right] }
     end
 
     self
@@ -124,7 +124,7 @@ class Footsteps < Rules
   end
 
   def turn
-    has_ops.first
+    has_moves.first
   end
 
 end

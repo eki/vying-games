@@ -74,10 +74,10 @@ class Game
     super || !!(history && history.last.respond_to?( method_id ))
   end
 
-  def append( op )
-    if op?( op )
-      @history << apply( op )
-      @sequence << op
+  def append( move )
+    if move?( move )
+      @history << apply( move )
+      @sequence << move 
 
       if history.last.class.check_cycles?
         history[0...(history.length-1)].each do |p|
@@ -87,13 +87,13 @@ class Game
 
       return self
     end
-    raise "'#{op}' not a valid operation"
+    raise "'#{move}' not a valid move"
   end
 
-  def append_list( ops )
+  def append_list( moves )
     i = 0
     begin
-      ops.each { |op| append( op ); i += 1 }
+      moves.each { |move| append( move ); i += 1 }
     rescue
       i.times { undo }
       raise
@@ -101,17 +101,17 @@ class Game
     self
   end
 
-  def append_string( ops, regex=/,/ )
-    append_list( ops.split( regex ) )
+  def append_string( moves, regex=/,/ )
+    append_list( moves.split( regex ) )
   end
 
-  def <<( ops )
-    if ops.kind_of? String
-      return append_string( ops )
-    elsif ops.kind_of? Enumerable
-      return append_list( ops )
+  def <<( moves )
+    if moves.kind_of? String
+      return append_string( moves )
+    elsif moves.kind_of? Enumerable
+      return append_list( moves )
     else
-      return append( ops )
+      return append( moves )
     end
   end
 
@@ -146,7 +146,7 @@ class Game
       return self
     end
 
-    has_ops.each do |p|
+    has_moves.each do |p|
       if players.include?( p )
         if user_map[p].ready?
           position = history.last.censor( p )
@@ -164,17 +164,17 @@ class Game
             return self
           end
 
-          # Ask for an op
-          op = user_map[p].select( sequence, position, p )
-          if op?( op, p )
-            self << op
+          # Ask for an move
+          move = user_map[p].select( sequence, position, p )
+          if move?( move, p )
+            self << move 
           else
-            raise "#{user_map[p].username} attempted invalid op: #{op}"
+            raise "#{user_map[p].username} attempted invalid move: #{move}"
           end
         end
       elsif p == :random
-        ops = history.last.ops
-        self << ops[history.last.rng.rand(ops.size)]
+        moves = history.last.moves
+        self << moves[history.last.rng.rand(moves.size)]
       end
     end
     self
@@ -203,12 +203,12 @@ class Game
     draw_by_agreement? || history.last.draw?
   end
 
-  def op?( op, player=nil )
-    history.last.op?( op, player ) unless draw_by_agreement? || forfeit?
+  def move?( move, player=nil )
+    history.last.move?( move, player ) unless draw_by_agreement? || forfeit?
   end
 
-  def ops( player=nil )
-    history.last.ops( player ) unless draw_by_agreement? || forfeit?
+  def moves( player=nil )
+    history.last.moves( player ) unless draw_by_agreement? || forfeit?
   end
 
   def forfeit?
@@ -236,14 +236,14 @@ class Game
   end
 
   def Game.replay( results )
-    special_ops = [/^forfeit_by_(\w+)$/, /draw_offered_by_(\w+)/,
+    special_moves = [/^forfeit_by_(\w+)$/, /draw_offered_by_(\w+)/,
                    /^draw$/]
 
     g = Game.new( results.rules, results.seed )
 
     s = results.sequence.dup
 
-    if special_ops.any? { |so| s.last =~ so }
+    if special_moves.any? { |sm| s.last =~ sm }
       s.pop
     end
 

@@ -20,14 +20,14 @@ class Minesweeper < Rules
   info :name        => 'Minesweeper',
        :description => '9x9, 10 bomb Minesweeper'
 
-  attr_reader :board, :mines, :unused_ops
+  attr_reader :board, :mines, :unused_moves
 
   random
 
   censor   :one => [:mines]
   players [:one]
 
-  @@init_ops = Coords.new( 9, 9 ).map { |c| c.to_s }
+  @@init_moves = Coords.new( 9, 9 ).map { |c| c.to_s }
 
   def initialize( seed=nil )
     super
@@ -37,25 +37,25 @@ class Minesweeper < Rules
     10.times { |i| @mines << Coord[a[i]/9,a[i]%9] }
 
     @board = MinesweeperBoard.new( 9, 9 )
-    @unused_ops = @@init_ops.dup
+    @unused_moves = @@init_moves.dup
   end
 
-  def op?( op, player=nil )
-    unused_ops.include?( op.to_s )
+  def move?( move, player=nil )
+    unused_moves.include?( move.to_s )
   end
 
-  def ops( player=nil )
-    final? || unused_ops == [] ? nil : unused_ops
+  def moves( player=nil )
+    final? || unused_moves == [] ? nil : unused_moves
   end
 
-  def apply!( op )
-    c = Coord[op] 
+  def apply!( move )
+    c = Coord[move] 
 
     revealed = board.reveal( c, mines )
     if revealed.any? { |rc| board[rc] == :b }
-      unused_ops.clear
+      unused_moves.clear
     else
-      @unused_ops -= revealed.map { |rc| rc.to_s }
+      @unused_moves -= revealed.map { |rc| rc.to_s }
     end
 
     self
@@ -66,11 +66,11 @@ class Minesweeper < Rules
   end
 
   def winner?( player=:one )
-    unused_ops.size == 10
+    unused_moves.size == 10
   end
 
   def loser?( player=:one )
-    unused_ops.empty?
+    unused_moves.empty?
   end
 end
 

@@ -8,11 +8,11 @@ class AI::Connect6::AggressiveBot < AI::Bot
     eval_player_threats( position, player )
   end
 
-  def prune( position, player, ops )
+  def prune( position, player, moves )
     n = (position.board.occupied[:white] || []).length < 20 ? super : nil
 
     if position.board.threats.length > 0
-       original_ops = ops
+       original_moves = moves
        threats = position.board.threats.sort_by { |t| t.degree }
 
        important = []
@@ -22,72 +22,76 @@ class AI::Connect6::AggressiveBot < AI::Bot
        threes = threats.select { |t| t.degree == 3 && t.player == player }
        twos   = threats.select { |t| t.degree == 4 && t.player == player }
 
-       ops3 = threes.map { |t| t.empty_coords.map { |c| c.to_s } }
-       ops3.flatten!
+       moves3 = threes.map { |t| t.empty_coords.map { |c| c.to_s } }
+       moves3.flatten!
 
-       ops2 = twos.map { |t| t.empty_coords.map { |c| c.to_s } }
-       ops2.flatten!
+       moves2 = twos.map { |t| t.empty_coords.map { |c| c.to_s } }
+       moves2.flatten!
 
        important += p_important[0..1]
        important += o_important[0..1]
 
        unless important.empty?
-         ops = important.map { |t| t.empty_coords.map { |c| c.to_s } }
-         ops.flatten!
-         ops  &= n if n
-         ops3 &= n if n
-         ops2 &= n if n
+         moves = important.map { |t| t.empty_coords.map { |c| c.to_s } }
+         moves.flatten!
+         moves  &= n if n
+         moves3 &= n if n
+         moves2 &= n if n
 
-         ops3 -= ops
-         ops2 -= ops
+         moves3 -= moves
+         moves2 -= moves
 
-         ops << ops3[rand(ops3.length)] unless ops3.empty?
-         ops << ops2[rand(ops2.length)] unless ops2.empty?
-         ops << n.find { |o| !ops.include?( o ) } if n
+         moves << moves3[rand(moves3.length)] unless moves3.empty?
+         moves << moves2[rand(moves2.length)] unless moves2.empty?
+         moves << n.find { |o| !moves.include?( o ) } if n
 
-         return ops 
+         return moves 
        else
          threats2 = threats.select { |t| t.player == player }
 
          unless threats2.empty?
-           ops = threats2.map { |t| t.empty_coords.map { |c| c.to_s } }
-           ops.flatten!
-           ops = ops.sort_by { |op| ops.select { |o| o == op }.length }
-           ops = ops.uniq.reverse!
+           moves = threats2.map { |t| t.empty_coords.map { |c| c.to_s } }
+           moves.flatten!
+           moves = moves.sort_by do |move| 
+             moves.select { |m| m == move }.length 
+           end
+           moves = moves.uniq.reverse!
 
-           ops  &= n if n
-           ops3 &= n if n
-           ops2 &= n if n
+           moves  &= n if n
+           moves3 &= n if n
+           moves2 &= n if n
 
-           ops = ops[0..2]
+           moves = moves[0..2]
 
-           ops3 -= ops
-           ops2 -= ops
+           moves3 -= moves
+           moves2 -= moves
 
-           ops << ops3[rand(ops3.length)] unless ops3.empty?
-           ops << ops2[rand(ops2.length)] unless ops2.empty?
-           ops << n.find { |o| !ops.include?( o ) } if n
+           moves << moves3[rand(moves3.length)] unless moves3.empty?
+           moves << moves2[rand(moves2.length)] unless moves2.empty?
+           moves << n.find { |m| !moves.include?( m ) } if n
 
-           return ops
+           return moves
          else
-           ops = threats.map { |t| t.empty_coords.map { |c| c.to_s } }
-           ops.flatten!
-           ops = ops.sort_by { |op| ops.select { |o| o == op }.length }
-           ops = ops.uniq.reverse!
+           moves = threats.map { |t| t.empty_coords.map { |c| c.to_s } }
+           moves.flatten!
+           moves = moves.sort_by do |move| 
+             moves.select { |m| m == move }.length
+           end
+           moves = moves.uniq.reverse!
 
            if n
-             ops &= n
+             moves &= n
            else
-             nops = ops.select { |op| position.board.has_neighbor? op }
-             ops = nops unless nops.empty?
+             nmoves = moves.select { |move| position.board.has_neighbor? move }
+             moves = nmoves unless nmoves.empty?
            end
 
-           return ops[0..3]
+           return moves[0..3]
          end
        end
     else
       return n.sort_by { rand }[0..2] if n
-      return ops.sort_by { rand }[0..2]
+      return moves.sort_by { rand }[0..2]
     end
   end
 

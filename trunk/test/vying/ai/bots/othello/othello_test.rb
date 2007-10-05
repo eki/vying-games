@@ -16,18 +16,18 @@ class TestBotsOthello < Test::Unit::TestCase
    
     assert_equal( 395, b.openings.length )
 
-    op = b.opening( g.history.last, g.sequence )
-    assert( op )
+    move = b.opening( g.history.last, g.sequence )
+    assert( move )
 
-    assert( ['c5','d6'].include?( op ) )
+    assert( ['c5','d6'].include?( move ) )
   end
 
   def test_eval_count
     b = TestBot.new
 
     g = Game.new( Othello )
-    while( g.ops )
-      g << g.ops.first
+    while( g.moves )
+      g << g.moves.first
     end
 
     pc, oc, total, score = b.eval_count( g.history.first, :black )

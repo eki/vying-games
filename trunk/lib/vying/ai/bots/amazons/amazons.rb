@@ -31,11 +31,11 @@ module AI::Amazons
     end
 
     def select( sequence, position, player )
-      return position.ops.first if position.ops.length == 1
+      return position.moves.first if position.moves.length == 1
 
-      score, op = best( analyze( position, player ) )
+      score, move = best( analyze( position, player ) )
       puts "**** Score: #{score}"
-      op
+      move
     end
 
     def evaluate( position, player )

@@ -21,29 +21,29 @@ class TestKalah < Test::Unit::TestCase
     assert_equal( 0, g.score( :two ) )
   end
 
-  def test_ops
+  def test_moves
     g = Game.new( Kalah )
 
     assert_equal( :one, g.turn )
-    assert_equal( ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'], g.ops )
+    assert_equal( ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'], g.moves )
 
     g << :a1
 
     assert_equal( :two, g.turn )
-    assert_equal( ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'], g.ops )
+    assert_equal( ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'], g.moves )
 
     g << :f2
 
     assert_equal( :one, g.turn )
-    assert_equal( ['b1', 'c1', 'd1', 'e1', 'f1'], g.ops )
+    assert_equal( ['b1', 'c1', 'd1', 'e1', 'f1'], g.moves )
 
     g << :e1
 
     assert_equal( :one, g.turn )
-    assert_equal( ['a1', 'b1', 'c1', 'd1', 'f1'], g.ops )
+    assert_equal( ['a1', 'b1', 'c1', 'd1', 'f1'], g.moves )
 
-    while ops = g.ops do
-      g << ops[0]
+    while moves = g.moves do
+      g << moves[0]
     end
 
     assert_not_equal( g.history[0], g.history.last )
@@ -56,7 +56,7 @@ class TestKalah < Test::Unit::TestCase
 
   def test_has_score
     g = Game.new( Kalah )
-    g << g.ops.first
+    g << g.moves.first
 
     assert( g.has_score? )
     assert_equal( 1, g.score( :one ) )
@@ -119,7 +119,7 @@ class TestKalah < Test::Unit::TestCase
     assert( !g.final? )
     assert_equal( 0, g.score( :one ) )
     assert_equal( 0, g.score( :two ) )
-    assert_equal( ['a1'], g.ops )
+    assert_equal( ['a1'], g.moves )
 
     g << :a1
 

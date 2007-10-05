@@ -19,23 +19,23 @@ class Oware < Rules
     @annotation = MancalaBoard.new( 6, 2, "0" )
 
     @scoring_pits = { :one => 0, :two => 0 }
-    @ops_cache = { :one => ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'],
-                   :two => ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }
+    @moves_cache = { :one => ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'],
+                     :two => ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }
   end
 
-  def op?( op, player=nil )
-    valid = ops( player )
-    valid && valid.include?( op.to_s )
+  def move?( move, player=nil )
+    valid = moves( player )
+    valid && valid.include?( move.to_s )
   end
 
-  def ops( player=nil )
-    return false unless player.nil? || has_ops.include?( player )
+  def moves( player=nil )
+    return false unless player.nil? || has_moves.include?( player )
 
-    valid = @ops_cache[turn].select { |c| board[c] > 0 }
+    valid = @moves_cache[turn].select { |c| board[c] > 0 }
 
     # Check starvation rule
     opp = turn == :one ? :two : :one
-    if @ops_cache[opp].all? { |c| board[c] == 0 }
+    if @moves_cache[opp].all? { |c| board[c] == 0 }
       still_valid = []
       valid.each do |c|
         still_valid << c unless dup.apply!( c ).final?
@@ -46,19 +46,19 @@ class Oware < Rules
     valid.empty? ? false : valid
   end
 
-  def apply!( op )
+  def apply!( move )
     # Reset annotation
     annotation[*annotation.coords] = "0"
 
-    h = op.x
-    r = op.y
+    h = move.x
+    r = move.y
 
     # Sowing seeds
 
-    seeds, board[op] = board[op], 0
+    seeds, board[move] = board[move], 0
     last = nil
 
-    annotation[op] = "e"
+    annotation[move] = "e"
 
     while seeds > 0 
       if r == 0 && h == 0
@@ -74,7 +74,7 @@ class Oware < Rules
       h -= 1 if r == 0 && h > 0
       h += 1 if r == 1 && h < 6
 
-      next if h == op.x && r == op.y
+      next if h == move.x && r == move.y
     
       seeds -= 1  
       board[h,r] += 1
@@ -99,7 +99,7 @@ class Oware < Rules
     end
 
     opp = turn == :one ? :two : :one
-    opp_empties = @ops_cache[opp].select { |c| board[c] == 0 }
+    opp_empties = @moves_cache[opp].select { |c| board[c] == 0 }
 
     cap = [] if cap.length + opp_empties.length == 6   # Grand slam forfeit
 
@@ -122,7 +122,7 @@ class Oware < Rules
   end
 
   def final?
-    !ops
+    !moves
   end
 
   def winner?( player )
@@ -158,7 +158,7 @@ class Oware < Rules
   private
   def clear
     players.each do |p|
-      @ops_cache[p].each do |c|
+      @moves_cache[p].each do |c|
         scoring_pits[p] += board[c]
         board[c] = 0
         annotation[c] = "c" if annotation[c] == "0"

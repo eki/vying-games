@@ -22,27 +22,27 @@ class TestHearts < Test::Unit::TestCase
   def test_initialize       # Need to be more thorough here
     g = Game.new( Hearts )
 
-    # Passing, so everyone has ops
-    assert( g.has_ops.include?( :n ) )
-    assert( g.has_ops.include?( :e ) )
-    assert( g.has_ops.include?( :w ) )
-    assert( g.has_ops.include?( :s ) )
+    # Passing, so everyone has moves
+    assert( g.has_moves.include?( :n ) )
+    assert( g.has_moves.include?( :e ) )
+    assert( g.has_moves.include?( :w ) )
+    assert( g.has_moves.include?( :s ) )
 
     # Skip past passing phase
-    12.times { g << g.ops.first }
+    12.times { g << g.moves.first }
 
     # The 2 of Clubs is led
-    assert_equal( [Card[:C2]], g.ops )
+    assert_equal( [Card[:C2]], g.moves )
   end
 
-  def test_has_ops
+  def test_has_moves
   end
 
-  def test_ops
+  def test_moves
     g = Game.new( Hearts )
-    assert_equal( Card[:C2], g.ops.first )
-    assert( g.op?( Card[:C2] ) )
-    assert( g.op?( :C2 ) )
+    assert_equal( Card[:C2], g.moves.first )
+    assert( g.move?( Card[:C2] ) )
+    assert( g.move?( :C2 ) )
   end
 
   def test_shoot_moon

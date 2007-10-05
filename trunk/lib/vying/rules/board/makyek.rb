@@ -7,7 +7,7 @@ class Makyek < Rules
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Mak-yek>'],
        :aliases   => ['Makyek']
 
-  attr_reader :board, :lastc, :ops_cache
+  attr_reader :board, :lastc, :moves_cache
 
   players [:white, :black]
 
@@ -30,12 +30,12 @@ class Makyek < Rules
     brs.each { |c| board[c] = :black }
 
     @lastc = nil
-    @ops_cache = :ns
+    @moves_cache = :ns
   end
 
-  def op?( op, player=nil )
-    return false unless player.nil? || has_ops.include?( player )
-    return false unless op.to_s =~ /(\w\d+)(\w\d+)/
+  def move?( move, player=nil )
+    return false unless player.nil? || has_moves.include?( player )
+    return false unless move.to_s =~ /(\w\d+)(\w\d+)/
 
     sc = Coord[$1]
     ec = Coord[$2]
@@ -55,10 +55,10 @@ class Makyek < Rules
     return true
   end
 
-  def ops( player=nil )
-    return false     unless player.nil? || has_ops.include?( player )
+  def moves( player=nil )
+    return false     unless player.nil? || has_moves.include?( player )
     return nil       if final?
-    return ops_cache if ops_cache != :ns
+    return moves_cache if moves_cache != :ns
 
     a = []
 
@@ -73,13 +73,13 @@ class Makyek < Rules
       end
     end
 
-    ops_cache = a == [] ? nil : a
+    moves_cache = a == [] ? nil : a
   end
 
-  def apply!( op )
-    op.to_s =~ /(\w\d+)(\w\d+)/
-    sc = Coord[$1]
-    ec = Coord[$2]
+  def apply!( move )
+    coords = move.to_coords
+    sc = coords.first
+    ec = coords.last
 
     board.move( sc, ec )
     rooks = board.occupied[turn]
@@ -118,11 +118,11 @@ class Makyek < Rules
 
     turn( :rotate )
     @lastc = ec
-    @ops_cache = :ns
-    return self if ops
+    @moves_cache = :ns
+    return self if moves
 
     turn( :rotate )
-    @ops_cache = :ns
+    @moves_cache = :ns
 
     self
   end

@@ -161,13 +161,13 @@ module AI::Connect6
     end
 
     def select( sequence, position, player )
-      return position.ops.first if position.ops.length == 1
+      return position.moves.first if position.moves.length == 1
 
       @leaf, @nodes = 0, 0
-      score, op = best( analyze( position, player ) )
+      score, move = best( analyze( position, player ) )
       puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
 
-      op
+      move
     end
 
     def evaluate( position, player )
@@ -184,7 +184,7 @@ module AI::Connect6
       position.final? || depth >= 2
     end
 
-    def prune( position, player, ops )
+    def prune( position, player, moves )
       b = position.board
 
       occupied = b.occupied[:black] || []

@@ -22,7 +22,7 @@ exclude.each { |r| rules.delete( r ) }
 Benchmark.bm( 30 ) do |x|
   rules.each do |r|
     pos = r.new
-    op = pos.ops.first
+    move = pos.moves.first
     p_a = Array.new( n ) { |i| pos.dup }
 
     x.report( "#{r} position dup" ) do
@@ -33,16 +33,16 @@ Benchmark.bm( 30 ) do |x|
       n.times { r.new }
     end
 
-    x.report( "#{r} op?" ) do
-      n.times { pos.op?( op ) }
+    x.report( "#{r} move?" ) do
+      n.times { pos.move?( move ) }
     end
 
-    x.report( "#{r} ops" ) do
-      n.times { pos.ops }
+    x.report( "#{r} moves" ) do
+      n.times { pos.moves }
     end
 
     x.report( "#{r} apply" ) do
-      p_a.each { |p| p.apply( op ) }
+      p_a.each { |p| p.apply( move ) }
     end
 
     x.report( "#{r} final?" ) do
@@ -53,7 +53,7 @@ Benchmark.bm( 30 ) do |x|
       g = Game.new( r )
       n.times do
         g = Game.new( r ) if g.final?
-        g << g.ops[rand(g.ops.length)]
+        g << g.moves[rand(g.moves.length)]
       end
     end
   end

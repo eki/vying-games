@@ -26,24 +26,24 @@ class TestPig < Test::Unit::TestCase
     assert_equal( false, g.rolling )
   end
 
-  def test_has_ops
+  def test_has_moves
     g = Game.new( Pig )
-    assert_equal( [:a], g.has_ops )
+    assert_equal( [:a], g.has_moves )
     g << :roll
-    assert_equal( [:random], g.has_ops )
+    assert_equal( [:random], g.has_moves )
     g << 1
-    assert_equal( [:b], g.has_ops )
+    assert_equal( [:b], g.has_moves )
     g << :pass
-    assert_equal( [:a], g.has_ops )
+    assert_equal( [:a], g.has_moves )
   end
 
-  def test_ops
+  def test_moves
     g = Game.new( Pig )
-    ops = g.ops
+    moves = g.moves
 
-    assert_equal( [:pass,:roll], ops )
+    assert_equal( [:pass,:roll], moves )
 
-    while ops = g.ops do
+    while moves = g.moves do
       g << [:roll, 1, :roll, 6, :roll, 5, :pass]
     end
 
