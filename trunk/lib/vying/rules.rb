@@ -128,6 +128,10 @@ class Rules
     attr_reader :seed, :rng
   end
 
+  def rand( n=nil )
+    @rng ? @rng.rand( n ) : Kernel.rand( n )
+  end
+
   def self.censor( h={}, p=nil )
     @censored = h
     class << self
