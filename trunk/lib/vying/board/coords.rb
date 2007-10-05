@@ -107,6 +107,15 @@ class Coords
     a
   end
 
+  def ring( coord, d )
+    coords.select do |c| 
+      dx = (c.x - coord.x).abs
+      dy = (c.y - coord.y).abs
+
+      (dx == d && dy <= d) || (dx <= d && dy == d)
+    end
+  end
+
   def to_s
     inject( '' ) { |s,c| s + "#{c}" }
   end
@@ -116,5 +125,6 @@ class Coords
   memoize :diagonal
   memoize :neighbors
   memoize :neighbors_nil
+  memoize :ring
 end
 

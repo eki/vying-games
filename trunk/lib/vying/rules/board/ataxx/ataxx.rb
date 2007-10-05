@@ -1,0 +1,104 @@
+require 'vying/rules'
+require 'vying/board/board'
+
+class Ataxx < Rules
+
+  info :name      => 'Ataxx',
+       :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Ataxx>']
+
+  attr_reader :board, :block_pattern
+
+  players [:red, :blue]
+
+  random
+
+  def initialize( seed=nil )
+    super
+
+    @board = Board.new( 7, 7 )
+    @board[:a1,:g7] = :red
+    @board[:a7,:g1] = :blue
+
+    @block_pattern = set_rand_blocks
+  end
+
+  def moves( player=nil )
+    return [] unless player.nil? || has_moves.include?( player )
+    
+    p   = turn
+    opp = (p == :red) ? :blue : :red
+
+    cd = [:n, :s, :e, :w, :se, :sw, :ne, :nw]
+
+    found = []
+
+    return [] unless board.occupied[p]
+
+    # Adjacent moves
+
+    board.occupied[p].each do |c|
+      board.coords.ring( c, 1 ).each do |c1|
+        found << "#{c}#{c1}" if board[c1].nil? && !c1.nil?
+      end
+    end
+
+    # Jump moves
+
+    board.occupied[p].each do |c|
+      board.coords.ring( c, 2 ).each do |c2|
+        found << "#{c}#{c2}" if board[c2].nil? && !c2.nil?
+      end
+    end
+
+    found
+  end
+
+  def apply!( move )
+    coords, p = Coord.expand( move.to_coords ), turn
+    opp = (p == :red) ? :blue : :red
+
+    if coords.length == 2
+      board[coords.last] = turn
+    else
+      board.move( coords.first, coords.last )
+    end
+
+    board.coords.neighbors( coords.last ).each do |c|
+      board[c] = turn if board[c] == opp
+    end
+
+    turn( :rotate )
+
+    turn( :rotate ) if moves.empty?
+
+    self
+  end
+
+  def final?
+    moves.empty?
+  end
+
+  def winner?( player )
+    opp = player == :red ? :blue : :red
+    board.count( player ) > board.count( opp )
+  end
+
+  def loser?( player )
+    opp = player == :red ? :blue : :red
+    board.count( player ) < board.count( opp )
+  end
+
+  def draw?
+    board.count( :blue ) == board.count( :red )
+  end
+
+  def score( player )
+    board.count( player )
+  end
+
+  def hash
+    [board,turn].hash
+  end
+
+end
+
