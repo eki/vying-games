@@ -8,6 +8,7 @@ class Makyek < Rules
        :aliases   => ['Makyek']
 
   attr_reader :board, :lastc, :moves_cache
+  ignore :moves_cache
 
   players [:white, :black]
 
@@ -73,7 +74,7 @@ class Makyek < Rules
       end
     end
 
-    moves_cache = a
+    @moves_cache = a
   end
 
   def apply!( move )

@@ -7,6 +7,7 @@ class Othello < Rules
        :aliases => ['Reversi']
 
   attr_reader :board, :moves_cache
+  ignore :moves_cache
 
   players [:black, :white]
 
@@ -34,7 +35,7 @@ class Othello < Rules
     return []          unless player.nil? || has_moves.include?( player )
     return moves_cache if moves_cache != :ns
     a = frontier.select { |c| board.valid?( c, turn ) }.map { |c| c.to_s }
-    moves_cache = a
+    @moves_cache = a
   end
 
   def apply!( move )
@@ -46,7 +47,7 @@ class Othello < Rules
     return self unless moves.empty?
 
     turn( :rotate )
-    moves_cache = :ns
+    @moves_cache = :ns
 
     self
   end

@@ -6,7 +6,7 @@ class Amazons < Rules
   info :name      => "Amazons",
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Amazons_(game)>']
 
-  attr_reader :board, :lastc, :moves_cache
+  attr_reader :board, :lastc
 
   players [:white, :black]
 
@@ -41,8 +41,8 @@ class Amazons < Rules
   end
 
   def moves( player=nil )
-    return [] unless player.nil? || has_moves.include?( player )
-    return [] if final?
+    return []          unless player.nil? || has_moves.include?( player )
+    return []          if final?
 
     a = []
 
@@ -70,7 +70,6 @@ class Amazons < Rules
     end
 
     @lastc = coords.last 
-    @ops_cache = :ns
 
     self
   end

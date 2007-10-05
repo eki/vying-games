@@ -7,6 +7,7 @@ class Oware < Rules
        :related => ['Kalah']
 
   attr_reader :board, :scoring_pits, :annotation
+  ignore :moves_cache
 
   players [:one, :two]
 

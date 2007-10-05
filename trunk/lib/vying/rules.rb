@@ -89,7 +89,10 @@ class Rules
   def eql?( o )
     return false if instance_variables.sort != o.instance_variables.sort
     instance_variables.each do |iv|
-      return false if instance_variable_get(iv) != o.instance_variable_get(iv)
+      if instance_variable_get(iv) != o.instance_variable_get(iv) && 
+         !self.ignored?( iv )
+        return false
+      end
     end
     true
   end
@@ -109,6 +112,15 @@ class Rules
 
   def allow_draws_by_agreement?
     info[:allow_draws_by_agreement]
+  end
+
+  def self.ignore( *ivs )
+    @ignore ||= ["@ignore"]
+    @ignore += ivs.map { |iv| "@#{iv}" }
+  end
+
+  def self.ignored?( iv )
+    @ignore && @ignore.include?( iv )
   end
 
   def self.random

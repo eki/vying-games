@@ -6,7 +6,8 @@ class Ataxx < Rules
   info :name      => 'Ataxx',
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Ataxx>']
 
-  attr_reader :board, :block_pattern
+  attr_reader :board, :block_pattern, :moves_cache
+  ignore :moves_cache
 
   players [:red, :blue]
 
@@ -20,10 +21,13 @@ class Ataxx < Rules
     @board[:a7,:g1] = :blue
 
     @block_pattern = set_rand_blocks
+
+    @moves_cache = :ns
   end
 
   def moves( player=nil )
-    return [] unless player.nil? || has_moves.include?( player )
+    return []          unless player.nil? || has_moves.include?( player )
+    return moves_cache if moves_cache != :ns
     
     p   = turn
     opp = (p == :red) ? :blue : :red
@@ -50,7 +54,7 @@ class Ataxx < Rules
       end
     end
 
-    found
+    @moves_cache = found
   end
 
   def apply!( move )
@@ -68,8 +72,10 @@ class Ataxx < Rules
     end
 
     turn( :rotate )
+    @moves_cache = :ns
 
     turn( :rotate ) if moves.empty?
+    @moves_cache = :ns
 
     self
   end
