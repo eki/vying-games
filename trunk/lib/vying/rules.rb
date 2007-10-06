@@ -3,7 +3,9 @@ require 'random'
 
 class Random::MersenneTwister
   def dup
-    Marshal.load( Marshal.dump( self ) )
+    rng = Random::MersenneTwister.new
+    rng.state = self.state
+    rng
   end
 
   def eql?( o )
