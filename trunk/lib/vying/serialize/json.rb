@@ -40,9 +40,9 @@ class Rules
                 'loser'  => players.select { |p| loser? p },
                 'draw'   => draw? )
     else
-      h.merge!( 'ops' => ops,
+      h.merge!( 'moves' => moves,
                 'turn' => turn,
-                'has_ops' => has_ops )
+                'has_moves' => has_moves )
     end
 
     h.merge!( 'board' => board ) if respond_to? :board
