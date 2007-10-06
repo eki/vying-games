@@ -58,10 +58,13 @@ class Ataxx < Rules
   end
 
   def apply!( move )
-    coords, p = Coord.expand( move.to_coords ), turn
+    coords, p = move.to_coords, turn
     opp = (p == :red) ? :blue : :red
 
-    if coords.length == 2
+    dx = (coords.first.x - coords.last.x).abs
+    dy = (coords.first.y - coords.last.y).abs
+
+    if dx <= 1 && dy <= 1 && (dx == 1 || dy == 1)
       board[coords.last] = turn
     else
       board.move( coords.first, coords.last )
