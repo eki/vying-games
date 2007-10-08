@@ -206,6 +206,10 @@ class Rules
     final? ? [] : [turn]
   end
 
+  def has_moves?( player )
+    has_moves.include?( player )
+  end
+
   def apply( move )
     self.dup.apply!( move )
   end

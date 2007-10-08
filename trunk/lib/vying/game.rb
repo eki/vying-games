@@ -187,6 +187,10 @@ class Game
     results
   end
 
+  def seed
+    history.last.respond_to?( :seed ) ? history.last.seed : nil
+  end
+
   def final?
     forfeit? || draw_by_agreement? || history.last.final?
   end
