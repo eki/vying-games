@@ -1,9 +1,9 @@
 To Do:
 
-  /  Implement #hash for all Rules subclasses, data structures
+  x  Implement #hash for all Rules subclasses, data structures
 
-  o  Make a decision on what types may be returned as tokens from #ops
-  o  Make a decision on whether #apply should coerce an op or reject an
+  x  Make a decision on what types may be returned as tokens from #ops
+  x  Make a decision on whether #apply should coerce an op or reject an
      op if it isn't exactly the same type as was provided by #ops
      -  Would it help to think about how Game#sequence will be used?
      -  Game#sequence and Game#seed would need to be saved to save a
@@ -13,7 +13,7 @@ To Do:
         -  Marshal?
         -  ?
 
-  o  Decide whether or not to delete GameResults (replaced by *Results models
+  x  Decide whether or not to delete GameResults (replaced by *Results models
      in the vortex project)
 
   o  Add Rules#successor.  The #successor function would give all possible
@@ -53,10 +53,6 @@ To Do:
 
   o  Unit test memoize, do we want to move it into a separate directory?
      support/ maybe?
-
-  o  Change Othello, etc, to encode player in ops, eg:
-       a1 means black to play a1
-       A1 means white to play a1, and so forth.
 
 
   o  Can we come up with a more dsl like language for defining Rules?
