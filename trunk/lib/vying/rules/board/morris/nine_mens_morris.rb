@@ -84,7 +84,7 @@ class NineMensMorris < Rules
       end
 
       # If we couldn't find any moves, the game is over
-      return found.empty? ? false : found
+      return found
     end
 
     # Flying
