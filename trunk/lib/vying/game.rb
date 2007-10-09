@@ -218,7 +218,7 @@ class Game
   end
 
   def forfeit?
-    forfeit_by
+    !! forfeit_by
   end
 
   def forfeit_by
@@ -235,6 +235,10 @@ class Game
     if sequence.last =~ /draw_offered_by_(\w+)/
       $1.intern
     end
+  end
+
+  def draw_offered?
+    !! draw_offered_by
   end
 
   def results
