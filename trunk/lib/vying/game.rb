@@ -197,16 +197,18 @@ class Game
 
   def winner?( player )
     (forfeit? && forfeit_by != player) || 
-    (!draw_by_agreement? && history.last.winner?( player ))
+    (!draw_by_agreement? && 
+     history.last.final? && history.last.winner?( player ))
   end
 
   def loser?( player )
     (forfeit? && forfeit_by == player) || 
-    (!draw_by_agreement? && history.last.loser?( player ))
+    (!draw_by_agreement? && 
+     history.last.final? && history.last.loser?( player ))
   end
 
   def draw?
-    draw_by_agreement? || history.last.draw?
+    draw_by_agreement? || (history.last.final? && history.last.draw?)
   end
 
   def move?( move, player=nil )
