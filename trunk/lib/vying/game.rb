@@ -212,11 +212,17 @@ class Game
   end
 
   def move?( move, player=nil )
-    history.last.move?( move, player ) unless draw_by_agreement? || forfeit?
+    unless draw_by_agreement? || draw_offered? || forfeit?
+      history.last.move?( move, player )
+    end
   end
 
   def moves( player=nil )
-    draw_by_agreement? || forfeit? ? [] : history.last.moves( player )
+    if draw_by_agreement? || draw_offered? || forfeit? 
+      [] 
+    else
+      history.last.moves( player )
+    end
   end
 
   def forfeit?
@@ -237,6 +243,10 @@ class Game
     if sequence.last =~ /draw_offered_by_(\w+)/
       $1.intern
     end
+  end
+
+  def draw_offered_by?( player )
+    draw_offered_by == player
   end
 
   def draw_offered?
