@@ -1,0 +1,62 @@
+To Do:
+
+  x  Implement #hash for all Rules subclasses, data structures
+
+  x  Make a decision on what types may be returned as tokens from #ops
+  x  Make a decision on whether #apply should coerce an op or reject an
+     op if it isn't exactly the same type as was provided by #ops
+     -  Would it help to think about how Game#sequence will be used?
+     -  Game#sequence and Game#seed would need to be saved to save a
+        game, what are some options for saving them?
+        -  ActiveRecord to a database
+        -  YAML
+        -  Marshal?
+        -  ?
+
+  x  Decide whether or not to delete GameResults (replaced by *Results models
+     in the vortex project)
+
+  o  Add Rules#successor.  The #successor function would give all possible
+     successor positions to the current position.  This would be the 
+     equivalent of position.ops.map { |op| position.dup.apply( op ) }
+
+     - In many algorithms we don't actually care about the op that transitioned
+       us to any given child, we care only about the child.
+
+  o  Begin documentation of .rb files
+     x  Setup rdoc task for Rakefile
+  o  Look into rake's Rakefile for interesting tasks like counting lines
+  o  Add code coverage testing to Rakefile via rcov ?
+
+  o  Take a look at installing/using Cerberus
+
+  x  Figure out how to install 'vying' as a gem
+
+  o  Decide on a new name for bin/play, bin/bench, bin/branch, etc
+     -  It would be nice to have them available on install (bin/play at least)
+     -  What about vyingd and vying  ???
+
+  o  Benchmark the creation of temp arrays in various games, why are there
+     so many?  Would performance be better if there were fewer?
+     -  Where are Bignum's coming from on Pig?
+
+  o  attr_accessor :blah  needs self.blah when used internally... update code
+     accordingly  (???)
+
+  o  Work on defining a Position's hash function such that we could create
+     a cache of {position.hash => best_op} for iterative deepening
+
+  o  Setup regression tests based on replaying past (known to be correct) games.
+
+  o  Consider defining a Strategy (takes a State and returns which Action to
+     take) separate from a Search algorithm
+
+  o  Unit test memoize, do we want to move it into a separate directory?
+     support/ maybe?
+
+
+  o  Can we come up with a more dsl like language for defining Rules?
+     -  Perhaps a dsl for certain types of games that then creates a 
+        starting point for rules?  A board based Rules dsl, or a solitaire
+        card game based dsl, etc?
+
