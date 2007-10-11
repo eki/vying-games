@@ -32,6 +32,10 @@ module AI::Checkers
       move
     end
 
+    def accept_draw?( sequence, position, player )
+      position.board.occupied[player].length < 3
+    end
+
     def evaluate( position, player )
       @leaf += 1
 
