@@ -9,6 +9,8 @@ class Connect6 < Rules
 
   attr_reader :board, :lastc, :lastp, :unused_moves
 
+  allow_draws_by_agreement
+
   players [:black, :white]
 
   @@init_moves = Coords.new( 19, 19 ).map { |c| c.to_s }

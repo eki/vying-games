@@ -9,6 +9,8 @@ class NineMensMorris < Rules
 
   attr_reader :board, :remaining, :removing
 
+  allow_draws_by_agreement
+
   players [:black, :white]
 
   def initialize( seed=nil )
