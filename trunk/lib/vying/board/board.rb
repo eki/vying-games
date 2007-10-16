@@ -79,7 +79,7 @@ class Board
       s += row(y).inject( '' ) do |rs,p|
         rs + (p.nil? ? ' ' : p.to_s[0..0])
       end
-      s += sprintf( "%*-d\n", off, y+1 )
+      s += sprintf( "%*d\n", -off, y+1 )
     end
     s + letters
   end

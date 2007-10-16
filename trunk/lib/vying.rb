@@ -6,6 +6,7 @@ require 'vying/board/mancala'
 
 require 'vying/rules'
 require 'vying/game'
+require 'vying/ai/search'
 require 'vying/ai/bot'
 
 require 'yaml'
