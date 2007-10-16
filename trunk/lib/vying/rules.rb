@@ -159,7 +159,7 @@ class Rules
 
   def self.players( p )
     @players = p
-    class << self; attr_reader :players; end
+    class << self; def players; @players.dup; end; end
     p
   end
 
