@@ -126,6 +126,11 @@ class Checkers < Rules
     player == turn
   end
 
+  def score( player )
+    opp = player == :red ? :white : :red
+    12 - board.occupied[opp].length
+  end
+
   def hash
     [board,turn].hash
   end

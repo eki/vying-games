@@ -36,7 +36,7 @@ class TestBreakthrough < Test::Unit::TestCase
 
   def test_has_score
     g = Game.new( Breakthrough )
-    assert( !g.has_score? )
+    assert( g.has_score? )
   end
 
   def test_has_moves

@@ -80,6 +80,11 @@ class Breakthrough < Rules
      board[:a8, :b8, :c8, :d8, :e8, :f8, :g8, :h8].include?( :black ) )
   end
 
+  def score( player )
+    opp = player == :black ? :white : :black
+    16 - board.occupied[opp].length
+  end
+
   def hash
     [board,turn].hash
   end

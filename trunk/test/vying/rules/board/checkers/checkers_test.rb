@@ -40,7 +40,7 @@ class TestCheckers < Test::Unit::TestCase
 
   def test_has_score
     g = Game.new( Checkers )
-    assert( !g.has_score? )
+    assert( g.has_score? )
   end
 
   def test_has_moves
