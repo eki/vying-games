@@ -192,17 +192,19 @@ class Game
   end
 
   def final?
-    forfeit? || draw_by_agreement? || history.last.final?
+    forfeit? || draw_by_agreement? || time_exceeded? ||  history.last.final?
   end
 
   def winner?( player )
     (forfeit? && forfeit_by != player) || 
+    (time_exceeded? && time_exceeded_by != player) ||
     (!draw_by_agreement? && 
      history.last.final? && history.last.winner?( player ))
   end
 
   def loser?( player )
     (forfeit? && forfeit_by == player) || 
+    (time_exceeded? && time_exceeded_by == player) ||
     (!draw_by_agreement? && 
      history.last.final? && history.last.loser?( player ))
   end
@@ -212,13 +214,13 @@ class Game
   end
 
   def move?( move, player=nil )
-    unless draw_by_agreement? || draw_offered? || forfeit?
+    unless draw_by_agreement? || draw_offered? || forfeit? || time_exceeded?
       history.last.move?( move, player )
     end
   end
 
   def moves( player=nil )
-    if draw_by_agreement? || draw_offered? || forfeit? 
+    if draw_by_agreement? || draw_offered? || forfeit? || time_exceeded?
       [] 
     else
       history.last.moves( player )
@@ -251,6 +253,16 @@ class Game
 
   def draw_offered?
     !! draw_offered_by
+  end
+
+  def time_exceeded?
+    !! time_exceeded_by
+  end
+
+  def time_exceeded_by
+    if sequence.last =~ /time_exceeded_by_(\w+)/
+      $1.intern
+    end
   end
 
   def results
