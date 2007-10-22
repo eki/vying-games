@@ -227,6 +227,14 @@ class Game
     end
   end
 
+  def has_moves
+    draw_offered? ? players - [draw_offered_by] : history.last.has_moves
+  end
+
+  def has_moves?( player )
+    has_moves.include?( player )
+  end
+
   def forfeit?
     !! forfeit_by
   end
@@ -292,7 +300,7 @@ class Game
   def description
     if final?
       if draw?
-        s = user_map.map { |p,u| "#{u} (#{p})" }.join( " and " )
+        s = rules.players.map { |p| "#{user_map[p]} (#{p})" }.join( " and " )
         "#{s} played to a draw"
       else
 
@@ -312,10 +320,10 @@ class Game
         s
       end
     else
-      s = user_map.map { |p,u| "#{u} (#{p})" }.join( " vs " )
+      s = rules.players.map { |p| "#{user_map[p]} (#{p})" }.join( " vs " )
 
       if has_score?
-        s = "#{s} (#{user_map.map { |p,u| score( p ) }.join( '-' )})"
+        s = "#{s} (#{rules.players.map { |p| score( p ) }.join( '-' )})"
       end
 
       s
