@@ -128,7 +128,8 @@ class Checkers < Rules
 
   def score( player )
     opp = player == :red ? :white : :red
-    12 - board.occupied[opp].length
+    oppk =   opp == :red ? :RED : :WHITE
+    12 - board.count( opp ) - board.count( oppk )
   end
 
   def hash
