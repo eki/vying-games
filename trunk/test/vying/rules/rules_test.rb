@@ -53,7 +53,6 @@ module RulesTests
 
     g.moves.each do |move|
       assert( g.move?( move ) )
-      g.has_moves.each { |p| assert( g.move?( move, p ) ) }
       (g.players - g.has_moves).each { |p| assert( !g.move?( move, p ) ) }
     end
   end

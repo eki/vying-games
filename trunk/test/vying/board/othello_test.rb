@@ -142,7 +142,7 @@ class TestOthelloBoard < Test::Unit::TestCase
     assert_equal( b[3,4], :black )
     assert_equal( b[3,5], :black )
 
-    assert_equal( 8*8-3, b.count( nil ) )
+    assert_equal( 8*8-3, b.empty_count )
   end
 
   def test_place_s
@@ -157,7 +157,7 @@ class TestOthelloBoard < Test::Unit::TestCase
     assert_equal( b[3,3], :white )
     assert_equal( b[3,4], :white )
 
-    assert_equal( 8*8-3, b.count( nil ) )
+    assert_equal( 8*8-3, b.empty_count )
   end
 
   def test_place_e
@@ -178,7 +178,7 @@ class TestOthelloBoard < Test::Unit::TestCase
     assert_equal( b[4,3], :white )
     assert_equal( b[5,3], :white )
 
-    assert_equal( 8*8-6, b.count( nil ) )
+    assert_equal( 8*8-6, b.empty_count )
   end
 
   def test_place_w
@@ -195,7 +195,7 @@ class TestOthelloBoard < Test::Unit::TestCase
     assert_equal( b[4,3], :black )
     assert_equal( b[5,3], :black )
 
-    assert_equal( 8*8-4, b.count( nil ) )
+    assert_equal( 8*8-4, b.empty_count )
   end
 
   def test_place_nw_se
@@ -216,7 +216,7 @@ class TestOthelloBoard < Test::Unit::TestCase
     assert_equal( b[4,4], :black )
     assert_equal( b[5,5], :black )
 
-    assert_equal( 8*8-6, b.count( nil ) )
+    assert_equal( 8*8-6, b.empty_count )
   end
 
   def test_place_ne_sw
@@ -237,7 +237,7 @@ class TestOthelloBoard < Test::Unit::TestCase
     assert_equal( b[3,4], :black )
     assert_equal( b[2,5], :black )
 
-    assert_equal( 8*8-6, b.count( nil ) )
+    assert_equal( 8*8-6, b.empty_count )
   end
 
   def test_occupied

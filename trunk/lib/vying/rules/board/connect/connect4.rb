@@ -65,7 +65,7 @@ class Connect4 < Rules
   end
 
   def draw?
-    board.count( nil ) == 0 &&
+    board.empty_count == 0 &&
     board.each_from( lastc, [:e,:w] ) { |p| p == lastp } < 3 &&
     board.each_from( lastc, [:n,:s] ) { |p| p == lastp } < 3 &&
     board.each_from( lastc, [:ne,:sw] ) { |p| p == lastp } < 3 &&

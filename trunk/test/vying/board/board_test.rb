@@ -229,11 +229,11 @@ class TestBoard < Test::Unit::TestCase
 
   def test_clear
     b = Board.new( 4, 4 )
-    assert_equal( 16, b.count( nil ) )
+    assert_equal( 16, b.empty_count )
     assert_equal( :black, b[:a1,:a2,:a3] = :black )
     assert_equal( :white, b[:b1,:b2,:b3,:b4] = :white )
-    assert_equal( 9, b.count( nil ) )
-    assert_equal( 16, b.clear.count( nil ) )
+    assert_equal( 9, b.empty_count )
+    assert_equal( 16, b.clear.empty_count )
   end
 
   def test_to_s

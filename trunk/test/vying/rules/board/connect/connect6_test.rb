@@ -57,7 +57,7 @@ class TestConnect6 < Test::Unit::TestCase
 
     assert_not_equal( g.history[0], g.history.last )
 
-    assert_equal( 19*19-(19*5+6), g.board.count( nil ) )
+    assert_equal( 19*19-(19*5+6), g.board.empty_count )
     assert_equal( (19*5-1)/2+4, g.board.count( :black ) )
     assert_equal( (19*5-1)/2+3, g.board.count( :white ) )
   end

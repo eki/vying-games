@@ -32,7 +32,7 @@ class TestConnect4 < Test::Unit::TestCase
 
     assert_not_equal( g.history[0], g.history.last )
 
-    assert_equal( 42-19, g.board.count( nil ) )
+    assert_equal( 42-19, g.board.empty_count )
     assert_equal( 10, g.board.count( :red ) )
     assert_equal( 9, g.board.count( :blue ) )
   end
