@@ -28,9 +28,13 @@ class Board
     [cells,width].hash
   end
 
-  def count( p )
+  def count( p=nil )
     return (occupied[p] || []).length if p
-    width * height - occupied.inject(0) { |m,v| m + v[1].length }
+    occupied.inject(0) { |m,v| m + (v[0] ? v[1].length : 0) }
+  end
+
+  def empty_count
+    width * height - count
   end
 
   def row( y )

@@ -27,16 +27,15 @@ class Ataxx < Rules
 
   def moves( player=nil )
     return []          unless player.nil? || has_moves.include?( player )
+    return []          if players.any? { |p| board.count( p ) == 0 }
     return moves_cache if moves_cache != :ns
-    
+
     p   = turn
     opp = (p == :red) ? :blue : :red
 
     cd = [:n, :s, :e, :w, :se, :sw, :ne, :nw]
 
     found = []
-
-    return [] unless board.occupied[p]
 
     # Adjacent moves
 
