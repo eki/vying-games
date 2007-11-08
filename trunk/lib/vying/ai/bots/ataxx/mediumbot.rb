@@ -5,7 +5,11 @@ class AI::Ataxx::MediumBot < AI::Bot
   include AI::Ataxx::Bot
 
   def eval( position, player )
-    eval_score( position, player )
+    if position.board.count( :player ) < 10
+      eval_score( position, player ) + eval_stability( position, player )
+    else
+      eval_score( position, player )
+    end
   end
 
   def cutoff( position, depth )
