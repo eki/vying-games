@@ -78,21 +78,11 @@ class Amazons < Rules
   end
 
   def winner?( player )
-    opp = player == :black ? :white : :black
-
-    s_p = score( player )
-    s_opp = score( opp )
-
-    s_p == s_opp ? turn == opp : s_p > s_opp
+    player != turn
   end
 
   def loser?( player )
-    opp = player == :black ? :white : :black
-
-    s_p = score( player )
-    s_opp = score( opp )
-
-    s_p == s_opp ? turn == player : s_p < s_opp
+    player == turn
   end
 
   def score( player )
