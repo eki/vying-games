@@ -42,7 +42,6 @@ class Amazons < Rules
 
   def moves( player=nil )
     return []          unless player.nil? || has_moves.include?( player )
-    return []          if final?
 
     a = []
 
@@ -75,12 +74,7 @@ class Amazons < Rules
   end
 
   def final?
-    board.territories.each do |t|
-      return false if t.white.length > 0 && t.black.length > 0 &&
-                      t.white.length + t.black.length != t.coords.length
-    end
-
-    true
+    moves.empty?
   end
 
   def winner?( player )
