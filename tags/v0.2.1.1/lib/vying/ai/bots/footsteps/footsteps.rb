@@ -1,5 +1,0 @@
-
-module AI::Footsteps
-
-end
-
