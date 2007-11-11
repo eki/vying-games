@@ -2,6 +2,8 @@ require 'rake'
 require 'rake/testtask'
 require 'rake/rdoctask'
 require 'rake/clean'
+require 'fileutils'
+include FileUtils
 
 begin
   require 'rubygems'
@@ -10,7 +12,7 @@ rescue Exception
   nil
 end
 
-CLEAN.include( 'ext/**/*.o' )
+CLEAN.include( 'ext/**/*.o', 'ext/**/*.so' )
 CLOBBER.include( 'pkg' )
 
 Rake::TestTask.new do |t|
@@ -24,6 +26,12 @@ Rake::RDocTask.new do |rd|
   rd.rdoc_files.include( "docs/README.rdoc", "lib/**/*.rb", 
                          "ext/**/*.h", "ext/**/*.c" )
 end
+
+task :compile do 
+  sh %{cd ext/vying/board && ruby ./extconf.rb && make}
+end
+
+task :default => [:clean, :compile, :test]
 
 wd = Dir.pwd
 wd =~ /\/v([\d\.]*)$/
