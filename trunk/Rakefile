@@ -23,7 +23,8 @@ end
 Rake::RDocTask.new do |rd|
   rd.main = "README"
   rd.rdoc_dir = "doc/api"
-  rd.rdoc_files.include( "README", "doc/*.txt", "lib/**/*.rb", 
+  rd.rdoc_files.include( "README", "LICENSE", "COPYING", 
+                         "doc/*.txt", "lib/**/*.rb", 
                          "ext/**/*.h", "ext/**/*.c" )
 end
 
@@ -44,7 +45,10 @@ if defined?( Gem ) && pkg_version
     'bin/branch',
     'test/**/*',
     'ext/**/*',
-    'Rakefile']
+    'Rakefile',
+    'README',
+    'LICENSE',
+    'COPYING']
 
   spec = Gem::Specification.new do |s|
     s.name = 'vying'
