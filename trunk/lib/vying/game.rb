@@ -1,11 +1,23 @@
 
+#  GameResults is a memento of a Game.  Whereas Game stores every position
+#  as a part of it's history, GameResults stores only the seed and sequence
+#  of moves.  GameResults can be used to reconstruct a game by replaying the
+#  list of moves.
+
 class GameResults
   attr_reader :seed, :sequence, :win_lose_draw, :scores, :check
+
+  # Create GameResults by very simply assigning the given values to
+  # their respective properties.  It's more likely that you'll get
+  # a GameResults object by calling Game#results
 
   def initialize( rules, seed, sequence, win_lose_draw, scores, check )
     @rules, @seed, @sequence, @win_lose_draw, @scores, @check =
       rules, seed, sequence, win_lose_draw, scores, check
   end
+
+  #  Create a GameResults object from a Game.  This is used by Game#results,
+  #  the preferred method for getting a GameResults object.
   
   def self.from_game( game )
     @rules = game.rules.to_snake_case
@@ -33,9 +45,17 @@ class GameResults
     @check = "#{i},#{game.history[i].hash},#{game.history.last.hash}"
   end
 
+  # Returns the Rules subclass for the Game that this is the GameResults of.
+  # The GameResults @rules instance variable actually stores a string, this
+  # method attempts to turn it into a class via Rules.find.
+
   def rules
     Rules.find( @rules )
   end
+
+  # Checks the GameResults checksum.  If the code replaying the game is
+  # consistent with the code that was used to originally play the game,
+  # then the check's should match.
 
   def verify
     i, h1, h2 = check.split( /,/ ).map { |n| n.to_i }
@@ -44,8 +64,16 @@ class GameResults
   end
 end
 
+#  A Game represents the series of moves and positions that make up a game.
+#  It is heavily backed by a subclass of Rules.
+
 class Game
   attr_reader :history, :sequence, :user_map
+
+  # Create a game from the given Rules subclass, and an optional seed.  If
+  # the game has random elements and a seed is not provided, one will be 
+  # created.  If you'd like to replay a game with random elements you must
+  # provide the original seed.
 
   def initialize( rules, seed=nil )
     @rules, @history = rules.to_s, [rules.new( seed )]
@@ -53,12 +81,16 @@ class Game
     yield self if block_given?
   end
 
-  # For serialization purposes we can't store the Rules class constant,
-  # but it's what we actually want
+  # Returns the Rules subclass that this Game is based on.  For serialization
+  # purposes the @rules instance variable actually stores a string, but this
+  # returns the class (which is more useful).
 
   def rules
     Rules.find( @rules )
   end
+
+  # Missing method calls are passed on to the last position in the history,
+  # if it responds to the call.
 
   def method_missing( method_id, *args )
     # These extra checks that history is not nil are required for yaml-ization
@@ -69,10 +101,16 @@ class Game
     end
   end
 
+  # We respond to any methods provided by the last position in history.
+
   def respond_to?( method_id )
     # double !! to force false instead of nil
     super || !!(history && history.last.respond_to?( method_id ))
   end
+
+  # Append a move to the Game's sequence of moves.  Whatever token is used
+  # to represent a move will be converted to a String via #to_s.  It's more
+  # common to use the more versatile Game#<< method.
 
   def append( move )
     move = move.to_s
@@ -92,6 +130,9 @@ class Game
     raise "'#{move}' not a valid move"
   end
 
+  # Append a list of moves to this game.  Calls Game#append for each move
+  # in the given list.
+
   def append_list( moves )
     i = 0
     begin
@@ -103,9 +144,15 @@ class Game
     self
   end
 
+  # Splits a string on the given regex and then feeds it to Game#append_list.
+
   def append_string( moves, regex=/,/ )
     append_list( moves.split( regex ) )
   end
+
+  # The most versatile way of applying moves to this Game.  It will accept
+  # moves as a comma separated String, an Enumerable list of moves, or a 
+  # single move.
 
   def <<( moves )
     if moves.kind_of? String
@@ -117,13 +164,23 @@ class Game
     end
   end
 
+  # Undo a single move.  This returns [position, move] that have been undone
+  # as an array.
+
   def undo
     [@history.pop,@sequence.pop]
   end
 
+  # Accepts a hash mapping players to users.  The players should match up to
+  # the players returned by #players.  The users can be anything, but should
+  # implement the AI::Bot interface if you intend to use Game#step or
+  # Game#play.
+
   def register_users( h )
     user_map.merge!( h )
   end
+
+  # If this is a 2 player game, #switch_sides will swap the registered users.
 
   def switch_sides
     if players.length == 2
@@ -132,6 +189,17 @@ class Game
     end
     user_map
   end
+
+  # Ask the registered users for one move, and apply it.  The registered
+  # user must respond to methods like:
+  #
+  #   *  AI::Bot#offer_draw?
+  #   *  AI::Bot#accept_draw?
+  #   *  AI::Bot#forfeit?
+  #   *  AI::Bot#select
+  #
+  # If these methods aren't implemented (select in particular) by the
+  # registered user, Game#step and Game#play cannot be used.
 
   def step
 
@@ -182,18 +250,31 @@ class Game
     self
   end
 
+  # Repeatedly calls Game#step until the game is final.
+
   def play
     step until final?
     results
   end
 
+  # Returns this Game's seed.  If this game's rules don't allow for any random
+  # elements the seed will be nil.
+
   def seed
     history.last.respond_to?( :seed ) ? history.last.seed : nil
   end
 
+  # Is this game over?.  If so, there are now winners and losers, and so 
+  # forth.  A Game may be final even if the rules state that the last position
+  # in its history is *not* final.  This can happen if the Game has ended in
+  # a forfeit or a negotiated draw or a player exceeding their alloted time.
+
   def final?
     forfeit? || draw_by_agreement? || time_exceeded? ||  history.last.final?
   end
+
+  # Is the given player the winner of this game?  The results of this method
+  # may be meaningless if Game#final? is not true.
 
   def winner?( player )
     (forfeit? && forfeit_by != player) || 
@@ -202,6 +283,9 @@ class Game
      history.last.final? && history.last.winner?( player ))
   end
 
+  # Is the given player the loser of this game?  The results of this method
+  # may be meaningless if Game#final? is not true.
+
   def loser?( player )
     (forfeit? && forfeit_by == player) || 
     (time_exceeded? && time_exceeded_by == player) ||
@@ -209,15 +293,26 @@ class Game
      history.last.final? && history.last.loser?( player ))
   end
 
+  # Has this game ended in a draw?  The results of this method may be 
+  # meaningless if Game#final? is not true.
+
   def draw?
     draw_by_agreement? || (history.last.final? && history.last.draw?)
   end
+
+  # Is the given move valid for the position this Game is currently in?  If
+  # a player is provided, also verify that the move is valid for the given
+  # player.
 
   def move?( move, player=nil )
     unless draw_by_agreement? || draw_offered? || forfeit? || time_exceeded?
       history.last.move?( move, player )
     end
   end
+
+  # Return a list of all valid moves for the last position in this Game's 
+  # history.  If a player is given, filter this list to include only valid
+  # moves for that player.
 
   def moves( player=nil )
     if draw_by_agreement? || draw_offered? || forfeit? || time_exceeded?
@@ -227,17 +322,26 @@ class Game
     end
   end
 
+  # Returns a list of which players have valid moves for the last position
+  # in history.
+
   def has_moves
     draw_offered? ? players - [draw_offered_by] : history.last.has_moves
   end
+
+  # Returns true if the given player has any valid moves.
 
   def has_moves?( player )
     has_moves.include?( player )
   end
 
+  # Has this game ended in a forfeit?
+
   def forfeit?
     !! forfeit_by
   end
+
+  # If this game has ended in a forfeit, which player resigned?
 
   def forfeit_by
     if sequence.last =~ /^forfeit_by_(\w+)$/
@@ -245,9 +349,13 @@ class Game
     end
   end
 
+  # Has this game ended in a draw by the agreement of the players?
+
   def draw_by_agreement?
     sequence.last == "draw"
   end
+
+  # If a draw has been offered, which player offered it?
 
   def draw_offered_by
     if sequence.last =~ /draw_offered_by_(\w+)/
@@ -255,17 +363,25 @@ class Game
     end
   end
 
+  # Has the given player offered a draw?
+
   def draw_offered_by?( player )
     draw_offered_by == player
   end
+
+  # Has a draw been offered?
 
   def draw_offered?
     !! draw_offered_by
   end
 
+  # Has a player exceeded the time limit?
+
   def time_exceeded?
     !! time_exceeded_by
   end
+
+  # Which player exceeded the time limit?
 
   def time_exceeded_by
     if sequence.last =~ /time_exceeded_by_(\w+)/
@@ -273,9 +389,13 @@ class Game
     end
   end
 
+  # Returns a GameResults momento for this Game.
+
   def results
     GameResults.from_game( self )
   end
+
+  # Creates a new game instance by replaying the a GameResults object.
 
   def Game.replay( results )
     special_moves = [/^forfeit_by_(\w+)$/, /draw_offered_by_(\w+)/,
@@ -293,9 +413,19 @@ class Game
     g
   end
 
+  # The string representation of a Game is the string representation of the
+  # last position in its history.
+
   def to_s
     history.last.to_s
   end
+
+  # Provides a string describing the matchup.  For example:
+  #
+  #   eki (black) defeated SiriusBot (white), 34-30
+  #
+  # This depends on the user object's to_s method returning something 
+  # reasonable like a username.
 
   def description
     if final?

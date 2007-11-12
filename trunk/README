@@ -1,0 +1,6 @@
+= Vying
+
+Vying is a library of turn-based, strategy game implementations.  See 
+doc/games.txt[link:files/doc/games_txt.html] for a list of games that have 
+already been implemented or are planned.
+

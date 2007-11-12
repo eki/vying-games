@@ -1,29 +1,53 @@
 require 'rubygems'
 require 'random'
 
+# These are extensions to Random:
+#
+#   http://random.rubyforge.org/rdoc/index.html
+#
+# We need a repeatable, independent random number generator and
+# Random::MersenneTwister provides it.  Unfortunately, we need to make deep
+# copies of our rng since it's a part of a position's state (and we need
+# to make deep copies of positions).  We've also added equality checks and
+# the ability to include the rng in yaml.
+#
+
 class Random::MersenneTwister
+
+  # Create a deep copy of this random number generator.
+
   def dup
     rng = Random::MersenneTwister.new
     rng.state = self.state
     rng
   end
 
+  # Compare this rng against another.
+
   def eql?( o )
     state.eql? o.state
   end
 
+  # Compare this rng against another.
+
   def ==( o )
     eql? o
   end
+
+  # Get yaml from this rng.
 
   def to_yaml( opts = {} )
     @state = state   # This is uber kludgey
     super
   end
 
+  # Set the yaml type.
+
   def to_yaml_type
     "!vying.org,2007/MersenneTwister"
   end
+
+  # Only the state instance variable is needed to serialize the rng.
 
   def to_yaml_properties
     ['@state']
@@ -37,8 +61,10 @@ YAML.add_domain_type( "vying.org,2007", "MersenneTwister") do |type, val|
   rng
 end
 
-
 class Array
+
+  # Get a deep copy of this Array (and deep copies of all its elements).
+
   def deep_dup
     nd = [Symbol, NilClass, Fixnum, TrueClass, FalseClass]
     d = self.dup
@@ -54,6 +80,9 @@ class Array
 end
 
 class Hash
+
+  # Get a deep copy of this Hash (and deep copies of all its elements).
+
   def deep_dup
     nd = [Symbol, NilClass, Fixnum, TrueClass, FalseClass]
     d = self.dup
@@ -68,7 +97,34 @@ class Hash
   end
 end
 
+# This is the core of the Vying library.  Rules subclasses provide methods
+# that define the initial position of a game, valid moves that may be applied
+# to positions, successor positions (as moves are applied), and the definition
+# of final positions.
+#
+# The positions we refer to are actually Rules instances.
+#
+# To implement a game, a Rules subclass should be created that implements
+# these methods:
+#
+#   #initialize - creates the initial position
+#   #move?      - tests the validity of a move against a position
+#   #moves      - provides a list of all possible moves for a position
+#   #apply!     - apply a move to a position, changing it into its successor
+#                 position
+#   #final?     - tests whether or not the position is terminal (no more 
+#                 moves/successors)
+#   #winner?    - defines the winner of a final position
+#   #loser?     - defines the loser of a final position
+#   #draw?      - defines whether or not the final position represents a draw
+#
+
 class Rules
+
+  # All positions should provide a deep copy via #dup.  This initialize_copy
+  # attempts to provide such a deep copy by scanning a position's instance
+  # variables and copying them.
+
   def initialize_copy( original )
     nd = [Symbol, NilClass, Fixnum, TrueClass, FalseClass]
     instance_variables.each do |iv|
@@ -80,6 +136,16 @@ class Rules
     end
   end
 
+  # A Rules instance represents a position in a game, so #initialize should
+  # provide the starting position.  If the position contains random elements
+  # it should accept a seed to provide repeatability.  If no seed is provided
+  # one should be randomly created.
+  #
+  # If Rules.random has been called, #initialize will automatically create
+  # @seed and @rng instance variables and attributes.
+  #
+  # @turn is also set automatically to a copy of the players array.
+
   def initialize( seed=nil )
     if info[:random] ||= false
       @seed = seed.nil? ? rand( 10000 ) : seed
@@ -87,6 +153,10 @@ class Rules
     end
     @turn = players.dup
   end
+
+  # Attempts to provide an equality check by comparing unignored instance
+  # variables.  If an instance variable has no weight in the equality of
+  # two positions, use Rules.ignore to omit it from this check.
 
   def eql?( o )
     return false if instance_variables.sort != o.instance_variables.sort
@@ -99,40 +169,95 @@ class Rules
     true
   end
 
+  # See Rules#eql?
+
   def ==( o )
     eql?( o )
   end
+
+  # Provide meta info about the game being described by these Rules.  At a
+  # minimum Rules subclasses should define :name.  For example:
+  #
+  #  class BlahGame < Rules
+  #    info :name => "The Great Game of Blahs"
+  #  end
+  #
+  # Values can be retrieved later like so:
+  #
+  #   BlahGame.info[:name]
+  #   
 
   def self.info( i={} )
     @info = i
     class << self; attr_reader :info; end
   end
 
+  # Does the game defined by these rules allow the players to call a draw
+  # by agreement?  If not, draws can only be achieved (if at all) through game
+  # play.  This method is used like so:
+  #
+  #   class BlahRules < Rules
+  #     allow_draws_by_agreement
+  #   end
+  #
+  # This value can later be retrieved by subsequent calls to
+  # #allow_draws_by_agreement or info[:allows_draws_by_agreement].
+
   def self.allow_draws_by_agreement
     info[:allow_draws_by_agreement] = true
   end
 
+  # Returns whether this game allows the players to negotiate draws.
+
   def allow_draws_by_agreement?
     info[:allow_draws_by_agreement]
   end
+
+  # Indicates that an instance variable should be ignored (for purposes of
+  # equality).  This can be used like so:
+  #
+  #   class BlahRules < Rules
+  #     attr_reader :board, :moves_cache
+  #     ignore :moves_cache
+  #   end
+  #
 
   def self.ignore( *ivs )
     @ignore ||= ["@ignore"]
     @ignore += ivs.map { |iv| "@#{iv}" }
   end
 
+  # Tests whether or not an instance variable has been ignored.
+
   def self.ignored?( iv )
     @ignore && @ignore.include?( iv )
   end
+
+  # Used to indicate that a game has random elements.  This will setup seed
+  # and rng attributes.  The rng will be populated with a random number
+  # generator that can be used to setup these random elements.
+  #
+  #   class BlahRules < Rules
+  #     random
+  #   end
+  #
+  # If called, random will also set info[:random] to true.
 
   def self.random
     info[:random] = true
     attr_reader :seed, :rng
   end
 
+  # This rand provides the same interface as Kernel.rand but is backed by
+  # the rng created by Rules.random.
+
   def rand( n=nil )
     @rng ? @rng.rand( n ) : Kernel.rand( n )
   end
+
+  # Define sensitive position data that should be hidden from players.  This
+  # takes a hash mapping player to an array of the instance variables that
+  # should be hidden from the player.
 
   def self.censor( h={}, p=nil )
     @censored = h
@@ -141,6 +266,16 @@ class Rules
       attr_reader :censored
     end
   end
+
+  # Hide sensitive position data from the given player.  This creates a
+  # censored copy of this position.  Sensitive instance variables will be
+  # overwritten with :hidden. 
+  #
+  # If Rules.random has been called to create seed and rng instance variables,
+  # #censor will overwrite them with :hidden.
+  #
+  # Use this method with Rules.censor, or override it (more common) to 
+  # customize what data is censored.
 
   def censor( player )
     pos = self.dup
@@ -157,28 +292,57 @@ class Rules
     pos
   end
 
+  # Defines the players for the game this Rules subclass represents.  The 
+  # players should be symbols, for example:
+  #
+  #   class BlahRules < Rules
+  #     players :black, :white
+  #   end
+  #
+  # The values provided to players are also the basis of #turn.  That is, 
+  # in the above example, :black would move first.
+
   def self.players( p )
     @players = p
     class << self; def players; @players.dup; end; end
     p
   end
 
+  # Disallow cycles.
+
   def self.no_cycles
     @no_cycles = true
   end
 
+  # Are we checking for cycles?
+
   def self.check_cycles?
     @no_cycles
   end
+
+  # Missing methods are tried as class methods.  So, Rules.players can be
+  # called as Rules#players.
 
   def method_missing( m, *args )
     super unless self.class.respond_to?( m )
     self.class.send( m, *args )
   end
 
+  # See #method_missing.
+
   def respond_to?( m )
     super || self.class.respond_to?( m )
   end
+
+  # Who's turn is it?  Who's turn will it be next?  
+  #
+  #   rules.turn  <-- who's turn is it?
+  #   rules.turn( :next )  <-- who's turn will be next?
+  #   rules.turn( :rotate )  <-- should only be used by subclasses, changes the
+  #                              turn
+  #
+  # #turn should not be relied upon outside of implementing subclasses.
+  # Instead, use #has_moves.
 
   def turn( action=:now )
     case action
@@ -190,29 +354,61 @@ class Rules
     @turn[0]
   end
 
+  # Is the given move valid for the given player?  If the given player is
+  # nil, is the move? valid for any player?  This default implementation is
+  # based on #moves.  The move is first forced into a string and then looked
+  # for in the #moves list.  This implementation should always be correct
+  # (provided #moves is correct), but may be slow and inefficient depending
+  # on how time consuming it is for #moves to generate the full list of 
+  # all possible moves.
+
   def move?( move, player=nil )
     moves( player ).include?( move.to_s )
   end
+
+  # If the position is final?, does it represent a draw?  This default
+  # implementation returns false everytime.  This is great for rules which
+  # forbid draws.
 
   def draw?
     false
   end
 
+  # Do these rules define a score? 
+
   def has_score?
     respond_to?( :score )
   end
+
+  # Returns a list of all the players who have moves from this position.  This
+  # default implementation returns an empty array if the position is final? or
+  # an array containing the results of a call to #turn.  Games with 
+  # simultaneous moves should override this method.
 
   def has_moves
     final? ? [] : [turn]
   end
 
+  # Does the given player have moves?  See #has_moves.
+
   def has_moves?( player )
     has_moves.include?( player )
   end
 
+  # Apply a move to this position.  The move is applied to a dup of this
+  # position, returning the results.  Implementing subclasses should provide
+  # an implementation of #apply!, which should do the same thing without making
+  # a dup first.
+
   def apply( move )
     self.dup.apply!( move )
   end
+
+  # Scans the RUBYLIB (unless overridden via path), for rules subclasses and
+  # requires them.  Looks for files that match:
+  #
+  #   <Dir from path>/**/rules/**/*.rb
+  #
 
   def Rules.require_all( path=$: )
     required = []
@@ -229,13 +425,21 @@ class Rules
 
   @@rules_list = []
 
+  # When a subclass extends Rules, it is added to @@rules_list.
+
   def self.inherited( child )
     @@rules_list << child
   end
 
+  # Get a list of all Rules subclasses.
+
   def Rules.list
     @@rules_list
   end
+
+  # Find a rules subclass.  Takes a string and returns the subclass.  This
+  # method will try a couple transformations on the string to find a match
+  # in Rules.list.  For example, "keryo_pente" will find KeryoPente.
 
   def Rules.find( name )
     Rules.list.each do |r|
@@ -245,10 +449,14 @@ class Rules
     nil
   end
 
+  # Delete me.
+
   def Rules.related
     return [] unless info[:related]
     info[:related].map { |name| Rules.find( name ) }
   end
+
+  # Returns a very basic string representation of this position.
 
   def to_s
     s = ''
@@ -266,6 +474,8 @@ class Rules
     end
     s
   end
+
+  # Turns a Rules class name into snake case:  KeryoPente to "keryo_pente".
 
   def Rules.to_snake_case
     s = to_s
