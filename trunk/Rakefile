@@ -28,6 +28,7 @@ Rake::RDocTask.new do |rd|
                          "ext/**/*.h", "ext/**/*.c" )
 end
 
+desc "compile the C extension part of the vying library"
 task :compile do 
   sh %{cd ext/vying/board && ruby ./extconf.rb && make}
 end
