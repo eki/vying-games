@@ -1,6 +1,8 @@
 
 module OthelloStrategies
 
+  attr_reader :openings
+
   $:.each do |d|
     Dir.glob( "#{d}/**/ai/strategies/othello/*" ) do |f|
       if f =~ /corners\.yaml$/
