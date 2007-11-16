@@ -13,5 +13,5 @@ require 'yaml'
 require 'vying/serialize/json'
 
 Rules.require_all
-AI::Bot.require_all
+Bot.require_all
 
