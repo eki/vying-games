@@ -1,5 +1,3 @@
-require 'vying/ai/bot'
-require 'vying/ai/search'
 
 module AmazonsStrategies
 

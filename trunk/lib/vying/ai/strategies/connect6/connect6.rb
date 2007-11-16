@@ -1,4 +1,3 @@
-require 'vying/ai/bot'
 
 module Connect6Strategies
 

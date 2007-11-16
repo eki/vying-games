@@ -1,6 +1,5 @@
-require 'vying/ai/bot'
 
-module AI::Oware
+module OwareStrategies
 
   def eval_score( position, player )
     opp = player == :one ? :two : :one

@@ -1,6 +1,5 @@
-require 'vying/ai/bot'
 
-module AI::Phutball
+module PhutballStrategies
 
   def eval_distance( position, player )
     ball = position.board.occupied[:white].first

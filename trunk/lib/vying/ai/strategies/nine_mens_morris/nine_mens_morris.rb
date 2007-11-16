@@ -1,6 +1,5 @@
-require 'vying/ai/bot'
 
-module AI::NineMensMorris
+module NineMensMorrisStrategies
 
   def eval_score( position, player )
     opp = player == :black ? :white : :black

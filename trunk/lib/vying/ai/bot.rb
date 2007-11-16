@@ -102,7 +102,7 @@ class Bot
   def Bot.require_all( path=$: )
     required = []
     path.each do |d|
-      Dir.glob( "#{d}/**/bots/**/*bot.rb" ) do |f|
+      Dir.glob( "#{d}/**/bots/**/*.rb" ) do |f|
         f =~ /(.*)\/bots\/(.*\.rb)$/
         if ! required.include?( $2 ) && !f["test_"] && !f["ts_"]
           required << $2
