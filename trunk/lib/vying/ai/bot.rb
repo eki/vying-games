@@ -104,7 +104,7 @@ class Bot
     path.each do |d|
       Dir.glob( "#{d}/**/bots/**/*.rb" ) do |f|
         f =~ /(.*)\/bots\/(.*\.rb)$/
-        if ! required.include?( $2 ) && !f["test_"] && !f["ts_"]
+        if ! required.include?( $2 ) && !f["_test"]
           required << $2
           require "#{f}"
         end
