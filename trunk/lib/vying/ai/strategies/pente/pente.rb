@@ -1,6 +1,6 @@
 require 'vying/ai/bot'
 
-module AI::Pente
+module PenteStrategies
 
   def eval_threats( position, player )
     score = 0
@@ -93,63 +93,28 @@ module AI::Pente
     rand( 100 ) - 50
   end
 
-  module Bot
-    include AI::Pente
-    include AlphaBeta
+  def prune( position, player, moves )
+    b = position.board
 
-    attr_reader :nodes, :leaf
+    occupied = b.occupied[:black] || []
+    occupied += b.occupied[:white] if b.occupied[:white]
 
-    def initialize
-      super
-    end
+    return ["j9"] if occupied.length == 0
 
-    def select( sequence, position, player )
-      return position.moves.first if position.moves.length == 1
+    keep = []
 
-      @leaf, @nodes = 0, 0
-      score, move = fuzzy_best( analyze( position, player ), 1 )
-      puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
-
-      move
-    end
-
-    def evaluate( position, player )
-      @leaf += 1
-
-      return  1000 if position.final? && position.winner?( player )
-      return -1000 if position.final? && position.loser?( player )
-      return     0 if position.final?
-
-      eval( position, player )
-    end
-
-    def cutoff( position, depth )
-      position.final? || depth >= 2
-    end
-
-    def prune( position, player, moves )
-      b = position.board
-
-      occupied = b.occupied[:black] || []
-      occupied += b.occupied[:white] if b.occupied[:white]
-
-      return ["j9"] if occupied.length == 0
-
-      keep = []
-
-      occupied.each do |c| 
-        b.coords.neighbors( c ).each do |nc|
-          keep << nc if b[nc].nil?
-        end
+    occupied.each do |c| 
+      b.coords.neighbors( c ).each do |nc|
+        keep << nc if b[nc].nil?
       end
-
-      keep.uniq!
-
-      keep -= occupied
-      keep.map! { |c| c.to_s }
-
-      keep
     end
+
+    keep.uniq!
+
+    keep -= occupied
+    keep.map! { |c| c.to_s }
+
+    keep
   end
 end
 
