@@ -1,6 +1,7 @@
 require 'vying/ai/bot'
+require 'vying/ai/search'
 
-module AI::Amazons
+module AmazonsStrategies
 
   def eval_neighbors( position, player )
     opp = player == :black ? :white : :black
@@ -69,57 +70,5 @@ module AI::Amazons
     score
   end
 
-  module Bot
-    include AI::Amazons
-    include AlphaBeta
-
-    def initialize
-      super
-    end
-
-    def select( sequence, position, player )
-      return position.moves.first if position.moves.length == 1
-
-      score, move = fuzzy_best( analyze( position, player ), 0 )
-      puts "**** Score: #{score}"
-      move
-    end
-
-    def forfeit?( sequence, position, player )
-      opp = player == :black ? :white : :black
-      territories = position.board.territories
-
-      territories.all? { |t| t.black.empty? || t.white.empty? } &&
-      position.score( opp ) > position.score( player )
-    end
-
-    def evaluate( position, player )
-      return position.score( player ) * 1000 if position.final?
-      eval( position, player )
-    end
-
-    def cutoff( position, depth )
-      position.final? || depth >= 1
-    end
-
-    def prune( position, player, moves )
-      opp = player == :black ? :white : :black
-      pq = []
-
-      position.board.territories.each do |t|
-        qs = t.send( player )
-        pq += qs if !qs.empty? && t.send( opp ).empty?
-      end
-
-      return moves if pq.empty?
-
-      keep = moves.select do |m|
-        cs = m.to_coords
-        ! pq.include?( cs.first )
-      end
-
-      keep.empty? ? moves : keep
-    end
-  end
 end
 

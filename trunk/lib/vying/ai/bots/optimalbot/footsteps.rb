@@ -1,12 +1,10 @@
 require 'vying/ai/bot'
-require 'vying/ai/bots/footsteps/footsteps'
-
 require 'sqlite'
 
-class AI::Footsteps::OptimalBot < AI::Bot
+class OptimalBot < Bot
 
   $:.each do |d|
-    Dir.glob( "#{d}/**/ai/bots/footsteps/*" ) do |f|
+    Dir.glob( "#{d}/**/ai/bots/optimalbot/*" ) do |f|
       if f =~ /footsteps\.db$/
         FOOTSTEPS_DB = f unless defined? FOOTSTEPS_DB
       end

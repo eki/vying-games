@@ -1,10 +1,10 @@
 require 'vying/ai/bot'
 require 'vying/ai/search'
 
-module AI::Othello
+module OthelloStrategies
 
   $:.each do |d|
-    Dir.glob( "#{d}/**/ai/bots/othello/*" ) do |f|
+    Dir.glob( "#{d}/**/ai/strategies/othello/*" ) do |f|
       if f =~ /corners\.yaml$/
         CORNERS_YAML = f unless defined? CORNERS_YAML
       elsif f=~ /edge\.yaml$/
@@ -178,44 +178,5 @@ module AI::Othello
     score
   end
 
-  module Bot
-    include AI::Othello
-    include AlphaBeta
-
-    attr_reader :leaf, :nodes, :openings
-
-    def initialize
-      super
-      @leaf = 0
-      @nodes = 0
-
-      load_openings
-    end
-
-    def select( sequence, position, player )
-      return position.moves.first if position.moves.length == 1
-
-      if( move = opening( position, sequence ) )
-        puts "**** Taking opening #{sequence.join}:#{move}"
-        return move 
-      end
-
-      @leaf, @nodes = 0, 0
-      score, move = best( analyze( position, player ) )
-      puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
-      move
-    end
-
-    def evaluate( position, player )
-      @leaf += 1
-
-      return eval_count( position, player )[3] * 1000 if position.final?
-      eval( position, player )
-    end
-
-    def cutoff( position, depth )
-      position.final? || depth >= 2
-    end
-  end
 end
 
