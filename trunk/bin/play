@@ -7,7 +7,7 @@ rules = Othello
 p2b = {}
 number = 1
 
-class HumanBot < AI::Bot
+class HumanBot < Bot
   def select( sequence, position, player )
     puts position
 
@@ -44,7 +44,7 @@ opts.on( "-n", "--number NUMBER" ) { |n| number = Integer(n) }
 opts.on( "-p", "--player PLAYER=BOT" ) do |s|
   s =~ /(\w*)=([\w:]*)/
   #p2b[$1.downcase.intern] = Kernel.const_get( $2 ).new
-  p2b[$1.downcase.intern] = AI::Bot.find( $2 ).new
+  p2b[$1.downcase.intern] = Bot.find( $2 ).new
 end
 
 
