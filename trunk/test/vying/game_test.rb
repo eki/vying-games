@@ -159,7 +159,7 @@ class TestGame < Test::Unit::TestCase
     g = Game.new( FakeRules )
 
     g.players.each do |p|
-      g.register_users p => AI::Human.new
+      g.register_users p => Human.new
     end 
 
     assert( !g.final? )
@@ -192,7 +192,7 @@ class TestGame < Test::Unit::TestCase
   end
 
   def test_human
-    u = AI::Human.new
+    u = Human.new
     
     assert( ! u.accept_draw?( nil, nil, nil ) )
 
@@ -221,7 +221,7 @@ class TestGame < Test::Unit::TestCase
     g = Game.new FakeRules
 
     g.players.each do |p|
-      g.register_users p => AI::Human.new
+      g.register_users p => Human.new
     end 
 
     assert( !g.final? )

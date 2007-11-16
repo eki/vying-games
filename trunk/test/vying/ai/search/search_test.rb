@@ -3,7 +3,7 @@ require 'test/unit'
 require 'vying'
 
 module BotTemplate
-  include AI::Othello
+  include OthelloStrategies
 
   attr_reader :leaf, :nodes, :leaf_list, :nodes_list
   attr_accessor :depth
@@ -33,17 +33,17 @@ module BotTemplate
   end
 end
 
-class MiniMaxBot < AI::Bot
+class MiniMaxBot < Bot
   include BotTemplate
   include Minimax
 end
 
-class AlphaBetaBot < AI::Bot
+class AlphaBetaBot < Bot
   include BotTemplate
   include AlphaBeta
 end
 
-class PlayFirstOpBot < AI::Bot
+class PlayFirstOpBot < Bot
   def select( sequence, position, player )
     position.moves.first
   end

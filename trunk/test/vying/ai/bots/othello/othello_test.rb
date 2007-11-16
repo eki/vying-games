@@ -2,8 +2,42 @@ require 'test/unit'
 
 require 'vying'
 
-class TestBot < AI::Bot
-  include AI::Othello::Bot
+class TestBot < Bot
+  include OthelloStrategies
+  include AlphaBeta
+
+  def initialize
+    super
+    @leaf, @nodes = 0, 0
+    load_openings
+  end
+
+  def select( sequence, position, player )
+    return position.moves.first if position.moves.length == 1
+
+    if( move = opening( position, sequence ) )
+      puts "**** Taking opening #{sequence.join}:#{move}"
+      return move
+    end
+
+    @leaf, @nodes = 0, 0
+    score, move = best( analyze( position, player ) )
+    puts "**** Searched #{nodes}:#{leaf} positions, best: #{score}"
+    move
+  end
+
+  def evaluate( position, player )
+    pc, oc, total, score = eval_count( position, player )
+
+    return score * 1000 if position.final?
+
+    score
+  end
+
+  def cutoff( position, depth )
+    position.final? || depth >= 2
+  end
+
 end
 
 class TestBotsOthello < Test::Unit::TestCase
