@@ -1,6 +1,6 @@
 require 'vying/ai/bot'
 require 'vying/ai/search'
-require 'vying/ai/strategies/othello/othello'
+require 'vying/ai/strategies/amazons/amazons'
 
 class CapellaBot < Bot
   class Amazons < Bot

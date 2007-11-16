@@ -2,7 +2,7 @@ require 'vying/ai/bot'
 require 'vying/ai/search'
 require 'vying/ai/strategies/othello/othello'
 
-class VegaBot < Bot
+class SiriusBot < Bot
   class Othello < Bot
     include AlphaBeta
     include OthelloStrategies
