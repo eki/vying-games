@@ -7,6 +7,8 @@ class VegaBot < Bot
     include AlphaBeta
     include Connect6Strategies
 
+    difficulty :easy
+
     attr_reader :leaf, :nodes
 
     def initialize

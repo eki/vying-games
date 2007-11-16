@@ -7,6 +7,8 @@ class VegaBot < Bot
     include AlphaBeta
     include KalahStrategies
 
+    difficulty :easy
+
     attr_reader :leaf, :nodes
 
     def initialize

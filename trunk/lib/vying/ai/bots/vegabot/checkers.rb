@@ -7,6 +7,8 @@ class VegaBot < Bot
     include AlphaBeta
     include CheckersStrategies
 
+    difficulty :medium
+
     attr_reader :leaf, :nodes
 
     def initialize

@@ -7,6 +7,8 @@ class SiriusBot < Bot
     include AlphaBeta
     include PenteStrategies
 
+    difficulty :easy
+
     attr_reader :leaf, :nodes
 
     def initialize

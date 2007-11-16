@@ -7,6 +7,8 @@ class CapellaBot < Bot
     include AlphaBeta
     include OwareStrategies
 
+    difficulty :medium
+
     attr_reader :leaf, :nodes
 
     def initialize

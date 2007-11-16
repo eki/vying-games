@@ -2,6 +2,8 @@ require 'vying/ai/bot'
 
 class SiriusBot < Bot
   class Footsteps < Bot
+    difficulty :easy
+
     def select( sequence, position, player )
       opp = player == :left ? :right : :left
       marker = position.board.occupied[:white].first

@@ -7,6 +7,8 @@ class VegaBot < Bot
     include AlphaBeta
     include OwareStrategies
 
+    difficulty :easy
+
     attr_reader :leaf, :nodes
 
     def initialize

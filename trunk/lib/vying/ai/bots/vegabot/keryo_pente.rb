@@ -7,6 +7,8 @@ class VegaBot < Bot
     include AlphaBeta
     include KeryoPenteStrategies
 
+    difficulty :medium
+
     attr_reader :leaf, :nodes
 
     def initialize

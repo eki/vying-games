@@ -7,6 +7,8 @@ class CapellaBot < Bot
     include AlphaBeta
     include BreakthroughStrategies
 
+    difficulty :easy
+
     attr_reader :leaf, :nodes
 
     def initialize

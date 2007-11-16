@@ -146,6 +146,27 @@ class Bot
     nil
   end
 
+  DIFFICULTY_LEVELS = { :easy   => 0,
+                        :medium => 1,
+                        :hard   => 2 }
+
+  def self.difficulty( d=nil )
+    @difficulty = DIFFICULTY_LEVELS[d]
+    class << self 
+      def difficulty_name; DIFFICULTY_LEVELS[@difficulty]; end
+      def difficulty; @difficulty; end
+    end
+    d
+  end
+
+  def self.difficulty_for( rules )
+    if self.const_defined?( "#{rules}".intern )
+      d = self.const_get( "#{rules}".intern ).difficulty
+      return DIFFICULTY_LEVELS.invert[d] if d && DIFFICULTY_LEVELS.invert[d]
+    end
+    return :unknown
+  end
+
 end
 
 # This is just a simple dummy Human bot class.  It can be used as a placeholder

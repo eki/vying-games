@@ -7,6 +7,8 @@ class SiriusBot < Bot
     include AlphaBeta
     include KalahStrategies
 
+    difficulty :hard
+
     attr_reader :leaf, :nodes
 
     def initialize

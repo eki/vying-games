@@ -7,6 +7,8 @@ class SiriusBot < Bot
     include AlphaBeta
     include Connect6Strategies
 
+    difficulty :hard
+
     attr_reader :leaf, :nodes
 
     def initialize

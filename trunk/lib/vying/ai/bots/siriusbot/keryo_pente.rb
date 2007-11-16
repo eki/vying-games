@@ -7,6 +7,8 @@ class SiriusBot < Bot
     include AlphaBeta
     include KeryoPenteStrategies
 
+    difficulty :easy
+
     attr_reader :leaf, :nodes
 
     def initialize
