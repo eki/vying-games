@@ -113,10 +113,15 @@ class Bot
   end
 
   @@bots_list = []
+  @@bots_play = {}
 
   def self.inherited( child )
     if child.to_s =~ /(\w+)\:\:(\w+)/ 
-      unless @@bots_list.any? { |b| b.to_s == $1 }
+      if @@bots_list.any? { |b| b.to_s == $1 }
+        b = Bot.find( $1 )
+        r = Rules.find( $2 )
+        (@@bots_play[r] ||= []) << b
+      else
         @@bots_list << child
       end
     else
@@ -127,6 +132,10 @@ class Bot
   def Bot.list( rules=nil )
     return @@bots_list.select { |b| b.to_s[rules.to_s] } if rules
     @@bots_list
+  end
+
+  def Bot.play( rules )
+    @@bots_play[Rules.find( rules )]
   end
 
   def Bot.find( name )
