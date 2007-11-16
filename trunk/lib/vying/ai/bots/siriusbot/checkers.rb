@@ -14,7 +14,6 @@ class SiriusBot < Bot
     def initialize
       super
       @leaf, @nodes = 0, 0
-      load_openings
     end
 
     def select( sequence, position, player )
