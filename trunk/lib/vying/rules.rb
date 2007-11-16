@@ -443,8 +443,9 @@ class Rules
 
   def Rules.find( name )
     Rules.list.each do |r|
-      return r if name.downcase == r.to_s.downcase ||
-                  name.downcase == r.to_snake_case
+      return r if name == r ||
+                  name.to_s.downcase == r.to_s.downcase ||
+                  name.to_s.downcase == r.to_snake_case
     end
     nil
   end
