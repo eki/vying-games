@@ -10,7 +10,6 @@ require 'vying/ai/search'
 require 'vying/ai/bot'
 
 require 'yaml'
-require 'vying/serialize/json'
 
 Rules.require_all
 Bot.require_all
