@@ -463,6 +463,8 @@ class Rules
     s = ''
     fs = instance_variables.map { |iv| iv.to_s.length }.max + 2
     instance_variables.each do |iv|
+      next if ignored? iv
+
       v = instance_variable_get( iv )
       iv = iv.sub( /@/, '' )
       case v
