@@ -12,6 +12,7 @@
 VALUE coord_initialize( VALUE self, VALUE x, VALUE y ) {
   rb_iv_set( self, "@x", x );
   rb_iv_set( self, "@y", y );
+  rb_iv_set( self, "@s", rb_funcall( self, id_to_s, 0 ) );
 }
 
 /*
@@ -34,18 +35,42 @@ VALUE coord_class_subscript( int argc, VALUE *argv, VALUE self ) {
     return rb_funcall( Coord, id_new, 2, argv[0], argv[1] );
   }
   else if( argc == 1 ) {
-    return rb_funcall( Coord, id_new, 2,  
-                       rb_funcall( argv[0], id_x, 0 ),
-                       rb_funcall( argv[0], id_y, 0 ) );
+    if( rb_obj_class( argv[0] ) == Coord ) {
+      return argv[0];
+    }
+
+    VALUE cache = rb_cv_get( self, "@@coords_cache" );
+    VALUE coord = rb_hash_aref( cache, argv[0] );
+
+    if( coord == Qnil ) {
+      coord = rb_funcall( Coord, id_new, 2,  
+                          rb_funcall( argv[0], id_x, 0 ),
+                          rb_funcall( argv[0], id_y, 0 ) );
+      rb_hash_aset( cache, argv[0], coord );
+    }
+
+    return coord;
   }
   else {
+    VALUE cache = rb_cv_get( self, "@@coords_cache" );
     VALUE ary = rb_ary_new2( argc );
     int i;
     for( i = 0; i < argc; i++ ) {
-      rb_ary_push( ary, 
-        rb_funcall( Coord, id_new, 2, 
-                    rb_funcall( argv[i], id_x, 0 ),
-                    rb_funcall( argv[i], id_y, 0 ) ) );
+      if( rb_obj_class( argv[i] ) == Coord ) {
+        rb_ary_push( ary, argv[i] );
+      }
+      else {
+        VALUE coord = rb_hash_aref( cache, argv[i] );
+
+        if( coord == Qnil ) {
+          coord = rb_funcall( Coord, id_new, 2,  
+                              rb_funcall( argv[i], id_x, 0 ),
+                              rb_funcall( argv[i], id_y, 0 ) );
+          rb_hash_aset( cache, argv[i], coord );
+        }
+
+        rb_ary_push( ary, coord );
+      }
     }
     return ary;
   }

@@ -22,15 +22,28 @@ class Coords
   def initialize( w, h )
     @width = w
     @height = h
-    @coords = Array.new( w*h ) { |i| Coord.new( i%w, i/w ) } 
+    @coords = Array.new( w*h ) { |i| Coord.new( i%w, i/w ) }.freeze
   end
 
   def each
     coords.each { |c| yield c }
   end
 
+  def dup
+    self
+  end
+
   def to_a
-    coords.dup
+    coords
+  end
+
+  def _dump( depth=-1 )
+    Marshal.dump( [width, height] )
+  end
+
+  def self._load( str )
+    width, height = Marshal.load( str )
+    new( width, height )
   end
 
 #  def include?( c )

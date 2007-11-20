@@ -6,6 +6,7 @@ void Init_boardext() {
   /* Map Coord */
 
   Coord = rb_define_class( "Coord", rb_cObject );
+  rb_define_class_variable( Coord, "@@coords_cache", rb_hash_new() );
 
   rb_define_method( Coord, "initialize", coord_initialize, 2 );
                                                               /* in coord.c */
@@ -72,6 +73,7 @@ void Init_boardext() {
   id_black = rb_intern("black");
   id_delete = rb_intern("delete");
   id_uniq_ex = rb_intern("uniq!");
+  id_to_s = rb_intern( "to_s" );
 
   /* Look up all our symbols */
 

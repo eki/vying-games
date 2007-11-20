@@ -1,4 +1,5 @@
 require 'vying/board/boardext'
+require 'vying/memoize'
 
 class Array
   def x
@@ -41,15 +42,41 @@ class Symbol
 end
 
 class Coord
+  extend Memoizable
+
+  class << self
+    extend Memoizable
+    memoize :new
+  end
+
   attr_reader :x, :y
 
+  def dup
+    self
+  end
+
+  def copy
+    self
+  end
+
+  def _dump( depth=-1 )
+    to_s
+  end
+
+  def self._load( str )
+    Coord[str]
+  end
 
   def <=>( c )
     (t = y <=> c.y) != 0 ? t : x <=> c.x
   end
 
   def to_s
-    "#{(97+x).chr}#{y+1}"
+    @s || "#{(97+x).chr}#{y+1}"
+  end
+
+  def to_sym
+    to_s.intern
   end
 
   def inspect
