@@ -3,13 +3,13 @@ planned to be added.
 
 
 
-== Amazons (incomplete)
+=== Amazons (incomplete)
 
 Now that the Bot api defines a method to forfeit the rules need to be changed
 back to force all moves to be played.  Then any bots will need to forfeit if
 the game is clearly finished.
 
-== Ataxx (incomplete)
+=== Ataxx (incomplete)
 
 Very close to being done.  Need to figure out how to deal with cycles.
 Sometimes the bots, as they are now, jump continuously at the end of lost
@@ -17,105 +17,105 @@ games.  These jumps should probably lead to the game ending.
 
 Ataxx also needs more unit testing.
 
-== Breakthrough (complete)
+=== Breakthrough (complete)
 
 The rules are complete and correct.  The AI could use a lot of work.
 
-== Cyclotron (planned)
+=== Cyclotron (planned)
 
 Twist on rock-paper-scissors played in a chess like fashion.  This game will
 be somewhat tricky in that it forbids moves that lead to repeated positions.
 
-== Cephalopod (planned)
+=== Cephalopod (planned)
 
 Neat "dice" game by Mark Steere.
 
-== Dipole (planned)
+=== Dipole (planned)
 
 Neat "checkers" game by Mark Steere.
 
-== Checkers (complete)
+=== Checkers (complete)
 
 The rules for American Checkers (aka English Draughts, aka Straight Checkers)
 are complete and correct.  The AI could use opening / closing books.
 
-== International Checkers (incomplete)
+=== InternationalCheckers (incomplete)
 
 Needs a lot of work.  Can't be completed until we figure out how to enforce
 the maximum jump rule (if a player can jump, they must capture the maximum
 possible men).
 
-== Connect4 (complete?)
+=== Connect4 (complete?)
 
 Should probably just be removed.  This game doesn't offer much in terms of
 game play due to first player bias.
 
-== Connect6 (complete)
+=== Connect6 (complete)
 
 The rules are complete and correct.
 
-== Keryo-Pente (complete)
+=== Keryo-Pente (complete)
 
 The rules are complete and correct.
 
-== Pente (complete)
+=== Pente (complete)
 
 The rules are complete and correct.
 
-== Pah-Tum (POTM) (planned)
+=== PahTum (POTM) (planned)
 
 Ancient game with slight twist on normal n-in-a-row games.  Includes random
 starting position.  There doesn't seem to be an official rulesheet, though,
 and there is some question as to the number of random blocks that should be
 placed on the board (5 or an "odd number").
 
-== Tic-Tac-Toe (complete)
+=== TicTacToe (complete)
 
 The rules are complete and correct.  The code should be reviewed and then used
 as the test rules in some unit tests.
 
-== Kalah (complete)
+=== Kalah (complete)
 
 The rules are complete and correct.  There is strong first player bias.  This
 game should be "dropped" (hard to do because it's already been released), or a
 fair variation should replace it.
 
-== Oware (complete)
+=== Oware (complete)
 
 The rules are complete and correct.
 
-== Nine Men's Morris (incomplete)
+=== NineMensMorris (incomplete)
 
 The rules are very close to complete and correct.  There is some question
 about how to handle infinite cycles.  Should the players negotiate a draw?  Or,
 should the rules force cycles to be called draws?  If the former the rules are
 already done.
 
-== Hearts (incomplete)
+=== Hearts (incomplete)
 
 The rules appear to be complete and correct.  Further testing needs to be
 done, and the code should be reviewed and refactored.  The ideal situation
 would be to add another trick-taking card game and then refactor Hearts and
 the new game.
 
-== Pig (complete)
+=== Pig (complete)
 
 Simple game with random elements.  The rules should be complete and correct,
 but may need to be refactored as more serious games with random elements are
 added.
 
-== Footsteps (complete)
+=== Footsteps (complete)
 
 The rules are complete and correct.
 
-== Frames (planned)
+=== Frames (planned)
 
 Very cool game with simultaneous moves on a Go board.  Players simultaneously
 place one stone each on the board.  If they form a frame (box with at least
 some depth, edges don't count as interior), the player with more of his stones
 in the frame scores a point.  Game ends when a player reaches 10 points.
 
-== Trax (planned)
+=== Trax (planned)
 
 A very interesting game from an implementation standpoint.  The 8x8 version is
 probably more managable that then infinite version (though that also provides
