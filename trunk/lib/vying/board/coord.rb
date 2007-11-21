@@ -2,9 +2,22 @@ require 'vying/board/boardext'
 require 'vying/memoize'
 
 class Array
+
+  # Returns the first element in this Array.  This only really make sense with
+  # an array that looks something like this:
+  #
+  #   [1,2].x => 1
+  #
+
   def x
     self[0]
   end
+
+  # Returns the second element in this Array.  This only really make sense with
+  # an array that looks something like this:
+  #
+  #   [1,2].y => 2
+  #
 
   def y
     self[1]
@@ -12,14 +25,32 @@ class Array
 end
 
 class String
+
+  # Returns the x coordinate of a string that's formated as "[a-z][1-9]+", 
+  # for example:
+  #
+  #   "b1".x => 1
+  #
+  # Note that "a1" is equivalent to (0,0).
+
   def x
     self[0]-97
   end
+
+  # Returns the y coordinate of a string that's formated as "[a-z][1-9]+", 
+  # for example:
+  #
+  #   "b1".y => 0
+  #
+  # Note that "a1" is equivalent to (0,0).
 
   def y
     self =~ /\w(\d+)$/
     $1.to_i-1
   end
+
+  # If this string represents multipe coordinates in the form "([a-z][1-9]+)*",
+  # they are parsed out and returned as an array of Coord's.
 
   def to_coords
     scan( /[a-z]\d+/ ).map { |s| Coord[s] }
@@ -27,14 +58,32 @@ class String
 end
 
 class Symbol
+
+  # Returns the x coordinate of a symbol that's formated as "[a-z][1-9]+", 
+  # for example:
+  #
+  #   :b1.x => 1
+  #
+  # Note that :a1 is equivalent to (0,0).
+
   def x
     to_s[0]-97
   end
+
+  # Returns the y coordinate of a symbol that's formated as "[a-z][1-9]+", 
+  # for example:
+  #
+  #   :b1.y => 0
+  #
+  # Note that :a1 is equivalent to (0,0).
 
   def y
     to_s =~ /\w(\d+)$/
     $1.to_i-1
   end
+
+  # If this symbol represents multipe coordinates in the form "([a-z][1-9]+)*",
+  # they are parsed out and returned as an array of Coord's.
 
   def to_coords
     to_s.scan( /[a-z]\d+/ ).map { |s| Coord[s] }
