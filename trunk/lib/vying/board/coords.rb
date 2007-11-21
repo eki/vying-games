@@ -46,10 +46,6 @@ class Coords
     new( width, height )
   end
 
-#  def include?( c )
-#    c.x >= 0 && c.x < width && c.y >= 0 && c.y < height
-#  end
-
   def hash
     [width, height].hash
   end
