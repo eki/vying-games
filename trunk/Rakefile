@@ -40,6 +40,8 @@ wd =~ /\/v([\d\.]*)$/
 pkg_version = $1
 
 if defined?( Gem ) && pkg_version
+  task :gem => [:clean, :compile, :test]
+
   PKG_FILES = FileList[
     'lib/**/*',
     'bin/bench',
