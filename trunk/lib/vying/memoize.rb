@@ -1,4 +1,6 @@
-
+# Copyright 2007, Eric Idema except where otherwise noted.
+# You may redistribute / modify this file under the same terms as Ruby.
+#
 # Stolen from:
 #   http://blog.grayproductions.net/articles/2006/01/20/caching-and-memoization
 #
