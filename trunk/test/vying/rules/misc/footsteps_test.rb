@@ -36,56 +36,54 @@ class TestFootsteps < Test::Unit::TestCase
   def test_has_moves
     g = Game.new( Footsteps )
     assert_equal( [:left, :right], g.has_moves )
+    assert( g.has_moves.include?( g.turn ) )
     g << "left_1"
     assert_equal( [:right], g.has_moves )
+    assert( g.has_moves.include?( g.turn ) )
     g << "right_1"
     assert_equal( [:left, :right], g.has_moves )
+    assert( g.has_moves.include?( g.turn ) )
     g << "right_2"
     assert_equal( [:left], g.has_moves )
+    assert( g.has_moves.include?( g.turn ) )
   end
 
+  def test_game01
+    g = play_sequence( [:left_50, :right_40, 
+                        :right_1, :right_1, :right_1, :right_1] )
 
-# def test_game01
-#   g = play_sequence( [:h10,:h9,:h8,:h7,:h6,:h5,:h4,:h3,:h2,:h11h1] )
-#
-#   assert( !g.draw? )
-#   assert( !g.winner?( :eks ) )
-#   assert( g.loser?( :eks ) )
-#   assert( g.winner?( :ohs ) )
-#   assert( !g.loser?( :ohs ) )
-# end
-#
-# def test_game02
-#   g = play_sequence( [:h12,:h13,:h14,:h15,:h16,:h17,:h18,:h19,:h11h20] )
-#
-#   assert( !g.draw? )
-#   assert( g.winner?( :eks ) )
-#   assert( !g.loser?( :eks ) )
-#   assert( !g.winner?( :ohs ) )
-#   assert( g.loser?( :ohs ) )
-# end
-#
-## def test_game02
-##   # This game is going to be a win for White (diagonal)(winner in middle)
-##   g = play_sequence( [:f13,:a1,:c3,:f12,:f11,:d4,:e5,:f14,:f10,:f6,:b2] )
-#
-##   assert( !g.draw? )
-##   assert( !g.winner?( :black ) )
-##   assert( g.loser?( :black ) )
-##   assert( g.winner?( :white ) )
-##   assert( !g.loser?( :white ) )
-## end
-#
-## def test_game03
-##   # This game is going to be a win for Black (horizontal)(7-in-a-row)
-##   g = play_sequence [:a1,:f10,:f9,:b1,:c1,:g10,:g9,:e1,:f1,:g8,:g7,:g1,:d1]
-#
-##   assert( !g.draw? )
-##   assert( g.winner?( :black ) )
-##   assert( !g.loser?( :black ) )
-##   assert( !g.winner?( :white ) )
-##   assert( g.loser?( :white ) )
-## end
+    assert( !g.draw? )
+    assert( !g.winner?( :left ) )
+    assert( g.loser?( :left ) )
+    assert( g.winner?( :right ) )
+    assert( !g.loser?( :right ) )
+  end
+
+  def test_game02
+    g = play_sequence( [:left_10, :right_9, 
+                        :right_8,  :left_9,
+                         :left_2, :right_1] )
+
+    assert( !g.draw? )
+    assert( g.winner?( :left ) )
+    assert( !g.loser?( :left ) )
+    assert( !g.winner?( :right ) )
+    assert( g.loser?( :right ) )
+  end
+
+  def test_game03
+    g = play_sequence( [:left_10, :right_9, 
+                        :right_9,  :left_8,
+                        :left_20, :right_20,
+                        :right_10, :left_10,
+                        :left_1, :right_1, :left_1, :right_1] )
+
+    assert( g.draw? )
+    assert( !g.winner?( :left ) )
+    assert( !g.loser?( :left ) )
+    assert( !g.winner?( :right ) )
+    assert( !g.loser?( :right ) )
+  end
 
 end
 
