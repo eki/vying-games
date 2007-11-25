@@ -13,8 +13,9 @@ module CLI
     n = 10
 
     opts = OptionParser.new
+    opts.banner = "Usage: vying branch [options]"
     opts.on( "-r", "--rules RULES" ) { |r| rules << Kernel.const_get( r ) }
-    opts.on( "-n", "--number GAMES" ) { |num| n = Integer( num ) }
+    opts.on( "-n", "--number NUMBER" ) { |num| n = Integer( num ) }
 
     opts.parse( ARGV )
 

@@ -13,6 +13,7 @@ module CLI
     key = nil
 
     opts = OptionParser.new
+    opts.banner = "Usage: vying info [options]"
     opts.on( "-r", "--rules RULES" ) { |r| rules << Kernel.const_get( r ) }
     opts.on( "-k", "--key KEY"     ) { |k| key = k }
 

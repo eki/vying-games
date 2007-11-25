@@ -41,7 +41,7 @@ module CLI
     bots = []
 
     opts = OptionParser.new
-
+    opts.banner = "Usage: vying bot_rank [options]"
     opts.on( "-r", "--rules RULES" ) { |r| rules = Kernel.const_get( r ) }
     opts.on( "-n", "--number NUMBER" ) { |n| number = Integer(n) }
     opts.on( "-b", "--bots BOTS" ) { |b| bots << Bot.find( b ) }

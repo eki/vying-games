@@ -14,9 +14,10 @@ module CLI
     n = 100
 
     opts = OptionParser.new
+    opts.banner = "Usage: vying bench [options]"
     opts.on( "-r", "--rules RULES"   ) { |r| rules << Kernel.const_get( r ) }
     opts.on( "-e", "--exclude RULES" ) { |r| exclude << Kernel.const_get( r ) }
-    opts.on( "-n", "--number NUM"    ) { |n| n = Integer( n ) }
+    opts.on( "-n", "--number NUMBER" ) { |n| n = Integer( n ) }
     opts.on( "-p", "--profile"       ) { require 'profile' }
 
     opts.parse( ARGV )

@@ -9,7 +9,12 @@ if CLI::SUBCOMMANDS.include?( ARGV.first )
   CLI.send( command )
 
 else
-  puts "blah blah blah, the --help output should be here..."
-
+  puts "Usage: vying <subcommand> [options] [args]"
+  puts "  Use 'vying <subcommand> --help' for help on a specific subcommand"
+  puts
+  puts "  Available subcommands: "
+  CLI::SUBCOMMANDS.each do |sc|
+    puts "    #{sc}"
+  end
 end
 
