@@ -20,7 +20,7 @@ module CLI
 
     rules = Rules.list if rules.empty?
 
-    puts sprintf( "%20-s %16s %16s", "rules", "branch", "moves / game" )
+    puts sprintf( "%20s %16s %16s", "rules", "branch", "moves / game" )
 
     rules.each do |r|
       total_spread = 0
@@ -41,7 +41,7 @@ module CLI
       b = total_spread.to_f / total_moves.to_f
       mg = total_moves.to_f / n.to_f
 
-      puts sprintf( "%20-s %16.2f %16.2f", r.to_s, b, mg )
+      puts sprintf( "%20s %16.2f %16.2f", r.to_s, b, mg )
     end
 
   end
