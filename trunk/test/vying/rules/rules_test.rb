@@ -13,7 +13,9 @@ module RulesTests
     assert( r.respond_to?( :draw? ) )
   end
 
-  def test_dup # This test uses rand!  This could be bad in some cases...
+  def test_dup
+    srand 123456789  # We do random things, but should still be repeatable
+
     g = Game.new( rules )
     30.times do                          # Take two steps forward,
       p = g.history.last.dup             # one step back, check for corruption
