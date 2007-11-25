@@ -1,15 +1,57 @@
 
 require 'optparse'
 require 'vying'
+require 'curses'
 
 CLI::SUBCOMMANDS << "play"
 
 module CLI
-  class HumanBot < Bot
-    def select( sequence, position, player )
-      puts position
 
-      puts "Ops: #{position.moves.inspect}"
+  module Play
+    def Play.summarize( games )
+      players = {}
+      games.each do |g|
+        g.players.each do |p|
+          players[p] ||= [0,0,0]
+          players[p][0] += 1 if g.winner?( p )
+          players[p][1] += 1 if g.loser?( p )
+          players[p][2] += 1 if g.draw?
+        end
+      end
+      players.each_pair { |k,v| puts "#{k} #{v[0]}-#{v[1]}-#{v[2]}" }
+    end
+
+    def Play.show_position( game )
+      position = game.history.last
+
+      puts position
+      position.has_moves.each do |p|
+        puts "#{p}'s moves: #{position.moves( p ).inspect}"
+      end
+    end
+
+    def Play.show_position_curses( game )
+      position = game.history.last
+
+      w = $scr.maxx
+      h = $scr.maxy
+
+      $scr.clear
+
+      $scr.setpos( 0, 0 )
+      $scr.addstr( position.to_s )
+
+      i = position.has_moves.length - 1
+      position.has_moves.each do |p|
+        $scr.setpos( h-2-i, 0 )
+        i -= 1
+        $scr.addstr( "#{p}'s moves: #{position.moves( p ).inspect}" )
+      end
+    end
+
+    def Play.get_human_move( game, player )
+      position = game.history.last
+
       print "Select: "
 
       move = $stdin.gets.chomp
@@ -19,8 +61,8 @@ module CLI
         exit
       end
 
-      until position.move?( move )
-        puts "'#{move}' not a valid move!"
+      until position.move?( move, player )
+        puts "'#{move}' not a valid move for #{player}!"
 
         print "Select: "
 
@@ -31,56 +73,86 @@ module CLI
           exit
         end
       end
-      move 
+      game.user_map[player] << move 
     end
-  end
 
-  def CLI.summarize( games )
-    players = {}
-    games.each do |g|
-      g.players.each do |p|
-        players[p] ||= [0,0,0]
-        players[p][0] += 1 if g.winner?( p )
-        players[p][1] += 1 if g.loser?( p )
-        players[p][2] += 1 if g.draw?
+    def Play.get_human_move_curses( game, player )
+      position = game.history.last
+
+      w = $scr.maxx
+      h = $scr.maxy
+
+      $scr.setpos( h-1, 0 )
+      $scr.addstr( "Select: " );
+      move = $scr.getstr
+      exit if move == ""
+      $scr.refresh
+      until position.move?( move )
+        $scr.setpos( h-1, 0 )
+        $scr.addstr( "Select: " );
+        move = $scr.getstr
+        exit if move == ""
+        $scr.refresh
       end
+      game.user_map[player] << move
     end
-    players.each_pair { |k,v| puts "#{k} #{v[0]}-#{v[1]}-#{v[2]}" }
+
   end
 
   def CLI.play
-
     rules = Othello
     p2b = {}
     number = 1
+    curses = false
 
     opts = OptionParser.new
 
     opts.on( "-r", "--rules RULES" ) { |r| rules = Kernel.const_get( r ) }
     opts.on( "-n", "--number NUMBER" ) { |n| number = Integer(n) }
+    opts.on( "-c", "--curses" ) { curses = true }
     opts.on( "-p", "--player PLAYER=BOT" ) do |s|
       s =~ /(\w*)=([\w:]*)/
       #p2b[$1.downcase.intern] = Kernel.const_get( $2 ).new
       p2b[$1.downcase.intern] = Bot.find( $2 ).new
     end
 
-
     opts.parse( ARGV )
 
+    if curses
+      $scr = Curses::init_screen
+      Curses::cbreak
+    end
 
     games = []
     number.times do |n|
 
       g = Game.new( rules )
       g.register_users( p2b )
-      results = g.play
+
+      until g.final?
+        if g.user_map[g.turn].class == Human
+          if curses
+            CLI::Play.show_position_curses( g )
+            CLI::Play.get_human_move_curses( g, g.turn )
+          else
+            CLI::Play.show_position( g )
+            CLI::Play.get_human_move( g, g.turn )
+          end
+        end
+
+        g.step
+      end
+
+      results = g.results
     
       games << g
     
       puts "completed game #{n}"
     end
 
-    summarize( games )
+    Curses::close_screen if curses
+
+    CLI::Play.summarize( games )
 
   end
 end
