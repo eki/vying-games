@@ -47,5 +47,42 @@ class TestPig < Test::Unit::TestCase
 
     assert_not_equal( g.history[0], g.history.last )
   end
+
+  def test_current_score
+    g = Game.new( Pig )
+
+    g << [:roll, 3, :roll, 5]
+    assert_equal( 8, g.current_score )
+    assert_equal( 0, g.score( :a ) )
+
+    g << :pass
+    assert_equal( 0, g.current_score )
+    assert_equal( 8, g.score( :a ) )
+
+    g << [:roll, 2, :roll, 5]
+    assert_equal( 7, g.current_score )
+    assert_equal( 0, g.score( :b ) )
+
+    g << [:roll, 1]
+    assert_equal( 0, g.current_score )
+    assert_equal( 0, g.score( :b ) )
+  end
+
+  def test_game
+    g = Game.new( Pig )
+
+    srand 12345678
+    g << g.moves[rand( g.moves.length )] until g.final?
+
+    assert( !g.draw? )
+
+    g.players.each do |p|
+      assert( g.score( p ) >= 100 ) if g.winner?( p )
+      assert( g.score( p )  < 100 ) if g.loser?( p )
+    end
+
+    assert( g.players.select { |p| g.winner?( p ) }.length == 1 )
+    assert( g.players.select { |p| g.loser?(  p ) }.length == 1 )
+  end
 end
 

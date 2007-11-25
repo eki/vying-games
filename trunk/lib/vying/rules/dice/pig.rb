@@ -8,7 +8,7 @@ class Pig < Rules
   info :name => 'Pig',
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Pig_(dice)>']
 
-  attr_reader :total, :score, :rolling
+  attr_reader :total, :current_score, :rolling
 
   players [:a, :b]
 
@@ -17,7 +17,7 @@ class Pig < Rules
   def initialize( seed=nil )
     super
 
-    @total, @score, @rolling = Hash.new( 0 ), 0, false
+    @total, @current_score, @rolling = Hash.new( 0 ), 0, false
   end
 
   def moves( player=nil )
@@ -34,17 +34,17 @@ class Pig < Rules
   def apply!( move )
     case move 
       when 'pass'
-        total[turn] += score
-        @score = 0
+        total[turn] += current_score
+        @current_score = 0
         turn( :rotate )
       when 'roll'
         @rolling = true
       when '1'
-        @score = 0
+        @current_score = 0
         turn( :rotate )
         @rolling = false
       else
-        @score += move.to_i
+        @current_score += move.to_i
         @rolling = false
     end
 
@@ -61,6 +61,10 @@ class Pig < Rules
 
   def loser?( player )
     total[player] < 100
+  end
+
+  def score( player )
+    total[player] 
   end
 end
 
