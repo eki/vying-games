@@ -44,8 +44,7 @@ if defined?( Gem ) && pkg_version
 
   PKG_FILES = FileList[
     'lib/**/*',
-    'bin/bench',
-    'bin/branch',
+    'bin/vying',
     'test/**/*',
     'ext/**/*',
     'Rakefile',
@@ -60,7 +59,7 @@ if defined?( Gem ) && pkg_version
     s.description = 'Vying is a game library.'
     s.files = PKG_FILES.to_a
     s.extensions = "ext/vying/board/extconf.rb"
-    s.executables = ['branch', 'bench']
+    s.executables = ['vying']
     s.add_dependency "random" ">= 0.2.1"
     s.add_dependency "sqlite" ">= 2.2.3"
     s.require_paths << "ext"
