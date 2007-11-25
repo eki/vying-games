@@ -8,7 +8,12 @@ if CLI::SUBCOMMANDS.include?( ARGV.first )
   command = ARGV.shift
   CLI.send( command )
 
+elsif ARGV.first == "--version" || ARGV.first == "-v"
+
+  puts Vying.version
+
 else
+
   puts "Usage: vying <subcommand> [options] [args]"
   puts "  Use 'vying <subcommand> --help' for help on a specific subcommand"
   puts
@@ -16,5 +21,6 @@ else
   CLI::SUBCOMMANDS.each do |sc|
     puts "    #{sc}"
   end
+
 end
 

@@ -39,8 +39,12 @@ wd = Dir.pwd
 wd =~ /\/v([\d\.]*)$/
 pkg_version = $1
 
+task :version do
+  sh %{echo 'module Vying; VERSION = "#{pkg_version}"; end' >> lib/vying.rb}
+end
+
 if defined?( Gem ) && pkg_version
-  task :gem => [:clean, :compile, :test]
+  task :gem => [:clean, :compile, :test, :version]
 
   PKG_FILES = FileList[
     'lib/**/*',
