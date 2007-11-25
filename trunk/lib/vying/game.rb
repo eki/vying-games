@@ -1,8 +1,10 @@
+# Copyright 2007, Eric Idema except where otherwise noted.
+# You may redistribute / modify this file under the same terms as Ruby.
 
-#  GameResults is a memento of a Game.  Whereas Game stores every position
-#  as a part of it's history, GameResults stores only the seed and sequence
-#  of moves.  GameResults can be used to reconstruct a game by replaying the
-#  list of moves.
+# GameResults is a memento of a Game.  Whereas Game stores every position
+# as a part of it's history, GameResults stores only the seed and sequence
+# of moves.  GameResults can be used to reconstruct a game by replaying the
+# list of moves.
 
 class GameResults
   attr_reader :seed, :sequence, :win_lose_draw, :scores, :check
@@ -16,8 +18,8 @@ class GameResults
       rules, seed, sequence, win_lose_draw, scores, check
   end
 
-  #  Create a GameResults object from a Game.  This is used by Game#results,
-  #  the preferred method for getting a GameResults object.
+  # Create a GameResults object from a Game.  This is used by Game#results,
+  # the preferred method for getting a GameResults object.
   
   def self.from_game( game )
     @rules = game.rules.to_snake_case
