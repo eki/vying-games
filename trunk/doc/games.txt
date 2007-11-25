@@ -3,36 +3,19 @@ planned to be added.
 
 
 
-=== Amazons (incomplete)
+=== Amazons (complete)
 
-Now that the Bot api defines a method to forfeit the rules need to be changed
-back to force all moves to be played.  Then any bots will need to forfeit if
-the game is clearly finished.
+Could probably use more unit testing, and the bots could use some refinement.
+But, it appears to be complete and correct.
 
-=== Ataxx (incomplete)
+=== Ataxx (complete)
 
-Very close to being done.  Need to figure out how to deal with cycles.
-Sometimes the bots, as they are now, jump continuously at the end of lost
-games.  These jumps should probably lead to the game ending.
-
-Ataxx also needs more unit testing.
+Could probably use more unit testing, but it's very well tested (through
+play), and correct.
 
 === Breakthrough (complete)
 
 The rules are complete and correct.  The AI could use a lot of work.
-
-=== Cyclotron (planned)
-
-Twist on rock-paper-scissors played in a chess like fashion.  This game will
-be somewhat tricky in that it forbids moves that lead to repeated positions.
-
-=== Cephalopod (planned)
-
-Neat "dice" game by Mark Steere.
-
-=== Dipole (planned)
-
-Neat "checkers" game by Mark Steere.
 
 === Checkers (complete)
 
@@ -61,13 +44,6 @@ The rules are complete and correct.
 === Pente (complete)
 
 The rules are complete and correct.
-
-=== PahTum (POTM) (planned)
-
-Ancient game with slight twist on normal n-in-a-row games.  Includes random
-starting position.  There doesn't seem to be an official rulesheet, though,
-and there is some question as to the number of random blocks that should be
-placed on the board (5 or an "odd number").
 
 === TicTacToe (complete)
 
@@ -108,17 +84,8 @@ added.
 
 The rules are complete and correct.
 
-=== Frames (planned)
+=== Frames (incomplete)
 
-Very cool game with simultaneous moves on a Go board.  Players simultaneously
-place one stone each on the board.  If they form a frame (box with at least
-some depth, edges don't count as interior), the player with more of his stones
-in the frame scores a point.  Game ends when a player reaches 10 points.
-
-=== Trax (planned)
-
-A very interesting game from an implementation standpoint.  The 8x8 version is
-probably more managable that then infinite version (though that also provides
-an interesting challenge).
-
+Very basic implementation, it's unknown whether it's remotely correct.  Needs
+much more unit testing.  
 
