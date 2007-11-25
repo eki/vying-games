@@ -48,6 +48,43 @@ class TestFootsteps < Test::Unit::TestCase
     assert( g.has_moves.include?( g.turn ) )
   end
 
+  def test_censor
+    g = Game.new( Footsteps )
+    p = g.censor( :left )
+    assert_equal( nil, p.bids[:left] )
+    assert_equal( nil, p.bids[:right] )
+
+    g << "right_10"
+
+    p = g.censor( :left )
+    assert_equal( nil, p.bids[:left] )
+    assert_equal( :hidden, p.bids[:right] )
+
+    p = g.censor( :right )
+    assert_equal( nil, p.bids[:left] )
+    assert_equal( 10, p.bids[:right] )
+
+    g << "left_5"
+
+    p = g.censor( :left )
+    assert_equal( nil, p.bids[:left] )
+    assert_equal( nil, p.bids[:right] )
+
+    p = g.censor( :right )
+    assert_equal( nil, p.bids[:left] )
+    assert_equal( nil, p.bids[:right] )
+
+    g << "left_4"
+
+    p = g.censor( :left )
+    assert_equal( 4, p.bids[:left] )
+    assert_equal( nil, p.bids[:right] )
+
+    p = g.censor( :right )
+    assert_equal( :hidden, p.bids[:left] )
+    assert_equal( nil, p.bids[:right] )
+  end
+
   def test_game01
     g = play_sequence( [:left_50, :right_40, 
                         :right_1, :right_1, :right_1, :right_1] )

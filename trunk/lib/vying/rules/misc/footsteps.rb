@@ -43,13 +43,15 @@ class Footsteps < Rules
     return unused_moves_left.map  { |i| "left_#{i}" }  if player == :left
     return unused_moves_right.map { |i| "right_#{i}" } if player == :right
 
-    has_moves.map do |p|
+    ms = has_moves.map do |p|
       if p == :left
         unused_moves_left.map  { |i| "left_#{i}" }  if p == :left
       elsif p == :right
         unused_moves_right.map { |i| "right_#{i}" } if p == :right
       end
-    end.flatten
+    end
+
+    ms.flatten
   end
 
   def apply!( move )
