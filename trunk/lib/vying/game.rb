@@ -115,6 +115,9 @@ class Game
   # common to use the more versatile Game#<< method.
 
   def append( move )
+    special_moves = [/^forfeit_by_(\w+)$/, /draw_offered_by_(\w+)/,
+                   /^draw$/, /^time_exceeded_by_(\w+)$/]
+
     move = move.to_s
 
     if move?( move )
@@ -128,6 +131,12 @@ class Game
       end
 
       return self
+
+    elsif special_moves.any? { |sm| move =~ sm }
+
+      @sequence << move
+      return self
+
     end
     raise "'#{move}' not a valid move"
   end
@@ -400,18 +409,8 @@ class Game
   # Creates a new game instance by replaying the a GameResults object.
 
   def Game.replay( results )
-    special_moves = [/^forfeit_by_(\w+)$/, /draw_offered_by_(\w+)/,
-                   /^draw$/]
-
     g = Game.new( results.rules, results.seed )
-
-    s = results.sequence.dup
-
-    if special_moves.any? { |sm| s.last =~ sm }
-      s.pop
-    end
-
-    g << s
+    g << results.sequence
     g
   end
 
