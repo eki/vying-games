@@ -66,5 +66,9 @@ class Pig < Rules
   def score( player )
     total[player] 
   end
+
+  def hash
+    [total, current_score, rolling].hash
+  end
 end
 
