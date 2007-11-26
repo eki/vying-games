@@ -106,12 +106,14 @@ end
 ###
 
 begin
+  require 'rubygems'
   require 'rcov/rcovtask'
 rescue Exception
   nil
 end
 
 if defined?( Rcov )
+  puts "Rcov defined!"
   task :rcov => [:compile]
 
   Rcov::RcovTask.new do |t|
@@ -120,6 +122,8 @@ if defined?( Rcov )
     t.output_dir = "doc/coverage"
   end
 else
+  puts "Rcov not defined!"
+
   task :rcov => [:test] do
     puts "No RCOV here!!!"
   end
