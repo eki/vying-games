@@ -57,5 +57,18 @@ class TestAtaxx < Test::Unit::TestCase
     assert_equal( 2, g.score( :blue ) )
   end
 
+  def test_hash
+    g1 = Game.new( Ataxx, 1234 )
+    g2 = Game.new( Ataxx, 1234 )
+
+    10.times do
+      g1 << g1.moves.first
+      g2 << g2.moves.first
+    end
+
+    assert( g1.history.last == g2.history.last )
+    assert( g1.history.last.hash == g2.history.last.hash )
+  end
+
 end
 
