@@ -119,5 +119,9 @@ if defined?( Rcov )
     t.test_files = FileList['test/**/*_test.rb']
     t.output_dir = "doc/coverage"
   end
+else
+  task :rcov => [:test] do
+    puts "No RCOV here!!!"
+  end
 end
 
