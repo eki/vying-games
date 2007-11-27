@@ -98,6 +98,22 @@ class TestCoord < Test::Unit::TestCase
     assert_equal( nil, c.direction_to( Coord[1,6] ) )
   end
 
+  def test_next
+    c = Coord[3,3]
+
+    assert_equal( Coord[3,2], c.next( :n ) )
+    assert_equal( Coord[3,4], c.next( :s ) )
+    assert_equal( Coord[4,3], c.next( :e ) )
+    assert_equal( Coord[2,3], c.next( :w ) )
+
+    assert_equal( Coord[4,2], c.next( :ne ) )
+    assert_equal( Coord[2,2], c.next( :nw ) )
+    assert_equal( Coord[4,4], c.next( :se ) )
+    assert_equal( Coord[2,4], c.next( :sw ) )
+
+    assert_equal( nil, c.next( :blah ) )
+  end
+
   def test_to_s
     assert_equal( 'a1', Coord[0,0].to_s )
     assert_equal( 'b3', Coord[1,2].to_s )
@@ -112,12 +128,26 @@ class TestCoord < Test::Unit::TestCase
   def test_to_coords
     assert_equal( [Coord[:a1],Coord[:j12],Coord[:b2]], "a1j12b2".to_coords )
     assert_equal( [Coord[:a1],Coord[:j12],Coord[:b2]], :a1j12b2.to_coords )
+    assert_equal( [Coord[:a1]], Coord[:a1].to_coords )
+    assert_equal( [Coord[:a1]], :a1.to_coords )
+    assert_equal( [Coord[:a1]], "a1".to_coords )
+  end
+
+  def test_to_sym
+    assert_equal( :a1, Coord[0,0].to_sym )
+    assert_equal( :j12, Coord[:j12].to_sym )
   end
 
   def test_dup
     c = Coord[:k9]
     assert_equal( c, c.dup )
     assert_equal( c.object_id, c.dup.object_id )
+  end
+
+  def test_marshal
+    c = Coord[:j12]
+    assert_equal( c, Marshal.load( Marshal.dump( c ) ) )
+    assert_equal( c.object_id, Marshal.load( Marshal.dump( c ) ).object_id )
   end
 end
 
