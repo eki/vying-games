@@ -101,11 +101,23 @@ class TestCoord < Test::Unit::TestCase
   def test_to_s
     assert_equal( 'a1', Coord[0,0].to_s )
     assert_equal( 'b3', Coord[1,2].to_s )
+    assert_equal( 'a1', Coord[0,0].inspect )
   end
 
   def test_from_s
     assert_equal( Coord[0,0], Coord['a1'] )
     assert_equal( Coord[1,2], Coord[:b3] )
+  end
+
+  def test_to_coords
+    assert_equal( [Coord[:a1],Coord[:j12],Coord[:b2]], "a1j12b2".to_coords )
+    assert_equal( [Coord[:a1],Coord[:j12],Coord[:b2]], :a1j12b2.to_coords )
+  end
+
+  def test_dup
+    c = Coord[:k9]
+    assert_equal( c, c.dup )
+    assert_equal( c.object_id, c.dup.object_id )
   end
 end
 

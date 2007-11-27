@@ -107,10 +107,6 @@ class Coord
     self
   end
 
-  def copy
-    self
-  end
-
   def _dump( depth=-1 )
     to_s
   end
