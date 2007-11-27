@@ -200,5 +200,18 @@ class TestCoords < Test::Unit::TestCase
     coords = Coords.new( 2, 2 )
     assert_equal( "a1b1a2b2", coords.to_s )
   end
+
+  def test_dup
+    coords = Coords.new( 3, 5 )
+    assert_equal( coords, coords.dup )
+    assert_equal( coords.object_id, coords.dup.object_id )
+  end
+
+  def test_marshal
+    coords = Coords.new( 3, 5 )
+    assert_equal( coords, Marshal.load( Marshal.dump( coords ) ) )
+    assert_equal( coords.object_id,
+                  Marshal.load( Marshal.dump( coords ) ).object_id )
+  end
 end
 

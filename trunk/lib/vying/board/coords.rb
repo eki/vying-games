@@ -67,26 +67,12 @@ class Coords
     coords.select { |c| coord.y == c.y }
   end
 
-  def rows
-    column( Coord[0,0] ).map { |c| row( c ) }
-  end
-
   def column( coord )
     coords.select { |c| coord.x == c.x }
   end
 
-  def columns
-    row( Coord[0,0] ).map { |c| column( c ) }
-  end
-
   def diagonal( coord, slope=1 )
     coords.select { |c| slope*(coord.y-c.y) == (coord.x-c.x) }
-  end
-
-  def diagonals( slope=1 )
-    cs = row( Coord[0,0] )
-    cs += column( slope == 1 ? Coord[0,0] : Coord[width-1,0] )
-    cs.uniq.map { |c| diagonal( c, slope ) }
   end
 
   def neighbors_nil( coord, directions=[:n,:ne,:e,:se,:s,:sw,:w,:nw] )
@@ -96,25 +82,6 @@ class Coords
 
   def neighbors( coord, directions=[:n,:ne,:e,:se,:s,:sw,:w,:nw] )
     a = directions.map { |dir| coord + DIRECTIONS[dir] }
-    a.reject! { |c| ! include?( c ) }
-    a
-  end
-
-#  def next( coord, direction )
-#    include?( n = coord + DIRECTIONS[direction] ) ? n : nil
-#  end
-
-  def radius( coord, r )
-    directions=[:n,:ne,:e,:se,:s,:sw,:w,:nw]
-    a = directions.map do |dir|
-      sa, c, i = [], coord, 0
-      while (c = self.next( c, dir )) && i < r
-        sa << c
-        i += 1
-      end
-      sa
-    end 
-    a.flatten!
     a.reject! { |c| ! include?( c ) }
     a
   end
