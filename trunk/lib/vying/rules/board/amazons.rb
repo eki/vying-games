@@ -4,6 +4,12 @@
 require 'vying/rules'
 require 'vying/board/amazons'
 
+# Amazons is a territory game.  With every move the playable area of the
+# game board is reduced.  Each player tries to claim more territory so they
+# can outlast their opponent.
+#
+# For detailed rules see:  http://vying.org/games/amazons
+
 class Amazons < Rules
 
   info :name      => "Amazons",

@@ -4,6 +4,11 @@
 require 'vying/rules'
 require 'vying/board/board'
 
+# Breakthrough is a where each player races to push his pawns across the
+# board.  Plays sort of like a hybrid of Chess and Checkers.
+#
+# For detailed rules, etc:  http://vying.org/games/breakthrough
+
 class Breakthrough < Rules
 
   info :name      => 'Breakthrough',

@@ -4,6 +4,12 @@
 require 'vying/rules'
 require 'vying/board/board'
 
+# This is an implementation of American Checkers, or Straight Checkers, or
+# British Draughts, or, etc, etc, depending on what part of the world you're
+# from.
+#
+# For more detailed rules, etc:  http://vying.org/games/checkers
+
 class Checkers < Rules
 
   info :name      => 'Checkers',

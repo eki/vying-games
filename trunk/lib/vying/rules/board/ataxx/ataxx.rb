@@ -4,6 +4,12 @@
 require 'vying/rules'
 require 'vying/board/board'
 
+# Ataxx is territory game where each player tries to populate a majority of
+# board with his pieces.  This game has a random starting position, but past
+# the initial position there are no more random elements.
+#
+# For detailed rules, etc:  http://vying.org/games/ataxx
+
 class Ataxx < Rules
 
   info :name      => 'Ataxx',
