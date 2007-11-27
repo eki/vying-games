@@ -25,6 +25,38 @@ class TestConnect6Board < Test::Unit::TestCase
     assert_not_equal( b.threats, b2.threats )
   end
 
+  def test_clear
+    b = Connect6Board.new
+
+    b[10,10] = b[9,9] = b[8,8] = :black
+    b.update_threats( Coord[10,10] )
+    b.update_threats( Coord[9,9] )
+    b.update_threats( Coord[8,8] )
+
+    assert_equal( 6, b.threats.length )
+
+    b.clear
+
+    assert_equal( 0, b.threats.length )
+  end
+
+  def test_threats_to_s
+    b = Connect6Board.new
+
+    b[10,10] = b[9,9] = b[8,8] = :black
+    b.update_threats( Coord[10,10] )
+    b.update_threats( Coord[9,9] )
+    b.update_threats( Coord[8,8] )
+
+    assert_equal( 6, b.threats.length )
+
+    b.threats.each do |t|
+      assert_equal( "[#{t.degree}, #{t.player}, #{t.empty_coords.inspect}]",
+                    t.to_s )
+      assert_equal( t.to_s, t.inspect )
+    end
+  end
+
   def test_create_windows
     b = Connect6Board.new
 
@@ -42,5 +74,12 @@ class TestConnect6Board < Test::Unit::TestCase
 
     w = [Coord[1,1],Coord[2,2],Coord[3,3]]
     assert( b.in_bounds?( w ) )
+  end
+
+  def test_has_neighbor?
+    b = Connect6Board.new
+    b[:c3] = :black
+    assert( b.has_neighbor?( Coord[:c2] ) )
+    assert( ! b.has_neighbor?( Coord[:c1] ) )
   end
 end
