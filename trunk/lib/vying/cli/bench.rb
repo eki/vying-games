@@ -14,12 +14,16 @@ module CLI
     rules = []
     exclude = []
     n = 100
+    benchmark_game = false
+    benchmark_marshal = false
 
     opts = OptionParser.new
     opts.banner = "Usage: vying bench [options]"
     opts.on( "-r", "--rules RULES"   ) { |r| rules << Kernel.const_get( r ) }
     opts.on( "-e", "--exclude RULES" ) { |r| exclude << Kernel.const_get( r ) }
     opts.on( "-n", "--number NUMBER" ) { |n| n = Integer( n ) }
+    opts.on( "-g", "--game" )          { benchmark_game = true }
+    opts.on( "-m", "--marshal" )       { benchmark_marshal = true }
     opts.on( "-p", "--profile"       ) { require 'profile' }
 
     opts.parse( ARGV )
@@ -35,6 +39,34 @@ module CLI
 
         x.report( "#{r} position dup" ) do
           n.times { pos.dup }
+        end
+
+        g, i = Game.new( r ), 0
+        until g.final? || i == 30
+          g << g.moves.first
+          i += 1
+        end
+        marshal_p = g.history.last
+        marshal_g = g
+        marshal_s = Marshal.dump( marshal_p )
+        marshal_gs = Marshal.dump( marshal_g )
+
+        x.report( "#{r} marshal dump" ) do
+          n.times { Marshal.dump( marshal_p ) }
+        end
+
+        x.report( "#{r} marshal load" ) do
+          n.times { Marshal.load( marshal_s ) }
+        end
+
+        if benchmark_game
+          x.report( "#{r} (game) marshal dump" ) do
+            n.times { Marshal.dump( marshal_g ) }
+          end
+
+          x.report( "#{r} (game) marshal load" ) do
+            n.times { Marshal.load( marshal_gs ) }
+          end
         end
 
         x.report( "#{r} init" ) do
@@ -64,6 +96,23 @@ module CLI
             g << g.moves[rand(g.moves.length)]
           end
         end
+      end
+    end
+
+    if benchmark_marshal
+      rules.each do |r|
+
+        g, i = Game.new( r ), 0
+        until g.final? || i == 30
+          g << g.moves.first
+          i += 1
+        end
+        marshal_p = g.history.last
+        marshal_g = g
+        marshal_s = Marshal.dump( marshal_p )
+        marshal_gs = Marshal.dump( marshal_g )
+
+        puts "#{r} marshal dump size: #{marshal_s.length}"
       end
     end
 

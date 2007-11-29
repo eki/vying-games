@@ -1,34 +1,54 @@
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
-require 'rubygems'
 require 'random'
+require 'yaml'
 
-# These are extensions to Random:
-#
-#   http://random.rubyforge.org/rdoc/index.html
-#
-# We need a repeatable, independent random number generator and
-# Random::MersenneTwister provides it.  Unfortunately, we need to make deep
-# copies of our rng since it's a part of a position's state (and we need
-# to make deep copies of positions).  We've also added equality checks and
-# the ability to include the rng in yaml.
-#
+# RandomNumberGenerator is a thin wrapper around Random::MersenneTwister.  It
+# provides a simpler interface to Rules that have random elements.  It also
+# has a few small benefits over Random::MersenneTwister.  For one, it provides
+# faster, lazier (deep) dup'ing, marshaling, and yaml-izing.  It also provides
+# a quick equality check.
 
-class Random::MersenneTwister
+class RandomNumberGenerator
+  attr_reader :seed, :count
 
-  # Create a deep copy of this random number generator.
+  # Provide the seed to initialize the RandomNumberGenerator with.  If no
+  # seed is given one will be taken from Kernel.rand (given a max of 2**30-1).
+
+  def initialize( seed=nil )
+    @seed = seed || Kernel.rand( 2**30-1 )
+    @count = 0
+    @rng = Random::MersenneTwister.new( seed )
+  end
+
+  # Same as Kernel.rand, but uses MersenneTwister.
+
+  def rand( n=nil )
+    if @rng.nil?
+      @rng = Random::MersenneTwister.new( seed )
+      count.times { @rng.rand }
+    end
+
+    @count += 1
+    @rng.rand( n )
+  end
+
+  # Makes a deep, lazy copy of this RandomNumberGenerator.  The MersenneTwiser
+  # that's used behind the scenes is *not* recreated until the first call
+  # to #rand.
 
   def dup
-    rng = Random::MersenneTwister.new
-    rng.state = self.state
+    rng = self.class.allocate
+    rng.instance_variable_set( "@seed", seed )
+    rng.instance_variable_set( "@count", count )
     rng
   end
 
   # Compare this rng against another.
 
   def eql?( o )
-    state.eql? o.state
+    seed == o.seed && count == o.count
   end
 
   # Compare this rng against another.
@@ -37,31 +57,28 @@ class Random::MersenneTwister
     eql? o
   end
 
-  # Get yaml from this rng.
+  # Only the seed and count are dumped when marshalling.
 
-  def to_yaml( opts = {} )
-    @state = state   # This is uber kludgey
-    super
+  def _dump( depth=-1 )
+    Marshal.dump( [seed, count] )
   end
 
-  # Set the yaml type.
+  # Load mashalled data.
 
-  def to_yaml_type
-    "!vying.org,2007/MersenneTwister"
+  def self._load( s )
+    s, c = Marshal.load( s )
+    rng = self.allocate
+    rng.instance_variable_set( "@seed", s )
+    rng.instance_variable_set( "@count", c )
+    rng
   end
 
-  # Only the state instance variable is needed to serialize the rng.
+  # Only the seed and count are written out to YAML.
 
   def to_yaml_properties
-    ['@state']
+    ["@seed","@count"]
   end
 
-end
-
-YAML.add_domain_type( "vying.org,2007", "MersenneTwister") do |type, val|
-  rng = Random::MersenneTwister.new( 0 )
-  rng.state = val["state"]
-  rng
 end
 
 class Array
@@ -152,7 +169,7 @@ class Rules
   def initialize( seed=nil )
     if info[:random] ||= false
       @seed = seed.nil? ? rand( 10000 ) : seed
-      @rng = Random::MersenneTwister.new( @seed )
+      @rng = RandomNumberGenerator.new( @seed )
     end
     @turn = players.dup
   end
