@@ -22,12 +22,6 @@ The rules are complete and correct.  The AI could use a lot of work.
 The rules for American Checkers (aka English Draughts, aka Straight Checkers)
 are complete and correct.  The AI could use opening / closing books.
 
-=== InternationalCheckers (incomplete)
-
-Needs a lot of work.  Can't be completed until we figure out how to enforce
-the maximum jump rule (if a player can jump, they must capture the maximum
-possible men).
-
 === Connect4 (complete?)
 
 Should probably just be removed.  This game doesn't offer much in terms of
