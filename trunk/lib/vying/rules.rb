@@ -470,13 +470,6 @@ class Rules
     nil
   end
 
-  # Delete me.
-
-  def Rules.related
-    return [] unless info[:related]
-    info[:related].map { |name| Rules.find( name ) }
-  end
-
   # Returns a very basic string representation of this position.
 
   def to_s
