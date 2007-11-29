@@ -1,0 +1,13 @@
+== Requirements
+
+=== Gems
+
+  *  gem install random
+  *  gem install sqlite
+    *  Last I checked this gem only works with sqlite 2.8
+
+=== Build Environment
+
+Vying is part C extension and will not work without a typical unix-like build
+environment.
+
