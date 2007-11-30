@@ -6,6 +6,7 @@ module RulesTests
     assert( r.respond_to?( :apply ) )
     assert( r.respond_to?( :apply! ) )
     assert( r.respond_to?( :has_moves ) )
+    assert( r.respond_to?( :has_moves? ) )
     assert( r.respond_to?( :censor ) )
     assert( r.respond_to?( :final? ) )
     assert( r.respond_to?( :winner? ) )
@@ -56,6 +57,17 @@ module RulesTests
     g.moves.each do |move|
       assert( g.move?( move ) )
       (g.players - g.has_moves).each { |p| assert( !g.move?( move, p ) ) }
+    end
+  end
+
+  def test_has_moves
+    g = Game.new( rules )
+    10.times do
+      g.has_moves.each do |p|
+        assert( g.has_moves?( p ) )
+      end
+      g << g.moves.first
+      break if g.final?
     end
   end
 
