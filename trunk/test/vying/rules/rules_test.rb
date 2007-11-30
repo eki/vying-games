@@ -65,6 +65,7 @@ module RulesTests
     10.times do
       g.has_moves.each do |p|
         assert( g.has_moves?( p ) )
+        assert( g.history.last.has_moves?( p ) ) # There are two #has_moves?
       end
       g << g.moves.first
       break if g.final?
