@@ -3,11 +3,11 @@
 
 require 'vying/rules'
 
-# 
-# 
-# 
+# Three Musketeers is a simple board game with nonsymmetric objectives.  The
+# red player wins by running out of moves.  The blue player wins by aligning
+# all the red pieces on any single row or column.
 #
-# For detailed rules see:  http://vying.org/games/amazons
+# For detailed rules see:  http://vying.org/games/three_musketeers
 
 class ThreeMusketeers < Rules
 

@@ -51,5 +51,28 @@ class TestThreeMusketeers < Test::Unit::TestCase
     assert_equal( nil, g.board[:c3] )
     assert_equal( ["b3c3", "d3c3", "c4c3"].sort, g.moves.sort )
   end
+
+  def test_game01
+    g = play_sequence ["a5b5", "a4a5", "b5c5", "a5b5", "e1d1", "e2e1", "d1c1"]
+
+    assert( !g.draw? )
+    assert( g.winner?( :blue ) )
+    assert( !g.loser?( :blue ) )
+    assert( !g.winner?( :red ) )
+    assert( g.loser?( :red ) )
+  end
+
+  def test_game02
+    g = play_sequence ["a5a4", "b5a5", "a4a5", "b4a4", "e1d1", "e2e1",
+                       "d1e1", "a4b4", "c3d3", "c2c3", "d3d2", "c1d1",
+                       "d2d1", "e3d3"]
+
+    assert( !g.draw? )
+    assert( g.winner?( :red ) )
+    assert( !g.loser?( :red ) )
+    assert( !g.winner?( :blue ) )
+    assert( g.loser?( :blue ) )
+  end
+
 end
 
