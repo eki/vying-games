@@ -2,12 +2,22 @@
 # You may redistribute / modify this file under the same terms as Ruby.
 
 require 'vying/ai/bot'
-require 'vying/ai/search'
+require 'vying/rules'
 
 class RandomBot < Bot
-  def select( sequence, position, player )
+  def RandomBot.select( sequence, position, player )
     moves = position.moves
     moves[rand(moves.size)]
+  end
+
+  Rules.list.each do |r|
+    class_eval <<-EVAL
+      class #{r} < Bot
+        def select( sequence, position, player )
+          RandomBot.select( sequence, position, player )
+        end
+      end
+    EVAL
   end
 end
 
