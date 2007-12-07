@@ -34,7 +34,9 @@ class ThreeMusketeers < Rules
 
   def moves( player=nil )
     return [] unless player.nil? || has_moves.include?( player )
-    return [] if turn == :blue && final?
+    return [] if (turn == :blue && 
+     (board.occupied[:red].map { |c| c.x }.uniq.length == 1 ||
+      board.occupied[:red].map { |c| c.y }.uniq.length == 1))
 
     a = []
 
@@ -67,18 +69,19 @@ class ThreeMusketeers < Rules
   end
 
   def final?
-    (turn == :red && moves.empty?) ||
-    (turn == :blue && 
-     (board.occupied[:red].map { |c| c.x }.uniq.length == 1 ||
-      board.occupied[:red].map { |c| c.y }.uniq.length == 1))
+    moves.empty?
   end
 
   def winner?( player )
-    turn == player
+     bw = (board.occupied[:red].map { |c| c.x }.uniq.length == 1 ||
+           board.occupied[:red].map { |c| c.y }.uniq.length == 1)
+     player == :red ? !bw : bw
   end
 
   def loser?( player )
-    turn != player
+     bw = (board.occupied[:red].map { |c| c.x }.uniq.length == 1 ||
+           board.occupied[:red].map { |c| c.y }.uniq.length == 1)
+     player == :red ? bw : !bw
   end
 
   def hash
