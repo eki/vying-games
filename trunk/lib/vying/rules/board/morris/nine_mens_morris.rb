@@ -10,6 +10,8 @@ class NineMensMorris < Rules
        :resources => 
          ["Wikipedia <http://en.wikipedia.org/wiki/Nine_Men's_Morris>"]
 
+  version "1.0.0"
+
   attr_reader :board, :remaining, :removing
 
   allow_draws_by_agreement

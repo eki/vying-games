@@ -15,6 +15,8 @@ class Checkers < Rules
   info :name      => 'Checkers',
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Checkers>']
 
+  version "1.0.0"
+
   allow_draws_by_agreement
 
   attr_reader :board, :jumping

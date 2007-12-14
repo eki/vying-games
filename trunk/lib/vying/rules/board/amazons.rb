@@ -17,6 +17,8 @@ class Amazons < Rules
 
   attr_reader :board, :lastc
 
+  version "1.0.0"
+
   players [:white, :black]
 
   def initialize( seed=nil )

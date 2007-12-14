@@ -12,6 +12,8 @@ class TicTacToe < Rules
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Tic-tac-toe>'],
        :related   => ['Connect6', 'Connect4', 'Pente', 'KeryoPente']
 
+  version "1.0.0"
+
   attr_reader :board, :lastc, :lastp, :unused_moves
 
   players [:x, :o]

@@ -9,6 +9,8 @@ class Frames < Rules
        :resources => 
        ['About <http://boardgames.about.com/od/freesimultaneous/a/frames.htm>']
 
+  version "0.3.0"
+
   attr_reader :board, :sealed_moves, :unused_moves, :points
 
   players [:black, :white]

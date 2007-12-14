@@ -10,6 +10,8 @@ class Pente < Rules
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Pente>'],
        :related   => ['Connect6', 'Connect4', 'KeryoPente', 'TicTacToe']
 
+  version "1.0.0"
+
   attr_reader :board, :lastc, :lastp, :unused_moves, :captured
 
   players [:white, :black]

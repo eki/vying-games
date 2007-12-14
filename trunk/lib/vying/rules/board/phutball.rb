@@ -9,6 +9,8 @@ class Phutball < Rules
   info :name      => 'Phutball',
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Phutball>']
 
+  version "1.0.0"
+
   attr_reader :board, :jumping, :unused_moves
 
   players [:ohs, :eks]

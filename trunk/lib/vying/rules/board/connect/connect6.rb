@@ -10,6 +10,8 @@ class Connect6 < Rules
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Connect6>'],
        :related   => ["Pente", "KeryoPente", "Connect4", "TicTacToe"]
 
+  version "1.0.0"
+
   attr_reader :board, :lastc, :lastp, :unused_moves
 
   allow_draws_by_agreement

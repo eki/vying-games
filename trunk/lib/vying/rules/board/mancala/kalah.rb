@@ -9,6 +9,8 @@ class Kalah < Rules
   info :name    => 'Kalah',
        :related => ['Oware']
 
+  version "1.0.0"
+
   attr_reader :board, :scoring_pits, :annotation
   ignore :moves_cache
 

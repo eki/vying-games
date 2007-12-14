@@ -15,6 +15,8 @@ class ThreeMusketeers < Rules
        :resources => 
          ['Wikipedia <http://en.wikipedia.org/wiki/Three_Musketeers_(game)>']
 
+  version "1.0.0"
+
   attr_reader :board
 
   players [:red, :blue]

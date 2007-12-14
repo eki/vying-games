@@ -15,6 +15,8 @@ class Ataxx < Rules
   info :name      => 'Ataxx',
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Ataxx>']
 
+  version "1.0.0"
+
   attr_reader :board, :block_pattern, :moves_cache
   ignore :moves_cache
 

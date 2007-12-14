@@ -16,6 +16,8 @@ class PahTum < Rules
 
   info :name      => "Pah-Tum"
 
+  version "1.0.0"
+
   attr_reader :board, :unused_moves
 
   ignore :unused_moves

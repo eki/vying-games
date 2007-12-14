@@ -287,6 +287,17 @@ class Rules
     end
   end
 
+  # Define the version for a Rules implementation.  After defining it
+  # the version can be retrieved with subsequent calls.
+
+  def self.version( v )
+    @version = v
+    class << self
+      undef_method :version
+      attr_reader :version
+    end
+  end
+
   # Hide sensitive position data from the given player.  This creates a
   # censored copy of this position.  Sensitive instance variables will be
   # overwritten with :hidden. 

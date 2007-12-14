@@ -10,6 +10,8 @@ class Connect4 < Rules
        :aliases => ['Plot Four', 'Connect 4', "The Captain's Mistress"],
        :related => ['Connect6', 'Pente', 'KeryoPente', 'TicTacToe']
 
+  version "1.0.0"
+
   attr_reader :board, :lastc, :lastp, :unused_moves
 
   def initialize_copy( original )

@@ -15,6 +15,8 @@ class Breakthrough < Rules
        :resources => 
          ['Wikipedia <http://en.wikipedia.org/wiki/Breakthrough_(board_game)>']
 
+  version "1.0.0"
+
   attr_reader :board
 
   players [:black, :white]

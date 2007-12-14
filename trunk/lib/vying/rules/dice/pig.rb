@@ -8,6 +8,8 @@ class Pig < Rules
   info :name => 'Pig',
        :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Pig_(dice)>']
 
+  version "1.0.0"
+
   attr_reader :total, :current_score, :rolling
 
   players [:a, :b]

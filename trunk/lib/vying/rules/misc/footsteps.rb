@@ -10,6 +10,8 @@ class Footsteps < Rules
        :resources => 
          ['Everything2 <http://www.everything2.com/index.pl?node=Footsteps>']
 
+  version "1.0.0"
+
   attr_reader :board, :points, :bids, :unused_moves_left, :unused_moves_right,
               :bid_history
 

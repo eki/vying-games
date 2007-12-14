@@ -9,6 +9,8 @@ class Othello < Rules
   info :name    => 'Othello',
        :aliases => ['Reversi']
 
+  version "1.0.0"
+
   attr_reader :board, :moves_cache
   ignore :moves_cache
 

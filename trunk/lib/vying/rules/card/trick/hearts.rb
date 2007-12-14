@@ -8,6 +8,8 @@ class Hearts < Rules
 
   info :name => 'Hearts'
 
+  version "0.5.0"
+
   players [:n, :e, :s, :w]
 
   deck [:SA,:SK,:SQ,:SJ,:ST,:S9,:S8,:S7,:S6,:S5,:S4,:S3,:S2,
