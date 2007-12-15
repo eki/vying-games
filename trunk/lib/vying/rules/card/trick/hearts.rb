@@ -44,19 +44,29 @@ class Hearts < Rules
     hands.each { |k,v| v.sort! }
     @post_deal = true
 
-    turn( :rotate ) until hands[turn].include?( Card[:C2] )
-
     @tricks = {}
     @selected = { :n => [], :s => [], :e => [], :w => [] }
     @trick = []
     @broken = false
     @score = Hash.new( 0 )
+
+    # This code should effectively never be run... (and thus removed),
+    # because every game of Hearts starts with passing, and we don't want
+    # to rotate turn because it would reveal to the players who has C2
+
+    if !(post_deal && pass?)
+      turn( :rotate ) until hands[turn].include?( Card[:C2] )
+    end
   end
 
   def censor( player )
     pos = super
-    pos.hands.each { |k,v| pos.hands[k] = :hidden if k != player }
-    pos.selected.each { |k,v| pos.selected[k] = :hidden if k != player }
+    pos.hands.each do |k,v| 
+      pos.hands[k] = [:hidden]*pos.hands[k].length if k != player
+    end
+    pos.selected.each do |k,v| 
+      pos.selected[k] = [:hidden]*pos.selected[k].length if k != player
+    end
     pos
   end
 

@@ -180,6 +180,8 @@ module TrickTaking
         hands.each { |k,v| v.sort! }
       end
 
+      turn( :rotate ) until has_moves.include?( turn )
+
       return self
     end
 
@@ -245,6 +247,8 @@ module TrickTaking
     else
       turn( :rotate )
     end
+
+    turn( :rotate ) until has_moves.include?( turn )
 
     self
   end
