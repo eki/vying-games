@@ -60,6 +60,10 @@ class Card
     card.value? - value?
   end
 
+  def eql?( card )
+    self == card
+  end
+
   def hash
     [suit, rank].hash
   end
