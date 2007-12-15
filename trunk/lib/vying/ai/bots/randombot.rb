@@ -6,7 +6,7 @@ require 'vying/rules'
 
 class RandomBot < Bot
   def RandomBot.select( sequence, position, player )
-    moves = position.moves
+    moves = position.moves( player )
     moves[rand(moves.size)]
   end
 
