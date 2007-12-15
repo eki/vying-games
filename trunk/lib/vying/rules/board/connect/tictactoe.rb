@@ -15,6 +15,7 @@ class TicTacToe < Rules
   version "1.0.0"
 
   attr_reader :board, :lastc, :lastp, :unused_moves
+  ignore :lastc, :lastp, :unused_moves
 
   players [:x, :o]
 
