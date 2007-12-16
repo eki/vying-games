@@ -26,11 +26,6 @@ class Connect4 < Rules
     @unused_moves = @@init_moves.map { |a| a.dup }
   end
 
-  def initialize_copy( original )
-    super
-    @unused_moves = original.unused_moves.map { |a| a.dup }
-  end
-
   def moves( player=nil )
     return [] unless player.nil? || has_moves.include?( player )
     return [] if final?
