@@ -6,15 +6,12 @@ require 'vying/board/connect6'
 
 class KeryoPente < Rules
 
-  info :name      => 'Keryo-Pente',
-       :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Pente>'],
-       :related   => ['Connect6', 'Connect4', 'Pente', 'TicTacToe']
-
+  name    "Keryo-Pente"
   version "1.0.0"
 
-  attr_reader :board, :lastc, :lastp, :unused_moves, :captured
-
   players [:white, :black]
+
+  attr_reader :board, :lastc, :lastp, :unused_moves, :captured
 
   @@init_moves = Coords.new( 19, 19 ).map { |c| c.to_s }
 

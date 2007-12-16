@@ -6,11 +6,12 @@ require 'vying/cards/card'
 class Hearts < Rules
   include TrickTaking
 
-  info :name => 'Hearts'
-
+  name    "Hearts"
   version "0.5.0"
 
   players [:n, :e, :s, :w]
+
+  random
 
   deck [:SA,:SK,:SQ,:SJ,:ST,:S9,:S8,:S7,:S6,:S5,:S4,:S3,:S2,
         :CA,:CK,:CQ,:CJ,:CT,:C9,:C8,:C7,:C6,:C5,:C4,:C3,:C2,
@@ -32,8 +33,6 @@ class Hearts < Rules
                     :directions => [:left, :right, :across, :no_pass]
 
   attr_reader :hands, :tricks, :trick, :broken, :post_deal, :selected
-
-  random
 
   def initialize( seed=nil )
     super

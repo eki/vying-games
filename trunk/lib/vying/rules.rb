@@ -195,23 +195,6 @@ class Rules
     eql?( o )
   end
 
-  # Provide meta info about the game being described by these Rules.  At a
-  # minimum Rules subclasses should define :name.  For example:
-  #
-  #  class BlahGame < Rules
-  #    info :name => "The Great Game of Blahs"
-  #  end
-  #
-  # Values can be retrieved later like so:
-  #
-  #   BlahGame.info[:name]
-  #   
-
-  def self.info( i={} )
-    @info = i
-    class << self; attr_reader :info; end
-  end
-
   # Does the game defined by these rules allow the players to call a draw
   # by agreement?  If not, draws can only be achieved (if at all) through game
   # play.  This method is used like so:
@@ -287,17 +270,6 @@ class Rules
     end
   end
 
-  # Define the version for a Rules implementation.  After defining it
-  # the version can be retrieved with subsequent calls.
-
-  def self.version( v )
-    @version = v
-    class << self
-      undef_method :version
-      attr_reader :version
-    end
-  end
-
   # Hide sensitive position data from the given player.  This creates a
   # censored copy of this position.  Sensitive instance variables will be
   # overwritten with :hidden. 
@@ -323,22 +295,6 @@ class Rules
     pos
   end
 
-  # Defines the players for the game this Rules subclass represents.  The 
-  # players should be symbols, for example:
-  #
-  #   class BlahRules < Rules
-  #     players :black, :white
-  #   end
-  #
-  # The values provided to players are also the basis of #turn.  That is, 
-  # in the above example, :black would move first.
-
-  def self.players( p )
-    @players = p
-    class << self; def players; @players.dup; end; end
-    p
-  end
-
   # Disallow cycles.
 
   def self.no_cycles
@@ -351,12 +307,58 @@ class Rules
     @no_cycles
   end
 
+  def self.name( *args )
+    method_missing( :name, *args )
+  end
+
+  class << self
+    attr_reader :info
+
+    # method_missing is used to setup dsl like access to the info array.
+    # This enables, the following, for example:
+    #     class Blah < Rules
+    #       name "Blah Blah Game"
+    #       version "0.0.1"
+    #     end
+    #
+    #     Blah.name => "Blah Blah Game"
+    #     Blah.version => "0.0.1"
+    #
+    # Combined with Rules#method_missing, the following is possible:
+    #
+    #     Blah.new.name => "Blah Blah Game"
+    #     Blah.new.version => "0.0.1"
+    #
+    # Combined with Game#method_missing, the following is possible:
+    #
+    #     g = Game.new Blah
+    #     g.name => "Blah Blah Game"
+    #     g.version => "0.0.1"
+    #
+
+    def method_missing( m, *args )
+      @info ||= {}
+      if info.key?( m ) && args.length == 0
+        info[m]
+      elsif ! info.key?( m ) && args.length == 1
+        info[m] = args.first.freeze
+      else
+        super
+      end
+    end
+
+    # See Rules.version.
+
+    def respond_to?( m )
+      super || info.key?( m )
+    end
+  end
+
   # Missing methods are tried as class methods.  So, Rules.players can be
   # called as Rules#players.
 
   def method_missing( m, *args )
-    super unless self.class.respond_to?( m )
-    self.class.send( m, *args )
+    self.class.respond_to?( m ) ? self.class.send( m, *args ) : super
   end
 
   # See #method_missing.
@@ -508,6 +510,13 @@ class Rules
     s = to_s
     s.gsub!( /(.)([A-Z])/ ) { "#{$1}_#{$2.downcase}" }
     s.downcase
+  end
+
+  # This is needed because we regularly override Class#name which is used
+  # by YAML to set the type.
+
+  def to_yaml_type
+    "!ruby/object:#{self.class}"
   end
 
   class << self

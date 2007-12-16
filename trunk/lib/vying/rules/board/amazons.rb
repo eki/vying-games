@@ -12,14 +12,12 @@ require 'vying/board/amazons'
 
 class Amazons < Rules
 
-  info :name      => "Amazons",
-       :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Amazons_(game)>']
-
-  attr_reader :board, :lastc
-
+  name    "Amazons"
   version "1.0.0"
 
   players [:white, :black]
+
+  attr_reader :board, :lastc
 
   def initialize( seed=nil )
     super

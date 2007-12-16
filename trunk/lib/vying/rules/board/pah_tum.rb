@@ -14,17 +14,15 @@ require 'vying/rules'
 
 class PahTum < Rules
 
-  info :name      => "Pah-Tum"
-
+  name    "Pah-Tum"
   version "1.0.0"
-
-  attr_reader :board, :unused_moves
-
-  ignore :unused_moves
 
   players [:white, :black]
 
   random
+
+  attr_reader :board, :unused_moves
+  ignore :unused_moves
 
   def initialize( seed=nil )
     super

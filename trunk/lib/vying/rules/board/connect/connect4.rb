@@ -6,21 +6,13 @@ require 'vying/board/board'
 
 class Connect4 < Rules
 
-  info :name    => 'Connect Four',
-       :aliases => ['Plot Four', 'Connect 4', "The Captain's Mistress"],
-       :related => ['Connect6', 'Pente', 'KeryoPente', 'TicTacToe']
-
+  name    "Connect Four"
   version "1.0.0"
+
+  players [:red, :blue]
 
   attr_reader :board, :lastc, :lastp, :unused_moves
   ignore :lastc, :lastp, :unused_moves
-
-  def initialize_copy( original )
-    super
-    @unused_moves = original.unused_moves.map { |a| a.dup }
-  end
-
-  players [:red, :blue]
 
   @@init_moves = Coords.new( 7, 6 ).group_by { |c| c.x }.map do |sa|
     sa.map { |c| c.to_s }
@@ -32,6 +24,11 @@ class Connect4 < Rules
     @board = Board.new( 7, 6 )
     @lastc, @lastp = nil, :noone
     @unused_moves = @@init_moves.map { |a| a.dup }
+  end
+
+  def initialize_copy( original )
+    super
+    @unused_moves = original.unused_moves.map { |a| a.dup }
   end
 
   def moves( player=nil )

@@ -6,14 +6,12 @@ require 'vying/board/board'
 
 class Phutball < Rules
 
-  info :name      => 'Phutball',
-       :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Phutball>']
-
+  name    "Phutball"
   version "1.0.0"
 
-  attr_reader :board, :jumping, :unused_moves
-
   players [:ohs, :eks]
+
+  attr_reader :board, :jumping, :unused_moves
 
   @@init_moves = Coords.new( 15, 21 ).select { |c| c.y != 0 && c.y != 20 }
   @@init_moves.map! { |c| c.to_s }

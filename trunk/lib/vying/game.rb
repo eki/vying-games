@@ -421,6 +421,14 @@ class Game
     history.last.to_s
   end
 
+  # This is being defined so that we don't pass through to Rules#to_yaml_type.
+  # And, because #name get's passed to Rules#name which overrides Class#name
+  # which YAML normally depends on.
+
+  def to_yaml_type
+    "!ruby/object:#{self.class}"
+  end
+
   # Provides a string describing the matchup.  For example:
   #
   #   eki (black) defeated SiriusBot (white), 34-30

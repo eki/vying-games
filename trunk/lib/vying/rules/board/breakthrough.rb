@@ -11,15 +11,12 @@ require 'vying/board/board'
 
 class Breakthrough < Rules
 
-  info :name      => 'Breakthrough',
-       :resources => 
-         ['Wikipedia <http://en.wikipedia.org/wiki/Breakthrough_(board_game)>']
-
+  name    "Breakthrough"
   version "1.0.0"
 
-  attr_reader :board
-
   players [:black, :white]
+
+  attr_reader :board
 
   def initialize( seed=nil )
     super

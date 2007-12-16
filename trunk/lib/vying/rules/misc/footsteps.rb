@@ -6,16 +6,13 @@ require 'vying/board/board'
 
 class Footsteps < Rules
 
-  info :name      => 'Footsteps',
-       :resources => 
-         ['Everything2 <http://www.everything2.com/index.pl?node=Footsteps>']
-
+  name    "Footsteps"
   version "1.0.0"
+
+  players [:left, :right]
 
   attr_reader :board, :points, :bids, :unused_moves_left, :unused_moves_right,
               :bid_history
-
-  players [:left, :right]
 
   @@init_moves_left  = (1..50).to_a
   @@init_moves_right = (1..50).to_a

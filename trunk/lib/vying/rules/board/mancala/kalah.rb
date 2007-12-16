@@ -6,15 +6,13 @@ require 'vying/board/mancala'
 
 class Kalah < Rules
 
-  info :name    => 'Kalah',
-       :related => ['Oware']
-
+  name    "Kalah"
   version "1.0.0"
+
+  players [:one, :two]
 
   attr_reader :board, :scoring_pits, :annotation
   ignore :moves_cache
-
-  players [:one, :two]
 
   def initialize( seed=nil )
     super

@@ -6,17 +6,15 @@ require 'vying/board/mancala'
 
 class Oware < Rules
 
-  info :name    => 'Oware',
-       :related => ['Kalah']
-
+  name    "Oware"
   version "1.0.0"
-
-  attr_reader :board, :scoring_pits, :annotation
-  ignore :moves_cache
 
   players [:one, :two]
 
   no_cycles
+
+  attr_reader :board, :scoring_pits, :annotation
+  ignore :moves_cache
 
   def initialize( seed=nil )
     super

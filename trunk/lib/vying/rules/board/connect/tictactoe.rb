@@ -6,18 +6,13 @@ require 'vying/board/board'
 
 class TicTacToe < Rules
 
-  info :name      => 'Tic Tac Toe',
-       :aliases   => ['Noughts and Crosses', 'Naughts and Crosses',
-                      "X's and O's", 'Tick Tat Toe', 'Tit Tat Toe'],
-       :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Tic-tac-toe>'],
-       :related   => ['Connect6', 'Connect4', 'Pente', 'KeryoPente']
-
+  name    "Tic Tac Toe"
   version "1.0.0"
+
+  players [:x, :o]
 
   attr_reader :board, :lastc, :lastp, :unused_moves
   ignore :lastc, :lastp, :unused_moves
-
-  players [:x, :o]
 
   @@init_moves = Coords.new( 3, 3 ).map { |c| c.to_s }
 

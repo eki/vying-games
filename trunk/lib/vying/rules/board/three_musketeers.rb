@@ -11,15 +11,12 @@ require 'vying/rules'
 
 class ThreeMusketeers < Rules
 
-  info :name      => "Three Musketeers",
-       :resources => 
-         ['Wikipedia <http://en.wikipedia.org/wiki/Three_Musketeers_(game)>']
-
+  name    "Three Musketeers"
   version "1.0.0"
 
-  attr_reader :board
-
   players [:red, :blue]
+
+  attr_reader :board
 
   def initialize( seed=nil )
     super

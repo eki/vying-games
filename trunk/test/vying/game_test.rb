@@ -8,7 +8,7 @@ class FakeRules < Rules
 
   attr_reader :fake_board, :fake_foo
 
-  info :name => "Fake Rules"
+  name "Fake Rules"
 
   random
 

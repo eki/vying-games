@@ -6,17 +6,14 @@ require 'vying/board/board'
 
 class NineMensMorris < Rules
 
-  info :name      => "Nine Men's Morris",
-       :resources => 
-         ["Wikipedia <http://en.wikipedia.org/wiki/Nine_Men's_Morris>"]
-
+  name    "Nine Men's Morris"
   version "1.0.0"
 
-  attr_reader :board, :remaining, :removing
+  players [:black, :white]
 
   allow_draws_by_agreement
 
-  players [:black, :white]
+  attr_reader :board, :remaining, :removing
 
   def initialize( seed=nil )
     super

@@ -6,15 +6,13 @@ require 'vying/board/othello'
 
 class Othello < Rules
 
-  info :name    => 'Othello',
-       :aliases => ['Reversi']
-
+  name    "Othello"
   version "1.0.0"
+
+  players [:black, :white]
 
   attr_reader :board, :moves_cache
   ignore :moves_cache
-
-  players [:black, :white]
 
   def initialize( seed=nil )
     super

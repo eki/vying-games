@@ -5,15 +5,12 @@ require 'vying/rules'
 
 class Frames < Rules
 
-  info :name      => 'Frames',
-       :resources => 
-       ['About <http://boardgames.about.com/od/freesimultaneous/a/frames.htm>']
-
+  name    "Frames"
   version "0.3.0"
 
-  attr_reader :board, :sealed_moves, :unused_moves, :points
-
   players [:black, :white]
+
+  attr_reader :board, :sealed_moves, :unused_moves, :points
 
   @@init_moves = Coords.new( 19, 19 ).map { |c| c.to_s }
 

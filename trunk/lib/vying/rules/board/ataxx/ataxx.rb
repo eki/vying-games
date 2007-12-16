@@ -12,17 +12,15 @@ require 'vying/board/board'
 
 class Ataxx < Rules
 
-  info :name      => 'Ataxx',
-       :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Ataxx>']
-
+  name    "Ataxx"
   version "1.0.0"
-
-  attr_reader :board, :block_pattern, :moves_cache
-  ignore :moves_cache
 
   players [:red, :blue]
 
   random
+
+  attr_reader :board, :block_pattern, :moves_cache
+  ignore :moves_cache
 
   def initialize( seed=nil )
     super

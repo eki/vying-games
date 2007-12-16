@@ -12,16 +12,14 @@ require 'vying/board/board'
 
 class Checkers < Rules
 
-  info :name      => 'Checkers',
-       :resources => ['Wikipedia <http://en.wikipedia.org/wiki/Checkers>']
-
+  name    "Checkers"
   version "1.0.0"
+
+  players [:red, :white]
 
   allow_draws_by_agreement
 
   attr_reader :board, :jumping
-
-  players [:red, :white]
 
   def initialize( seed=nil )
     super

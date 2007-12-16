@@ -8,56 +8,26 @@ module TrickTaking
   module Meta
     def trump( a )
       info[:trump] = a.map { |s| Card[s] }
-      alias_method :old_trump, :trump
-      def trump; info[:trump]; end
+      class << self; undef_method( :trump ); end
     end
 
     def suits( h )
       h.each { |k,v| h[k] = v.map { |s| Card[s] } }
       info[:suits] = h
-      alias_method :old_suits, :suits
-      def suits; info[:suits]; end
+      class << self; undef_method( :suits ); end
     end
 
     def deck( a )
       a = a.map { |s| Card[s] }
       info[:deck] = a
-      alias_method :old_deck, :deck  # aliasing before redefinition
-      def deck; info[:deck]; end     # squashes a warning
-    end
-
-    def lead( a )
-      @info[:lead] = a
-      alias_method :old_lead, :lead
-      def lead; info[:lead]; end
-    end
-
-    def follow( a )
-      info[:follow] = a
-      alias_method :old_follow, :follow
-      def follow; info[:follow]; end
-    end
-
-    def deal_out( d_o )
-      info[:deal_out] = d_o
-      alias_method :old_deal_out, :deal_out
-      def deal_out; info[:deal_out]; end
+      class << self; undef_method( :deck ); end
     end
 
     def wait_until_broken( a )
       info[:wait_until_broken] = a.map { |s| Card[s] }
-      alias_method :old_wait_until_broken, :wait_until_broken
-      def wait_until_broken; info[:wait_until_broken]; end
-    end
-
-    def pass_before_deal( a )
-      info[:pass_before_deal] = a
-      alias_method :old_pass_before_deal, :pass_before_deal
-      def pass_before_deal; info[:pass_before_deal]; end
+      class << self; undef_method( :wait_until_broken ); end
     end
   end
-
-  include Meta
 
   def self.append_features(klass)
     super
