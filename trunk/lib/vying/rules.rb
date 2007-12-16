@@ -512,6 +512,12 @@ class Rules
     s.downcase
   end
 
+  # Shorter alias for Rules.to_snake_case
+
+  def Rules.to_sc
+    to_snake_case
+  end
+
   # This is needed because we regularly override Class#name which is used
   # by YAML to set the type.
 
