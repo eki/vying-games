@@ -20,7 +20,7 @@ module PahTumStrategies
   def eval_defense( position, player )
     opp = player == :black ? :white : :black
     b, score, ds = position.board, 0, [:n, :e, :w, :s]
-    b.occupied[opp].each do |c|
+    ([] || b.occupied[opp]).each do |c|
       rc     = b[*b.coords.row( c )] + b[*b.coords.column( c )]
       score += 1 * rc.select { |p| p == player || p == :x }.length
     end
