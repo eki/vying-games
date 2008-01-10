@@ -83,8 +83,16 @@ class Hearts < Rules
     end
 
     if (shot_moon = tmp_scores.select { |k,v| v == 26 }).size != 0
-      # Note:  shot_moon looks something like this [[:e,26]], for example
-      tmp_scores.each { |k,v| @score[k] += 26 if k != shot_moon[0][0] }
+      # Note (1.8):  shot_moon looks something like this [[:e,26]], for example
+      # Note (1.9):  shot_moon looks something like this {:e=>26}, for example
+
+      # TODO:  Do we reset the player who shot the moon's tmp_score back to 0?
+
+      if shot_moon.class == Array
+        tmp_scores.each { |k,v| @score[k] += 26 if k != shot_moon[0][0] }
+      elsif shot_moon.class == Hash
+        tmp_scores.each { |k,v| @score[k] += 26 if k != shot_moon.keys.first }
+      end
     else
       tmp_scores.each { |k,v| @score[k] += v }
     end

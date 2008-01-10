@@ -21,7 +21,7 @@ module CLI
     opts.banner = "Usage: vying bench [options]"
     opts.on( "-r", "--rules RULES"   ) { |r| rules << Kernel.const_get( r ) }
     opts.on( "-e", "--exclude RULES" ) { |r| exclude << Kernel.const_get( r ) }
-    opts.on( "-n", "--number NUMBER" ) { |n| n = Integer( n ) }
+    opts.on( "-n", "--number NUMBER" ) { |num| n = Integer( num ) }
     opts.on( "-g", "--game" )          { benchmark_game = true }
     opts.on( "-m", "--marshal" )       { benchmark_marshal = true }
     opts.on( "-p", "--profile"       ) { require 'profile' }

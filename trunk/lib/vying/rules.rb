@@ -233,7 +233,7 @@ class Rules
   # Tests whether or not an instance variable has been ignored.
 
   def self.ignored?( iv )
-    @ignore && @ignore.include?( iv )
+    @ignore && @ignore.include?( iv.to_s )
   end
 
   # Used to indicate that a game has random elements.  This will setup seed
@@ -492,7 +492,7 @@ class Rules
       next if ignored? iv
 
       v = instance_variable_get( iv )
-      iv = iv.sub( /@/, '' )
+      iv = iv.to_s.sub( /@/, '' )
       case v
         when Hash  then s += "#{iv}:".ljust(fs) + "#{v.inspect}\n"
         when Array then s += "#{iv}:".ljust(fs) + "#{v.inspect}\n"

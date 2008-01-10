@@ -47,7 +47,7 @@ class Oware < Rules
 
   def apply!( move )
     # Reset annotation
-    annotation[*annotation.coords] = "0"
+    annotation[*annotation.coords.to_a] = "0"
 
     h = move.x
     r = move.y

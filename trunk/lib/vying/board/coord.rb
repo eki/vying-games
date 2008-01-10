@@ -37,7 +37,7 @@ class String
   # Note that "a1" is equivalent to (0,0).
 
   def x
-    self[0]-97
+    self.ord - 97
   end
 
   # Returns the y coordinate of a string that's formated as "[a-z][1-9]+", 
@@ -50,6 +50,14 @@ class String
   def y
     self =~ /\w(\d+)$/
     $1.to_i-1
+  end
+
+  # Compatibility with Ruby 1.9
+
+  unless method_defined?( :ord )
+    def ord
+      self[0]
+    end
   end
 
   # If this string represents multipe coordinates in the form "([a-z][1-9]+)*",
@@ -70,7 +78,7 @@ class Symbol
   # Note that :a1 is equivalent to (0,0).
 
   def x
-    to_s[0]-97
+    to_s.x
   end
 
   # Returns the y coordinate of a symbol that's formated as "[a-z][1-9]+", 
@@ -81,8 +89,7 @@ class Symbol
   # Note that :a1 is equivalent to (0,0).
 
   def y
-    to_s =~ /\w(\d+)$/
-    $1.to_i-1
+    to_s.y
   end
 
   # If this symbol represents multipe coordinates in the form "([a-z][1-9]+)*",
