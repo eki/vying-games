@@ -1,0 +1,76 @@
+= Vying
+
+Vying is a library for multi-player, turn-based, strategy games. The goal is to
+make it easy to implement a large number of games very quickly, with only a
+small amount of code. This includes the rules (or game logic) and AI, but does
+not extend to user interface code (though there is a small, primitive
+command-line program for playing games). This library is the core of Vying
+Games <http://vying.org>.
+
+Some of vying's features are:
+
+  * Support for a wide range of game elements
+    * Games with random starting positions
+    * Games with random events (dice rolls, for example)
+    * While turn-based, games may feature simultaneous turns (or sealed moves) 
+  * Includes support for board games and card games (though the card game
+    support is a little primitive still)
+  * Most "rules" can be implemented approximately 100 lines of Ruby code
+  * Fairly simple bot interface can make AI programming fairly simple (this
+    needs improvement) 
+
+
+== Development Info
+
+This README is just a brief introduction to this library.  For more detailed /
+up-to-date info see the dev wiki: <http://vying.org/dev/public/wiki/vying>.
+
+
+== The Games
+
+See doc/games.txt[link:files/doc/games_txt.html] for a list of games that have 
+already been implemented.  There's a list of planned games on the development
+wiki <http://vying.org/dev/public/wiki/PlannedGames>.
+
+
+== Installation
+
+Vying is available as a gem:
+
+  gem install vying --source http://vying.org
+
+
+== Command-Line Interface
+
+This package includes a small command-line application called 'vying' that can
+be invoked in the following ways.  To get more help on any of these commands
+type:
+
+  vying --help
+
+=== To play a game:
+
+  vying play --rules Breakthrough --player white=Human --player black=RandomBot
+
+=== To benchmark a game:
+
+  vying bench --rules Breakthrough
+
+=== To check the branching factor of a game:
+
+  vying branch --rules Breakthrough
+
+=== To get info about a game:
+
+  vying info --rules Breakthrough
+
+
+== The Future
+
+It's the goal of this library to document games through implementation.
+Towards that end adding games, and making it easier to add games is this
+library's top priority.  Secondarily, providing AI utility code, and bots that
+play the games is also important.  Lastly, it's the goal of this library to
+provide some kind of client connectivity to the Vying Games server.  
+
+
