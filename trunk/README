@@ -39,6 +39,10 @@ Vying is available as a gem:
 
   gem install vying --source http://vying.org
 
+Or, if you'd rather check the code out from subversion:
+
+  svn co svn://code.vying.org/vying/trunk vying
+
 
 == Command-Line Interface
 
