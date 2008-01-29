@@ -137,6 +137,7 @@ class History
   def <<( move )
     positions << positions.last.apply( move )
     sequence << move
+    self
   end
 
   # Iterate over the positions in this history.
@@ -155,6 +156,31 @@ class History
 
   def ==( o )
     eql? o
+  end
+
+  # For efficiency's sake don't dump the entire positions array
+
+  def _dump( depth=-1 )
+    ps = positions
+
+    if length > 6
+      ps = [nil] * length
+      ps[0] = positions.first
+      r = ( (ps.length - 6)..(ps.length - 1) )
+      ps[r] = positions[r]
+    end
+
+    Marshal.dump( [sequence, ps] )
+  end
+
+  # Load mashalled data.
+
+  def self._load( s )
+    s, p = Marshal.load( s )
+    h = self.allocate
+    h.instance_variable_set( "@sequence", s )
+    h.instance_variable_set( "@positions", p )
+    h
   end
 
 end
