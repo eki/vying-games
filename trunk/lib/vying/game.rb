@@ -66,11 +66,104 @@ class GameResults
   end
 end
 
+#  History component of a Game.  This is the sequence and position cache.
+#  It behaves much like an array but doesn't write out every position when
+#  being serialized (and thus needs to be able to recreate positions based
+#  on the sequence when necessary.
+
+class History
+  include Enumerable
+
+  attr_reader :sequence, :positions
+
+  SPECIAL_MOVES = [/^draw_offered_by_/,
+                   /^forfeit_by_/,
+                   /^time_exceeded_by/,
+                   /^draw$/]
+
+  # Takes the initial position and initializes the sequence and positions
+  # arrays.
+
+  def initialize( start )
+    @sequence, @positions = [], [start]
+  end
+
+  # Fetch a position from history.
+
+  def []( i )
+    return nil          if i > length
+    return positions[i] if positions[i]
+
+    # Need to recreate a missing position
+    j = i
+    until positions[j]
+      j -= 1
+    end
+
+    until j == i
+      positions[j+1] = positions[j].apply( sequence[j] )
+      j += 1
+    end
+
+    positions[i]
+  end
+
+  # Fetch the first position from history.
+
+  def first
+    positions[0]
+  end
+
+  # Fetch the last position from history.
+
+  def last
+    positions[length-1] # Use [] -- positions could be missing
+  end
+
+  # How many positions are in this history?
+
+  def length
+    if SPECIAL_MOVES.any? { |p| sequence.last =~ p }
+      sequence.length
+    else
+      sequence.length + 1
+    end
+  end
+
+  # Add a new position to history.  The given move is applied to the last
+  # position in history and the new position is appended to the end of the
+  # history.
+
+  def <<( move )
+    positions << positions.last.apply( move )
+    sequence << move
+  end
+
+  # Iterate over the positions in this history.
+
+  def each
+    sequence.length.times { |i| yield self[i] }
+  end
+
+  # Compare History objects.
+
+  def eql?( o )
+    positions.first == o.positions.first && sequence == o.sequence
+  end
+
+  # Compare History objects.
+
+  def ==( o )
+    eql? o
+  end
+
+end
+
 #  A Game represents the series of moves and positions that make up a game.
 #  It is heavily backed by a subclass of Rules.
 
 class Game
-  attr_reader :history, :sequence, :user_map
+  attr_reader :history, :user_map
 
   # Create a game from the given Rules subclass, and an optional seed.  If
   # the game has random elements and a seed is not provided, one will be 
@@ -78,9 +171,13 @@ class Game
   # provide the original seed.
 
   def initialize( rules, seed=nil )
-    @rules, @history = rules.to_s, [rules.new( seed )]
-    @sequence, @user_map = [], {}
+    @rules, @history = rules.to_s, History.new( rules.new( seed ) )
+    @user_map = {}
     yield self if block_given?
+  end
+
+  def sequence
+    history.sequence
   end
 
   # Returns the Rules subclass that this Game is based on.  For serialization
@@ -121,12 +218,11 @@ class Game
     move = move.to_s
 
     if move?( move )
-      @history << apply( move )
-      @sequence << move 
+      history << move
 
       if history.last.class.check_cycles?
-        history[0...(history.length-1)].each do |p|
-          history.last.cycle_found if p == history.last
+        (0...(history.length-1)).each do |i|
+          history.last.cycle_found if history[i] == history.last
         end
       end
 
@@ -134,7 +230,7 @@ class Game
 
     elsif special_moves.any? { |sm| move =~ sm }
 
-      @sequence << move
+      history.sequence << move
       return self
 
     end
@@ -179,7 +275,7 @@ class Game
   # as an array.
 
   def undo
-    [@history.pop,@sequence.pop]
+    [history.positions.pop, history.sequence.pop]
   end
 
   # Accepts a hash mapping players to users.  The players should match up to
