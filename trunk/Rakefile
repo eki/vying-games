@@ -98,6 +98,7 @@ if defined?( Gem ) && pkg_version
 
   package_task = Rake::GemPackageTask.new( spec ) do |pkg|
     pkg.need_tar_gz = true
+    pkg.need_zip = true
   end
 end
 
