@@ -68,6 +68,86 @@ type:
 
   vying info --rules Breakthrough
 
+== Example Code
+
+At the heart of the library are subclasses of the Rules class.  For example:
+
+  class TicTacToe < Rules
+  end
+
+An instance of TicTacToe represents a position in a game of TicTacToe.  It
+should have as instance variables the game board and who's turn it is.  The
+initialize method should setup the starting position for the game.  In the case
+of TicTacToe, this means creating an empty board.  For example, the code could
+look like this:
+
+  class TicTacToe < Rules
+    players [:x, :o]
+    attr_reader :board
+
+    def initialize( seed=nil )
+      @board = Board.new( 3, 3 )
+    end
+  end
+
+In the above example the players (:x, :o) were defined.  The player symbols
+declared in the order that the players take turns.  In this case, :x will go
+first, and the :o.  
+
+If we were to continue this example, we'd need to define a #moves method to
+return tokens representing each move.  In Tic Tac Toe, we'd probably return the
+coordinates representing where the player would place an X or O on the board.
+We'd also define an #apply! method which would take a move token and alter the
+position state.
+
+Finally, we'd define a #final? method that would return true if the position is
+final (the game is over).  We'd also define #winner?, #loser?, and #draw?
+methods.
+
+There are more methods that can be defined depending on the game being
+implemented but those are the basics at the core of every game.
+
+Once some rules have been defined, we can play around with them like so:
+
+  g = Game.new TicTacToe
+
+A Game represents an entire tree of positions.  
+
+  g.moves                  # Returns an array of possible moves
+  g << g.moves.first       # Make the first move
+
+  g.turn                   # Who's turn is it?
+
+  g.board                  # Game passes calls through to the underlying
+                           # (last) position, this is the equivalent of
+
+  g.history.last.board
+  g.history[3].board       # History can be used like an array to look back
+                           # at any position
+
+  g.move?( "a1" )          # Is "a1" a valid move?
+  g.move?( "a1", :x )      # Is "a1" a valid move for :x?
+
+  g.has_moves              # Returns a list of all the players who can move.
+                           # Some games allow simultaneous moves, so checking
+                           # #has_moves is safer than using #turn
+
+  g.final?                 # Is the game over?
+  g.winner?( :x )          # Did :x win the game?
+  g.draw?                  # Is the game a draw?
+  
+  if g.has_score?
+    g.score( :x )          # If the game has a score, what was :x's score?
+  end
+
+  # Setup a random game..
+
+  g = Game.new TicTacToe
+  g.register_users :x => RandomBot.new, :o => RandomBot.new
+ 
+  g.step   # Play a single move (Game asks the appropriate Bot for it's move) 
+  g.play   # Play out the entire game.
+
 
 == The Future
 
