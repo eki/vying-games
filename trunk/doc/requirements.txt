@@ -3,8 +3,12 @@
 === Gems
 
   *  gem install random
-  *  gem install sqlite
-    *  Last I checked this gem only works with sqlite 2.8
+
+You'll also need Sqlite bindings.  Use sqlite-ruby if you have Sqlite v2, or
+sqlite3-ruby if you have Sqlite v3.
+
+  *  gem install sqlite-ruby
+  *  gem install sqlite3-ruby
 
 === Build Environment
 

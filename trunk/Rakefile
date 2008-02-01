@@ -90,7 +90,8 @@ if defined?( Gem ) && pkg_version
     s.extensions = "ext/vying/board/extconf.rb"
     s.executables = ['vying']
     s.add_dependency "random", ">= 0.2.1"
-    s.add_dependency "sqlite-ruby", ">= 2.2.3"
+    #s.add_dependency "sqlite-ruby", ">= 2.2.3"
+    #s.add_dependency "sqlite3-ruby"
     s.require_paths << "ext"
     s.author = 'Eric K Idema'
     s.email = 'eki@vying.org'
