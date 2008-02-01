@@ -2,7 +2,15 @@
 # You may redistribute / modify this file under the same terms as Ruby.
 
 require 'vying/ai/bot'
-require 'sqlite'
+
+begin
+  require 'sqlite3'
+  SQLite = SQLite3
+  DB_FILE = /footsteps3\.db$/
+rescue
+  require 'sqlite'
+  DB_FILE = /footsteps.db$/
+end
 
 class OptimalBot < Bot
   class Footsteps < Bot
@@ -11,7 +19,7 @@ class OptimalBot < Bot
 
     $:.each do |d|
       Dir.glob( "#{d}/**/ai/bots/optimalbot/*" ) do |f|
-        if f =~ /footsteps\.db$/
+        if f =~ DB_FILE
           FOOTSTEPS_DB = f unless defined? FOOTSTEPS_DB
         end
       end
