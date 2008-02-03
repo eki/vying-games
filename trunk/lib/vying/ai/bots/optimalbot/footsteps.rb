@@ -7,7 +7,7 @@ begin
   require 'sqlite3'
   SQLite = SQLite3
   DB_FILE = /footsteps3\.db$/
-rescue
+rescue Exception
   require 'sqlite'
   DB_FILE = /footsteps.db$/
 end
