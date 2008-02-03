@@ -18,6 +18,9 @@ class TestAmazonsBoard < Test::Unit::TestCase
     assert_equal( :black, b[6,9] )
     assert_equal( :black, b[3,9] )
     assert_equal( :black, b[9,6] )
+
+    assert_equal( 1, b.territories.length )
+    assert_equal( 92, b.territories.first.coords.length )
   end
 
   def test_territory_splits
@@ -47,27 +50,71 @@ class TestAmazonsBoard < Test::Unit::TestCase
 
     b.arrow( :a2,:b2,:c2,:d2,:e2,:f2,:g2,:h2,:i2,:j2 )
 
-    assert_equal( 4, b.territories.length )
+    assert_equal( 5, b.territories.length )
 
-    assert_equal( [a4], b.territories[0].white )
-    assert_equal( [a7, d10].sort, b.territories[0].black.sort )
+    assert_equal( [d1], b.territories[0].white )
+    assert_equal( [], b.territories[0].black )
+
+    assert_equal( [a4], b.territories[1].white )
+    assert_equal( [a7, d10].sort, b.territories[1].black.sort )
     
-    assert_equal( [d1], b.territories[1].white )
-    assert_equal( [], b.territories[1].black )
-
-    assert_equal( [g1], b.territories[2].white )
+    assert_equal( [d1], b.territories[2].white )
     assert_equal( [], b.territories[2].black )
 
-    assert_equal( [j4], b.territories[3].white )
-    assert_equal( [g10, j7].sort, b.territories[3].black.sort )
+    assert_equal( [g1], b.territories[3].white )
+    assert_equal( [], b.territories[3].black )
+
+    assert_equal( [j4], b.territories[4].white )
+    assert_equal( [g10, j7].sort, b.territories[4].black.sort )
 
     a1 = Coord[:a1]
     b1 = Coord[:b1]
     c1 = Coord[:c1]
     e1 = Coord[:e1]
 
-    assert_equal( [d1,e1,c1,b1,a1].sort, b.territories[1].coords.sort )
+    assert_equal( [c1,b1,a1].sort, b.territories[0].coords.sort )
+    assert_equal( [e1].sort, b.territories[2].coords.sort )
 
+  end
+
+  def test_territory_blocking
+    b = AmazonsBoard.new
+    b.arrow( :b7,:c7,:d7,:e7,:f7,:g7,:h7,:i7 )
+    
+    a4 = Coord[:a4]
+    d1 = Coord[:d1]
+    g1 = Coord[:g1]
+    j4 = Coord[:j4]
+
+    a7  = Coord[:a7]
+    d10 = Coord[:d10]
+    g10 = Coord[:g10]
+    j7  = Coord[:j7]
+
+    a5 = Coord[:a5]
+
+    assert_equal( 2, b.territories.length )
+    assert_equal( [a4, j4, g1, d1].sort, b.territories.first.white.sort )
+    assert_equal( [a7, j7].sort, b.territories.first.black.sort )
+    assert_equal( [d10, a7, g10, j7].sort, b.territories.last.black.sort )
+    assert_equal( 56, b.territories.first.coords.uniq.length )
+    assert_equal( 28, b.territories.last.coords.uniq.length )
+    assert( b.territories.first.coords.all? { |c| c.y < 6 } )
+    assert( b.territories.last.coords.all? { |c| c.y > 6 } )
+
+    b.move( a7, a5 )
+
+    b.territories.each do |t|
+      assert( ! t.black.include?( a7 ) )
+      assert( ! t.coords.include?( a5 ) )
+    end
+
+    assert( b.territories.any? { |t| t.black.include?( a5 ) } )
+    assert( b.territories.any? { |t| t.coords.include?( a7 ) } )
+
+    assert_equal( 1, b.territories.length )
+    assert_equal( [a4, j4, g1, d1].sort, b.territories.first.white.sort )
+    assert_equal( [d10, a5, g10, j7].sort, b.territories.last.black.sort )
   end
 
   def test_mobility_init

@@ -4,6 +4,14 @@
 require 'vying/board/board'
 require 'vying/memoize'
 
+# An AmazonsBoard Territory is block of connected (8-way) empty squares on an
+# AmazonsBoard.  The properties white and black represent the queens that are
+# attached to the territory.  For a queen to be attached to a territory it
+# must border at least one empty square that's in that territory.
+#
+# Note that the square occupied by the queen is not considered a part of the 
+# territory.
+
 class Territory
   attr_reader :white, :black, :coords
 
@@ -27,51 +35,54 @@ class Territory
   end
 
   class << self
-    def []( board, queens=nil )
-      t = new board, [], queens
-      t.update board, queens
+    def []( board, coords )
+      t = new board, coords
+      t.update board
     end
   end
 
-  def update( board, queens=nil )
-    if queens.nil?
-      @white = board.occupied[:white]
-      @black = board.occupied[:black]
+  def update( board )
+    coords.reject! { |c| ! board[c].nil? }
 
-      queens ||= white + black
-    else
-      @white = queens.select { |q| board[q] == :white }
-      @black = queens.select { |q| board[q] == :black }
-    end
+    return self if coords.empty?
 
-    queens_found, coords_found = check( board, queens.first )
+    queens_found, coords_found = check( board, coords.first )
 
-    if queens_found.length == queens.length
-      @coords = coords_found
+    @white = queens_found.select { |q| board[q] == :white }
+    @black = queens_found.select { |q| board[q] == :black }
+
+    not_found = coords - coords_found
+
+    @coords = coords_found
+
+    if not_found.empty?
       return self
     else
-      return [Territory.new( board, coords_found, queens_found ),
-              Territory[board, queens - queens_found]]
+      return [self, Territory[board, not_found]]
     end
 
   end
 
+  # board[start] must be nil
+
   def check( board, start )
-    queens_found, coords_found, all, todo = [], [], {start => start}, [start]
+    raise "Territory#check: board[start] must be nil" unless board[start].nil?
+
+    coords_found, todo = [start], [start]
+    all = { start => start }
+    queens_found = []
 
     while (c = todo.pop)
-      p = board[c]
-      if p.nil?
-        coords_found.push c
-      elsif p == :white || p == :black
-        queens_found.push c
-        coords_found.push c
-      end
-
       board.coords.neighbors( c ).each do |nc|
-        unless board[c] == :arrow || all[nc]
-          todo.push( nc )
+        unless all[nc]
           all[nc] = nc
+
+          if board[nc].nil? 
+            todo.push nc
+            coords_found.push nc
+          elsif board[c].nil? && (board[nc] == :black || board[nc] == :white)
+            queens_found.push nc
+          end
         end
       end
     end
@@ -83,20 +94,42 @@ class Territory
     if white.include?( sc )
       white.delete( sc )
       white << ec
+
+      coords << sc
+      coords.delete( ec )
     elsif black.include?( sc )
       black.delete( sc )
       black << ec
+
+      coords << sc
+      coords.delete( ec )
     end
   end
 
+  def empty?
+    coords.empty?
+  end
+
   def eql?( o )
-    white == o.white &&
-    black == o.black &&
-    coords == o.coords
+    return false if o.nil?
+
+    if white.length != o.white.length ||
+       black.length != o.black.length ||
+       coords.length != o.coords.length
+      return false
+    end
+
+    white.sort == o.white.sort &&
+    black.sort == o.black.sort &&
+    coords.sort == o.coords.sort
   end
 
   def ==( o )
     eql? o
+  end
+
+  def hash
+    [white.sort, black.sort, coords.sort].hash
   end
 
 end
@@ -108,6 +141,7 @@ class AmazonsBoard < Board
 
   INIT_WQS = [Coord[0,3], Coord[3,0], Coord[6,0], Coord[9,3]]
   INIT_BQS = [Coord[0,6], Coord[3,9], Coord[6,9], Coord[9,6]]
+  INIT_QS = INIT_WQS + INIT_BQS
 
   def initialize
     super( 10, 10 )
@@ -115,7 +149,7 @@ class AmazonsBoard < Board
     self[*INIT_WQS] = :white
     self[*INIT_BQS] = :black
 
-    @territories = [Territory.new( self, coords.to_a, INIT_WQS + INIT_BQS )]
+    @territories = [Territory.new( self, coords.to_a - INIT_QS, INIT_QS )]
 
     @mobility = {}
     @blocked = {}
@@ -143,7 +177,26 @@ class AmazonsBoard < Board
 
   def move( sc, ec )
     super
-    territories.each { |t| t.move( sc, ec ) }
+
+    shared = @territories.select do |t|
+      t.black.include?( sc ) || t.white.include?( sc )
+    end
+
+    if shared.length > 1
+      @territories = @territories.map do |t| 
+        t.move( sc, ec ) if t.black.include?( sc ) || t.white.include?( sc )
+        t.update( self )
+      end
+      @territories.flatten!
+      @territories.uniq!
+
+    else
+      @territories = @territories.map do |t| 
+        t.move( sc, ec ) if t == shared.first 
+        t.update( self )
+      end
+      @territories.flatten!
+    end
 
     mobility[ec] = mobility.delete( sc )
 
@@ -158,9 +211,9 @@ class AmazonsBoard < Board
   def arrow( *ecs )
     self[*ecs] = :arrow
     
-    @territories = @territories.map { |t| t.update( self, t.white + t.black ) }
+    @territories = @territories.map { |t| t.update( self ) }
     @territories.flatten!
-    @territories
+    @territories.reject! { |t| t.empty? }
 
     a = []
     ecs.each do |ec|
