@@ -19,6 +19,8 @@ class PahTum < Rules
 
   players [:white, :black]
 
+  allow_draws_by_agreement
+
   random
 
   attr_reader :board, :unused_moves
