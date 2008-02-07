@@ -1,0 +1,11 @@
+== Requirements
+
+=== Gems
+
+  *  gem install random
+
+=== Build Environment
+
+Vying is part C extension and will not work without a typical unix-like build
+environment.
+
