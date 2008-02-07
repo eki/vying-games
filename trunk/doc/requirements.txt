@@ -4,12 +4,6 @@
 
   *  gem install random
 
-You'll also need Sqlite bindings.  Use sqlite-ruby if you have Sqlite v2, or
-sqlite3-ruby if you have Sqlite v3.
-
-  *  gem install sqlite-ruby
-  *  gem install sqlite3-ruby
-
 === Build Environment
 
 Vying is part C extension and will not work without a typical unix-like build
