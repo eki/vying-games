@@ -137,7 +137,7 @@ class Cephalopod < Rules
   end
 
   def final?
-    moves.empty?
+    board.empty_count == 0
   end
 
   def winner?( player )
