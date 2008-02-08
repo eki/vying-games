@@ -6,11 +6,12 @@ require 'vying/rules'
 class Frames < Rules
 
   name    "Frames"
-  version "0.3.0"
+  version "0.4.0"
 
   players [:black, :white]
 
-  attr_reader :board, :sealed_moves, :unused_moves, :points
+  attr_reader :board, :sealed, :unused, :points
+  ignore :unused
 
   @@init_moves = Coords.new( 19, 19 ).map { |c| c.to_s }
 
@@ -18,24 +19,28 @@ class Frames < Rules
     super
 
     @board = Board.new( 19, 19 )
-    @sealed_moves = { :black => nil, :white => nil }
+    @sealed = { :black => nil, :white => nil }
     @points = { :black => 0, :white => 0 }
-    @unused_moves = {}
+    @unused = {}
     players.each do |p|
-      @unused_moves[p] = @@init_moves.dup.map { |m| "#{p}_#{m}" }
+      @unused[p] = @@init_moves.dup.map { |m| "#{p}_#{m}" }
     end
   end
 
   def has_moves
-    final? ? [] : players.select { |p| ! sealed_moves[p] }
+    final? ? [] : players.select { |p| ! sealed[p] }
   end
 
   def moves( player=nil )
     return [] unless player.nil? || has_moves.include?( player )
     return [] if final?
 
-    return unused_moves[player] if player
-    unused_moves.values.flatten
+    return unused[player] if player
+
+    return unused[:white] if sealed[:black] && ! sealed[:white]
+    return unused[:black] if sealed[:white] && ! sealed[:black]
+
+    unused.values.flatten
   end
 
   def apply!( move )
@@ -43,14 +48,14 @@ class Frames < Rules
     player = player.intern
     coord = Coord[coord]
 
-    sealed_moves[player] = coord
+    sealed[player] = coord
 
-    if sealed_moves[:black] && sealed_moves[:white]
-      if sealed_moves[:black] == sealed_moves[:white]
+    if sealed[:black] && sealed[:white]
+      if sealed[:black] == sealed[:white]
         board[coord] = :neutral
       else
-        fb = sealed_moves[:black]
-        fw = sealed_moves[:white]
+        fb = sealed[:black]
+        fw = sealed[:white]
 
         board[fb], board[fw] = :black, :white
 
@@ -70,8 +75,9 @@ class Frames < Rules
       end
 
       players.each do |p|
-        unused_moves[p].delete( sealed_moves[p] )
-        sealed_moves[p] = nil
+        unused[:black].delete( "black_#{sealed[p]}" )
+        unused[:white].delete( "white_#{sealed[p]}" )
+        sealed[p] = nil
       end
     end
 
@@ -95,15 +101,15 @@ class Frames < Rules
   end
 
   def hash
-    [board,points,sealed_moves].hash
+    [board,points,sealed].hash
   end
 
   def censor( player )
     position = super( player )
 
     players.each do |p|
-      if p != player && ! position.sealed_moves[p].nil?
-        position.sealed_moves[p] = :hidden
+      if p != player && ! position.sealed[p].nil?
+        position.sealed[p] = :hidden
       end
     end
 
