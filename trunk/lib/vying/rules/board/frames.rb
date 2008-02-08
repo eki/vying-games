@@ -10,7 +10,7 @@ class Frames < Rules
 
   players [:black, :white]
 
-  attr_reader :board, :sealed, :unused, :points
+  attr_reader :board, :sealed, :unused, :points, :frame
   ignore :unused
 
   @@init_moves = Coords.new( 19, 19 ).map { |c| c.to_s }
@@ -21,6 +21,7 @@ class Frames < Rules
     @board = Board.new( 19, 19 )
     @sealed = { :black => nil, :white => nil }
     @points = { :black => 0, :white => 0 }
+    @frame = []
     @unused = {}
     players.each do |p|
       @unused[p] = @@init_moves.dup.map { |m| "#{p}_#{m}" }
@@ -53,6 +54,7 @@ class Frames < Rules
     if sealed[:black] && sealed[:white]
       if sealed[:black] == sealed[:white]
         board[coord] = :neutral
+        frame.clear
       else
         fb = sealed[:black]
         fw = sealed[:white]
@@ -62,16 +64,22 @@ class Frames < Rules
         count = { :black => 0, :white => 0 }
         max_x, min_x = [fb.x, fw.x].max, [fb.x, fw.x].min
         max_y, min_y = [fb.y, fw.y].max, [fb.y, fw.y].min
-       
-        board.coords.each do |c|
-          if (board[c] == :black || board[c] == :white) &&
-             (min_x < c.x && c.x < max_x && min_y < c.y && c.y < max_y)
-            count[board[c]] += 1
+      
+        if max_x > min_x + 1 && max_y > min_y +1 
+          board.coords.each do |c|
+            if (board[c] == :black || board[c] == :white) &&
+               (min_x < c.x && c.x < max_x && min_y < c.y && c.y < max_y)
+              count[board[c]] += 1
+            end
           end
-        end
         
-        points[:black] += 1 if count[:black] > count[:white]
-        points[:white] += 1 if count[:white] > count[:black]
+          points[:black] += 1 if count[:black] > count[:white]
+          points[:white] += 1 if count[:white] > count[:black]
+
+          frame.replace [fb, fw]
+        else
+          frame.clear
+        end
       end
 
       players.each do |p|
