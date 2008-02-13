@@ -128,6 +128,8 @@ class Cephalopod < Rules
       @removing -= p.up
       @removed += 1
 
+      dice[p.color] -= 1
+
       if @removing == 0
         turn( :rotate )
       end
