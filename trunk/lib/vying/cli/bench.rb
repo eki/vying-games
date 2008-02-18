@@ -19,8 +19,8 @@ module CLI
 
     opts = OptionParser.new
     opts.banner = "Usage: vying bench [options]"
-    opts.on( "-r", "--rules RULES"   ) { |r| rules << Kernel.const_get( r ) }
-    opts.on( "-e", "--exclude RULES" ) { |r| exclude << Kernel.const_get( r ) }
+    opts.on( "-r", "--rules RULES"   ) { |r| rules << Rules.find( r ) }
+    opts.on( "-e", "--exclude RULES" ) { |r| exclude << Rules.find( r ) }
     opts.on( "-n", "--number NUMBER" ) { |num| n = Integer( num ) }
     opts.on( "-g", "--game" )          { benchmark_game = true }
     opts.on( "-m", "--marshal" )       { benchmark_marshal = true }

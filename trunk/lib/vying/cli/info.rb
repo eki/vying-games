@@ -15,7 +15,7 @@ module CLI
 
     opts = OptionParser.new
     opts.banner = "Usage: vying info [options]"
-    opts.on( "-r", "--rules RULES" ) { |r| rules << Kernel.const_get( r ) }
+    opts.on( "-r", "--rules RULES" ) { |r| rules << Rules.find( r ) }
     opts.on( "-k", "--key KEY"     ) { |k| key = k }
 
     opts.parse( ARGV )

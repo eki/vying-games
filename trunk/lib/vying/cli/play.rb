@@ -110,7 +110,7 @@ module CLI
     opts = OptionParser.new
 
     opts.banner = "Usage: vying play [options]"
-    opts.on( "-r", "--rules RULES" ) { |r| rules = Kernel.const_get( r ) }
+    opts.on( "-r", "--rules RULES" ) { |r| rules = Rules.find( r ) }
     opts.on( "-n", "--number NUMBER" ) { |num| number = Integer( num ) }
     opts.on( "-c", "--curses" ) { curses = true }
     opts.on( "-p", "--player PLAYER=BOT" ) do |s|
