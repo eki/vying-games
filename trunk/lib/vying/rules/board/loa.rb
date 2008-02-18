@@ -87,33 +87,28 @@ class LinesOfAction < Rules
 
   def final?
     players.each do |p|
-      coords = (board.occupied[p] || []).dup
-
-      return true if coords.empty?
-
-      all, check = {}, [coords.first]
-
-      while c = check.pop
-        all[c] = c
-
-        if coords.delete c
-          board.coords.neighbors( c ).each do |nc|
-            check << nc unless all[c] = c
-          end
-        end
-      end
-
-      return true if coords.empty?
+      coords = board.occupied[p].dup
+      return true if all_connected?( coords )
     end
 
     return false
   end
 
   def winner?( player )
-    coords = (board.occupied[player] || []).dup
+    coords = board.occupied[player].dup
+    all_connected?( coords )
+  end
 
-    return true if coords.empty?
+  def loser?( player )
+    coords = board.occupied[player].dup
+    ! all_connected?( coords )
+  end
 
+  def hash
+    [board,turn].hash
+  end
+
+  def all_connected?( coords )
     all, check = {}, [coords.first]
 
     while c = check.pop
@@ -125,28 +120,6 @@ class LinesOfAction < Rules
     end
 
     coords.empty?
-  end
-
-  def loser?( player )
-    coords = (board.occupied[player] || []).dup
-
-    return true if coords.empty?
-
-    all, check = {}, [coords.first]
-
-    while c = check.pop
-      coords.delete c
-
-      board.coords.neighbors( c ).each do |nc|
-        check << nc unless all[c] = c
-      end
-    end
-
-    !coords.empty?
-  end
-
-  def hash
-    [board,turn].hash
   end
 
   def count( c, d )
