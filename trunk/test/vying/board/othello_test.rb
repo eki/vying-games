@@ -252,7 +252,9 @@ class TestOthelloBoard < Test::Unit::TestCase
     o[:black] += [Coord[3,3],Coord[3,2]]
     o[:white] -= [Coord[3,3]]
 
-    assert_equal( o, b.occupied )
+    o.each do |k,v|
+      assert_equal( o[k].sort, b.occupied[k].sort )
+    end
 
     # Commented out because only #place actually updates occupied
 #   b.clear

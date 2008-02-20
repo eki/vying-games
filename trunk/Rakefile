@@ -21,6 +21,8 @@ Rake::TestTask.new do |t|
   t.test_files = FileList['test/**/*_test.rb']
 end
 
+task :"test_sans_ext" => [:clobber, :test, :compile]
+
 ###
 ### rdoc task
 ###
@@ -96,6 +98,32 @@ if defined?( Gem ) && pkg_version
   end
 
   package_task = Rake::GemPackageTask.new( spec ) do |pkg|
+    pkg.need_tar_gz = true
+    pkg.need_zip = true
+  end
+
+  PKG_FILES_NO_EXT = FileList[
+    'lib/**/*',
+    'bin/vying',
+    'test/**/*',
+    'Rakefile',
+    'README',
+    'LICENSE',
+    'COPYING']
+
+  spec_pure = Gem::Specification.new do |s|
+    s.name = 'vying-pure'
+    s.version = pkg_version
+    s.summary = 'Vying Game Library (Pure Ruby)'
+    s.description = 'Vying is a game library.'
+    s.files = PKG_FILES_NO_EXT.to_a
+    s.executables = ['vying']
+    s.add_dependency "random", ">= 0.2.1"
+    s.author = 'Eric K Idema'
+    s.email = 'eki@vying.org'
+  end
+
+  package_task = Rake::GemPackageTask.new( spec_pure ) do |pkg|
     pkg.need_tar_gz = true
     pkg.need_zip = true
   end

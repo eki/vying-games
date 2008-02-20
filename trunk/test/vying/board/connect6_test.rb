@@ -69,11 +69,11 @@ class TestConnect6Board < Test::Unit::TestCase
     end
   end
 
-  def test_in_bounds
+  def test_window_in_bounds
     b = Connect6Board.new
 
     w = [Coord[1,1],Coord[2,2],Coord[3,3]]
-    assert( b.in_bounds?( w ) )
+    assert( b.window_in_bounds?( w ) )
   end
 
   def test_has_neighbor?

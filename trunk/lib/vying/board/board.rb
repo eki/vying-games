@@ -1,8 +1,16 @@
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
+begin
+  require 'vying/board/boardext'
+  Vying::UsingBoardExt = true
+rescue LoadError
+  require 'vying/board/ruby'
+  Vying::UsingBoardExt = false
+end
+
+require 'vying/board/coord'
 require 'vying/board/coords'
-require 'vying/board/boardext'
 
 class Board
 

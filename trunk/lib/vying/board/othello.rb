@@ -32,51 +32,5 @@ class OthelloBoard < Board
     super
   end
 
-#  def valid?( c, bp, directions = [:n,:s,:w,:e,:ne,:nw,:se,:sw] )
-#    return false if !self[c].nil?
-#
-#
-#    op = bp == :black ? :white : :black
-#
-#    a = directions.zip( coords.neighbors_nil( c, directions ) )
-#    a.each do |d,nc|
-#      p = self[nc]
-#      next if p.nil? || p == bp
-#
-#      i = nc
-#      while (i = coords.next( i, d ))
-#        p = self[i]
-#        return true if p == bp 
-#        break       if p.nil?
-#      end
-#    end
-#
-#    false
-#  end
-#
-#  def place( c, bp )
-#    op = bp == :black ? :white : :black
-#
-#    directions = [:n,:s,:w,:e,:ne,:nw,:se,:sw]
-#
-#    a = directions.zip( coords.neighbors_nil( c, directions ) )
-#    a.each do |d,nc|
-#      p = self[nc]
-#      next if p.nil? || p == bp
-#
-#      bt = [nc]
-#      while (bt << coords.next( bt.last, d ))
-#        p = self[bt.last]
-#        break if p.nil?
-#
-#        if p == bp
-#          bt.each { |bc| self[bc] = bp }
-#          break
-#        end
-#      end
-#    end
-#
-#    self[c] = bp
-#  end
 end
 

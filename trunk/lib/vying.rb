@@ -1,9 +1,21 @@
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
+# Container for constants related to the vying library
+
+module Vying
+  
+  # Returns the version of this vying codebase.
+
+  def self.version
+    v = const_defined?( :VERSION ) ? VERSION : "svn trunk"
+    "vying #{v}"
+  end
+end
+
 begin
   require 'rubygems'
-rescue Exception
+rescue LoadError
   # No worries, mate.
 end
 
@@ -26,23 +38,12 @@ require 'vying/ai/bot'
 
 begin
   require 'version'
-rescue Exception
+rescue LoadError
   nil
 end
 
+# Load all Rules and Bots
 
 Rules.require_all
 Bot.require_all
-
-# Container for constants related to the vying library
-
-module Vying
-  
-  # Returns the version of this vying codebase.
-
-  def self.version
-    v = const_defined?( :VERSION ) ? VERSION : "svn trunk"
-    "vying #{v}"
-  end
-end
 

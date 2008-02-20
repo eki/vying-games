@@ -2,8 +2,7 @@
 # You may redistribute / modify this file under the same terms as Ruby.
 
 require 'vying/memoize'
-require 'vying/board/coord'
-require 'vying/board/boardext'
+require 'vying/board/board'
 
 class Coords
   include Enumerable

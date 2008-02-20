@@ -82,10 +82,10 @@ class Connect6Board < Board
       list << list.last.map { |c| c + Coords::DIRECTIONS[directions.last] }
     end
 
-    list.select { |w| in_bounds?( w ) }
+    list.select { |w| window_in_bounds?( w ) }
   end
 
-  def in_bounds?( w )
+  def window_in_bounds?( w )
     0 <= w.first.x && w.first.x < 19 && 0 <= w.first.y && w.first.y < 19 &&
     0 <= w.last.x  && w.last.x  < 19 && 0 <= w.last.y  && w.last.y  < 19
   end
