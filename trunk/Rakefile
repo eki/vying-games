@@ -78,6 +78,7 @@ if defined?( Gem ) && pkg_version
     'bin/vying',
     'test/**/*',
     'ext/**/*',
+    'doc/**/*',
     'Rakefile',
     'README',
     'LICENSE',
@@ -88,6 +89,9 @@ if defined?( Gem ) && pkg_version
     s.version = pkg_version
     s.summary = 'Vying Game Library'
     s.description = 'Vying is a game library.'
+    s.homepage = 'http://vying.org/dev/public'
+    s.rubyforge_project = 'silence stupid WARNINGS'
+    s.has_rdoc = true
     s.files = PKG_FILES.to_a
     s.extensions = "ext/vying/board/extconf.rb"
     s.executables = ['vying']
@@ -106,6 +110,7 @@ if defined?( Gem ) && pkg_version
     'lib/**/*',
     'bin/vying',
     'test/**/*',
+    'doc/**/*',
     'Rakefile',
     'README',
     'LICENSE',
@@ -116,6 +121,9 @@ if defined?( Gem ) && pkg_version
     s.version = pkg_version
     s.summary = 'Vying Game Library (Pure Ruby)'
     s.description = 'Vying is a game library.'
+    s.homepage = 'http://vying.org/dev/public'
+    s.rubyforge_project = 'silence stupid WARNINGS'
+    s.has_rdoc = true
     s.files = PKG_FILES_NO_EXT.to_a
     s.executables = ['vying']
     s.add_dependency "random", ">= 0.2.1"
