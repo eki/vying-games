@@ -157,7 +157,7 @@ module Connect6Strategies
     occupied = b.occupied[:black] || []
     occupied += b.occupied[:white] if b.occupied[:white]
 
-    return ["j9"] if occupied.length == 0
+    return ["j10"] if occupied.length == 0
 
     keep = []
 
