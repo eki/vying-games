@@ -78,7 +78,7 @@ class DotsAndBoxes < Rules
     end
 
     def hash
-      [board,turn].hash
+      [grid,turn].hash
     end
 
 end
