@@ -29,6 +29,7 @@ require 'vying/board/mancala'
 
 require 'vying/dice'
 
+require 'vying/user'
 require 'vying/rules'
 require 'vying/game'
 require 'vying/ai/search'

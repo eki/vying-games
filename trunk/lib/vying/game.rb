@@ -27,7 +27,9 @@ class GameResults
     @sequence = game.sequence
 
     @user_map = {}
-    game.user_map.each { |k,v| @user_map[k] = [v.id, v.username] }
+    game.players.each do |p| 
+      @user_map[p] = [game[p].id, game[p].username]
+    end
 
     @win_lose_draw = {}
     game.players.each do |p|
@@ -120,10 +122,16 @@ class History
     positions[length-1] # Use [] -- positions could be missing
   end
 
+  # Is the last move special?
+
+  def last_special?
+    SPECIAL_MOVES.any? { |p| sequence.last =~ p }
+  end
+
   # How many positions are in this history?
 
   def length
-    if SPECIAL_MOVES.any? { |p| sequence.last =~ p }
+    if last_special?
       sequence.length
     else
       sequence.length + 1
@@ -189,7 +197,7 @@ end
 #  It is heavily backed by a subclass of Rules.
 
 class Game
-  attr_reader :history, :user_map
+  attr_reader :history
 
   # Create a game from the given Rules subclass, and an optional seed.  If
   # the game has random elements and a seed is not provided, one will be 
@@ -301,16 +309,51 @@ class Game
   # as an array.
 
   def undo
-    [history.positions.pop, history.sequence.pop]
+    if history.last_special?
+      [history.last, history.sequence.pop]
+    else
+      [history.positions.pop, history.sequence.pop]
+    end
   end
 
   # Accepts a hash mapping players to users.  The players should match up to
-  # the players returned by #players.  The users can be anything, but should
-  # implement the AI::Bot interface if you intend to use Game#step or
-  # Game#play.
+  # the players returned by #players.  The users should be an instance
+  # of User or one of it's subclasses, but should implement the AI::Bot 
+  # interface if you intend to use Game#step or Game#play.
 
   def register_users( h )
-    user_map.merge!( h )
+    @user_map.merge!( h )
+  end
+
+  # Get the User playing as the given player.
+  #
+  # Example:
+  #
+  #   g = Game.new Othello
+  #   g[:black]                     => nil
+  #   g[:black] = RandomBot.new     => <RandomBot>
+  #   g[:black]                     => <RandomBot>
+  #
+
+  def []( p )
+    @user_map[p]
+  end
+
+  # Assign an instance of the User playing as the given player.
+  #
+  # Example:
+  #
+  #   g = Game.new Othello
+  #   g[:black] = RandomBot.new
+  #   g[:white] = Human.new
+  #
+
+  def []=( p, u )
+    @user_map[p] = u
+  end
+
+  def users
+    @user_map.values
   end
 
   # If this is a 2 player game, #switch_sides will swap the registered users.
@@ -318,9 +361,9 @@ class Game
   def switch_sides
     if players.length == 2
       ps = players
-      user_map[ps[0]], user_map[ps[1]] = user_map[ps[1]], user_map[ps[0]]
+      @user_map[ps[0]], @user_map[ps[1]] = @user_map[ps[1]], @user_map[ps[0]]
     end
-    user_map
+    self
   end
 
   # Ask the registered users for one move, and apply it.  The registered
@@ -338,7 +381,7 @@ class Game
 
     # Accept or reject offered draw
     if allow_draws_by_agreement? && offered_by = draw_offered_by
-      accepted = user_map.all? do |p,u| 
+      accepted = @user_map.all? do |p,u| 
         position = history.last.censor( p )
         p == offered_by || u.accept_draw?( sequence, position, p )
       end
@@ -351,28 +394,28 @@ class Game
 
     has_moves.each do |p|
       if players.include?( p )
-        if user_map[p].ready?
+        if @user_map[p].ready?
           position = history.last.censor( p )
 
           # Handle draw offers
           if allow_draws_by_agreement? && 
-             user_map[p].offer_draw?( sequence, position, p )
+             @user_map[p].offer_draw?( sequence, position, p )
             sequence << "draw_offered_by_#{p}"
             return self
           end
 
           # Ask for forfeit
-          if user_map[p].forfeit?( sequence, position, p )
+          if @user_map[p].forfeit?( sequence, position, p )
             sequence << "forfeit_by_#{p}"
             return self
           end
 
           # Ask for an move
-          move = user_map[p].select( sequence, position, p )
+          move = @user_map[p].select( sequence, position, p )
           if move?( move, p )
             self << move 
           else
-            raise "#{user_map[p].username} attempted invalid move: #{move}"
+            raise "#{@user_map[p].username} attempted invalid move: #{move}"
           end
         end
       elsif p == :random
@@ -410,6 +453,8 @@ class Game
   # may be meaningless if Game#final? is not true.
 
   def winner?( player )
+    player = who?( player )
+
     (forfeit? && forfeit_by != player) || 
     (time_exceeded? && time_exceeded_by != player) ||
     (!draw_by_agreement? && 
@@ -420,6 +465,8 @@ class Game
   # may be meaningless if Game#final? is not true.
 
   def loser?( player )
+    player = who?( player )
+
     (forfeit? && forfeit_by == player) || 
     (time_exceeded? && time_exceeded_by == player) ||
     (!draw_by_agreement? && 
@@ -433,13 +480,20 @@ class Game
     draw_by_agreement? || (history.last.final? && history.last.draw?)
   end
 
+  # Returns the score for the given player or user.  Shouldn't be used
+  # without first checking #has_score?.
+
+  def score( player )
+    history.last.score( who?( player ) )
+  end
+
   # Is the given move valid for the position this Game is currently in?  If
   # a player is provided, also verify that the move is valid for the given
   # player.
 
   def move?( move, player=nil )
     unless draw_by_agreement? || draw_offered? || forfeit? || time_exceeded?
-      history.last.move?( move, player )
+      history.last.move?( move, who?( player ) )
     end
   end
 
@@ -451,7 +505,7 @@ class Game
     if draw_by_agreement? || draw_offered? || forfeit? || time_exceeded?
       [] 
     else
-      history.last.moves( player )
+      history.last.moves( who?( player ) )
     end
   end
 
@@ -465,7 +519,18 @@ class Game
   # Returns true if the given player has any valid moves.
 
   def has_moves?( player )
-    has_moves.include?( player )
+    has_moves.include?( who?( player ) )
+  end
+
+  # Takes a User and returns which player he/she is.  If given a player
+  # returns that player.
+
+  def who?( user )
+    return nil if user.nil?
+
+    return user if user.class == Symbol
+
+    players.find { |p| self[p] == user }
   end
 
   # Has this game ended in a forfeit?
@@ -561,15 +626,17 @@ class Game
   def description
     if final?
       if draw?
-        s = rules.players.map { |p| "#{user_map[p]} (#{p})" }.join( " and " )
-        "#{s} played to a draw"
+        s = rules.players.map { |p| "#{@user_map[p]} (#{p})" }.join( " and " )
+        s += " played to a draw"
+        s += " (by agreement)" if draw_by_agreement?
+        s
       else
 
         winners = players.select { |p| winner?( p ) }
         losers  = players.select { |p| loser?( p ) }
 
-        ws = winners.map { |p| "#{user_map[p]} (#{p})" }.join( " and " )
-        ls = losers.map  { |p| "#{user_map[p]} (#{p})" }.join( " and " )
+        ws = winners.map { |p| "#{@user_map[p]} (#{p})" }.join( " and " )
+        ls = losers.map  { |p| "#{@user_map[p]} (#{p})" }.join( " and " )
 
         s = "#{ws} defeated #{ls}"
 
@@ -578,10 +645,12 @@ class Game
           s = "#{s}, #{ss}"
         end
 
+        s += " (forfeit by #{self[forfeit_by]})" if forfeit?
+        s += " (time exceeded)"                  if time_exceeded?
         s
       end
     else
-      s = rules.players.map { |p| "#{user_map[p]} (#{p})" }.join( " vs " )
+      s = rules.players.map { |p| "#{@user_map[p]} (#{p})" }.join( " vs " )
 
       if has_score?
         s = "#{s} (#{rules.players.map { |p| score( p ) }.join( '-' )})"

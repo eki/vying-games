@@ -14,7 +14,7 @@ class CapellaBot < Bot
 
     attr_reader :leaf, :nodes
 
-    def initialize
+    def initialize( *args )
       super
       @leaf, @nodes = 0, 0
     end

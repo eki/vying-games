@@ -75,7 +75,7 @@ module CLI
           exit
         end
       end
-      game.user_map[player] << move 
+      game[player] << move 
     end
 
     def Play.get_human_move_curses( game, player )
@@ -96,7 +96,7 @@ module CLI
         exit if move == ""
         $scr.refresh
       end
-      game.user_map[player] << move
+      game[player] << move
     end
 
   end
@@ -132,7 +132,7 @@ module CLI
       g.register_users( p2b )
 
       until g.final?
-        if g.user_map[g.turn].class == Human
+        if g[g.turn].class == Human
           if curses
             CLI::Play.show_position_curses( g )
             CLI::Play.get_human_move_curses( g, g.turn )

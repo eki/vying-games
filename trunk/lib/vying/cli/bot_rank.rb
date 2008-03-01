@@ -13,10 +13,10 @@ module CLI
       players = {}
       games.each do |g|
         g.players.each do |p|
-          players[g.user_map[p].to_s] ||= [0,0,0]
-          players[g.user_map[p].to_s][0] += 1 if g.winner?( p )
-          players[g.user_map[p].to_s][1] += 1 if g.loser?( p )
-          players[g.user_map[p].to_s][2] += 1 if g.draw?
+          players[g[p].to_s] ||= [0,0,0]
+          players[g[p].to_s][0] += 1 if g.winner?( p )
+          players[g[p].to_s][1] += 1 if g.loser?( p )
+          players[g[p].to_s][2] += 1 if g.draw?
         end
       end
       puts

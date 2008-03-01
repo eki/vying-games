@@ -3,12 +3,7 @@
 
 require 'vying/rules'
 
-class Bot
-  attr_reader :id, :username
-
-  def initialize
-    @id, @username = 0, self.class.to_s
-  end
+class Bot < User
 
   def ready?
     true
@@ -91,7 +86,7 @@ class Bot
   end
 
   def to_s
-    self.class.to_s
+    username || self.class.to_s
   end
 
   def name
@@ -172,15 +167,16 @@ class Bot
 
 end
 
-# This is just a simple dummy Human bot class.  It can be used as a placeholder
-# in Game#user_map
+# This is just a simple dummy Human bot class.  It accepts moves into a 
+# queue via #<< and then plays them when asked for a move by Game#step and
+# Game#play.
 #
-# moves taken from whatever UI, can use << to make them available via #select
 
 class Human < Bot
   attr_reader :queue
 
-  def initialize
+  def initialize( *args )
+    super
     @queue = []
   end
 
@@ -201,7 +197,12 @@ class Human < Bot
   end
 
   def accept_draw?( sequence, position, player )
-    queue.shift if queue.first == "accept_draw"
+    return   queue.shift if queue.first == "accept_draw"
+    return ! queue.shift if queue.first == "reject_draw"
+  end
+
+  def ready?
+    ! @queue.empty?
   end
 
   def bot?
