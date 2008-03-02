@@ -513,7 +513,13 @@ class Game
   # in history.
 
   def has_moves
-    draw_offered? ? players - [draw_offered_by] : history.last.has_moves
+    if forfeit? || time_exceeded?
+      []
+    elsif draw_offered?
+      players - [draw_offered_by]
+    else
+      history.last.has_moves
+    end
   end
 
   # Returns true if the given player has any valid moves.
