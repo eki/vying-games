@@ -115,7 +115,7 @@ class LinesOfAction < Rules
       coords.delete c
 
       board.coords.neighbors( c ).each do |nc|
-        check << nc unless all[c] = c
+        check << nc if coords.include?( nc )
       end
     end
 
