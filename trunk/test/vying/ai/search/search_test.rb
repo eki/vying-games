@@ -3,7 +3,6 @@ require 'test/unit'
 require 'vying'
 
 module BotTemplate
-  include OthelloStrategies
 
   attr_reader :leaf, :nodes, :leaf_list, :nodes_list
   attr_accessor :depth
@@ -25,11 +24,13 @@ module BotTemplate
   
   def evaluate( position, player )
     @leaf += 1
-    return eval_count( position, player )[3]
+    return 1  if position.winner? player
+    return 0  if position.draw?
+    return -1
   end
                                                               
   def cutoff( position, depth )                               
-    position.final? || depth >= @depth 
+    position.final?  # it's very abnormal to search all the way to the bottom
   end
 end
 
@@ -43,46 +44,72 @@ class AlphaBetaBot < Bot
   include AlphaBeta
 end
 
-class PlayFirstOpBot < Bot
-  def select( sequence, position, player )
-    position.moves.first
-  end
-end
-
-
 class TestSearch < Test::Unit::TestCase
-  def test_alphabeta
+  def test_alphabeta_01
     mini = MiniMaxBot.new
     alpha = AlphaBetaBot.new
 
-    g = Game.new( Othello )
-    g.register_users :black => PlayFirstOpBot.new, :white => PlayFirstOpBot.new
-    g.play
+    g = Game.new( TicTacToe )
+    g << :a1 << :b2 << :a2 << :c3
 
-    assert( g.history.length > 58 )
+    position = g.history.last
 
-    ps = { 0 => 3,
-           1 => 3,
-           5 => 2,
-           30 => 1,
-           31 => 2,
-           53 => 6,
-           58 => 7 }
+    m_score, m_move = mini.select( position, position.turn )
+    a_score, a_move = alpha.select( position, position.turn )
 
-    ps.each do |i, depth|
-      position = g.history[i]
-      mini.depth = depth
-      alpha.depth = depth
+    assert_equal( "a3", m_move )
+    assert_equal( 1, m_score )
 
-      m_score, m_move = mini.select( position, position.turn )
-      a_score, a_move = alpha.select( position, position.turn )
-
-      assert_equal( m_score, a_score )
-      assert_equal( m_move, a_move )
-      assert( mini.leaf >= alpha.leaf )
-      assert( mini.nodes >= alpha.nodes )
-    end
+    assert_equal( m_score, a_score )
+    assert_equal( m_move, a_move )
+    assert( mini.leaf >= alpha.leaf )
+    assert( mini.nodes >= alpha.nodes )
   end
+
+  def test_alphabeta_02
+    mini = MiniMaxBot.new
+    alpha = AlphaBetaBot.new
+
+    g = Game.new( TicTacToe )
+    g << :a1 << :a2 << :b2 << :c3
+
+    position = g.history.last
+
+    m_score, m_move = mini.select( position, position.turn )
+    a_score, a_move = alpha.select( position, position.turn )
+
+    assert( ["b1", "c1"].include?( m_move ) )  # Both can force a win
+    assert_equal( 1, m_score )
+
+    assert_equal( m_score, a_score )
+    assert_equal( m_move, a_move )
+    assert( mini.leaf >= alpha.leaf )
+    assert( mini.nodes >= alpha.nodes )
+  end
+
+# This test takes time...
+#
+# def test_alphabeta_03
+#   mini = MiniMaxBot.new
+#   alpha = AlphaBetaBot.new
+#
+#   position = TicTacToe.new
+#
+#   m_score, m_move = mini.select( position, position.turn )
+#   a_score, a_move = alpha.select( position, position.turn )
+#
+#   assert_equal( 0, m_score )
+#
+#   puts "mini.leaf:   #{mini.leaf}"
+#   puts "mini.nodes:  #{mini.nodes}"
+#   puts "alpha.leaf:  #{alpha.leaf}"
+#   puts "alpha.nodes: #{alpha.nodes}"
+#
+#   assert_equal( m_score, a_score )
+#   assert_equal( m_move, a_move )
+#   assert( mini.leaf >= alpha.leaf )
+#   assert( mini.nodes >= alpha.nodes )
+# end
 
 end
 
