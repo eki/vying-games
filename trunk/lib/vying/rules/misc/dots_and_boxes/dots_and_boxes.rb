@@ -29,6 +29,15 @@ class DotsAndBoxes < Rules
       lines.map { |line| "#{line.first}:#{line.last}" }
     end
 
+    def moves_that_complete_boxes( player=nil )
+      return [] unless player.nil? || has_moves.include?( player )
+
+      lines = grid.lines.keys.select { |k| ! grid.lines[k] }
+
+      lines = lines.select { |line| grid.will_complete_box?( *line ) }
+      lines.map { |line| "#{line.first}:#{line.last}" }
+    end
+
     def apply!( move )
       move =~ /(\d+):(\d+)/
 

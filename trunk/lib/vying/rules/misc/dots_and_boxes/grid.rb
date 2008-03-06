@@ -74,6 +74,17 @@ class DotsAndBoxes < Rules
       boxes[a.sort]
     end
 
+    def will_complete_box?( d1, d2 )
+      directions = (d1 - d2).abs == 1 ? [:s, :n] : [:e, :w]
+
+      directions.each do |dir|
+        d3, d4 = self.next( d1, dir ), self.next( d2, dir )
+        return true if line?( d1, d3 ) && line?( d2, d4 ) && line?( d3, d4 )
+      end
+
+      false
+    end
+
     def next( dot, dir )
       return nil if dot.nil?
 
