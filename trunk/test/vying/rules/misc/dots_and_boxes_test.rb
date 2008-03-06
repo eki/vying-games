@@ -28,7 +28,7 @@ class TestDotsAndBoxes < Test::Unit::TestCase
     assert_equal( 60, p.grid.lines.keys.length )
     assert_equal( 25, p.grid.boxes.keys.length )
     assert_equal( 0, p.grid.lines.select { |k,v| v }.length )
-    assert_equal( 0, p.grid.boxes.select { |k,v| v.owner }.length )
+    assert_equal( 0, p.grid.boxes.select { |k,v| v }.length )
   end
 
   def test_moves
