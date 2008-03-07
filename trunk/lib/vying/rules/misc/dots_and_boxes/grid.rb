@@ -1,13 +1,19 @@
 
 class DotsAndBoxes < Rules
   class Grid
+    extend Memoizable
+
+    class << self
+      extend Memoizable
+      memoize :new
+    end
 
     attr_reader :width, :height, :dots, :lines, :boxes
 
     def initialize( width=6, height=6 )
       @width, @height = width, height
 
-      @dots = (1..(width*height)).to_a
+      @dots = (1..(width*height)).to_a.freeze
       @lines = {}
       @boxes = {}
 
@@ -24,10 +30,9 @@ class DotsAndBoxes < Rules
     end
 
     def initialize_copy( original )
-      @dots = original.dots.dup
-      @lines, @boxes = {}, {}
-      original.lines.each { |k,v| @lines[k.dup] = v }
-      original.boxes.each { |k,v| @boxes[k.dup] = v }
+      @dots = original.dots
+      @lines = original.lines.dup
+      @boxes = original.boxes.dup
     end
 
     def []( *args )
@@ -50,7 +55,7 @@ class DotsAndBoxes < Rules
       a = [d1, d2]
       raise "Attempt to define line with nil dot" if a.include?( nil )
 
-      lines[a.sort] = on
+      lines[a.sort.freeze] = on
     end
 
     def line?( d1, d2 )
@@ -64,7 +69,7 @@ class DotsAndBoxes < Rules
       a = [d1, d2, d3, d4]
       raise "Attempt to define box with nil dot" if a.include?( nil )
 
-      boxes[a.sort] = player
+      boxes[a.sort.freeze] = player
     end
 
     def box?( d1, d2, d3, d4 )
