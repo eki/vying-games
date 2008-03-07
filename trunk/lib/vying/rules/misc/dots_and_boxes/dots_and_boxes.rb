@@ -10,7 +10,7 @@ require 'vying/rules'
 class DotsAndBoxes < Rules
 
     name    "Dots and Boxes"
-    version "0.0.1"
+    version "1.0.0"
 
     players [:black, :white]
   
