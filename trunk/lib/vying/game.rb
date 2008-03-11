@@ -513,7 +513,7 @@ class Game
   # in history.
 
   def has_moves
-    if forfeit? || time_exceeded?
+    if forfeit? || time_exceeded? || draw_by_agreement?
       []
     elsif draw_offered?
       players - [draw_offered_by]
