@@ -36,7 +36,14 @@ module CLI
           total_spread += moves.length
           total_moves += 1
 
-          g << moves[rand(moves.length)]
+          begin
+            g << moves[rand(moves.length)]
+          rescue Exception => e
+            puts g
+            puts "moves: #{g.moves}"
+            puts "squence: #{g.sequence.inspect}"
+            raise e
+          end
         end
       end
 
