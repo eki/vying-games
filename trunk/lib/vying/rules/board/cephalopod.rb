@@ -11,11 +11,11 @@ require 'vying/rules'
 class Cephalopod < Rules
 
   name    "Cephalopod"
-  version "0.9.0"
+  version "0.9.1"
 
   players [:white, :black]
 
-  attr_reader :board, :dice, :removing, :removing_coord, :removed
+  attr_reader :board, :dice, :removed, :removed
 
   COMBOS = { [1,1]     => 2,
              [1,2]     => 3,
@@ -44,7 +44,7 @@ class Cephalopod < Rules
     @board = Board.new( 5, 5 )
     @dice = { :black => 0, :white => 0 }
 
-    @removing, @removing_coord, @removed = 0, nil, 0
+    @removed = {}
   end
 
   def moves( player=nil )
@@ -54,42 +54,41 @@ class Cephalopod < Rules
 
     # Remove dice
 
-    if @removing > 0
-      ns = board.coords.neighbors( removing_coord ).reject { |c| board[c].nil? }
-
-      # If only one die is available, we can short circuit
-      return ns.map { |c| c.to_s } if ns.length == 1
-
-      # Any Die whose face value == @removing can be removed
-      if removed > 0
-        ns.each { |c| a << c.to_s if board[c].up == @removing }
-
-        return a if a.length == ns.length
-      end
-
-      # Die that are apart of a combo adding up to @removing can be removed
-
-      dice = Dice.new( board[*ns] )
+    qs = board.occupied["?"] || []
+    unless qs.empty?
+      cc = qs.first
+      ns = board.coords.neighbors( cc ).reject { |c| board[c].nil? }
+      
+      removed_faces = @removed.values.map { |d| d.up }.sort
+      dice = Dice.new( [board[*ns]].flatten + @removed.values )
 
       COMBOS.keys.each do |combo|
-        if COMBOS[combo] == @removing && dice.include?( combo )
+        if dice.include?( combo )
           combo.each { |f| ns.each { |c| a << c.to_s if board[c].up == f } }
         end
 
-        a.uniq!
-
-        return a if a.length == ns.length
+        if removed_faces == combo
+          a << cc.to_s
+        end
       end
 
-      return a
+      return a.uniq
     end
-
 
     # Add a die
 
     board.coords.each do |c|
       next unless board[c].nil?
 
+      a << "#{c}"
+    end
+
+    a
+  end
+
+  def apply!( move )
+    c = Coord[move]
+    if board[c].nil?
       np = board[*board.coords.neighbors( c, [:n, :e, :w, :s] )]
       dice = Dice.new( np.compact )
 
@@ -98,41 +97,26 @@ class Cephalopod < Rules
       COMBOS.keys.each do |combo|
         if dice.include?( combo )
           capturing = true
-          a << "#{COMBOS[combo]}#{c}"
         end
       end
 
-      a << "1#{c}" unless capturing
-    end
-
-    a
-  end
-
-  def apply!( move )
-    if move =~ /([123456])(\w+)/           # Place a die on the board
-      p = $1.to_i
-      c = Coord[$2]
-
-      board[c] = Die.new( p, turn )
-      dice[turn] += 1
-
-      if p > 1 
-        @removing, @removing_coord, @removed = p, c, 0
+      if capturing
+        board[c] = "?" 
       else
+        board[c] = Die.new( 1, turn )
+        @dice[turn] += 1
         turn( :rotate )
       end
 
-    else                                   # Remove a die from the board
-      c = Coord[move]
+    elsif board[c] == "?"
+      board[c] = Die.new( @removed.values.inject( 0 ) { |m,d| m + d.up }, turn )
+      @removed.clear
+      turn( :rotate )
+
+    else
       p, board[c] = board[c], nil
-      @removing -= p.up
-      @removed += 1
-
-      dice[p.color] -= 1
-
-      if @removing == 0
-        turn( :rotate )
-      end
+      @removed[c] =  p
+      @dice[p.color] -= 1
     end
 
     self

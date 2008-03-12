@@ -41,19 +41,18 @@ class TestCephalopod < Test::Unit::TestCase
 
     assert_equal( 25, g.moves.length )
     g.board.coords.each do |c|
-      assert( g.move?( "1#{c}", :white ) )
+      assert( g.move?( "#{c}", :white ) )
     end
   end
 
   def test_capture
     g = Game.new( Cephalopod )
 
-    g << "1b1" << "1d1"
+    g << "b1" << "d1"
 
-    assert(   g.move?( "2c1" ) )
-    assert( ! g.move?( "1c1" ) )
+    assert(   g.move?( "c1" ) )
 
-    g << "2c1"
+    g << "c1"
 
     assert_equal( ["b1", "d1"].sort, g.moves.sort )
 
@@ -63,30 +62,32 @@ class TestCephalopod < Test::Unit::TestCase
 
     g << "b1"
 
+    assert_equal( ["c1"], g.moves )
+
+    g << "c1"
+
     assert_equal( 24, g.moves.length )
 
-    g << "1c3" << "1b2" << "1d2"
+    g << "c3" << "b2" << "d2"
 
-    assert( g.move?( "2c2" ) )
-    assert( g.move?( "3c2" ) )
-    assert( g.move?( "4c2" ) )
-    assert( g.move?( "5c2" ) )
+    assert( g.move?( "c2" ) )
 
-    g << "2c2"
+    g << "c2"
 
-    assert( ! g.move?( "c1" ) )
-    assert_equal( ["c3", "b2", "d2"].sort, g.moves.sort )
+    assert_equal( ["c3", "b2", "d2", "c1"].sort, g.moves.sort )
 
     g << "c3"
 
-    assert( ! g.move?( "c1" ) )
-    assert_equal( ["b2", "d2"].sort, g.moves.sort )
+    assert_equal( ["b2", "d2", "c1"].sort, g.moves.sort )
 
     g << "d2"
 
-    assert( ! g.move?( "c1" ) )
-    assert( ! g.move?( "b2" ) )
-    assert( ! g.move?( "d2" ) )
+    assert( g.move?( "c2" ) )
+
+    g << "c2"
+
+    assert_equal( 22, g.moves.length )
+    assert_equal( 2, g.board[:c2].up )
 
   end
 
