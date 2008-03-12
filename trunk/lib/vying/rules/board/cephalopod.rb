@@ -77,8 +77,10 @@ class Cephalopod < Rules
           end
         end
 
-        if o_dice.include?( combo )
-          combo.each { |f| ns.each { |c| a << c.to_s if board[c].up == f } }
+        if removed_faces.empty?
+          if o_dice.include?( combo )
+            combo.each { |f| ns.each { |c| a << c.to_s if board[c].up == f } }
+          end
         end
 
         if removed_faces == combo
@@ -138,7 +140,7 @@ class Cephalopod < Rules
   end
 
   def final?
-    board.empty_count == 0
+    board.empty_count == 0 && (board.occupied["?"] || []).empty?
   end
 
   def winner?( player )
