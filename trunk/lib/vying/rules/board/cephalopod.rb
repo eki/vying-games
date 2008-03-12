@@ -57,13 +57,27 @@ class Cephalopod < Rules
     qs = board.occupied["?"] || []
     unless qs.empty?
       cc = qs.first
-      ns = board.coords.neighbors( cc ).reject { |c| board[c].nil? }
+      ns = board.coords.neighbors( cc, [:n, :e, :w, :s] ).
+             reject { |c| board[c].nil? }
       
       removed_faces = @removed.values.map { |d| d.up }.sort
-      dice = Dice.new( [board[*ns]].flatten + @removed.values )
+      ns_dice = {}
+      ns.each do |c|
+        ns_dice[c] = @removed.values.map { |d| d.up }
+        ns_dice[c] << board[c].up
+        ns_dice[c].sort!
+      end
+
+      o_dice = Dice.new( [board[*ns]].flatten )
 
       COMBOS.keys.each do |combo|
-        if dice.include?( combo )
+        ns_dice.each do |c, dice|
+          if dice == combo
+            a << c.to_s
+          end
+        end
+
+        if o_dice.include?( combo )
           combo.each { |f| ns.each { |c| a << c.to_s if board[c].up == f } }
         end
 
@@ -110,6 +124,7 @@ class Cephalopod < Rules
 
     elsif board[c] == "?"
       board[c] = Die.new( @removed.values.inject( 0 ) { |m,d| m + d.up }, turn )
+      @dice[turn] += 1
       @removed.clear
       turn( :rotate )
 

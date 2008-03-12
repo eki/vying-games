@@ -12,7 +12,8 @@ class Die
   end
 
   def eql?( o )
-    o && o.respond_to?( :up ) && up == o.up
+    o && o.respond_to?( :up ) && up == o.up && 
+         o.respond_to?( :color ) && color == o.color
   end
 
   def ==( o )

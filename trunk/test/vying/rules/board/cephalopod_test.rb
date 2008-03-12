@@ -88,7 +88,16 @@ class TestCephalopod < Test::Unit::TestCase
 
     assert_equal( 22, g.moves.length )
     assert_equal( 2, g.board[:c2].up )
+  end
 
+  def test_illegal_captures
+    g = Game.new Cephalopod
+
+    g << ["b1", "d1", "c2", "c1", "b1", "c2", "c1", "c3", "d2", "b2", "c2",
+          "b2", "c1", "d2", "c3", "c2", "e2", "d2", "e2", "d1"]
+
+    assert(   g.move?( "d2" ) )
+    assert( ! g.move?( "c2" ) )
   end
 
 
