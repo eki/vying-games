@@ -6,12 +6,12 @@ require 'vying/rules'
 # Cephalopod is a game invented by Mark Steere.  It involves filling a 5x5
 # board with dice.
 #
-# For detailed rules see:  http://vying.org/games/three_musketeers
+# For detailed rules see:  http://vying.org/games/cephalopod
 
 class Cephalopod < Rules
 
   name    "Cephalopod"
-  version "0.9.1"
+  version "0.9.5"
 
   players [:white, :black]
 
@@ -61,34 +61,27 @@ class Cephalopod < Rules
              reject { |c| board[c].nil? }
       
       removed_faces = @removed.values.map { |d| d.up }.sort
-      ns_dice = {}
-      ns.each do |c|
-        ns_dice[c] = @removed.values.map { |d| d.up }
-        ns_dice[c] << board[c].up
-        ns_dice[c].sort!
-      end
 
-      o_dice = Dice.new( [board[*ns]].flatten )
+      if removed_faces.length > 0
+        a << "#{cc}" if removed_faces.length > 1
 
-      COMBOS.keys.each do |combo|
-        ns_dice.each do |c, dice|
-          if dice == combo
-            a << c.to_s
-          end
+        removed_sum = removed_faces.inject( 0 ) { |s,d| s + d }
+
+        ns.each do |nc|
+          a << "#{nc}" if board[nc].up + removed_sum <= 6
         end
-
-        if removed_faces.empty?
+      else
+        o_dice = Dice.new( [board[*ns]].flatten )
+        COMBOS.keys.each do |combo|
           if o_dice.include?( combo )
             combo.each { |f| ns.each { |c| a << c.to_s if board[c].up == f } }
           end
         end
 
-        if removed_faces == combo
-          a << cc.to_s
-        end
+        a.uniq!
       end
 
-      return a.uniq
+      return a
     end
 
     # Add a die
