@@ -119,7 +119,7 @@ class History
   # Fetch the last position from history.
 
   def last
-    positions[length-1] # Use [] -- positions could be missing
+    self[length-1] # Use [] -- positions could be missing
   end
 
   # Is the last move special?
