@@ -601,7 +601,7 @@ module DrawOffered
   def draw_offered?;               true;                    end
   def draw_offered_by;             @offered_by;             end
   def draw_offered_by?( player );  @offered_by == player;   end
-  def final?;                      true;                    end
+  def final?;                      false;                   end
   def moves( player=nil );         [];                      end
   def move?( move, player=nil );   false;                   end
   def has_moves;                   players - [@offered_by]; end
