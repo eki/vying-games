@@ -242,7 +242,7 @@ class TestGame < Test::Unit::TestCase
     g << move
 
     assert_equal( 1, g.sequence.length )
-    assert_equal( 1, g.history.length )
+    assert_equal( 2, g.history.length )
     assert_equal( move, g.sequence.last )
     
     p, m = g.undo

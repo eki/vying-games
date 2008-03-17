@@ -528,5 +528,82 @@ class Rules
   class << self
     private :allow_draws_by_agreement
   end
+
+  def forfeit?;                    false;                   end
+  def forfeit_by;                  nil;                     end
+  def forfeit_by?( player )        false;                   end
+  def time_exceeded?;              false                    end
+  def time_exceeded_by;            nil;                     end
+  def time_exceeded_by?( player ); false;                   end
+  def draw_by_agreement?;          false;                   end
+  def draw_offered?;               false;                   end
+  def draw_offered_by;             nil;                     end
+  def draw_offered_by?( player );  false;                   end
+end
+
+module Forfeit
+  def special_move=( special_move )
+    if special_move =~ /^forfeit_by_(\w+)/
+      @forfeit_by = $1.intern
+    end
+  end
+
+  def forfeit?;                    true;                    end
+  def forfeit_by;                  @forfeit_by;             end
+  def forfeit_by?( player );       @forfeit_by == player;   end
+  def final?;                      true;                    end
+  def winner?( player );           player != @forfeit_by;   end
+  def loser?( player );            player == @forfeit_by;   end
+  def moves( player=nil );         [];                      end
+  def move?( move, player=nil );   false;                   end
+  def has_moves;                   [];                      end
+end
+
+module TimeExceeded
+  def special_move=( special_move )
+    if special_move =~ /^time_exceeded_by_(\w+)/
+      @exceeded_by = $1.intern
+    end
+  end
+
+  def time_exceeded?;              true;                    end
+  def time_exceeded_by;            @exceeded_by;            end
+  def time_exceeded_by?( player ); @exceeded_by == player;  end
+  def final?;                      true;                    end
+  def winner?( player );           player != @exceeded_by;  end
+  def loser?( player );            player == @exceeded_by;  end
+  def moves( player=nil );         [];                      end
+  def move?( move, player=nil );   false;                   end
+  def has_moves;                   [];                      end
+end
+
+module NegotiatedDraw
+  def special_move=( special_move )
+  end
+
+  def draw_by_agreement?;          true;                    end
+  def final?;                      true;                    end
+  def winner?( player );           false;                   end
+  def loser?( player );            false;                   end
+  def draw?;                       true;                    end
+  def moves( player=nil );         [];                      end
+  def move?( move, player=nil );   false;                   end
+  def has_moves;                   [];                      end
+end
+
+module DrawOffered
+  def special_move=( special_move )
+    if special_move =~ /^draw_offered_by_(\w+)/
+      @offered_by = $1.intern
+    end
+  end
+
+  def draw_offered?;               true;                    end
+  def draw_offered_by;             @offered_by;             end
+  def draw_offered_by?( player );  @offered_by == player;   end
+  def final?;                      true;                    end
+  def moves( player=nil );         [];                      end
+  def move?( move, player=nil );   false;                   end
+  def has_moves;                   players - [@offered_by]; end
 end
 

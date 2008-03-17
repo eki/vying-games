@@ -78,10 +78,10 @@ class History
 
   attr_reader :sequence, :positions
 
-  SPECIAL_MOVES = [/^draw_offered_by_/,
-                   /^forfeit_by_/,
-                   /^time_exceeded_by/,
-                   /^draw$/]
+  SPECIAL_MOVES = { /^draw_offered_by_/   => DrawOffered,
+                    /^forfeit_by_/        => Forfeit,
+                    /^time_exceeded_by_/  => TimeExceeded,
+                    /^draw$/              => NegotiatedDraw }
 
   # Takes the initial position and initializes the sequence and positions
   # arrays.
@@ -124,18 +124,14 @@ class History
 
   # Is the last move special?
 
-  def last_special?
-    SPECIAL_MOVES.any? { |p| sequence.last =~ p }
+  def special?( move )
+    SPECIAL_MOVES.keys.any? { |p| move =~ p }
   end
 
   # How many positions are in this history?
 
   def length
-    if last_special?
-      sequence.length
-    else
-      sequence.length + 1
-    end
+    sequence.length + 1
   end
 
   # Add a new position to history.  The given move is applied to the last
@@ -143,7 +139,19 @@ class History
   # history.
 
   def <<( move )
-    positions << positions.last.apply( move )
+    p = nil
+
+    SPECIAL_MOVES.each do |pattern, mod|
+      if move =~ pattern
+        p = last.dup
+        p.extend mod
+        p.special_move = move
+      end
+    end
+
+    p ||= last.apply( move )
+
+    positions << p
     sequence << move
     self
   end
@@ -246,9 +254,6 @@ class Game
   # common to use the more versatile Game#<< method.
 
   def append( move )
-    special_moves = [/^forfeit_by_(\w+)$/, /draw_offered_by_(\w+)/,
-                   /^draw$/, /^time_exceeded_by_(\w+)$/]
-
     move = move.to_s
 
     if move?( move )
@@ -262,9 +267,9 @@ class Game
 
       return self
 
-    elsif special_moves.any? { |sm| move =~ sm }
+    elsif history.special?( move )
 
-      history.sequence << move
+      history << move
       return self
 
     end
@@ -309,11 +314,7 @@ class Game
   # as an array.
 
   def undo
-    if history.last_special?
-      [history.last, history.sequence.pop]
-    else
-      [history.positions.pop, history.sequence.pop]
-    end
+    [history.positions.pop, history.sequence.pop]
   end
 
   # Accepts a hash mapping players to users.  The players should match up to
@@ -386,8 +387,8 @@ class Game
         p == offered_by || u.accept_draw?( sequence, position, p )
       end
 
-      sequence.pop
-      sequence << "draw" if accepted
+      undo
+      history << "draw" if accepted
 
       return self
     end
@@ -400,13 +401,13 @@ class Game
           # Handle draw offers
           if allow_draws_by_agreement? && 
              @user_map[p].offer_draw?( sequence, position, p )
-            sequence << "draw_offered_by_#{p}"
+            history << "draw_offered_by_#{p}"
             return self
           end
 
           # Ask for forfeit
           if @user_map[p].forfeit?( sequence, position, p )
-            sequence << "forfeit_by_#{p}"
+            history << "forfeit_by_#{p}"
             return self
           end
 
@@ -440,48 +441,25 @@ class Game
     history.last.respond_to?( :seed ) ? history.last.seed : nil
   end
 
-  # Is this game over?.  If so, there are now winners and losers, and so 
-  # forth.  A Game may be final even if the rules state that the last position
-  # in its history is *not* final.  This can happen if the Game has ended in
-  # a forfeit or a negotiated draw or a player exceeding their alloted time.
-
-  def final?
-    forfeit? || draw_by_agreement? || time_exceeded? ||  history.last.final?
-  end
-
   # Is the given player the winner of this game?  The results of this method
-  # may be meaningless if Game#final? is not true.
+  # may be meaningless if Game#final? is not true.  This method accepts either
+  # a player or a User.
 
   def winner?( player )
-    player = who?( player )
-
-    (forfeit? && forfeit_by != player) || 
-    (time_exceeded? && time_exceeded_by != player) ||
-    (!draw_by_agreement? && 
-     history.last.final? && history.last.winner?( player ))
+    history.last.winner?( who?( player ) )
   end
 
   # Is the given player the loser of this game?  The results of this method
-  # may be meaningless if Game#final? is not true.
+  # may be meaningless if Game#final? is not true.  This method accepts either
+  # a player or a User.
 
   def loser?( player )
-    player = who?( player )
-
-    (forfeit? && forfeit_by == player) || 
-    (time_exceeded? && time_exceeded_by == player) ||
-    (!draw_by_agreement? && 
-     history.last.final? && history.last.loser?( player ))
-  end
-
-  # Has this game ended in a draw?  The results of this method may be 
-  # meaningless if Game#final? is not true.
-
-  def draw?
-    draw_by_agreement? || (history.last.final? && history.last.draw?)
+    history.last.loser?( who?( player ) )
   end
 
   # Returns the score for the given player or user.  Shouldn't be used
-  # without first checking #has_score?.
+  # without first checking #has_score?.  This method accepts either a
+  # player or a User.
 
   def score( player )
     history.last.score( who?( player ) )
@@ -489,37 +467,11 @@ class Game
 
   # Is the given move valid for the position this Game is currently in?  If
   # a player is provided, also verify that the move is valid for the given
-  # player.
+  # player.  This method passes through to the last position in the game's
+  # history, but accepts either or a player or a User.
 
   def move?( move, player=nil )
-    unless draw_by_agreement? || draw_offered? || forfeit? || time_exceeded?
-      history.last.move?( move, who?( player ) )
-    end
-  end
-
-  # Return a list of all valid moves for the last position in this Game's 
-  # history.  If a player is given, filter this list to include only valid
-  # moves for that player.
-
-  def moves( player=nil )
-    if draw_by_agreement? || draw_offered? || forfeit? || time_exceeded?
-      [] 
-    else
-      history.last.moves( who?( player ) )
-    end
-  end
-
-  # Returns a list of which players have valid moves for the last position
-  # in history.
-
-  def has_moves
-    if forfeit? || time_exceeded? || draw_by_agreement?
-      []
-    elsif draw_offered?
-      players - [draw_offered_by]
-    else
-      history.last.has_moves
-    end
+    history.last.move?( move, who?( player ) )
   end
 
   # Returns true if the given player has any valid moves.
@@ -537,60 +489,6 @@ class Game
     return user if user.class == Symbol
 
     players.find { |p| self[p] == user }
-  end
-
-  # Has this game ended in a forfeit?
-
-  def forfeit?
-    !! forfeit_by
-  end
-
-  # If this game has ended in a forfeit, which player resigned?
-
-  def forfeit_by
-    if sequence.last =~ /^forfeit_by_(\w+)$/
-      $1.intern
-    end
-  end
-
-  # Has this game ended in a draw by the agreement of the players?
-
-  def draw_by_agreement?
-    sequence.last == "draw"
-  end
-
-  # If a draw has been offered, which player offered it?
-
-  def draw_offered_by
-    if sequence.last =~ /draw_offered_by_(\w+)/
-      $1.intern
-    end
-  end
-
-  # Has the given player offered a draw?
-
-  def draw_offered_by?( player )
-    draw_offered_by == player
-  end
-
-  # Has a draw been offered?
-
-  def draw_offered?
-    !! draw_offered_by
-  end
-
-  # Has a player exceeded the time limit?
-
-  def time_exceeded?
-    !! time_exceeded_by
-  end
-
-  # Which player exceeded the time limit?
-
-  def time_exceeded_by
-    if sequence.last =~ /time_exceeded_by_(\w+)/
-      $1.intern
-    end
   end
 
   # Returns a GameResults momento for this Game.
