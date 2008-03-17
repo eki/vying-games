@@ -103,7 +103,19 @@ class History
     end
 
     until j == i
-      positions[j+1] = positions[j].apply( sequence[j] )
+      p = nil
+
+      SPECIAL_MOVES.each do |pattern, mod|
+        if sequence[j] =~ pattern
+          p = positions[j].dup
+          p.extend mod
+          p.special_move = sequence[j]
+        end
+      end
+
+      p ||= positions[j].apply( sequence[j] )
+
+      positions[j+1] = p
       j += 1
     end
 
