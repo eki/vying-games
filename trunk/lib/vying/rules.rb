@@ -554,6 +554,7 @@ module Forfeit
   def final?;                      true;                    end
   def winner?( player );           player != @forfeit_by;   end
   def loser?( player );            player == @forfeit_by;   end
+  def draw?;                       false;                   end
   def moves( player=nil );         [];                      end
   def move?( move, player=nil );   false;                   end
   def has_moves;                   [];                      end
@@ -572,6 +573,7 @@ module TimeExceeded
   def final?;                      true;                    end
   def winner?( player );           player != @exceeded_by;  end
   def loser?( player );            player == @exceeded_by;  end
+  def draw?;                       false;                   end
   def moves( player=nil );         [];                      end
   def move?( move, player=nil );   false;                   end
   def has_moves;                   [];                      end
