@@ -106,6 +106,26 @@ class TestGame < Test::Unit::TestCase
                   g.description )
   end
 
+  def test_forfeit_off_turn
+    g = Game.new TicTacToe
+
+    g[:x] = Human.new "john_doe"
+    g[:o] = Human.new "jane_doe"
+
+    g[:o] << "forfeit"
+
+    assert( ! g[:x].ready? )
+    assert(   g[:o].ready? )
+    assert(   g.has_moves?( :x ) )
+    assert( ! g.has_moves?( :o ) )
+    
+    g.step
+
+    assert( g.final? )
+    assert( g.forfeit? )
+    assert_equal( :o, g.forfeit_by )
+  end
+
   def test_draw_by_agreement_accept
     g = Game.new Checkers
 

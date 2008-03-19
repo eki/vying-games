@@ -405,23 +405,29 @@ class Game
       return self
     end
 
+    players.each do |p|
+      if @user_map[p].ready?
+        position = history.last.censor( p )
+
+        # Handle draw offers
+        if allow_draws_by_agreement? && 
+           @user_map[p].offer_draw?( sequence, position, p )
+          history << "draw_offered_by_#{p}"
+          return self
+        end
+
+        # Ask for forfeit
+        if @user_map[p].forfeit?( sequence, position, p )
+          history << "forfeit_by_#{p}"
+          return self
+        end
+      end
+    end
+
     has_moves.each do |p|
       if players.include?( p )
         if @user_map[p].ready?
           position = history.last.censor( p )
-
-          # Handle draw offers
-          if allow_draws_by_agreement? && 
-             @user_map[p].offer_draw?( sequence, position, p )
-            history << "draw_offered_by_#{p}"
-            return self
-          end
-
-          # Ask for forfeit
-          if @user_map[p].forfeit?( sequence, position, p )
-            history << "forfeit_by_#{p}"
-            return self
-          end
 
           # Ask for an move
           move = @user_map[p].select( sequence, position, p )
