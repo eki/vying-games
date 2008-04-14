@@ -225,7 +225,8 @@ class Game
   # provide the original seed.
 
   def initialize( rules, seed=nil )
-    @rules, @history = rules.to_s, History.new( rules.new( seed ) )
+    @rules = rules.to_s
+    @history = History.new( self.rules.new( seed ) )
     @user_map = {}
     yield self if block_given?
   end
@@ -362,7 +363,7 @@ class Game
   #
 
   def []=( p, u )
-    @user_map[p] = u
+    @user_map[p] = u if players.include?( p )
   end
 
   def users
