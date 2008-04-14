@@ -78,10 +78,11 @@ class History
 
   attr_reader :sequence, :positions
 
-  SPECIAL_MOVES = { /^draw_offered_by_/   => DrawOffered,
-                    /^forfeit_by_/        => Forfeit,
-                    /^time_exceeded_by_/  => TimeExceeded,
-                    /^draw$/              => NegotiatedDraw }
+  SPECIAL_MOVES = { /^draw_offered_by_/     => DrawOffered,
+                    /^undo_requested_by_/   => UndoRequested,
+                    /^forfeit_by_/          => Forfeit,
+                    /^time_exceeded_by_/    => TimeExceeded,
+                    /^draw$/                => NegotiatedDraw }
 
   # Takes the initial position and initializes the sequence and positions
   # arrays.
@@ -406,6 +407,19 @@ class Game
       return self
     end
 
+    # Accept or reject undo request 
+    if requested_by = undo_requested_by
+      accepted = @user_map.all? do |p,u| 
+        position = history.last.censor( p )
+        p == requested_by || u.accept_undo?( sequence, position, p )
+      end
+
+      undo
+      undo if accepted
+
+      return self
+    end
+
     players.each do |p|
       if @user_map[p].ready?
         position = history.last.censor( p )
@@ -414,6 +428,12 @@ class Game
         if allow_draws_by_agreement? && 
            @user_map[p].offer_draw?( sequence, position, p )
           history << "draw_offered_by_#{p}"
+          return self
+        end
+
+        # Handle undo requests 
+        if @user_map[p].request_undo?( sequence, position, p )
+          history << "undo_requested_by_#{p}"
           return self
         end
 

@@ -272,6 +272,53 @@ class TestGame < Test::Unit::TestCase
     assert_equal( move, m )
   end
 
+  def test_undo_by_request
+    g = Game.new TicTacToe
+    g[:x] = Human.new "john_doe"
+    g[:o] = Human.new "jane_doe"
+
+    assert_equal( 0, g.sequence.length )
+    assert_equal( 1, g.history.length )
+
+    move = g.moves.first
+    g << move
+
+    assert_equal( 1, g.sequence.length )
+    assert_equal( 2, g.history.length )
+    assert_equal( move, g.sequence.last )
+
+    g[:x] << "request_undo"
+    g.step
+
+    assert( g.undo_requested? )
+    assert_equal( "undo_requested_by_x", g.sequence.last )
+    assert_equal( :x, g.undo_requested_by )
+    assert( g.undo_requested_by?( :x ) )
+    assert_equal( [:o], g.has_moves )
+
+    g[:o] << "reject_undo"
+    g.step
+
+    assert_equal( 1, g.sequence.length )
+    assert_equal( 2, g.history.length )
+    assert_equal( move, g.sequence.last )
+
+    g[:o] << "request_undo"
+    g.step
+
+    assert( g.undo_requested? )
+    assert_equal( "undo_requested_by_o", g.sequence.last )
+    assert_equal( :o, g.undo_requested_by )
+    assert( g.undo_requested_by?( :o ) )
+    assert_equal( [:x], g.has_moves )
+
+    g[:x] << "accept_undo"
+    g.step
+
+    assert_equal( 0, g.sequence.length )
+    assert_equal( 1, g.history.length )
+  end
+
   def test_human
     u = Human.new
     

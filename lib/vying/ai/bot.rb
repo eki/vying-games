@@ -55,6 +55,24 @@ class Bot < User
     false
   end
 
+  def request_undo?( sequence, position, player )
+    delegate = delegate_for( position )
+    if delegate && delegate.respond_to?( :request_undo? )
+      return delegate.request_undo?( sequence, position, player )
+    end
+
+    false
+  end
+
+  def accept_undo?( sequence, position, player )
+    delegate = delegate_for( position )
+    if delegate && delegate.respond_to?( :accept_undo? )
+      return delegate.accept_undo?( sequence, position, player )
+    end
+
+    false
+  end
+
   def analyze( position, player )
     h = {}
     position.moves.each do |move|
@@ -199,6 +217,15 @@ class Human < Bot
   def accept_draw?( sequence, position, player )
     return   queue.shift if queue.first == "accept_draw"
     return ! queue.shift if queue.first == "reject_draw"
+  end
+
+  def request_undo?( sequence, position, player )
+    queue.shift if queue.first == "request_undo"
+  end
+
+  def accept_undo?( sequence, position, player )
+    return   queue.shift if queue.first == "accept_undo"
+    return ! queue.shift if queue.first == "reject_undo"
   end
 
   def ready?
