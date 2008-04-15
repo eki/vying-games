@@ -85,6 +85,9 @@ class TestGame < Test::Unit::TestCase
     assert( !g.final? )
     assert( !g.draw? )
 
+    assert( g.special_move?( "forfeit_by_x" ) )
+    assert( g.special_move?( "forfeit_by_o" ) )
+
     g[:x] << "forfeit"
     g.step
 
@@ -112,6 +115,9 @@ class TestGame < Test::Unit::TestCase
     g[:x] = Human.new "john_doe"
     g[:o] = Human.new "jane_doe"
 
+    assert( g.special_move?( "forfeit_by_x" ) )
+    assert( g.special_move?( "forfeit_by_o" ) )
+
     g[:o] << "forfeit"
 
     assert( ! g[:x].ready? )
@@ -137,6 +143,9 @@ class TestGame < Test::Unit::TestCase
     assert( !g.final? )
     assert( !g.draw? )
 
+    assert( g.special_move?( "draw_offered_by_red" ) )
+    assert( g.special_move?( "draw_offered_by_white" ) )
+
     g[:red] << "offer_draw"
     g.step
 
@@ -148,6 +157,14 @@ class TestGame < Test::Unit::TestCase
     moves.each do |move|
       assert( ! g.move?( move ) )
     end
+
+    assert( g.special_move?( "accept_draw", :white ) )
+    assert( g.special_move?( "reject_draw", :white ) )
+    assert( ! g.special_move?( "accept_draw", :red ) )
+    assert( ! g.special_move?( "reject_draw", :red ) )
+
+    assert_equal( ["accept_draw", "reject_draw"], 
+                  g.special_moves( :white).sort )
 
     g[:white] << "accept_draw"
     g.step
@@ -185,6 +202,9 @@ class TestGame < Test::Unit::TestCase
     assert( !g.final? )
     assert( !g.draw? )
 
+    assert( g.special_move?( "draw_offered_by_red" ) )
+    assert( g.special_move?( "draw_offered_by_white" ) )
+
     g[:red] << "offer_draw"
     g.step
 
@@ -197,6 +217,14 @@ class TestGame < Test::Unit::TestCase
       assert( ! g.move?( move ) )
     end
 
+    assert( g.special_move?( "accept_draw", :white ) )
+    assert( g.special_move?( "reject_draw", :white ) )
+    assert( ! g.special_move?( "accept_draw", :red ) )
+    assert( ! g.special_move?( "reject_draw", :red ) )
+
+    assert_equal( ["accept_draw", "reject_draw"], 
+                  g.special_moves( :white).sort )
+
     g[:white] << "reject_draw"
     g.step
     
@@ -204,6 +232,9 @@ class TestGame < Test::Unit::TestCase
     assert( ! g.draw_by_agreement? )
 
     assert( ! g.final? )
+
+    assert( ! g.special_move?( "accept_draw" ) )
+    assert( ! g.special_move?( "reject_draw" ) )
 
     moves.each do |move|
       assert( g.move?( move ) )
@@ -217,6 +248,9 @@ class TestGame < Test::Unit::TestCase
     g[:o] = RandomBot.new "randombot"
 
     moves = g.moves
+
+    assert( g.special_move?( "time_exceeded_by_x" ) )
+    assert( g.special_move?( "time_exceeded_by_o" ) )
 
     g << "time_exceeded_by_x"
 
@@ -287,6 +321,9 @@ class TestGame < Test::Unit::TestCase
     assert_equal( 2, g.history.length )
     assert_equal( move, g.sequence.last )
 
+    assert( g.special_move?( "undo_requested_by_x" ) )
+    assert( g.special_move?( "undo_requested_by_o" ) )
+
     g[:x] << "request_undo"
     g.step
 
@@ -295,6 +332,14 @@ class TestGame < Test::Unit::TestCase
     assert_equal( :x, g.undo_requested_by )
     assert( g.undo_requested_by?( :x ) )
     assert_equal( [:o], g.has_moves )
+
+    assert( g.special_move?( "accept_undo", :o ) )
+    assert( g.special_move?( "reject_undo", :o ) )
+    assert( ! g.special_move?( "accept_undo", :x ) )
+    assert( ! g.special_move?( "reject_undo", :x ) )
+
+    assert_equal( ["accept_undo", "reject_undo"],
+                  g.special_moves( :o ).sort )
 
     g[:o] << "reject_undo"
     g.step
@@ -312,8 +357,19 @@ class TestGame < Test::Unit::TestCase
     assert( g.undo_requested_by?( :o ) )
     assert_equal( [:x], g.has_moves )
 
+    assert( g.special_move?( "accept_undo", :x ) )
+    assert( g.special_move?( "reject_undo", :x ) )
+    assert( ! g.special_move?( "accept_undo", :o ) )
+    assert( ! g.special_move?( "reject_undo", :o ) )
+
+    assert_equal( ["accept_undo", "reject_undo"],
+                  g.special_moves( :x ).sort )
+
     g[:x] << "accept_undo"
     g.step
+
+    assert( ! g.special_move?( "accept_undo" ) )
+    assert( ! g.special_move?( "reject_undo" ) )
 
     assert_equal( 0, g.sequence.length )
     assert_equal( 1, g.history.length )

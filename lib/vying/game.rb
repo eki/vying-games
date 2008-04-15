@@ -281,11 +281,16 @@ class Game
 
       return self
 
-    elsif history.special?( move )
+    elsif special_move?( move )
 
-      history << move
+      msym = move.intern
+      if respond_to?( msym )
+        send( msym )
+      else
+        history << move
+      end
+
       return self
-
     end
     raise "'#{move}' not a valid move"
   end
@@ -517,6 +522,94 @@ class Game
 
   def has_moves?( player )
     has_moves.include?( who?( player ) )
+  end
+
+  # Returns a list of special moves (forfeit, offer draw, and the like).
+
+  def special_moves( player=nil )
+    return [] if final?
+
+    if draw_offered?
+      return [] if draw_offered_by == player
+
+      ["accept_draw", "reject_draw"]
+    elsif undo_requested?
+      return [] if undo_requested_by == player
+
+      ["accept_undo", "reject_undo"]
+    else
+      ps = player ? [player] : players
+
+      normal_undo = false
+
+      moves = []
+
+      ps.each do |p|
+        moves << "forfeit_by_#{p}"
+        moves << "draw_offered_by_#{p}" if allow_draws_by_agreement?
+
+        if history.length > 1
+          last = history.last
+          next_to_last = history[history.length - 2]
+          if last.has_moves?( p ) && next_to_last.has_moves?( p )
+            normal_undo = true
+            moves << "undo"
+          else
+            moves << "undo_requested_by_#{p}"
+          end
+        end
+      end
+
+      moves.reject! { |m| m =~ /^undo_requested/ } if normal_undo
+
+      if player.nil?
+        players.each do |p|
+          moves << "time_exceeded_by_#{p}"
+        end
+      end
+
+      moves
+    end
+  end
+
+  # Is the given move a valid special move?
+
+  def special_move?( move, player=nil )
+    special_moves( player ).include?( move )
+  end
+
+  # Who can make special moves?
+
+  def has_special_moves
+    players.select { |p| ! special_moves( p ).empty? }    
+  end
+
+  # Can the given player make a special move?
+
+  def has_special_moves?( player )
+    ! special_moves( player ).empty?
+  end
+
+  def accept_draw
+    if special_move?( "accept_draw" )
+      undo
+      history << "draw"
+    end
+  end
+
+  def reject_draw
+    undo if special_move?( "reject_draw" )
+  end
+
+  def accept_undo
+    if special_move?( "accept_undo" )
+      undo
+      undo
+    end
+  end
+
+  def reject_undo
+    undo if special_move?( "reject_undo" )
   end
 
   # Takes a User and returns which player he/she is.  If given a player
