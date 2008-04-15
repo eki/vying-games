@@ -538,29 +538,27 @@ class Game
 
       ["accept_undo", "reject_undo"]
     else
-      ps = player ? [player] : players
-
       normal_undo = false
-
       moves = []
 
-      ps.each do |p|
-        moves << "forfeit_by_#{p}"
-        moves << "draw_offered_by_#{p}" if allow_draws_by_agreement?
-
+      players.each do |p|
         if history.length > 1
           last = history.last
           next_to_last = history[history.length - 2]
           if last.has_moves?( p ) && next_to_last.has_moves?( p )
             normal_undo = true
-            moves << "undo"
-          else
-            moves << "undo_requested_by_#{p}"
+            moves << "undo"  if player.nil? || p == player
           end
         end
-      end
+     end
 
-      moves.reject! { |m| m =~ /^undo_requested/ } if normal_undo
+      players.each do |p|
+        if player.nil? || p == player
+          moves << "forfeit_by_#{p}"
+          moves << "draw_offered_by_#{p}" if allow_draws_by_agreement?
+          moves << "undo_requested_by_#{p}" unless normal_undo
+        end
+      end
 
       if player.nil?
         players.each do |p|

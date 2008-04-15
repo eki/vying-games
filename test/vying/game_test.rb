@@ -375,6 +375,20 @@ class TestGame < Test::Unit::TestCase
     assert_equal( 1, g.history.length )
   end
 
+  def test_special_moves_undo
+    g = Game.new Connect6
+
+    g << g.moves.first
+    g << g.moves.first
+
+    assert( g.special_move?( "undo" ) )
+    assert( g.special_move?( "undo", :white ) )
+    assert( ! g.special_move?( "undo_requested_by_white" ) )
+    assert( ! g.special_move?( "undo_requested_by_black" ) )
+    assert( ! g.special_move?( "undo_requested_by_white", :white ) )
+    assert( ! g.special_move?( "undo_requested_by_black", :black ) )
+  end
+
   def test_human
     u = Human.new
     
