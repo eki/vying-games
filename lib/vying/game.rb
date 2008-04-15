@@ -554,9 +554,9 @@ class Game
 
       players.each do |p|
         if player.nil? || p == player
+          moves << "undo_requested_by_#{p}" unless normal_undo
           moves << "forfeit_by_#{p}"
           moves << "draw_offered_by_#{p}" if allow_draws_by_agreement?
-          moves << "undo_requested_by_#{p}" unless normal_undo
         end
       end
 
