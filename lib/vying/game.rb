@@ -22,31 +22,33 @@ class GameResults
   # the preferred method for getting a GameResults object.
   
   def self.from_game( game )
-    @rules = game.rules.to_snake_case
-    @seed = game.respond_to?( :seed ) ? game.seed : nil
-    @sequence = game.sequence
+    rules = game.rules.to_snake_case
+    seed = game.respond_to?( :seed ) ? game.seed : nil
+    sequence = game.sequence
 
-    @user_map = {}
-    game.players.each do |p| 
-      @user_map[p] = [game[p].id, game[p].username]
-    end
+    #user_map = {}
+    #game.players.each do |p| 
+    #  user_map[p] = [game[p].id, game[p].username]
+    #end
 
-    @win_lose_draw = {}
+    win_lose_draw = {}
     game.players.each do |p|
-      @win_lose_draw[p] = :winner if game.winner?( p )
-      @win_lose_draw[p] = :loser  if game.loser?( p )
-      @win_lose_draw[p] = :draw   if game.draw?
+      win_lose_draw[p] = :winner if game.winner?( p )
+      win_lose_draw[p] = :loser  if game.loser?( p )
+      win_lose_draw[p] = :draw   if game.draw?
     end
 
-    @scores = {}
+    scores = {}
     if game.has_score?
       game.players.each do |p|
-        @scores[p] = game.score( p )
+        scores[p] = game.score( p )
       end
     end
 
     i = rand( game.history.length )
-    @check = "#{i},#{game.history[i].hash},#{game.history.last.hash}"
+    check = "#{i},#{game.history[i].hash},#{game.history.last.hash}"
+
+    GameResults.new( rules, seed, sequence, win_lose_draw, scores, check )
   end
 
   # Returns the Rules subclass for the Game that this is the GameResults of.
@@ -529,17 +531,18 @@ class Game
   def special_moves( player=nil )
     return [] if final?
 
+    moves = []
+
     if draw_offered?
       return [] if draw_offered_by == player
 
-      ["accept_draw", "reject_draw"]
+      moves << "accept_draw" << "reject_draw"
     elsif undo_requested?
       return [] if undo_requested_by == player
 
-      ["accept_undo", "reject_undo"]
+      moves << "accept_undo" << "reject_undo"
     else
       normal_undo = false
-      moves = []
 
       players.each do |p|
         if history.length > 1
@@ -560,14 +563,16 @@ class Game
         end
       end
 
-      if player.nil?
-        players.each do |p|
-          moves << "time_exceeded_by_#{p}"
-        end
-      end
-
-      moves
     end
+
+    if player.nil?
+      moves << "draw" if allow_draws_by_agreement?
+      players.each do |p|
+        moves << "time_exceeded_by_#{p}"
+      end
+    end
+
+    moves
   end
 
   # Is the given move a valid special move?
