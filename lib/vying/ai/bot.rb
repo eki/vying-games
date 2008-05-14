@@ -5,6 +5,10 @@ require 'vying/rules'
 
 class Bot < User
 
+  def bot?
+    true
+  end
+
   def ready?
     true
   end
