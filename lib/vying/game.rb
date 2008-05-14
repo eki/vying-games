@@ -1,75 +1,6 @@
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
-# GameResults is a memento of a Game.  Whereas Game stores every position
-# as a part of it's history, GameResults stores only the seed and sequence
-# of moves.  GameResults can be used to reconstruct a game by replaying the
-# list of moves.
-
-class GameResults
-  attr_reader :seed, :sequence, :win_lose_draw, :scores, :check
-
-  # Create GameResults by very simply assigning the given values to
-  # their respective properties.  It's more likely that you'll get
-  # a GameResults object by calling Game#results
-
-  def initialize( rules, seed, sequence, win_lose_draw, scores, check )
-    @rules, @seed, @sequence, @win_lose_draw, @scores, @check =
-      rules, seed, sequence, win_lose_draw, scores, check
-  end
-
-  # Create a GameResults object from a Game.  This is used by Game#results,
-  # the preferred method for getting a GameResults object.
-  
-  def self.from_game( game )
-    rules = game.rules.to_snake_case
-    seed = game.respond_to?( :seed ) ? game.seed : nil
-    sequence = game.sequence
-
-    #user_map = {}
-    #game.players.each do |p| 
-    #  user_map[p] = [game[p].id, game[p].username]
-    #end
-
-    win_lose_draw = {}
-    game.players.each do |p|
-      win_lose_draw[p] = :winner if game.winner?( p )
-      win_lose_draw[p] = :loser  if game.loser?( p )
-      win_lose_draw[p] = :draw   if game.draw?
-    end
-
-    scores = {}
-    if game.has_score?
-      game.players.each do |p|
-        scores[p] = game.score( p )
-      end
-    end
-
-    i = rand( game.history.length )
-    check = "#{i},#{game.history[i].hash},#{game.history.last.hash}"
-
-    GameResults.new( rules, seed, sequence, win_lose_draw, scores, check )
-  end
-
-  # Returns the Rules subclass for the Game that this is the GameResults of.
-  # The GameResults @rules instance variable actually stores a string, this
-  # method attempts to turn it into a class via Rules.find.
-
-  def rules
-    Rules.find( @rules )
-  end
-
-  # Checks the GameResults checksum.  If the code replaying the game is
-  # consistent with the code that was used to originally play the game,
-  # then the check's should match.
-
-  def verify
-    i, h1, h2 = check.split( /,/ ).map { |n| n.to_i }
-    game = Game.replay( self )
-    game.history[i].hash == h1 && game.history.last.hash == h2
-  end
-end
-
 #  History component of a Game.  This is the sequence and position cache.
 #  It behaves much like an array but doesn't write out every position when
 #  being serialized (and thus needs to be able to recreate positions based
@@ -220,7 +151,7 @@ end
 #  It is heavily backed by a subclass of Rules.
 
 class Game
-  attr_reader :history
+  attr_reader :history, :id, :time_limit, :updated_at
 
   # Create a game from the given Rules subclass, and an optional seed.  If
   # the game has random elements and a seed is not provided, one will be 
@@ -557,7 +488,8 @@ class Game
 
       players.each do |p|
         if player.nil? || p == player
-          moves << "undo_requested_by_#{p}" unless normal_undo
+          moves << "undo_requested_by_#{p}" unless normal_undo ||
+                                                   sequence.length == 0
           moves << "forfeit_by_#{p}"
           moves << "draw_offered_by_#{p}" if allow_draws_by_agreement?
         end
@@ -626,17 +558,37 @@ class Game
     players.find { |p| self[p] == user }
   end
 
-  # Returns a GameResults momento for this Game.
-
-  def results
-    GameResults.from_game( self )
-  end
-
-  # Creates a new game instance by replaying the a GameResults object.
+  # Creates a new game instance by replaying from a results object.
+  # The results object is a momento, containing only the minimal info
+  # needed to recreate a full Game.  The results object must respond
+  # to #rules, #seed, and #sequence.  It may also define #user( player )
+  # that returns a user object for a player (it may return nil, or a
+  # proxy object that responds to #to_user).  The results object may also
+  # provide #id, #time_limit, and #updated_at.
 
   def Game.replay( results )
     g = Game.new( results.rules, results.seed )
     g << results.sequence
+
+    results.rules.players.each do |p|
+      if results.respond_to?( :user )
+        u = results.user( p )
+        g[p] = u.to_user if u
+      end
+    end
+
+    if results.respond_to?( :id )
+      g.instance_variable_set( "@id", results.id )
+    end
+
+    if results.respond_to?( :time_limit )
+      g.instance_variable_set( "@time_limit", results.time_limit )
+    end
+    
+    if results.respond_to?( :updated_at )
+      g.instance_variable_set( "@updated_at", results.updated_at )
+    end
+    
     g
   end
 
