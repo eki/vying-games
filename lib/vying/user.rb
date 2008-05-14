@@ -18,5 +18,12 @@ class User
     username.hash
   end
 
+  def to_user
+    self
+  end
+
+  def to_s
+    username
+  end
 end
 
