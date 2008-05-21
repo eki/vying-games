@@ -23,6 +23,11 @@ VALUE coords_include( VALUE self, VALUE c ) {
     return Qnil;
   }
 
+  if( RTEST(rb_iv_get( self, "@irregular" )) ) {
+    VALUE coords = rb_iv_get( self, "@coords" ); 
+    return rb_funcall( coords, id_include, 1, c );
+  }
+
   return Qtrue;
 }
 

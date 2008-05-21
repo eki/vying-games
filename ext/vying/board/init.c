@@ -64,6 +64,7 @@ void Init_boardext() {
   id_subscript_assign = rb_intern("[]=");
   id_new = rb_intern("new");
   id_hash = rb_intern("hash");
+  id_include = rb_intern("include?");
   id_n = rb_intern("n");
   id_s = rb_intern("s");
   id_w = rb_intern("w");
