@@ -15,6 +15,8 @@ class YinshBoard < Board
                  :j1,  :j2,  :j3,  :j4,
                  :k1,  :k2,  :k3,  :k4,  :k5, :k6,  :k11].map { |c| Coord[c] }
 
+  DIRECTIONS = [:n, :s, :e, :w, :nw, :se]
+
   def initialize
     @width, @height = 11, 11
     @cells = Array.new( @width * @height, nil )
