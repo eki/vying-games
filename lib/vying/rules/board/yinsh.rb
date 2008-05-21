@@ -34,7 +34,7 @@ class Yinsh < Rules
 
     rings = board.occupied[RING[turn]] || []
 
-    if rings.length < 5 && removed[turn] == 0
+    if rings.length < 5 && removed[RING[turn]] == 0
       a = board.unoccupied.map { |c| c.to_s }
 
     elsif removed_markers.length == 5
@@ -115,19 +115,22 @@ class Yinsh < Rules
 
     elsif coords.length == 1
       rings = board.occupied[RING[turn]] || []
-
-      if rings.length < 5 && removed[turn] == 0  # add a ring to the board
+  
+      # add a ring to the board
+      if rings.length < 5 && removed[RING[turn]] == 0
         board[coords.first] = RING[turn]
         turn( :rotate )
 
-      elsif removed_markers.length == 5          # remove a ring from the board
+      # remove a ring from the board
+      elsif removed_markers.length == 5
         removed[board[coords.first]] += 1
         board[coords.first] = nil
         rows.reject! do |row|
           row.sort == removed_markers.sort
         end
 
-      elsif ! rows.empty?                        # remove a marker
+      # remove a marker
+      elsif ! rows.empty?
         board[coords.first] = nil
         removed_markers << coords.first
 
