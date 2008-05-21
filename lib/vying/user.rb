@@ -7,7 +7,7 @@ class User
   end
 
   def eql?( u )
-    username == u.username
+    u && username == u.username
   end
 
   def ==( u )
