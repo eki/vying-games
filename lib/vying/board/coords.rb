@@ -21,10 +21,10 @@ class Coords
                  :nw => Coord.new( -1, -1 ), :ne => Coord.new( 1, -1 ),
                  :sw => Coord.new( -1, 1 ),  :se => Coord.new( 1, 1 ) }
 
-  def initialize( w, h )
+  def initialize( w, h, omit=[] )
     @width = w
     @height = h
-    @coords = Array.new( w*h ) { |i| Coord.new( i%w, i/w ) }.freeze
+    @coords = (Array.new( w*h ) { |i| Coord.new( i%w, i/w ) } - omit).freeze
   end
 
   def each

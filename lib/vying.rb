@@ -26,6 +26,7 @@ require 'vying/board/amazons'
 require 'vying/board/othello'
 require 'vying/board/connect6'
 require 'vying/board/mancala'
+require 'vying/board/yinsh'
 
 require 'vying/dice'
 
