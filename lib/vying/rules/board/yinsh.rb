@@ -47,7 +47,7 @@ class Yinsh < Rules
         prows = rows.select { |row| row.include?( removed_markers.first ) }
       end
 
-      a = prows.flatten.map { |c| c.to_s }     
+      a = (prows.flatten - removed_markers).map { |c| c.to_s }     
 
     else
       rings.each do |r|
