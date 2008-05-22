@@ -13,7 +13,7 @@ class Coords
     memoize :new
   end
 
-  attr_reader :width, :height, :coords, :irregular
+  attr_reader :width, :height, :coords, :irregular, :omitted
   protected :coords
 
   DIRECTIONS = { :n  => Coord.new( 0, -1 ),  :s  => Coord.new( 0, 1 ),
@@ -25,6 +25,7 @@ class Coords
     @width = w
     @height = h
     @coords = (Array.new( w*h ) { |i| Coord.new( i%w, i/w ) } - omit).freeze
+    @omitted = omit.dup.freeze
     @irregular = ! omit.empty?
   end
 
@@ -41,12 +42,16 @@ class Coords
   end
 
   def _dump( depth=-1 )
-    Marshal.dump( [width, height] )
+    Marshal.dump( [width, height, omitted] )
   end
 
   def self._load( str )
-    width, height = Marshal.load( str )
-    new( width, height )
+    width, height, omitted = Marshal.load( str )
+    if omitted.empty?          # extra care to make sure memoize works
+      new( width, height )
+    else
+      new( width, height, omitted )
+    end
   end
 
   def hash
