@@ -134,7 +134,7 @@ class Yinsh < Rules
         board[coords.first] = nil
         rows.reject! { |row| row.sort == removed_markers.sort }
         removed_markers.clear
-        turn( :rotate )
+        turn( :rotate ) if rows.empty?
 
       # remove a marker
       elsif ! rows.empty?

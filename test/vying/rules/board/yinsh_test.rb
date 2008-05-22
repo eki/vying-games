@@ -113,5 +113,57 @@ class TestYinsh < Test::Unit::TestCase
     assert( g.board[:f5].nil? )
     assert_equal( 1, g.score( :white ) )
   end
+
+  def test_two_rows
+    g = Game.new( Yinsh )
+    b = g.board
+
+    b[:c1, :c2, :c4, :c5] = :white
+    b[:c3] = :WHITE_RING
+
+    b[:e2, :g4, :h5, :i6] = :white
+    b[:f3] = :black
+
+    b[:b7, :c8, :d9] = :WHITE_RING
+    b[:f10, :g10, :h10, :i10, :j10] = :BLACK_RING
+
+    g.removed[:WHITE_RING] = 1
+
+    assert_equal( :white, g.turn )
+    assert( g.moves.include?( "c3g3" ) )
+
+    g << "c3g3"
+
+    assert_equal( :white, g.turn )
+    assert_equal( 2, g.rows.length )
+
+    g << ["c1", "c2", "c3", "c4", "c5"]
+
+    assert_equal( :white, g.turn )
+    assert_equal( 2, g.rows.length )
+    assert_equal( ["b7", "c8", "d9", "g3"].sort, g.moves.sort )
+
+    g << "b7"
+
+    assert_equal( :white, g.turn )
+    assert_equal( 1, g.rows.length )
+
+    g << ["e2", "f3", "g4", "h5", "i6"]
+    
+    assert_equal( :white, g.turn )
+    assert_equal( 1, g.rows.length )
+    assert_equal( ["c8", "d9", "g3"].sort, g.moves.sort )
+
+    g << "c8"
+
+    assert( g.final? )
+    assert( g.winner?( :white ) )
+    assert( g.loser?( :black ) )
+    assert( ! g.winner?( :black ) )
+    assert( ! g.loser?( :white ) )
+    assert( ! g.draw? )
+    assert_equal( 3, g.score( :white ) )
+  end
+
 end
 
