@@ -41,7 +41,11 @@ class Yinsh < Rules
       a = rings.map { |c| c.to_s }
 
     elsif ! rows.empty?
-      prows = rows.select { |row| board[row.first] == turn }
+      if removed_markers.empty?
+        prows = rows.select { |row| board[row.first] == turn }
+      else
+        prows = rows.select { |row| row.include?( removed_markers.first ) }
+      end
 
       a = prows.flatten.map { |c| c.to_s }     
 
@@ -80,18 +84,21 @@ class Yinsh < Rules
       board[coords.first] = turn
 
       # flip markers
+      all = [coords.first]
       d = coords.first.direction_to( coords.last )
       c = coords.first
       until (c = board.coords.next( c, d )) == coords.last
+        all << c
         p = board[c]
         if p == :white || p == :black
           board[c] = p == :white ? :black : :white
         end
       end
 
+      all << coords.last
+
       # check for five-in-a-row
-      c = coords.first
-      until (c = board.coords.next( c, d )) == coords.last
+      all.each do |c|
         p = board[c]
 
         if p == :white || p == :black
@@ -111,7 +118,7 @@ class Yinsh < Rules
         end
       end
 
-      turn( :rotate ) if rows.empty?
+      turn( :rotate ) unless rows.any? { |row| board[row.first] == turn }
 
     elsif coords.length == 1
       rings = board.occupied[RING[turn]] || []
@@ -125,9 +132,9 @@ class Yinsh < Rules
       elsif removed_markers.length == 5
         removed[board[coords.first]] += 1
         board[coords.first] = nil
-        rows.reject! do |row|
-          row.sort == removed_markers.sort
-        end
+        rows.reject! { |row| row.sort == removed_markers.sort }
+        removed_markers.clear
+        turn( :rotate )
 
       # remove a marker
       elsif ! rows.empty?
@@ -145,11 +152,14 @@ class Yinsh < Rules
           if row.include?( removed_markers.first )
             row.reject! do |c|
               removed_markers.any? do |rm|
-                (c.x - rm.x).abs >= 5 || (c.y - rm.y).abs >= 5
+                (c.x - rm.x).abs >= 5 || (c.y - rm.y).abs >= 5 
               end
             end
           end
         end
+
+        # reject empty rows
+        rows.reject! { |row| row.empty? }
 
       end
     
@@ -160,15 +170,23 @@ class Yinsh < Rules
   end
 
   def final?
-    players.any? { |p| score( p ) == 3 }
+    players.any? { |p| score( p ) == 3 } || board.unoccupied.empty?
   end
 
   def winner?( player )
-    score( player ) == 3
+    opp = player == :white ? :black : :white
+    score( player ) == 3 || 
+    (board.unoccupied.empty? && score( player ) > score( opp ))
   end
 
   def loser?( player )
-    score( player ) == 3
+    opp = player == :white ? :black : :white
+    score( player ) != 3 ||
+    (board.unoccupied.empty? && score( player ) < score( opp ))
+  end
+
+  def draw?
+    board.unoccupied.empty? && score( :white ) == score( :black )
   end
 
   def score( player )
