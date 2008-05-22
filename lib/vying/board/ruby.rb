@@ -106,6 +106,10 @@ class Coords
       return nil
     end
 
+    if irregular
+      return coords.include?( c )
+    end
+
     true
   end
 
