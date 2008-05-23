@@ -190,22 +190,10 @@ class Yinsh < Rules
           ! removed_markers.all? { |c| row.include?( c ) }
         end
 
-        # reject individual markers that can no longer complete a 5-in-a-row
-        rows.each do |row|
-          if row.include?( removed_markers.first )
-            row.reject! do |c|
-              removed_markers.any? do |rm|
-                (c.x - rm.x).abs >= 5 || (c.y - rm.y).abs >= 5 
-              end
-            end
-          end
-        end
-
         # reject empty rows
         rows.reject! { |row| row.empty? }
 
       end
-    
 
     end
 
