@@ -146,6 +146,19 @@ class Yinsh < Rules
         end
       end
 
+      # separate overlines
+      rows.each do |row|
+        if row.length > 5
+          row.sort!
+          extra, i = row.length - 5, 0
+          until i == extra
+            rows << row[i,5]
+            i += 1
+          end
+          row.slice!( 0, extra )
+        end
+      end
+
       @completed_row = turn unless rows.empty?
       turn( :rotate )       unless rows.any? { |row| board[row.first] == turn }
 
