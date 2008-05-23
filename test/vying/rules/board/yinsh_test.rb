@@ -187,7 +187,7 @@ class TestYinsh < Test::Unit::TestCase
 
     assert_equal( :white, g.turn )
     assert_equal( 2, g.rows.length )
-    assert( 1, g.rows.select { |row| row.include?( Coord[:c1] ) } )
+    assert_equal( 1, g.rows.select { |row| row.include?( Coord[:c1] ) }.length )
 
     g << ["c1", "c2", "c3", "c4", "c5"]
 
@@ -215,6 +215,35 @@ class TestYinsh < Test::Unit::TestCase
     assert( ! g.loser?( :white ) )
     assert( ! g.draw? )
     assert_equal( 3, g.score( :white ) )
+  end
+
+  def test_complete_opponent_row
+    g = Game.new( Yinsh )
+    b = g.board
+
+    b[:c1, :c2, :c4, :c5, :c6] = :black
+    b[:c3] = :white
+    b[:b3] = :WHITE_RING
+
+    b[:b7, :c8, :d9, :e10] = :WHITE_RING
+    b[:f10, :g10, :h10, :i10, :j10] = :BLACK_RING
+
+    assert_equal( :white, g.turn )
+    assert( g.moves.include?( "b3d3" ) )
+
+    g << "b3d3"
+
+    assert_equal( :black, g.turn )
+    
+    g << ["c1", "c2", "c3", "c4", "c5"]
+
+    assert_equal( :black, g.turn )
+    assert_equal( ["f10", "g10", "h10", "i10", "j10"].sort, g.moves.sort )
+
+    g << "f10"
+
+    assert_equal( :black, g.turn )  # still black's turn because he only 
+                                    # removed a row created by white
   end
 
 end

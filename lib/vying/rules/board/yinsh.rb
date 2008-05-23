@@ -14,7 +14,7 @@ class Yinsh < Rules
 
   players [:white, :black]
 
-  attr_reader :board, :removed, :rows, :removed_markers
+  attr_reader :board, :removed, :rows, :removed_markers, :completed_row
 
   RING = { :white => :WHITE_RING, :black => :BLACK_RING }
 
@@ -25,6 +25,7 @@ class Yinsh < Rules
     @removed = { :WHITE_RING => 0, :BLACK_RING => 0 }
     @rows = []
     @removed_markers = []
+    @completed_row = nil
   end
 
   def moves( player=nil )
@@ -145,7 +146,8 @@ class Yinsh < Rules
         end
       end
 
-      turn( :rotate ) unless rows.any? { |row| board[row.first] == turn }
+      @completed_row = turn unless rows.empty?
+      turn( :rotate )       unless rows.any? { |row| board[row.first] == turn }
 
     elsif coords.length == 1
       rings = board.occupied[RING[turn]] || []
@@ -161,7 +163,8 @@ class Yinsh < Rules
         board[coords.first] = nil
         rows.reject! { |row| row.sort == removed_markers.sort }
         removed_markers.clear
-        turn( :rotate ) if rows.empty?
+        turn( :rotate ) if turn == completed_row && rows.empty?
+        @completed_row = nil
 
       # remove a marker
       elsif ! rows.empty?
