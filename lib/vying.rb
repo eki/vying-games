@@ -23,9 +23,10 @@ require 'yaml'
 
 require 'vying/board/board'
 require 'vying/board/amazons'
-require 'vying/board/othello'
 require 'vying/board/connect6'
 require 'vying/board/mancala'
+require 'vying/board/othello'
+require 'vying/board/y'
 require 'vying/board/yinsh'
 
 require 'vying/dice'
