@@ -3,6 +3,33 @@
 
 require 'vying/rules'
 
+class YGroup
+  attr_reader :coords, :sides, :size
+
+  def initialize( size, c=nil )
+    @coords, @sides, @size = [], 0, size
+    self << c if c
+  end
+
+  def winning?
+    sides == 7
+  end
+
+  def |( group )
+    g = YGroup.new( size )
+    g.instance_variable_set( "@coords", coords | group.coords )
+    g.instance_variable_set( "@sides",  sides  | group.sides )
+    g
+  end
+
+  def <<( c )
+    coords << c
+    @sides |= 1  if c.x == 0
+    @sides |= 2  if c.y == 0
+    @sides |= 4  if c.x + c.y == size - 1
+  end
+end
+
 # Y
 #
 # For detailed rules see:  http://vying.org/games/y
@@ -37,8 +64,9 @@ class Y < Rules
     new_groups = []
     YBoard::DIRECTIONS.each do |d|
       n = board.coords.next( coord, d )
+
       groups[turn].delete_if do |g|
-        if g.include?( n )
+        if g.coords.include?( n )
           g << coord
           new_groups << g
         end
@@ -46,9 +74,10 @@ class Y < Rules
     end
 
     if new_groups.empty?
-      groups[turn] << [coord]
+      groups[turn] << YGroup.new( board.width, coord )
     else
-      groups[turn] += new_groups.inject( [] ) { |m,a| m | a }
+      g = YGroup.new( board.width )
+      groups[turn] << new_groups.inject( g ) { |m,a| m | a }
     end
 
     turn( :rotate )
@@ -61,17 +90,7 @@ class Y < Rules
   end
 
   def winner?( player )
-    groups[player].each do |group|
-      sides = 0
-      group.each do |c|
-        sides |= 1  if c.x == 0
-        sides |= 2  if c.y == 0
-        sides |= 4  if c.x + c.y == board.length - 1
-        return true if sides == 7
-      end
-    end
-
-    false
+    groups[player].any? { |group| group.winning? }
   end
 
   def loser?( player )
