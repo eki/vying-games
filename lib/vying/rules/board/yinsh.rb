@@ -118,6 +118,33 @@ class Yinsh < Rules
         end
       end
 
+      # handle butted overlines
+      if rows.length > 1
+        rows.each do |row|
+          if row.length > 5   # overline
+            row.sort!
+
+            extra, i = row.length - 5, 0 
+            until i == extra
+              c = row[i]
+              if rows.any? { |r2| r2.length == 5 && r2.include?( c ) }
+                row.slice!( 0, i+1 )
+                break
+              end
+
+              c = row[-i]
+              if rows.any? { |r2| r2.length == 5 && r2.include?( c ) }
+                row.slice!( row.length - 1 - i, i+1 )
+                break
+              end
+
+              i += 1
+            end
+
+          end
+        end
+      end
+
       turn( :rotate ) unless rows.any? { |row| board[row.first] == turn }
 
     elsif coords.length == 1
