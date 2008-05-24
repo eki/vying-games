@@ -649,3 +649,8 @@ module UndoRequested
   def has_moves;                     players - [@requested_by]; end
 end
 
+module Swapped
+  def special_move=( special_move )
+  end
+end
+

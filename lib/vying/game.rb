@@ -15,7 +15,8 @@ class History
                     /^undo_requested_by_/   => UndoRequested,
                     /^forfeit_by_/          => Forfeit,
                     /^time_exceeded_by_/    => TimeExceeded,
-                    /^draw$/                => NegotiatedDraw }
+                    /^draw$/                => NegotiatedDraw,
+                    /^swap$/                => Swapped }
 
   # Takes the initial position and initializes the sequence and positions
   # arrays.
@@ -534,8 +535,7 @@ class Game
       self[players.first], self[players.last] = 
         self[players.last], self[players.first]
 
-      history.sequence  << "swap"
-      history.positions << history.positions.last.dup
+      history << "swap"
     end
   end
 
