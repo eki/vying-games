@@ -464,6 +464,10 @@ class Game
 
     moves = []
 
+    if pie_rule? && sequence.length == 1 && (player.nil? || player == turn)
+      moves << "swap"
+    end
+
     if draw_offered?
       return [] if draw_offered_by == player
 
@@ -523,6 +527,16 @@ class Game
 
   def has_special_moves?( player )
     ! special_moves( player ).empty?
+  end
+
+  def swap
+    if special_move?( "swap" )
+      self[players.first], self[players.last] = 
+        self[players.last], self[players.first]
+
+      history.sequence  << "swap"
+      history.positions << history.positions.last.dup
+    end
   end
 
   def accept_draw

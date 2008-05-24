@@ -11,6 +11,10 @@ class YGroup
     self << c if c
   end
 
+  def initialize_copy( other )
+    @coords = other.coords.dup
+  end
+
   def winning?
     sides == 7
   end
@@ -28,6 +32,10 @@ class YGroup
     @sides |= 2  if c.y == 0
     @sides |= 4  if c.x + c.y == size - 1
   end
+
+  def ==( o )
+    o && coords == o.coords
+  end
 end
 
 # Y
@@ -38,6 +46,8 @@ class Y < Rules
 
   name    "Y"
   version "0.0.1"
+
+  pie_rule
 
   players [:blue, :red]
 
