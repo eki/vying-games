@@ -41,6 +41,10 @@ class Coords
     coords
   end
 
+  def length
+    coords.length
+  end
+
   def _dump( depth=-1 )
     Marshal.dump( [width, height, omitted] )
   end
