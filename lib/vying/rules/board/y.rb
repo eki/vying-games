@@ -4,10 +4,10 @@
 require 'vying/rules'
 
 class YGroup
-  attr_reader :coords, :sides, :size
+  attr_reader :coords, :side_map, :size
 
   def initialize( size, c=nil )
-    @coords, @sides, @size = [], 0, size
+    @coords, @side_map, @size = [], 0, size
     self << c if c
   end
 
@@ -16,21 +16,25 @@ class YGroup
   end
 
   def winning?
-    sides == 7
+    side_map == 7
+  end
+
+  def sides
+    (side_map & 1) + ((side_map >> 1) & 1) + ((side_map >> 2) & 1)
   end
 
   def |( group )
     g = YGroup.new( size )
-    g.instance_variable_set( "@coords", coords | group.coords )
-    g.instance_variable_set( "@sides",  sides  | group.sides )
+    g.instance_variable_set( "@coords",    coords    | group.coords )
+    g.instance_variable_set( "@side_map",  side_map  | group.side_map )
     g
   end
 
   def <<( c )
     coords << c
-    @sides |= 1  if c.x == 0
-    @sides |= 2  if c.y == 0
-    @sides |= 4  if c.x + c.y == size - 1
+    @side_map |= 1  if c.x == 0
+    @side_map |= 2  if c.y == 0
+    @side_map |= 4  if c.x + c.y == size - 1
   end
 
   def ==( o )
