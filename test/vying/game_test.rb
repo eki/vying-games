@@ -447,5 +447,28 @@ class TestGame < Test::Unit::TestCase
     assert_equal( g.score( :white ), g.score( g[:white] ) )
   end
 
+  def test_pie_rule
+    g = Game.new Y
+    g[:blue] = Human.new "john_doe"
+    g[:red]  = Human.new "jane_doe"
+
+
+    assert( ! g.special_move?( "swap" ) )
+
+    g << g.moves.first
+
+    assert( g.special_move?( "swap" ) )
+    assert( g.special_move?( "swap", :red ) )
+    assert( ! g.special_move?( "swap", :blue ) )
+
+    g << "swap"
+
+    assert( ! g.special_move?( "swap" ) )
+    assert_equal( g.history[1], g.history.last )
+    assert_equal( "swap", g.sequence.last )
+    assert_equal( Human.new( "jane_doe" ), g[:blue] )
+    assert_equal( Human.new( "john_doe" ), g[:red] )
+  end
+
 end
 

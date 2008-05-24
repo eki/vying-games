@@ -203,8 +203,8 @@ class Rules
   #     allow_draws_by_agreement
   #   end
   #
-  # This value can later be retrieved by subsequent calls to
-  # #allow_draws_by_agreement or info[:allows_draws_by_agreement].
+  # This value can later be retrieved by calling
+  # #allow_draws_by_agreement? or info[:allows_draws_by_agreement].
 
   def self.allow_draws_by_agreement
     info[:allow_draws_by_agreement] = true
@@ -214,6 +214,27 @@ class Rules
 
   def allow_draws_by_agreement?
     info[:allow_draws_by_agreement]
+  end
+
+  # Does the game defined by these rules allow use of the pie rule?  The
+  # pie rule allows the second player to swap sides after the first move
+  # is played.
+  #
+  #   class BlahRules < Rules
+  #     pie_rule
+  #   end
+  #
+  # This value can later be retrieved by calling
+  # #pie_rule? or info[:pie_rule].
+
+  def self.pie_rule
+    info[:pie_rule] = true
+  end
+
+  # Returns whether or not this game uses the pie rule.
+
+  def pie_rule?
+    info[:pie_rule]
   end
 
   # Indicates that an instance variable should be ignored (for purposes of
