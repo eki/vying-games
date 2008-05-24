@@ -16,10 +16,6 @@ class HavannahGroup
     @coords = other.coords.dup
   end
 
-  def winning?
-    ring? || sides >= 3 || corners >= 2
-  end
-
   def sides
     (0...6).inject( 0 ) { |n,i| n + ((side_map >> i) & 1) }
   end
@@ -28,8 +24,20 @@ class HavannahGroup
     (0...6).inject( 0 ) { |n,i| n + ((side_map >> i) & 1) }
   end
 
+  def fork?
+    sides >= 3
+  end
+
+  def bridge?
+    corners > 2
+  end
+
   def ring?
     @ring
+  end
+
+  def winning?
+    ring? || bridge? || fork?
   end
 
   def |( group )
