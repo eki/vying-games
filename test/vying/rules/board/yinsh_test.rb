@@ -314,5 +314,27 @@ class TestYinsh < Test::Unit::TestCase
     assert_equal( 3, g.score( :white ) )
   end
 
+  def test_out_of_markers
+    g = play_sequence ["b1", "c1", "d1", "e1", 
+                       "a2", "b2", "c2", "d2", "e2", "f2", 
+                       "a2a3", "b2b3", "c2c3", "d2d3", "e2e3", "f2f3", 
+                       "a3a4", "e1g3", "c3c4", "b3b4", "e3e4", "c1f4", "a4a5", 
+                       "d3d4", "c4c5", "f3g4", "e4e5", "g3g2", "b1f5", "b4b5", 
+                       "a5b6", "f4g5", "c5c6", "d4d5", "e5e6", "g4h4", "d1h5", 
+                       "g2h3", "f5f6", "g5g6", "b6b7", "d5d6", "c6c7", "b5d7", 
+                       "e6e7", "h4i4", "h5h6", "g6g7", "f6f7", "d7d8", "b7c8", 
+                       "i4i5", "e7e8", "h3j5", "h6h7", "d6i6", "f7f8", "g7g8", 
+                       "c8d9", "d8e9", "d8", "d7", "d6", "d5", "d4", "i5", 
+                       "c7d7", "j5j6", "e8d8", "i6i5", "h7h8", "g8g9"]
+
+    assert_equal( 0, g.markers_remaining )
+
+    assert( !g.draw? )
+    assert( g.winner?( :black ) )
+    assert( !g.loser?( :black ) )
+    assert( !g.winner?( :white ) )
+    assert( g.loser?( :white ) )
+  end
+
 end
 

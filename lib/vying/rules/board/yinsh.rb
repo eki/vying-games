@@ -29,7 +29,8 @@ class Yinsh < Rules
   end
 
   def moves( player=nil )
-    return []          unless player.nil? || has_moves.include?( player )
+    return []  unless player.nil? || has_moves.include?( player )
+    return []  if final?
 
     a = []
 
@@ -201,23 +202,24 @@ class Yinsh < Rules
   end
 
   def final?
-    players.any? { |p| score( p ) == 3 } || board.unoccupied.empty?
+    players.any? { |p| score( p ) == 3 } || markers_remaining == 0
   end
 
   def winner?( player )
     opp = player == :white ? :black : :white
     score( player ) == 3 || 
-    (board.unoccupied.empty? && score( player ) > score( opp ))
+    (markers_remaining == 0 && score( player ) > score( opp ))
   end
 
   def loser?( player )
     opp = player == :white ? :black : :white
-    score( player ) != 3 ||
-    (board.unoccupied.empty? && score( player ) < score( opp ))
+    sp, so = score( player ), score( opp )
+
+    markers_remaining == 0 ? sp < so : sp != 3
   end
 
   def draw?
-    board.unoccupied.empty? && score( :white ) == score( :black )
+    markers_remaining == 0 && score( :white ) == score( :black )
   end
 
   def score( player )
@@ -226,6 +228,10 @@ class Yinsh < Rules
 
   def hash
     [board,removed,rows,removed_markers,turn].hash
+  end
+
+  def markers_remaining
+    51 - board.count( :white ) - board.count( :black )
   end
 end
 
