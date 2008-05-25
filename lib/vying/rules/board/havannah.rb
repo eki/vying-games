@@ -21,7 +21,7 @@ class HavannahGroup
   end
 
   def corners
-    (0...6).inject( 0 ) { |n,i| n + ((side_map >> i) & 1) }
+    (0...6).inject( 0 ) { |n,i| n + ((corner_map >> i) & 1) }
   end
 
   def fork?
@@ -29,7 +29,7 @@ class HavannahGroup
   end
 
   def bridge?
-    corners > 2
+    corners >= 2
   end
 
   def ring?
@@ -54,28 +54,64 @@ class HavannahGroup
 
     s1, s12 = size - 1, (size - 1) * 2
 
-    case c
-      when c.x == 0         && c.y == 0    then @corner_map |=  1
-      when c.x == 0         && c.y == s1   then @corner_map |=  2
-      when c.x == s1        && c.y == 0    then @corner_map |=  4
-      when c.x == s12       && c.y == s1   then @corner_map |=  8
-      when c.x == s1        && c.y == s12  then @corner_map |= 16
-      when c.x == s12       && c.y == s12  then @corner_map |= 32
+       if c.x == 0         && c.y == 0    then @corner_map |=  1
+    elsif c.x == 0         && c.y == s1   then @corner_map |=  2
+    elsif c.x == s1        && c.y == 0    then @corner_map |=  4
+    elsif c.x == s12       && c.y == s1   then @corner_map |=  8
+    elsif c.x == s1        && c.y == s12  then @corner_map |= 16
+    elsif c.x == s12       && c.y == s12  then @corner_map |= 32
 
-      when c.x == 0                        then @side_map   |=  1
-      when                     c.y == 0    then @side_map   |=  2
-      when c.x == s12                      then @side_map   |=  4
-      when                     c.y == s12  then @side_map   |=  8
-      when c.x - c.y == s12                then @side_map   |= 16
-      when c.y - c.x == s12                then @side_map   |= 32
+    elsif c.x == 0                        then @side_map   |=  1
+    elsif                     c.y == 0    then @side_map   |=  2
+    elsif c.x == s12                      then @side_map   |=  4
+    elsif                     c.y == s12  then @side_map   |=  8
+    elsif c.x - c.y == s1                 then @side_map   |= 16
+    elsif c.y - c.x == s1                 then @side_map   |= 32; end
+
+    # ring detection
+
+    ns = HexHexBoard::DIRECTIONS.map { |d| c + Coords::DIRECTIONS[d] }
+    ns.reject! do |nc| 
+      nc.x < 0          || nc.y < 0   || 
+      nc.x > s12        || nc.y > s12 ||
+      nc.x - nc.y > s12 || nc.y - nc.x > s12
     end
 
+    ms = ns.select { |nc| coords.include?( nc ) }
+    return self unless ms.length >= 2
 
-    @side_map |= 1  if c.x == 0
-    @side_map |= 2  if c.y == 0
-    @side_map |= 4  if c.x + c.y == size - 1
+    es = ns - ms
 
-    # add ring detection
+    es.each do |sc|
+      check, marked, found = [sc], [], true
+
+      until check.empty?
+        nc = check.pop
+        marked << nc
+
+        if nc == sc || ! coords.include?( nc )
+          nss = HexHexBoard::DIRECTIONS.map { |d| nc + Coords::DIRECTIONS[d] }
+          nss.each do |nnc|
+            check << nnc unless marked.include?( nnc ) || coords.include?( nnc )
+          end
+        end
+
+        if nc.x == 0          || nc.y == 0   || 
+           nc.x == s12        || nc.y == s12 ||
+           nc.x - nc.y == s12 || nc.y - nc.x == s12
+
+          found = false
+          break
+        end
+      end
+
+      if found
+        @ring = true
+        break
+      end     
+    end
+
+    self
   end
 
   def ==( o )
@@ -106,7 +142,8 @@ class Havannah < Rules
   end
 
   def moves( player=nil )
-    return []          unless player.nil? || has_moves.include?( player )
+    return []  unless player.nil? || has_moves.include?( player )
+    return []  if final?
 
     board.unoccupied
   end
@@ -129,9 +166,9 @@ class Havannah < Rules
     end
 
     if new_groups.empty?
-      groups[turn] << HavannahGroup.new( board.width, coord )
+      groups[turn] << HavannahGroup.new( board.length, coord )
     else
-      g = HavannahGroup.new( board.width )
+      g = HavannahGroup.new( board.length )
       groups[turn] << new_groups.inject( g ) { |m,a| m | a }
     end
 
