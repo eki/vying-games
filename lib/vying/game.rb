@@ -270,15 +270,6 @@ class Game
     [history.positions.pop, history.sequence.pop]
   end
 
-  # Accepts a hash mapping players to users.  The players should match up to
-  # the players returned by #players.  The users should be an instance
-  # of User or one of it's subclasses, but should implement the AI::Bot 
-  # interface if you intend to use Game#step or Game#play.
-
-  def register_users( h )
-    @user_map.merge!( h )
-  end
-
   # Get the User playing as the given player.
   #
   # Example:
@@ -315,7 +306,7 @@ class Game
   def switch_sides
     if players.length == 2
       ps = players
-      @user_map[ps[0]], @user_map[ps[1]] = @user_map[ps[1]], @user_map[ps[0]]
+      self[ps[0]], self[ps[1]] = self[ps[1]], self[ps[0]]
     end
     self
   end
@@ -335,9 +326,9 @@ class Game
 
     # Accept or reject offered draw
     if allow_draws_by_agreement? && offered_by = draw_offered_by
-      accepted = @user_map.all? do |p,u| 
+      accepted = players.all? do |p| 
         position = history.last.censor( p )
-        p == offered_by || u.accept_draw?( sequence, position, p )
+        p == offered_by || self[p].accept_draw?( sequence, position, p )
       end
 
       undo
@@ -348,9 +339,9 @@ class Game
 
     # Accept or reject undo request 
     if requested_by = undo_requested_by
-      accepted = @user_map.all? do |p,u| 
+      accepted = players.all? do |p| 
         position = history.last.censor( p )
-        p == requested_by || u.accept_undo?( sequence, position, p )
+        p == requested_by || self[p].accept_undo?( sequence, position, p )
       end
 
       undo
@@ -360,24 +351,24 @@ class Game
     end
 
     players.each do |p|
-      if @user_map[p].ready?
+      if self[p].ready?
         position = history.last.censor( p )
 
         # Handle draw offers
         if allow_draws_by_agreement? && 
-           @user_map[p].offer_draw?( sequence, position, p )
+           self[p].offer_draw?( sequence, position, p )
           history << "draw_offered_by_#{p}"
           return self
         end
 
         # Handle undo requests 
-        if @user_map[p].request_undo?( sequence, position, p )
+        if self[p].request_undo?( sequence, position, p )
           history << "undo_requested_by_#{p}"
           return self
         end
 
         # Ask for forfeit
-        if @user_map[p].forfeit?( sequence, position, p )
+        if self[p].forfeit?( sequence, position, p )
           history << "forfeit_by_#{p}"
           return self
         end
@@ -386,15 +377,15 @@ class Game
 
     has_moves.each do |p|
       if players.include?( p )
-        if @user_map[p].ready?
+        if self[p].ready?
           position = history.last.censor( p )
 
           # Ask for an move
-          move = @user_map[p].select( sequence, position, p )
+          move = self[p].select( sequence, position, p )
           if move?( move, p )
             self << move 
           else
-            raise "#{@user_map[p].username} attempted invalid move: #{move}"
+            raise "#{self[p].username} attempted invalid move: #{move}"
           end
         end
       elsif p == :random
@@ -631,7 +622,7 @@ class Game
   def description
     if final?
       if draw?
-        s = rules.players.map { |p| "#{@user_map[p]} (#{p})" }.join( " and " )
+        s = rules.players.map { |p| "#{self[p]} (#{p})" }.join( " and " )
         s += " played to a draw"
         s += " (by agreement)" if draw_by_agreement?
         s
@@ -640,8 +631,8 @@ class Game
         winners = players.select { |p| winner?( p ) }
         losers  = players.select { |p| loser?( p ) }
 
-        ws = winners.map { |p| "#{@user_map[p]} (#{p})" }.join( " and " )
-        ls = losers.map  { |p| "#{@user_map[p]} (#{p})" }.join( " and " )
+        ws = winners.map { |p| "#{self[p]} (#{p})" }.join( " and " )
+        ls = losers.map  { |p| "#{self[p]} (#{p})" }.join( " and " )
 
         s = "#{ws} defeated #{ls}"
 
@@ -655,7 +646,7 @@ class Game
         s
       end
     else
-      s = rules.players.map { |p| "#{@user_map[p]} (#{p})" }.join( " vs " )
+      s = rules.players.map { |p| "#{self[p]} (#{p})" }.join( " vs " )
 
       if has_score?
         s = "#{s} (#{rules.players.map { |p| score( p ) }.join( '-' )})"
