@@ -13,6 +13,8 @@ class Oware < Rules
 
   score_determines_outcome
 
+  allow_draws_by_agreement
+
   no_cycles
 
   attr_reader :board, :scoring_pits, :annotation
