@@ -13,7 +13,9 @@ class Hexxagon < Rules
   name    "Hexxagon"
   version "0.5.0"
 
-  players [:red, :blue]
+  players [:red, :blue, :white]
+
+  options :number_of_players => 2
 
   random
 
@@ -24,12 +26,26 @@ class Hexxagon < Rules
     super
 
     @board = HexHexBoard.new( 5 )
-    @board[:a1, :i5, :e9] = :red
-    @board[:e1, :a5, :i9] = :blue
+
+    if @options[:number_of_players] == 2
+      @board[:a1, :i5, :e9] = :red
+      @board[:e1, :a5, :i9] = :blue
+    else
+      @board[:a5, :i5] = :red
+      @board[:a1, :i9] = :blue
+      @board[:e1, :e9] = :white
+    end
 
     @block_pattern = set_rand_blocks
 
     @moves_cache = :ns
+  end
+
+  def validate( options )
+    super
+    np = options[:number_of_players].to_i
+    raise "number_of_players can only be 2 or 3 for #{name}" if np < 2 || np > 3
+    true
   end
 
   def moves( player=nil )
@@ -38,8 +54,6 @@ class Hexxagon < Rules
     return moves_cache if moves_cache != :ns
 
     p   = turn
-    opp = (p == :red) ? :blue : :red
-
     found = []
 
     # Adjacent moves
@@ -63,7 +77,6 @@ class Hexxagon < Rules
 
   def apply!( move )
     coords, p = move.to_coords, turn
-    opp = (p == :red) ? :blue : :red
 
     if board.ring( coords.first, 1 ).include?( coords.last )
       board[coords.last] = turn
@@ -72,7 +85,7 @@ class Hexxagon < Rules
     end
 
     board.coords.neighbors( coords.last, HexHexBoard::DIRECTIONS ).each do |c|
-      board[c] = turn if board[c] == opp
+      board[c] = turn unless board[c].nil? || board[c] == turn
     end
 
     turn( :rotate )
@@ -89,17 +102,16 @@ class Hexxagon < Rules
   end
 
   def winner?( player )
-    opp = player == :red ? :blue : :red
-    board.count( player ) > board.count( opp )
+    scores = players.map { |p| score( p ) }
+    scores.uniq.length > 1 && score( player ) == scores.max
   end
 
   def loser?( player )
-    opp = player == :red ? :blue : :red
-    board.count( player ) < board.count( opp )
+    score( player ) != players.map { |p| score( p ) }.max
   end
 
   def draw?
-    board.count( :blue ) == board.count( :red )
+    players.map { |p| score( p ) }.uniq.length == 1
   end
 
   def score( player )

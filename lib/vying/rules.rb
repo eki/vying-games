@@ -183,8 +183,8 @@ class Rules
 
     n = options[:number_of_players] || players.length
     n = n.to_i
-   
-    @players = players[0..n].dup.freeze
+
+    @players = players[0...n].dup.freeze
     @turn = @players.dup
   end
 
