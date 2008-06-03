@@ -258,6 +258,31 @@ class Rules
     info[:allow_draws_by_agreement]
   end
 
+  # Is this game's outcome determined by score?  Setting this causes the
+  # default implementations of #winner?, #loser?, and #draw? to use score.
+  # The Rules subclass therefore only has to define #score.  The default
+  # implementations are smart enough to deal with more than 2 players.  For
+  # example, if there are four players and their scores are [9,9,7,1], the
+  # players who scored 9 are winners, the players who scored 7 and 1 are
+  # the losers.  If all players score the same, the game is a draw.
+  #
+  #   class BlahRules < Rules
+  #     score_determines_outcome
+  #   end
+  #
+  # This value can later be retrieved by calling
+  # #score_determines_outcome? or info[:score_determines_outcome].
+
+  def self.score_determines_outcome
+    info[:score_determines_outcome] = true
+  end
+
+  # Returns whether this game's outcome is determined by score.
+
+  def score_determines_outcome?
+    info[:score_determines_outcome]
+  end
+
   # Does the game defined by these rules allow use of the pie rule?  The
   # pie rule allows the second player to swap sides after the first move
   # is played.
@@ -462,11 +487,45 @@ class Rules
     moves( player ).include?( move.to_s )
   end
 
-  # If the position is final?, does it represent a draw?  This default
-  # implementation returns false everytime.  This is great for rules which
-  # forbid draws.
+  # If the position is final?, is the given player a winner?  Note, that
+  # more than one player may be considered winners.  If the rules define a
+  # score, it's used.  If the player has the highest score, true
+  # is returned.  If the rules do not define a score, false is returned
+  # and the Rules subclass should override this method.
+
+  def winner?( player )
+    if score_determines_outcome?
+      scores = players.map { |p| score( p ) }
+      return scores.uniq.length > 1 && score( player ) == scores.max
+    end
+
+    false
+  end
+
+  # If the position is final?, is the given player a loser?  Note, that
+  # more than one player may be considered losers.  If the rules define a
+  # score, it's used.  If the player does not have the highest score, true
+  # is returned.  If the rules do not define a score, false is returned
+  # and the Rules subclass should override this method.
+
+  def loser?( player )
+    if score_determines_outcome?
+      return score( player ) != players.map { |p| score( p ) }.max
+    end
+
+    false
+  end
+
+  # If the position is final?, does it represent a draw?  The default
+  # implemention returns true if the rules define a score and all players
+  # have the same score.  If the rules do not define a score, then false
+  # is returned everytime.  Great for games that forbid draws.
 
   def draw?
+    if score_determines_outcome?
+      return players.map { |p| score( p ) }.uniq.length == 1
+    end
+
     false
   end
 

@@ -17,6 +17,8 @@ class Hexxagon < Rules
 
   options :number_of_players => 2
 
+  score_determines_outcome
+
   random
 
   attr_reader :board, :block_pattern, :moves_cache
@@ -99,19 +101,6 @@ class Hexxagon < Rules
 
   def final?
     moves.empty?
-  end
-
-  def winner?( player )
-    scores = players.map { |p| score( p ) }
-    scores.uniq.length > 1 && score( player ) == scores.max
-  end
-
-  def loser?( player )
-    score( player ) != players.map { |p| score( p ) }.max
-  end
-
-  def draw?
-    players.map { |p| score( p ) }.uniq.length == 1
   end
 
   def score( player )

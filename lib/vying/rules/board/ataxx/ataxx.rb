@@ -17,6 +17,8 @@ class Ataxx < Rules
 
   players [:red, :blue]
 
+  score_determines_outcome
+
   random
 
   attr_reader :board, :block_pattern, :moves_cache
@@ -93,20 +95,6 @@ class Ataxx < Rules
 
   def final?
     moves.empty?
-  end
-
-  def winner?( player )
-    opp = player == :red ? :blue : :red
-    board.count( player ) > board.count( opp )
-  end
-
-  def loser?( player )
-    opp = player == :red ? :blue : :red
-    board.count( player ) < board.count( opp )
-  end
-
-  def draw?
-    board.count( :blue ) == board.count( :red )
   end
 
   def score( player )

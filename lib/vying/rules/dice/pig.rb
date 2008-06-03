@@ -10,6 +10,8 @@ class Pig < Rules
 
   players [:a, :b]
 
+  score_determines_outcome
+
   random
 
   attr_reader :total, :current_score, :rolling
@@ -53,14 +55,6 @@ class Pig < Rules
 
   def final?
     total.select { |k,v| v >= 100 }.size > 0
-  end
-
-  def winner?( player )
-    total[player] >= 100
-  end
-
-  def loser?( player )
-    total[player] < 100
   end
 
   def score( player )

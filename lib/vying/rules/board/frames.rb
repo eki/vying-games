@@ -10,6 +10,8 @@ class Frames < Rules
 
   players [:black, :white]
 
+  score_determines_outcome
+
   attr_reader :board, :sealed, :unused, :points, :frame
   ignore :unused
 
@@ -94,14 +96,6 @@ class Frames < Rules
 
   def final?
     points.any? { |n| n == 10 }
-  end
-
-  def winner?( player )
-    points[player] == 10
-  end
-
-  def loser?( player )
-    points[player] != 10
   end
 
   def score( player )

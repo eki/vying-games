@@ -11,6 +11,8 @@ class Oware < Rules
 
   players [:one, :two]
 
+  score_determines_outcome
+
   no_cycles
 
   attr_reader :board, :scoring_pits, :annotation
@@ -122,20 +124,6 @@ class Oware < Rules
 
   def final?
     moves.empty?
-  end
-
-  def winner?( player )
-    opp = player == :one ? :two : :one
-    score( player ) > score( opp )
-  end
-
-  def loser?( player )
-    opp = player == :one ? :two : :one
-    score( player ) < score( opp )
-  end
-
-  def draw?
-    score( :one ) == score( :two )
   end
 
   def score( player )

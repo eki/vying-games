@@ -19,6 +19,8 @@ class PahTum < Rules
 
   players [:white, :black]
 
+  score_determines_outcome
+
   allow_draws_by_agreement
 
   random
@@ -60,20 +62,6 @@ class PahTum < Rules
 
   def final?
     unused_moves.empty?
-  end
-
-  def winner?( player )
-    opp = player == :white ? :black : :white
-    score( player ) > score( opp )
-  end
-
-  def loser?( player )
-    opp = player == :white ? :black : :white
-    score( player ) < score( opp )
-  end
-
-  def draw?
-    score( :white ) == score( :black )
   end
 
   def score( player )
@@ -127,8 +115,6 @@ class PahTum < Rules
 
     score + line_score( in_a_row )
   end
-
-
 
 end
 

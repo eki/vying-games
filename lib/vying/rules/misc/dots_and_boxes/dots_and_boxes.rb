@@ -13,6 +13,8 @@ class DotsAndBoxes < Rules
     version "1.0.0"
 
     players [:black, :white]
+
+    score_determines_outcome
   
     attr_reader :grid
 
@@ -66,20 +68,6 @@ class DotsAndBoxes < Rules
 
     def final?
       grid.boxes.values.all? { |v| v }
-    end
-
-    def winner?( player )
-      opp = player == :white ? :black : :white
-      score( player ) > score( opp )
-    end
-
-    def loser?( player )
-      opp = player == :white ? :black : :white
-      score( player ) < score( opp )
-    end
-
-    def draw?
-      score( :white ) == score( :black )
     end
 
     def score( player )

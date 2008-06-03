@@ -15,6 +15,8 @@ class Cephalopod < Rules
 
   players [:white, :black]
 
+  score_determines_outcome
+
   attr_reader :board, :dice, :removed, :removed
 
   COMBOS = { [1,1]     => 2,
@@ -134,16 +136,6 @@ class Cephalopod < Rules
 
   def final?
     board.empty_count == 0 && (board.occupied["?"] || []).empty?
-  end
-
-  def winner?( player )
-    opp = player == :black ? :white : :black
-    dice[player] > dice[opp]
-  end
-
-  def loser?( player )
-    opp = player == :black ? :white : :black
-    dice[player] < dice[opp]
   end
 
   def score( player )

@@ -11,6 +11,8 @@ class Othello < Rules
 
   players [:black, :white]
 
+  score_determines_outcome
+
   attr_reader :board, :moves_cache
   ignore :moves_cache
 
@@ -57,20 +59,6 @@ class Othello < Rules
 
   def final?
     moves.empty?
-  end
-
-  def winner?( player )
-    opp = player == :black ? :white : :black
-    board.count( player ) > board.count( opp )
-  end
-
-  def loser?( player )
-    opp = player == :black ? :white : :black
-    board.count( player ) < board.count( opp )
-  end
-
-  def draw?
-    board.count( :white ) == board.count( :black )
   end
 
   def score( player )

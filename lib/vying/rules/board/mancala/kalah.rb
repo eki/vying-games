@@ -11,6 +11,8 @@ class Kalah < Rules
 
   players [:one, :two]
 
+  score_determines_outcome
+
   attr_reader :board, :scoring_pits, :annotation
   ignore :moves_cache
 
@@ -116,20 +118,6 @@ class Kalah < Rules
 
   def final?
     @moves_cache[turn].all? { |c| board[c] == 0 }
-  end
-
-  def winner?( player )
-    opp = player == :one ? :two : :one
-    score( player ) > score( opp )
-  end
-
-  def loser?( player )
-    opp = player == :one ? :two : :one
-    score( player ) < score( opp )
-  end
-
-  def draw?
-    score( :one ) == score( :two )
   end
 
   def score( player )
