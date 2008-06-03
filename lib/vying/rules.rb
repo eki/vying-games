@@ -115,6 +115,12 @@ class Hash
 
     d
   end
+
+  # Define an actual hash function
+
+  def hash
+    [keys, values].hash
+  end
 end
 
 # This is the core of the Vying library.  Rules subclasses provide methods

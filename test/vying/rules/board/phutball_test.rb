@@ -222,19 +222,6 @@ class TestPhutball < Test::Unit::TestCase
     assert( ! g.moves.include?( "k14" ) )
   end
 
-  def test_hash
-    g1 = Game.new( rules ) 
-    g2 = Game.new( rules ) 
-
-    10.times do
-      g1 << g1.moves.first
-      g2 << g2.moves.first
-    end
-
-    assert( g1.history.last == g2.history.last )
-    assert( g1.history.last.hash == g2.history.last.hash )
-  end
-
   def test_game01
     g = play_sequence( [:h10,:h9,:h8,:h7,:h6,:h5,:h4,:h3,:h2,:h11h1] )
 

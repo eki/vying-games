@@ -88,5 +88,25 @@ module RulesTests
     assert_equal( g.history.last, g2.history.last )
   end
 
+  def test_hash
+    if rules.info[:random]
+      g1 = Game.new( rules, 1234 ) 
+      g2 = Game.new( rules, 1234 ) 
+    else
+      g1 = Game.new( rules ) 
+      g2 = Game.new( rules ) 
+    end
+
+    10.times do
+      break if g1.final?
+
+      g1 << g1.moves.first
+      g2 << g2.moves.first
+
+      assert( g1.history.last == g2.history.last )
+      assert( g1.history.last.hash == g2.history.last.hash )
+    end
+  end
+
 end
 

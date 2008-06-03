@@ -117,5 +117,9 @@ class Hearts < Rules
   def score( player )
     @score[player]
   end
+
+  def hash
+    [hands, tricks, trick, broken, post_deal, selected].hash
+  end
 end
 
