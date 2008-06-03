@@ -19,6 +19,8 @@ class PahTum < Rules
 
   players [:white, :black]
 
+  pie_rule
+
   score_determines_outcome
 
   allow_draws_by_agreement
