@@ -18,7 +18,7 @@ class Yinsh < Rules
 
   RING = { :white => :WHITE_RING, :black => :BLACK_RING }
 
-  def initialize( seed=nil )
+  def initialize( seed=nil, options={} )
     super
 
     @board = YinshBoard.new

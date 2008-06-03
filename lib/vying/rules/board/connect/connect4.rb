@@ -18,7 +18,7 @@ class Connect4 < Rules
     sa.map { |c| c.to_s }
   end
 
-  def initialize( seed=nil )
+  def initialize( seed=nil, options={} )
     super
 
     @board = Board.new( 7, 6 )

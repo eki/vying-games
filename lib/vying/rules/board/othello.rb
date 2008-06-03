@@ -14,7 +14,7 @@ class Othello < Rules
   attr_reader :board, :moves_cache
   ignore :moves_cache
 
-  def initialize( seed=nil )
+  def initialize( seed=nil, options={} )
     super
 
     @board = OthelloBoard.new

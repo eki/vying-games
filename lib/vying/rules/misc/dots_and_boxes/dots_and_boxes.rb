@@ -16,7 +16,7 @@ class DotsAndBoxes < Rules
   
     attr_reader :grid
 
-    def initialize( seed=nil )
+    def initialize( seed=nil, options={} )
       super
 
       @grid = Grid.new

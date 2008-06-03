@@ -15,7 +15,7 @@ class Frames < Rules
 
   @@init_moves = Coords.new( 19, 19 ).map { |c| c.to_s }
 
-  def initialize( seed=nil )
+  def initialize( seed=nil, options={} )
     super
 
     @board = Board.new( 19, 19 )

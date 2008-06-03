@@ -26,7 +26,7 @@ class PahTum < Rules
   attr_reader :board, :unused_moves
   ignore :unused_moves
 
-  def initialize( seed=nil )
+  def initialize( seed=nil, options={} )
     super
 
     w, h = 7, 7

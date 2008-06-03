@@ -34,7 +34,7 @@ class Hearts < Rules
 
   attr_reader :hands, :tricks, :trick, :broken, :post_deal, :selected
 
-  def initialize( seed=nil )
+  def initialize( seed=nil, options={} )
     super
 
     @hands = {}

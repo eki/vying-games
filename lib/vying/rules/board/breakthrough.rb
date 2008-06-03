@@ -18,7 +18,7 @@ class Breakthrough < Rules
 
   attr_reader :board
 
-  def initialize( seed=nil )
+  def initialize( seed=nil, options={} )
     super
 
     @board = Board.new( 8, 8 )

@@ -15,7 +15,7 @@ class NineMensMorris < Rules
 
   attr_reader :board, :remaining, :removing
 
-  def initialize( seed=nil )
+  def initialize( seed=nil, options={} )
     super
 
     @board = Board.new( 7, 7 )

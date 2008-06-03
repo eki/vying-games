@@ -17,7 +17,7 @@ class Connect6 < Rules
 
   @@init_moves = Coords.new( 19, 19 ).map { |c| c.to_s }
 
-  def initialize( seed=nil )
+  def initialize( seed=nil, options={} )
     super
 
     @board = Connect6Board.new

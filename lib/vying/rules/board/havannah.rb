@@ -134,7 +134,7 @@ class Havannah < Rules
 
   attr_reader :board, :groups
 
-  def initialize( seed=nil )
+  def initialize( seed=nil, options={} )
     super
 
     @board = HexHexBoard.new

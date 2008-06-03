@@ -22,7 +22,7 @@ class Ataxx < Rules
   attr_reader :board, :block_pattern, :moves_cache
   ignore :moves_cache
 
-  def initialize( seed=nil )
+  def initialize( seed=nil, options={} )
     super
 
     @board = Board.new( 7, 7 )

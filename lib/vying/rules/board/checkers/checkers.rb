@@ -21,7 +21,7 @@ class Checkers < Rules
 
   attr_reader :board, :jumping
 
-  def initialize( seed=nil )
+  def initialize( seed=nil, options={} )
     super
 
     @board = Board.new( 8, 8 )

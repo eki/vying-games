@@ -17,7 +17,7 @@ class Footsteps < Rules
   @@init_moves_left  = (1..50).to_a
   @@init_moves_right = (1..50).to_a
 
-  def initialize( seed=nil )
+  def initialize( seed=nil, options={} )
     super
 
     @board = Board.new( 7, 1 )

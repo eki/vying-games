@@ -51,17 +51,26 @@ class Y < Rules
   name    "Y"
   version "0.8.0"
 
+  options :board_size => 12
+
   pie_rule
 
   players [:blue, :red]
 
   attr_reader :board, :groups
 
-  def initialize( seed=nil )
+  def initialize( seed=nil, options={} )
     super
 
-    @board = YBoard.new
+    @board = YBoard.new( @options[:board_size] )
     @groups = { :blue => [], :red => [] }
+  end
+
+  def validate( options )
+    super
+    s = options[:board_size].to_i
+    raise "board_size must be 12, 13, or 14" unless s >= 12 && s <= 14
+    true
   end
 
   def moves( player=nil )

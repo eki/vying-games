@@ -14,7 +14,7 @@ class Pig < Rules
 
   attr_reader :total, :current_score, :rolling
 
-  def initialize( seed=nil )
+  def initialize( seed=nil, options={} )
     super
 
     @total, @current_score, @rolling = Hash.new( 0 ), 0, false

@@ -166,12 +166,54 @@ class Rules
   #
   # @turn is also set automatically to a copy of the players array.
 
-  def initialize( seed=nil )
+  def initialize( seed=nil, options={} )
+    if seed.class == Hash
+      seed, options = nil, seed
+    end
+
     if info[:random] ||= false
       @seed = seed.nil? ? rand( 10000 ) : seed
       @rng = RandomNumberGenerator.new( @seed )
     end
-    @turn = players.dup
+
+    options = (info[:options] || {}).dup.merge!( options )
+    if validate( options )
+      @options = options
+    end
+
+    n = options[:number_of_players] || players.length
+    n = n.to_i
+   
+    @players = players[0..n].dup.freeze
+    @turn = @players.dup
+  end
+
+  # Validate options that can be passed to Rules#initialize.  The default
+  # implementation checks that the keys in options match up to the hash keys
+  # info[:options].  Subclasses should override and validate the values of the
+  #  options.
+
+  def validate( options )
+    diff = options.keys - (info[:options] || {}).keys
+
+    if diff.length == 1
+      raise "#{diff.first} is not a valid option for #{name}"
+    elsif ! diff.empty?
+      raise "#{diff.inspect} are not valid options for #{name}"
+    end
+
+    true
+  end
+
+  # Returns the players for a position.  This may be the instance variable
+  # @players, if defined, or the value in info[:players].  Note, info[:players]
+  # should be used to enumerate the maximum number of players.  If the rules
+  # allow for variable players, @players should contain the first N players
+  # from info[:players].  Rules#initialize handles this automatically via
+  # the option :number_of_players.
+
+  def players
+    @players || self.class.players
   end
 
   # Attempts to provide an equality check by comparing unignored instance

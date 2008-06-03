@@ -14,7 +14,7 @@ class Kalah < Rules
   attr_reader :board, :scoring_pits, :annotation
   ignore :moves_cache
 
-  def initialize( seed=nil )
+  def initialize( seed=nil, options={} )
     super
 
     @board = MancalaBoard.new( 6, 2, 4 )

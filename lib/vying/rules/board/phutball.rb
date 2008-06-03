@@ -17,7 +17,7 @@ class Phutball < Rules
   @@init_moves.map! { |c| c.to_s }
   @@init_moves.delete( "h11" )
 
-  def initialize( seed=nil )
+  def initialize( seed=nil, options={} )
     super
 
     @board = Board.new( 15, 21 )

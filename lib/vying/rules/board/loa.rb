@@ -16,7 +16,7 @@ class LinesOfAction < Rules
 
   attr_reader :board, :counts
 
-  def initialize( seed=nil )
+  def initialize( seed=nil, options={} )
     super
 
     @board = Board.new( 8, 8 )

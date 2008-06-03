@@ -164,17 +164,22 @@ end
 #  It is heavily backed by a subclass of Rules.
 
 class Game
-  attr_reader :players, :history, :id, :time_limit, :updated_at
+  attr_reader :options, :players, :history, :id, :time_limit, :updated_at
 
   # Create a game from the given Rules subclass, and an optional seed.  If
   # the game has random elements and a seed is not provided, one will be 
   # created.  If you'd like to replay a game with random elements you must
   # provide the original seed.
 
-  def initialize( rules, seed=nil )
+  def initialize( rules, seed=nil, options={} )
+    if seed.class == Hash
+      seed, options = nil, seed
+    end
+
     @rules = rules.to_s
-    @history = History.new( self.rules.new( seed ) )
-    @players = rules.players.map { |p| Player.new( p ) }
+    @options = options
+    @history = History.new( self.rules.new( seed, options ) )
+    @players = history.first.players.map { |p| Player.new( p ) }
     yield self if block_given?
   end
 

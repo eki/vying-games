@@ -38,7 +38,7 @@ class Cephalopod < Rules
              [1,1,1,3] => 6,
              [1,1,2,2] => 6 }
 
-  def initialize( seed=nil )
+  def initialize( seed=nil, options={} )
     super
 
     @board = Board.new( 5, 5 )

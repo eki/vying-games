@@ -19,7 +19,7 @@ class Amazons < Rules
 
   attr_reader :board, :lastc
 
-  def initialize( seed=nil )
+  def initialize( seed=nil, options={} )
     super
 
     @board = AmazonsBoard.new
