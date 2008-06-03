@@ -11,16 +11,15 @@ class TestPhutball < Test::Unit::TestCase
   end
 
   def test_info
-    assert_equal( "Phutball", Phutball.info[:name] )
+    assert_equal( "Phutball", rules.name )
   end
 
   def test_players
-    assert_equal( [:ohs,:eks], Phutball.players )
-    assert_equal( [:ohs,:eks], Phutball.new.players )
+    assert_equal( [:ohs,:eks], rules.new.players )
   end
 
   def test_init
-    g = Game.new( Phutball )
+    g = Game.new( rules )
 
     b = Board.new( 15, 21 )
     b[:h11] = :white
@@ -36,19 +35,19 @@ class TestPhutball < Test::Unit::TestCase
   end
 
   def test_has_score
-    g = Game.new( Phutball )
+    g = Game.new( rules )
     assert( !g.has_score? )
   end
 
   def test_has_moves
-    g = Game.new( Phutball )
+    g = Game.new( rules )
     assert_equal( [:ohs], g.has_moves )
     g << g.moves.first
     assert_equal( [:eks], g.has_moves )
   end
 
   def test_moves
-    g = Game.new( Phutball )
+    g = Game.new( rules )
     moves = g.moves
 
     assert_equal( 'a2', moves[0] )
@@ -66,7 +65,7 @@ class TestPhutball < Test::Unit::TestCase
   end
 
   def test_jumping_moves
-    g = Game.new( Phutball )
+    g = Game.new( rules )
     g << :h10
 
     assert( g.moves.include?( "h11h9" ) )
@@ -94,7 +93,7 @@ class TestPhutball < Test::Unit::TestCase
   end
 
   def test_jumping_01
-    g = Game.new( Phutball )
+    g = Game.new( rules )
 
     g << :h10
 
@@ -113,7 +112,7 @@ class TestPhutball < Test::Unit::TestCase
   end
 
   def test_jumping_02
-    g = Game.new( Phutball )
+    g = Game.new( rules )
 
     g << [:i10, :j9, :k8, :l7, :m6, :n5]
 
@@ -132,7 +131,7 @@ class TestPhutball < Test::Unit::TestCase
   end
 
   def test_jumping_03
-    g = Game.new( Phutball )
+    g = Game.new( rules )
 
     g << [:i10, :j9, :k8, :l7, :m6, :n5, :o4]
 
@@ -141,7 +140,7 @@ class TestPhutball < Test::Unit::TestCase
   end
 
   def test_jumping_04
-    g = Game.new( Phutball )
+    g = Game.new( rules )
 
     g << [:h10, :h8, :h7]
 
@@ -181,7 +180,7 @@ class TestPhutball < Test::Unit::TestCase
   end
 
   def test_jumping_05
-    g = Game.new( Phutball )
+    g = Game.new( rules )
 
     g << [:h10, :h8, :h7]
 
@@ -218,14 +217,14 @@ class TestPhutball < Test::Unit::TestCase
   end
 
   def test_unused_moves
-    g = Game.new Phutball
+    g = Game.new( rules ) 
     g << "k14"
     assert( ! g.moves.include?( "k14" ) )
   end
 
   def test_hash
-    g1 = Game.new Phutball
-    g2 = Game.new Phutball
+    g1 = Game.new( rules ) 
+    g2 = Game.new( rules ) 
 
     10.times do
       g1 << g1.moves.first

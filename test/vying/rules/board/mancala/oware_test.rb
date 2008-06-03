@@ -10,8 +10,16 @@ class TestOware < Test::Unit::TestCase
     Oware
   end
 
+  def test_info
+    assert_equal( "Oware", rules.name )
+  end
+
+  def test_players
+    assert_equal( [:one,:two], rules.new.players )
+  end
+
   def test_initialize
-    g = Game.new( Oware )
+    g = Game.new( rules )
 
     b = MancalaBoard.new( 6, 2, 4 )
 
@@ -22,7 +30,7 @@ class TestOware < Test::Unit::TestCase
   end
 
   def test_moves
-    g = Game.new( Oware )
+    g = Game.new( rules )
 
     assert_equal( :one, g.turn )
     assert_equal( ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'], g.moves )
@@ -47,19 +55,14 @@ class TestOware < Test::Unit::TestCase
     assert_not_equal( g.history.first, g.history.last )
   end
 
-  def test_players
-    g = Game.new( Oware )
-    assert_equal( [:one,:two], g.players )
-  end
-
   def test_has_score
-    g = Game.new( Oware )
+    g = Game.new( rules )
 
     assert( g.has_score? )
   end
 
   def test_capture_01
-    g = Game.new( Oware )
+    g = Game.new( rules )
     g.board[:a1,:b2,:c2,:d2,:e2,:f2] = 2
     
     assert_equal( 0, g.score( :one ) )
@@ -78,7 +81,7 @@ class TestOware < Test::Unit::TestCase
   end
 
   def test_capture_02
-    g = Game.new( Oware )
+    g = Game.new( rules )
     g.board[:a1,:a2,:b2,:c2,:d2,:e2,:f2] = 2
     
     assert_equal( 0, g.score( :one ) )
@@ -97,7 +100,7 @@ class TestOware < Test::Unit::TestCase
   end
 
   def test_no_capture
-    g = Game.new( Oware )
+    g = Game.new( rules )
     g.board[:a1,:b1,:c1,:d1,:e1,:f1] = 2
     
     assert_equal( 0, g.score( :one ) )
@@ -115,7 +118,7 @@ class TestOware < Test::Unit::TestCase
   end
 
   def test_no_grand_slam_01    # Capture all 6 cups
-    g = Game.new( Oware )
+    g = Game.new( rules )
     g.board[:a2,:b2,:c2,:d2,:e2,:f2] = 2
     g.board[:a1] = 6
 
@@ -137,7 +140,7 @@ class TestOware < Test::Unit::TestCase
   end
 
   def test_no_grand_slam_02    # Capture 5 cups, 1 cup already empty
-    g = Game.new( Oware )
+    g = Game.new( rules )
     g.board[:a2,:b2,:c2,:d2,:e2] = 2
     g.board[:f2] = 0
     g.board[:a1] = 5
@@ -160,11 +163,11 @@ class TestOware < Test::Unit::TestCase
   end
 
   def test_check_cycles
-    assert( Oware.check_cycles? )
+    assert( rules.check_cycles? )
   end
 
   def test_cycle
-    g = Game.new( Oware )
+    g = Game.new( rules )
     g.board[:a1,:b1,:c1,:d1,:e1,:b2,:c2,:d2,:e2,:f2] = 0
     g.board[:f1,:a2] = 1
     
@@ -181,7 +184,7 @@ class TestOware < Test::Unit::TestCase
   end
 
   def test_final
-    g = Game.new( Oware )
+    g = Game.new( rules )
 
     # Doctor the board
 

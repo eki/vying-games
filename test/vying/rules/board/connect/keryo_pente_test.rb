@@ -11,16 +11,15 @@ class TestKeryoPente < Test::Unit::TestCase
   end
 
   def test_info
-    assert_equal( "Keryo-Pente", KeryoPente.info[:name] )
+    assert_equal( "Keryo-Pente", rules.name )
   end
 
   def test_players
-    assert_equal( [:white,:black], KeryoPente.players )
-    assert_equal( [:white,:black], KeryoPente.new.players )
+    assert_equal( [:white,:black], rules.new.players )
   end
 
   def test_init
-    g = Game.new( KeryoPente )
+    g = Game.new( rules )
     assert_equal( Board.new( 19, 19 ), g.board )
     assert_equal( :white, g.turn )
     assert_equal( 19*19, g.unused_moves.length )
@@ -29,19 +28,19 @@ class TestKeryoPente < Test::Unit::TestCase
   end
 
   def test_has_score
-    g = Game.new( KeryoPente )
+    g = Game.new( rules )
     assert( g.has_score? )
   end
 
   def test_has_moves
-    g = Game.new( KeryoPente )
+    g = Game.new( rules )
     assert_equal( [:white], g.has_moves )
     g << g.moves.first
     assert_equal( [:black], g.has_moves )
   end
 
   def test_moves
-    g = Game.new( KeryoPente )
+    g = Game.new( rules )
     moves = g.moves
 
     assert_equal( 'a1', moves[0] )
@@ -59,7 +58,7 @@ class TestKeryoPente < Test::Unit::TestCase
   end
 
   def test_capture01
-    g = Game.new( KeryoPente )
+    g = Game.new( rules )
     g << [:b2,:b1,:b3]
     
     assert_equal( 0, g.score( :black ) )
@@ -86,7 +85,7 @@ class TestKeryoPente < Test::Unit::TestCase
   end
 
   def test_capture02
-    g = Game.new( KeryoPente )
+    g = Game.new( rules )
     g << [:b2,:a1,:c3]
     
     assert_equal( 0, g.score( :black ) )
@@ -113,7 +112,7 @@ class TestKeryoPente < Test::Unit::TestCase
   end
 
   def test_capture03
-    g = Game.new( KeryoPente )
+    g = Game.new( rules )
     g << [:b2,:b1,:b3,:a9,:b4]
     
     assert_equal( 0, g.score( :black ) )

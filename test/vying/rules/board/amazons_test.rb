@@ -11,22 +11,21 @@ class TestAmazons < Test::Unit::TestCase
   end
 
   def test_info
-    assert_equal( "Amazons", Amazons.info[:name] )
+    assert_equal( "Amazons", rules.name )
   end
 
   def test_players
-    assert_equal( [:white,:black], Amazons.players )
-    assert_equal( [:white,:black], Amazons.new.players )
+    assert_equal( [:white,:black], rules.new.players )
   end
 
   def test_initialize       # Need to be more thorough here
-    g = Game.new( Amazons )
+    g = Game.new( rules )
     assert_equal( :white, g.turn )
     assert_equal( nil, g.lastc )
   end
 
   def test_has_moves
-    g = Game.new( Amazons )
+    g = Game.new( rules )
     assert_equal( [:white], g.has_moves )
     g << g.moves.first
     assert_equal( [:white], g.has_moves )
@@ -39,7 +38,7 @@ class TestAmazons < Test::Unit::TestCase
   end
 
   def test_moves
-    g = Game.new( Amazons )
+    g = Game.new( rules )
     moves = g.moves
 
     assert_equal( "a4a3", moves[0] )

@@ -11,16 +11,15 @@ class TestCephalopod < Test::Unit::TestCase
   end
 
   def test_info
-    assert_equal( "Cephalopod", Cephalopod.info[:name] )
+    assert_equal( "Cephalopod", rules.name )
   end
 
   def test_players
-    assert_equal( [:white,:black], Cephalopod.players )
-    assert_equal( [:white,:black], Cephalopod.new.players )
+    assert_equal( [:white,:black], rules.new.players )
   end
 
   def test_initialize
-    g = Game.new( Cephalopod )
+    g = Game.new( rules )
     assert_equal( :white, g.turn )
     assert_equal( 5, g.board.width )
     assert_equal( 5, g.board.height )
@@ -28,7 +27,7 @@ class TestCephalopod < Test::Unit::TestCase
   end
 
   def test_has_moves
-    g = Game.new( Cephalopod )
+    g = Game.new( rules )
     assert_equal( [:white], g.has_moves )
     g << g.moves.first
     assert_equal( [:black], g.has_moves )
@@ -37,7 +36,7 @@ class TestCephalopod < Test::Unit::TestCase
   end
 
   def test_moves
-    g = Game.new( Cephalopod )
+    g = Game.new( rules )
 
     assert_equal( 25, g.moves.length )
     g.board.coords.each do |c|
@@ -46,7 +45,7 @@ class TestCephalopod < Test::Unit::TestCase
   end
 
   def test_capture
-    g = Game.new( Cephalopod )
+    g = Game.new( rules )
 
     g << "b1" << "d1"
 
@@ -91,7 +90,7 @@ class TestCephalopod < Test::Unit::TestCase
   end
 
   def test_illegal_captures_01
-    g = Game.new Cephalopod
+    g = Game.new( rules ) 
 
     g << ["b1", "d1", "c2", "c1", "b1", "c2", "c1", "c3", "d2", "b2", "c2",
           "b2", "c1", "d2", "c3", "c2", "e2", "d2", "e2", "d1"]
@@ -101,7 +100,7 @@ class TestCephalopod < Test::Unit::TestCase
   end
 
   def test_illegal_captures_02
-    g = Game.new Cephalopod
+    g = Game.new( rules ) 
     g << ["a1", "a2", "e2", "b3", "d2", "b2", "b3", "a2", "b2", "b1", "a1",
           "b2", "b1", "e4", "c2", "a2", "e3", "e2", "e4", "e3", "b2", "a2",
           "b1", "c2", "b2", "c4", "b5", "a3", "b4", "b5", "c4", "b4", "d1",

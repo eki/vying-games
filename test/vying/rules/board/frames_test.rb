@@ -11,16 +11,15 @@ class TestFrames < Test::Unit::TestCase
   end
 
   def test_info
-    assert_equal( "Frames", Frames.info[:name] )
+    assert_equal( "Frames", rules.name )
   end
 
   def test_players
-    assert_equal( [:black,:white], Frames.players )
-    assert_equal( [:black,:white], Frames.new.players )
+    assert_equal( [:black,:white], rules.new.players )
   end
 
   def test_initialize
-    g = Game.new( Frames )
+    g = Game.new( rules )
     assert_equal( [:black, :white], g.has_moves )
     assert_equal( 19, g.board.width )
     assert_equal( 19, g.board.height )
@@ -28,7 +27,7 @@ class TestFrames < Test::Unit::TestCase
   end
 
   def test_moves
-    g = Game.new( Frames )
+    g = Game.new( rules )
 
     assert_equal( 19*19*2, g.moves.length )
     assert_equal( 19*19, g.moves( :black ).length )

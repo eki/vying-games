@@ -11,16 +11,15 @@ class TestPahTum < Test::Unit::TestCase
   end
 
   def test_info
-    assert_equal( "Pah-Tum", PahTum.info[:name] )
+    assert_equal( "Pah-Tum", rules.name )
   end
 
   def test_players
-    assert_equal( [:white,:black], PahTum.players )
-    assert_equal( [:white,:black], PahTum.new.players )
+    assert_equal( [:white,:black], rules.new.players )
   end
 
   def test_initialize
-    g = Game.new( PahTum, 1234 )
+    g = Game.new( rules, 1234 )
     assert_equal( :white, g.turn )
     assert_equal( 11, g.board.occupied[:x].length )
     assert_equal( nil, g.board.occupied[:white] )
@@ -28,7 +27,7 @@ class TestPahTum < Test::Unit::TestCase
   end
 
   def test_has_moves
-    g = Game.new( PahTum, 1234 )
+    g = Game.new( rules, 1234 )
     assert_equal( [:white], g.has_moves )
     g << g.moves.first
     assert_equal( [:black], g.has_moves )
@@ -37,7 +36,7 @@ class TestPahTum < Test::Unit::TestCase
   end
 
   def test_line_score
-    p = PahTum.new( 1234 )
+    p = rules.new( 1234 )
     assert_equal(   0, p.line_score( 0 ) )
     assert_equal(   0, p.line_score( 1 ) )
     assert_equal(   0, p.line_score( 2 ) )
@@ -49,7 +48,7 @@ class TestPahTum < Test::Unit::TestCase
   end
 
   def test_pieces_score
-    p = PahTum.new( 1234 )
+    p = rules.new( 1234 )
 
     w = { [:white, :white, :white, :white, :white, :white, :white] => 119,
           [:white, :white, :black, :white, :white, nil,    :black] =>   0,
@@ -73,7 +72,7 @@ class TestPahTum < Test::Unit::TestCase
   end
 
   def test_score
-    p = PahTum.new( 1234 )
+    p = rules.new( 1234 )
 
     p.board[:a1, :a2, :a3, :a4] = :black
     p.board[:a5, :a6, :a7] = :white

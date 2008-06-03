@@ -11,16 +11,15 @@ class TestCheckers < Test::Unit::TestCase
   end
 
   def test_info
-    assert_equal( "Checkers", Checkers.info[:name] )
+    assert_equal( "Checkers", rules.name )
   end
 
   def test_players
-    assert_equal( [:red,:white], Checkers.players )
-    assert_equal( [:red,:white], Checkers.new.players )
+    assert_equal( [:red,:white], rules.new.players )
   end
 
   def test_init
-    g = Game.new( Checkers )
+    g = Game.new( rules )
 
     b = Board.new( 8, 8 )
 
@@ -34,24 +33,24 @@ class TestCheckers < Test::Unit::TestCase
   end
 
   def test_allow_draws_by_agreement
-    g = Game.new( Checkers )
+    g = Game.new( rules )
     assert( g.allow_draws_by_agreement? )
   end
 
   def test_has_score
-    g = Game.new( Checkers )
+    g = Game.new( rules )
     assert( g.has_score? )
   end
 
   def test_has_moves
-    g = Game.new( Checkers )
+    g = Game.new( rules )
     assert_equal( [:red], g.has_moves )
     g << g.moves.first
     assert_equal( [:white], g.has_moves )
   end
 
   def test_moves
-    g = Game.new( Checkers )
+    g = Game.new( rules )
     moves = g.moves
 
     assert_equal( 'b3c4', moves[0] )
@@ -68,7 +67,7 @@ class TestCheckers < Test::Unit::TestCase
   end
 
   def test_move_diagonal
-    g = Game.new( Checkers )
+    g = Game.new( rules )
 
     assert_equal( :red, g.board[:b3] )
     assert_equal( nil,  g.board[:c4] )
@@ -88,7 +87,7 @@ class TestCheckers < Test::Unit::TestCase
   end
 
   def test_jumping
-    g = Game.new( Checkers )
+    g = Game.new( rules )
 
     g.board[:g4] = :white
     g.board[:f7] = nil
@@ -114,7 +113,7 @@ class TestCheckers < Test::Unit::TestCase
   end
 
   def test_jumping_to_king
-    g = Game.new( Checkers )
+    g = Game.new( rules )
 
     g.board[:c6] = :red
     g.board[:g6,:e8] = nil
@@ -145,7 +144,7 @@ class TestCheckers < Test::Unit::TestCase
   end
 
   def test_move_to_king
-    g = Game.new( Checkers )
+    g = Game.new( rules )
 
     g.board[:b1] = nil
     g.board[:a2] = :white
@@ -157,7 +156,7 @@ class TestCheckers < Test::Unit::TestCase
   end
 
   def test_jumping_backwards
-    g = Game.new( Checkers )
+    g = Game.new( rules )
 
     g.board[:c8] = :RED
     g.board[:e6] = nil
@@ -178,7 +177,7 @@ class TestCheckers < Test::Unit::TestCase
   end
 
   def test_final_01
-    g = Game.new( Checkers )
+    g = Game.new( rules )
 
     g.board[:b1,:d1,:f1,:h1,:a2,:c2,:e2,:g2,:b3,:d3,:f3] = nil
 
@@ -195,7 +194,7 @@ class TestCheckers < Test::Unit::TestCase
   end
 
   def test_final_02
-    g = Game.new( Checkers )
+    g = Game.new( rules )
 
     g.board[:a8,:c8,:e8,:g8,:b7,:d7,:f7,:h7,:a6,:c6,:e6,:g6] = nil
 
@@ -212,7 +211,7 @@ class TestCheckers < Test::Unit::TestCase
   end
 
   def test_final_03
-    g = Game.new( Checkers )
+    g = Game.new( rules )
 
     # Clear board
     g.board[:b1,:d1,:f1,:h1,:a2,:c2,:e2,:g2,:b3,:d3,:f3,:h3] = nil

@@ -11,16 +11,15 @@ class TestThreeMusketeers < Test::Unit::TestCase
   end
 
   def test_info
-    assert_equal( "Three Musketeers", ThreeMusketeers.info[:name] )
+    assert_equal( "Three Musketeers", rules.name )
   end
 
   def test_players
-    assert_equal( [:red,:blue], ThreeMusketeers.players )
-    assert_equal( [:red,:blue], ThreeMusketeers.new.players )
+    assert_equal( [:red,:blue], rules.new.players )
   end
 
   def test_initialize       # Need to be more thorough here
-    g = Game.new( ThreeMusketeers )
+    g = Game.new( rules )
     assert_equal( :red, g.turn )
     assert_equal( [:red,:red,:red], g.board[:a5,:c3,:e1] )
     assert_equal( 5, g.board.width )
@@ -29,7 +28,7 @@ class TestThreeMusketeers < Test::Unit::TestCase
   end
 
   def test_has_moves
-    g = Game.new( ThreeMusketeers )
+    g = Game.new( rules )
     assert_equal( [:red], g.has_moves )
     g << g.moves.first
     assert_equal( [:blue], g.has_moves )
@@ -42,7 +41,7 @@ class TestThreeMusketeers < Test::Unit::TestCase
   end
 
   def test_moves
-    g = Game.new( ThreeMusketeers )
+    g = Game.new( rules )
     assert_equal( ["a5a4", "a5b5", 
                    "c3c2", "c3d3", "c3b3", "c3c4",
                    "e1d1", "e1e2"].sort, g.moves.sort )
@@ -53,7 +52,7 @@ class TestThreeMusketeers < Test::Unit::TestCase
   end
 
   def test_blue_no_moves
-    g = Game.new( ThreeMusketeers )
+    g = Game.new( rules )
     g.board.clear
     g.board[:a1] = :blue
     g.board[:a2,:b2,:b1] = :red

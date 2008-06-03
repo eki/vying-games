@@ -11,16 +11,15 @@ class TestNineMensMorris < Test::Unit::TestCase
   end
 
   def test_info
-    assert_equal( "Nine Men's Morris", NineMensMorris.info[:name] )
+    assert_equal( "Nine Men's Morris", rules.name )
   end
 
   def test_players
-    assert_equal( [:black,:white], NineMensMorris.players )
-    assert_equal( [:black,:white], NineMensMorris.new.players )
+    assert_equal( [:black,:white], rules.new.players )
   end
 
   def test_init
-    g = Game.new( NineMensMorris )
+    g = Game.new( rules )
 
     b = Board.new( 7, 7)
 
@@ -46,19 +45,19 @@ class TestNineMensMorris < Test::Unit::TestCase
   end
 
   def test_has_score
-    g = Game.new( NineMensMorris )
+    g = Game.new( rules )
     assert( g.has_score? )
   end
 
   def test_has_moves
-    g = Game.new( NineMensMorris )
+    g = Game.new( rules )
     assert_equal( [:black], g.has_moves )
     g << g.moves.first
     assert_equal( [:white], g.has_moves )
   end
 
   def test_placement_phase
-    g = Game.new( NineMensMorris )
+    g = Game.new( rules )
 
     g.remaining[:black] = 3
     g.remaining[:white] = 3
@@ -84,7 +83,7 @@ class TestNineMensMorris < Test::Unit::TestCase
   end
 
   def test_removal_during_placement_phase
-    g = Game.new( NineMensMorris )
+    g = Game.new( rules )
 
     g.remaining[:black] = 3
     g.remaining[:white] = 3
@@ -105,7 +104,7 @@ class TestNineMensMorris < Test::Unit::TestCase
   end
 
   def test_movement_phase
-    g = Game.new( NineMensMorris )
+    g = Game.new( rules )
 
     g.remaining[:black] = 0
     g.remaining[:white] = 0

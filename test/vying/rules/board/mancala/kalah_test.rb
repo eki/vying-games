@@ -10,8 +10,16 @@ class TestKalah < Test::Unit::TestCase
     Kalah
   end
 
+  def test_info
+    assert_equal( "Kalah", rules.name )
+  end
+
+  def test_players
+    assert_equal( [:one,:two], rules.new.players )
+  end
+
   def test_initialize
-    g = Game.new( Kalah )
+    g = Game.new( rules )
 
     b = MancalaBoard.new( 6, 2, 4 )
 
@@ -22,7 +30,7 @@ class TestKalah < Test::Unit::TestCase
   end
 
   def test_moves
-    g = Game.new( Kalah )
+    g = Game.new( rules )
 
     assert_equal( :one, g.turn )
     assert_equal( ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'], g.moves )
@@ -47,13 +55,8 @@ class TestKalah < Test::Unit::TestCase
     assert_not_equal( g.history.first, g.history.last )
   end
 
-  def test_players
-    g = Game.new( Kalah )
-    assert_equal( [:one,:two], g.players )
-  end
-
   def test_has_score
-    g = Game.new( Kalah )
+    g = Game.new( rules )
     g << g.moves.first
 
     assert( g.has_score? )
@@ -62,7 +65,7 @@ class TestKalah < Test::Unit::TestCase
   end
 
   def test_capture
-    g = Game.new( Kalah )
+    g = Game.new( rules )
     g << :a1 << :f2
 
     assert_equal( 1, g.score( :one ) )
@@ -79,7 +82,7 @@ class TestKalah < Test::Unit::TestCase
   end
 
   def test_no_capture
-    g = Game.new( Kalah )
+    g = Game.new( rules )
 
     g << :a1 << :a2
 
@@ -97,7 +100,7 @@ class TestKalah < Test::Unit::TestCase
   end
 
   def test_extra_turn
-    g = Game.new( Kalah )
+    g = Game.new( rules )
     g << :a1 << :f2
     
     assert_equal( :one, g.turn )
@@ -108,7 +111,7 @@ class TestKalah < Test::Unit::TestCase
   end
 
   def test_final
-    g = Game.new( Kalah )
+    g = Game.new( rules )
 
     # Doctor the board
 

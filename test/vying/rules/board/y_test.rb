@@ -15,24 +15,23 @@ class TestY < Test::Unit::TestCase
   end
 
   def test_players
-    assert_equal( [:blue,:red], rules.players )
     assert_equal( [:blue,:red], rules.new.players )
   end
 
   def test_initialize       # Need to be more thorough here
-    g = Game.new( Y )
+    g = Game.new( rules )
     assert_equal( :blue, g.turn )
   end
 
   def test_has_moves
-    g = Game.new( Y )
+    g = Game.new( rules )
     assert_equal( [:blue], g.has_moves )
     g << g.moves.first
     assert_equal( [:red], g.has_moves )
   end
 
   def test_groups
-    g = Game.new( Y )
+    g = Game.new( rules )
 
     g << "b1"
     
@@ -74,7 +73,7 @@ class TestY < Test::Unit::TestCase
   end
 
   def test_sides
-    g = Game.new( Y )
+    g = Game.new( rules )
     g << ["a9", "a4", 
           "b9", "b3",
           "c9", "c2",

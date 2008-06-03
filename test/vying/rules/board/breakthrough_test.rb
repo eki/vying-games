@@ -11,16 +11,15 @@ class TestBreakthrough < Test::Unit::TestCase
   end
 
   def test_info
-    assert_equal( "Breakthrough", Breakthrough.info[:name] )
+    assert_equal( "Breakthrough", rules.name )
   end
 
   def test_players
-    assert_equal( [:black,:white], Breakthrough.players )
-    assert_equal( [:black,:white], Breakthrough.new.players )
+    assert_equal( [:black,:white], rules.new.players )
   end
 
   def test_init
-    g = Game.new( Breakthrough )
+    g = Game.new( rules )
 
     b = Board.new( 8, 8)
     b[:a1,:b1,:c1,:d1,:e1,:f1,:g1,:h1,
@@ -35,19 +34,19 @@ class TestBreakthrough < Test::Unit::TestCase
   end
 
   def test_has_score
-    g = Game.new( Breakthrough )
+    g = Game.new( rules )
     assert( g.has_score? )
   end
 
   def test_has_moves
-    g = Game.new( Breakthrough )
+    g = Game.new( rules )
     assert_equal( [:black], g.has_moves )
     g << g.moves.first
     assert_equal( [:white], g.has_moves )
   end
 
   def test_moves
-    g = Game.new( Breakthrough )
+    g = Game.new( rules )
 
     assert_equal( ["a2a3", "a2b3", "b2b3", "b2c3", "b2a3", "c2c3", "c2d3",
                    "c2b3", "d2d3", "d2e3", "d2c3", "e2e3", "e2f3", "e2d3",
@@ -60,7 +59,7 @@ class TestBreakthrough < Test::Unit::TestCase
   end
 
   def test_move_forward
-    g = Game.new( Breakthrough )
+    g = Game.new( rules )
 
     # Clear out the board
     g.board[:a1,:b1,:c1,:d1,:e1,:f1,:g1,:h1,
@@ -106,7 +105,7 @@ class TestBreakthrough < Test::Unit::TestCase
   end
 
   def test_capture
-    g = Game.new( Breakthrough )
+    g = Game.new( rules )
 
     # Clear out the board
     g.board[:a1,:b1,:c1,:d1,:e1,:f1,:g1,:h1,
@@ -131,7 +130,7 @@ class TestBreakthrough < Test::Unit::TestCase
   end
 
   def test_pass
-    g = Game.new( Breakthrough )
+    g = Game.new( rules )
 
     # Clear out the board
     g.board[:a1,:b1,:c1,:d1,:e1,:f1,:g1,:h1,

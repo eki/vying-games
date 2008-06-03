@@ -11,11 +11,10 @@ class TestDotsAndBoxes < Test::Unit::TestCase
   end
 
   def test_info
-    assert_equal( "Dots and Boxes", rules.info[:name] )
+    assert_equal( "Dots and Boxes", rules.name )
   end
 
   def test_players
-    assert_equal( [:black, :white], rules.players )
     assert_equal( [:black, :white], rules.new.players )
   end
 

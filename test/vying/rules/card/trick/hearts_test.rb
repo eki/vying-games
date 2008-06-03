@@ -11,16 +11,15 @@ class TestHearts < Test::Unit::TestCase
   end
 
   def test_info
-    assert_equal( "Hearts", Hearts.info[:name] )
+    assert_equal( "Hearts", rules.name )
   end
 
   def test_players
-    assert_equal( [:n,:e,:s,:w], Hearts.players )
-    assert_equal( [:n,:e,:s,:w], Hearts.new.players )
+    assert_equal( [:n,:e,:s,:w], rules.new.players )
   end
 
   def test_initialize       # Need to be more thorough here
-    g = Game.new( Hearts )
+    g = Game.new( rules )
 
     # Passing, so everyone has moves
     assert( g.has_moves.include?( :n ) )
@@ -39,14 +38,14 @@ class TestHearts < Test::Unit::TestCase
   end
 
   def test_moves
-    g = Game.new( Hearts )
+    g = Game.new( rules )
     assert_equal( 'C2', g.moves.first )
     assert( g.move?( Card[:C2] ) )
     assert( g.move?( :C2 ) )
   end
 
   def test_shoot_moon
-    g = Game.new( Hearts, 7319 )
+    g = Game.new( rules, 7319 )
     g <<  [:C2, :C7, :CA, :CQ, :SA, :S4, :S2, :S3, :S7, :ST, :SK, :S8,
            :SJ, :SQ, :S6, :S9, :D2, :DQ, :D8, :DA, :DJ, :D3, :DT, :D4,
            :D6, :D9, :D7, :HK, :DK, :HQ, :H9, :HJ, :D5, :HT, :H3, :H6, 

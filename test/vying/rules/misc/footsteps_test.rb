@@ -11,16 +11,15 @@ class TestFootsteps < Test::Unit::TestCase
   end
 
   def test_info
-    assert_equal( "Footsteps", Footsteps.info[:name] )
+    assert_equal( "Footsteps", rules.name )
   end
 
   def test_players
-    assert_equal( [:left, :right], Footsteps.players )
-    assert_equal( [:left, :right], Footsteps.new.players )
+    assert_equal( [:left, :right], rules.new.players )
   end
 
   def test_init
-    g = Game.new( Footsteps )
+    g = Game.new( rules )
 
     b = Board.new( 7, 1 )
     b[:d1] = :white
@@ -29,12 +28,12 @@ class TestFootsteps < Test::Unit::TestCase
   end
 
   def test_has_score
-    g = Game.new( Footsteps )
+    g = Game.new( rules )
     assert( !g.has_score? )
   end
 
   def test_has_moves
-    g = Game.new( Footsteps )
+    g = Game.new( rules )
     assert_equal( [:left, :right], g.has_moves )
     assert( g.has_moves.include?( g.turn ) )
     g << "left_1"
@@ -49,7 +48,7 @@ class TestFootsteps < Test::Unit::TestCase
   end
 
   def test_censor
-    g = Game.new( Footsteps )
+    g = Game.new( rules )
     p = g.censor( :left )
     assert_equal( nil, p.bids[:left] )
     assert_equal( nil, p.bids[:right] )

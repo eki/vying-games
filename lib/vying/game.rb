@@ -148,11 +148,23 @@ class History
 
 end
 
+#  Player is only used by Game to represent the combination of a player
+#  (the Symbols used by Rules), and a User.
+
+class Player
+  attr_reader :name
+  attr_accessor :user
+
+  def initialize( name, user=nil )
+    @name, @user = name, user
+  end
+end
+
 #  A Game represents the series of moves and positions that make up a game.
 #  It is heavily backed by a subclass of Rules.
 
 class Game
-  attr_reader :history, :id, :time_limit, :updated_at
+  attr_reader :players, :history, :id, :time_limit, :updated_at
 
   # Create a game from the given Rules subclass, and an optional seed.  If
   # the game has random elements and a seed is not provided, one will be 
@@ -162,7 +174,7 @@ class Game
   def initialize( rules, seed=nil )
     @rules = rules.to_s
     @history = History.new( self.rules.new( seed ) )
-    @user_map = {}
+    @players = rules.players.map { |p| Player.new( p ) }
     yield self if block_given?
   end
 
@@ -281,7 +293,7 @@ class Game
   #
 
   def []( p )
-    @user_map[p]
+    players.find { |player| player.name == p }.user
   end
 
   # Assign an instance of the User playing as the given player.
@@ -294,18 +306,23 @@ class Game
   #
 
   def []=( p, u )
-    @user_map[p] = u if players.include?( p )
+    player = players.find { |player| player.name == p }
+    player.user = u
   end
 
   def users
-    @user_map.values
+    rules.players.map { |p| self[p] }
+  end
+
+  def player_names
+    history.first.players
   end
 
   # If this is a 2 player game, #switch_sides will swap the registered users.
 
   def switch_sides
-    if players.length == 2
-      ps = players
+    if player_names.length == 2
+      ps = player_names
       self[ps[0]], self[ps[1]] = self[ps[1]], self[ps[0]]
     end
     self
@@ -326,7 +343,7 @@ class Game
 
     # Accept or reject offered draw
     if allow_draws_by_agreement? && offered_by = draw_offered_by
-      accepted = players.all? do |p| 
+      accepted = player_names.all? do |p| 
         position = history.last.censor( p )
         p == offered_by || self[p].accept_draw?( sequence, position, p )
       end
@@ -339,7 +356,7 @@ class Game
 
     # Accept or reject undo request 
     if requested_by = undo_requested_by
-      accepted = players.all? do |p| 
+      accepted = player_names.all? do |p| 
         position = history.last.censor( p )
         p == requested_by || self[p].accept_undo?( sequence, position, p )
       end
@@ -350,7 +367,7 @@ class Game
       return self
     end
 
-    players.each do |p|
+    player_names.each do |p|
       if self[p].ready?
         position = history.last.censor( p )
 
@@ -376,7 +393,7 @@ class Game
     end
 
     has_moves.each do |p|
-      if players.include?( p )
+      if player_names.include?( p )
         if self[p].ready?
           position = history.last.censor( p )
 
@@ -471,7 +488,7 @@ class Game
     else
       normal_undo = false
 
-      players.each do |p|
+      player_names.each do |p|
         if history.length > 1
           last = history.last
           next_to_last = history[history.length - 2]
@@ -482,7 +499,7 @@ class Game
         end
      end
 
-      players.each do |p|
+      player_names.each do |p|
         if player.nil? || p == player
           moves << "undo_requested_by_#{p}" unless normal_undo ||
                                                    sequence.length == 0
@@ -495,7 +512,7 @@ class Game
 
     if player.nil?
       moves << "draw" if allow_draws_by_agreement?
-      players.each do |p|
+      player_names.each do |p|
         moves << "time_exceeded_by_#{p}"
       end
     end
@@ -512,7 +529,7 @@ class Game
   # Who can make special moves?
 
   def has_special_moves
-    players.select { |p| ! special_moves( p ).empty? }    
+    player_names.select { |p| ! special_moves( p ).empty? }    
   end
 
   # Can the given player make a special move?
@@ -523,8 +540,8 @@ class Game
 
   def swap
     if special_move?( "swap" )
-      self[players.first], self[players.last] = 
-        self[players.last], self[players.first]
+      self[player_names.first], self[player_names.last] = 
+        self[player_names.last], self[player_names.first]
 
       history << "swap"
     end
@@ -560,7 +577,7 @@ class Game
 
     return user if user.class == Symbol
 
-    players.find { |p| self[p] == user }
+    player_names.find { |p| self[p] == user }
   end
 
   # Creates a new game instance by replaying from a results object.
@@ -622,14 +639,14 @@ class Game
   def description
     if final?
       if draw?
-        s = rules.players.map { |p| "#{self[p]} (#{p})" }.join( " and " )
+        s = player_names.map { |p| "#{self[p]} (#{p})" }.join( " and " )
         s += " played to a draw"
         s += " (by agreement)" if draw_by_agreement?
         s
       else
 
-        winners = players.select { |p| winner?( p ) }
-        losers  = players.select { |p| loser?( p ) }
+        winners = player_names.select { |p| winner?( p ) }
+        losers  = player_names.select { |p| loser?( p ) }
 
         ws = winners.map { |p| "#{self[p]} (#{p})" }.join( " and " )
         ls = losers.map  { |p| "#{self[p]} (#{p})" }.join( " and " )
@@ -646,10 +663,10 @@ class Game
         s
       end
     else
-      s = rules.players.map { |p| "#{self[p]} (#{p})" }.join( " vs " )
+      s = player_names.map { |p| "#{self[p]} (#{p})" }.join( " vs " )
 
       if has_score?
-        s = "#{s} (#{rules.players.map { |p| score( p ) }.join( '-' )})"
+        s = "#{s} (#{player_names.map { |p| score( p ) }.join( '-' )})"
       end
 
       s

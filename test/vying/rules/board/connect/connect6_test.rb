@@ -11,16 +11,15 @@ class TestConnect6 < Test::Unit::TestCase
   end
 
   def test_info
-    assert_equal( "Connect6", Connect6.info[:name] )
+    assert_equal( "Connect6", rules.name )
   end
 
   def test_players
-    assert_equal( [:black,:white], Connect6.players )
-    assert_equal( [:black,:white], Connect6.new.players )
+    assert_equal( [:black,:white], rules.new.players )
   end
 
   def test_init
-    g = Game.new( Connect6 )
+    g = Game.new( rules )
     assert_equal( Board.new( 19, 19 ), g.board )
     assert_equal( :black, g.turn )
     assert_equal( 19*19, g.unused_moves.length )
@@ -29,19 +28,19 @@ class TestConnect6 < Test::Unit::TestCase
   end
 
   def test_has_score
-    g = Game.new( Connect6 )
+    g = Game.new( rules )
     assert( !g.has_score? )
   end
 
   def test_has_moves
-    g = Game.new( Connect6 )
+    g = Game.new( rules )
     assert_equal( [:black], g.has_moves )
     g << g.moves.first
     assert_equal( [:white], g.has_moves )
   end
 
   def test_moves
-    g = Game.new( Connect6 )
+    g = Game.new( rules )
     moves = g.moves
 
     assert_equal( 'a1', moves[0] )

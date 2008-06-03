@@ -11,7 +11,7 @@ class TestAtaxx < Test::Unit::TestCase
   end
 
   def test_initialize
-    g = Game.new( Ataxx )
+    g = Game.new( rules )
 
     assert_equal( 7, g.board.width )
     assert_equal( 7, g.board.height )
@@ -23,7 +23,7 @@ class TestAtaxx < Test::Unit::TestCase
   end
 
   def test_moves
-    g = Game.new( Ataxx )
+    g = Game.new( rules )
     g.clear_blocks
     g.set_blocks( "" )
 
@@ -40,13 +40,11 @@ class TestAtaxx < Test::Unit::TestCase
   end
 
   def test_players
-    g = Game.new( Ataxx )
-    assert_equal( [:red,:blue], g.players )
-    assert_equal( [:red,:blue], g.players )
+    assert_equal( [:red,:blue], rules.new.players )
   end
 
   def test_has_score
-    g = Game.new( Ataxx )
+    g = Game.new( rules )
     g.clear_blocks
     g.set_blocks( "" )
 
@@ -58,8 +56,8 @@ class TestAtaxx < Test::Unit::TestCase
   end
 
   def test_hash
-    g1 = Game.new( Ataxx, 1234 )
-    g2 = Game.new( Ataxx, 1234 )
+    g1 = Game.new( rules, 1234 )
+    g2 = Game.new( rules, 1234 )
 
     10.times do
       g1 << g1.moves.first

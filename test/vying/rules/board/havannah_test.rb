@@ -15,7 +15,6 @@ class TestHavannah < Test::Unit::TestCase
   end
 
   def test_players
-    assert_equal( [:blue,:red], rules.players )
     assert_equal( [:blue,:red], rules.new.players )
   end
 
