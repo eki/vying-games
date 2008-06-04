@@ -147,6 +147,8 @@ end
 
 class Rules
 
+  attr_reader :options
+
   # All positions should provide a deep copy via #dup.  This initialize_copy
   # attempts to provide such a deep copy by scanning a position's instance
   # variables and copying them.

@@ -152,11 +152,27 @@ end
 #  (the Symbols used by Rules), and a User.
 
 class Player
-  attr_reader :name
+  attr_reader :name, :game
   attr_accessor :user
 
-  def initialize( name, user=nil )
-    @name, @user = name, user
+  def initialize( name, game, user=nil )
+    @name, @game, @user = name, game, user
+  end
+
+  def has_moves?
+    game.has_moves?( name )
+  end
+
+  def winner?
+    game.winner?( name )
+  end
+
+  def loser?
+    game.loser?( name )
+  end
+
+  def score
+    game.score( name )
   end
 end
 
@@ -177,9 +193,9 @@ class Game
     end
 
     @rules = rules.to_s
-    @options = options
     @history = History.new( self.rules.new( seed, options ) )
-    @players = history.first.players.map { |p| Player.new( p ) }
+    @options = history.first.options.dup.freeze
+    @players = history.first.players.map { |p| Player.new( p, self ) }
     yield self if block_given?
   end
 
