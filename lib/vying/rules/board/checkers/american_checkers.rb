@@ -8,11 +8,11 @@ require 'vying/board/board'
 # British Draughts, or, etc, etc, depending on what part of the world you're
 # from.
 #
-# For more detailed rules, etc:  http://vying.org/games/checkers
+# For more detailed rules, etc:  http://vying.org/games/american_checkers
 
-class Checkers < Rules
+class AmericanCheckers < Rules
 
-  name    "Checkers"
+  name    "American Checkers"
   version "1.0.0"
 
   players [:red, :white]
