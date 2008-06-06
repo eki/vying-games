@@ -174,6 +174,10 @@ class Player
   def score
     game.score( name )
   end
+
+  def username
+    user && user.username
+  end
 end
 
 #  A Game represents the series of moves and positions that make up a game.
@@ -332,7 +336,7 @@ class Game
   end
 
   def users
-    rules.players.map { |p| self[p] }
+    player_names.map { |p| self[p] }
   end
 
   def player_names
