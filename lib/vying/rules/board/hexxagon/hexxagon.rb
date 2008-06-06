@@ -87,7 +87,9 @@ class Hexxagon < Rules
     end
 
     board.coords.neighbors( coords.last, HexHexBoard::DIRECTIONS ).each do |c|
-      board[c] = turn unless board[c].nil? || board[c] == turn
+      unless board[c].nil? || board[c] == turn || board[c] == :x
+        board[c] = turn
+      end
     end
 
     turn( :rotate )
