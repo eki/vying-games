@@ -133,7 +133,7 @@ class TestGame < Test::Unit::TestCase
   end
 
   def test_draw_by_agreement_accept
-    g = Game.new Checkers
+    g = Game.new AmericanCheckers
 
     g[:red] = Human.new "john_doe"
     g[:white] = Human.new "jane_doe"
@@ -192,7 +192,7 @@ class TestGame < Test::Unit::TestCase
   end
 
   def test_draw_by_agreement_reject
-    g = Game.new Checkers
+    g = Game.new AmericanCheckers
 
     g[:red] = Human.new "john_doe"
     g[:white] = Human.new "jane_doe"

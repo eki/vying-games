@@ -3,15 +3,15 @@ require 'test/unit'
 require 'vying'
 require 'vying/rules/rules_test'
 
-class TestCheckers < Test::Unit::TestCase
+class TestAmericanCheckers < Test::Unit::TestCase
   include RulesTests
 
   def rules
-    Checkers
+    AmericanCheckers
   end
 
   def test_info
-    assert_equal( "Checkers", rules.name )
+    assert_equal( "American Checkers", rules.name )
   end
 
   def test_players
