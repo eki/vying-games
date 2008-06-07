@@ -124,7 +124,7 @@ class TestAmericanCheckers < Test::Unit::TestCase
 
     assert_equal( :white, g.turn )
     assert( ! g.jumping )
-    assert_equal( :RED, g.board[:e8] )
+    assert_equal( :RED_KING, g.board[:e8] )
     
     g << "a6b5"
 
@@ -152,13 +152,13 @@ class TestAmericanCheckers < Test::Unit::TestCase
 
     g << "a2b1"
 
-    assert_equal( :WHITE, g.board[:b1] )
+    assert_equal( :WHITE_KING, g.board[:b1] )
   end
 
   def test_jumping_backwards
     g = Game.new( rules )
 
-    g.board[:c8] = :RED
+    g.board[:c8] = :RED_KING
     g.board[:e6] = nil
     g.board[:d5] = :white
 
@@ -218,7 +218,7 @@ class TestAmericanCheckers < Test::Unit::TestCase
     g.board[:a8,:c8,:e8,:g8,:b7,:d7,:f7,:h7,:a6,:c6,:e6,:g6] = nil
 
     # Reset it, white is wedged
-    g.board[:b1] = :WHITE
+    g.board[:b1] = :WHITE_KING
     g.board[:a2,:c2,:b3] = :white
     g.board[:d1,:f7] = :red
 
