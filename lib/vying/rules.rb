@@ -137,7 +137,7 @@ class Option
     raise "values must include the default" unless @values.include?( @default )
   end
 
-  def validate( value )
+  def coerce( value )
     if default.kind_of?( Symbol )
       value = value.to_sym
     elsif default.kind_of?( Integer ) && ! value.kind_of?( Symbol )
@@ -147,6 +147,12 @@ class Option
     elsif default.kind_of?( String )
       value = value.to_s
     end
+
+    value
+  end
+
+  def validate( value )
+    value = coerce( value )
 
     unless values.include?( value )
       raise "#{value.inspect} is not valid for #{name}, try #{values.inspect}"
@@ -223,6 +229,7 @@ class Rules
     options = defaults.merge!( options )
     if validate( options )
       @options = options
+      coerce_options
     end
 
     n = options[:number_of_players] || players.length
@@ -230,6 +237,14 @@ class Rules
 
     @players = players[0...n].dup.freeze
     @turn = @players.dup
+  end
+
+  # Attempt to coerce the given opts into the default type.
+
+  def coerce_options
+    options.each do |name, value|
+      options[name] = info[:options][name].coerce( value )
+    end
   end
 
   # Validate options that can be passed to Rules#initialize.  The default
