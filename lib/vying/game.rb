@@ -614,7 +614,7 @@ class Game
   # provide #id, #time_limit, and #updated_at.
 
   def Game.replay( results )
-    g = Game.new( results.rules, results.seed )
+    g = Game.new( results.rules, results.seed, results.options || {} )
     g << results.sequence
 
     results.rules.players.each do |p|
