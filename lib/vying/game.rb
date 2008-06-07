@@ -528,8 +528,10 @@ class Game
         if player.nil? || p == player
           moves << "undo_requested_by_#{p}" unless normal_undo ||
                                                    sequence.length == 0
-          moves << "forfeit_by_#{p}"
-          moves << "draw_offered_by_#{p}" if allow_draws_by_agreement?
+          if player_names.length == 2
+            moves << "forfeit_by_#{p}"
+            moves << "draw_offered_by_#{p}" if allow_draws_by_agreement?
+          end
         end
       end
 
