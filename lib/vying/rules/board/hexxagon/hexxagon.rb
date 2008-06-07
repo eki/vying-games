@@ -15,7 +15,7 @@ class Hexxagon < Rules
 
   players [:red, :blue, :white]
 
-  options :number_of_players => 2
+  option :number_of_players, :default => 2, :values => [2, 3]
 
   score_determines_outcome
 
@@ -41,13 +41,6 @@ class Hexxagon < Rules
     @block_pattern = set_rand_blocks
 
     @moves_cache = :ns
-  end
-
-  def validate( options )
-    super
-    np = options[:number_of_players].to_i
-    raise "number_of_players can only be 2 or 3 for #{name}" if np < 2 || np > 3
-    true
   end
 
   def moves( player=nil )

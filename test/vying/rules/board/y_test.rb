@@ -24,7 +24,8 @@ class TestY < Test::Unit::TestCase
   end
 
   def test_options
-    assert_equal( 12, Y.options[:board_size] )
+    assert_equal( 12, Y.options[:board_size].default )
+    assert_equal( [12,13,14], Y.options[:board_size].values )
 
     assert_equal( 12, Y.new.board.width )
     assert_equal( 12, Y.new( :board_size => 12 ).board.width )

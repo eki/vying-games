@@ -123,6 +123,39 @@ class Hash
   end
 end
 
+# Represents the default and valid values for an option used with Rules#option,
+# Rules#initialize, and Rules#validate.
+
+class Option
+  attr_reader :name, :default, :values
+
+  def initialize( name, opts={} )
+    @name, @default, @values = name, opts[:default], opts[:values]
+
+    raise "default required for option" unless @default
+    raise "values required for option" unless @values
+    raise "values must include the default" unless @values.include?( @default )
+  end
+
+  def validate( value )
+    if default.kind_of?( Symbol )
+      value = value.to_sym
+    elsif default.kind_of?( Integer ) && ! value.kind_of?( Symbol )
+      value = value.to_i
+    elsif default.kind_of?( Float )
+      value = value.to_f
+    elsif default.kind_of?( String )
+      value = value.to_s
+    end
+
+    unless values.include?( value )
+      raise "#{value.inspect} is not valid for #{name}, try #{values.inspect}"
+    end
+
+    true
+  end
+end
+
 # This is the core of the Vying library.  Rules subclasses provide methods
 # that define the initial position of a game, valid moves that may be applied
 # to positions, successor positions (as moves are applied), and the definition
@@ -184,7 +217,10 @@ class Rules
       @rng = RandomNumberGenerator.new( @seed )
     end
 
-    options = (info[:options] || {}).dup.merge!( options )
+    defaults = {}
+    (info[:options] || {}).each { |name,opt| defaults[name] = opt.default }
+
+    options = defaults.merge!( options )
     if validate( options )
       @options = options
     end
@@ -201,8 +237,8 @@ class Rules
   # info[:options].  Subclasses should override and validate the values of the
   #  options.
 
-  def validate( options )
-    diff = options.keys - (info[:options] || {}).keys
+  def validate( opts )
+    diff = opts.keys - (info[:options] || {}).keys
 
     if diff.length == 1
       raise "#{diff.first} is not a valid option for #{name}"
@@ -210,7 +246,25 @@ class Rules
       raise "#{diff.inspect} are not valid options for #{name}"
     end
 
-    true
+    opts.all? do |name,value|
+      info[:options][name].validate( value )
+    end
+  end
+
+  # Create's an option for the Rules subclass.  These are stored in 
+  # info[:options], and are used for setting defaults and valid values for
+  # the options passed to Rules#initialize.
+  #
+  # For example:
+  #
+  #   class BlahRules < Rules
+  #     option :board_size, :default => 12, :values => [10, 11, 12, 13]
+  #   end
+  #
+
+  def self.option( name, options )
+    info[:options] ||= {}
+    info[:options][name] = Option.new( name, options )
   end
 
   # Returns the players for a position.  This may be the instance variable
