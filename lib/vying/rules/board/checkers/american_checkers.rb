@@ -21,6 +21,8 @@ class AmericanCheckers < Rules
 
   attr_reader :board, :jumping
 
+  KING = { :red => :RED_KING, :white => :WHITE_KING }
+
   def initialize( seed=nil, options={} )
     super
 
@@ -36,8 +38,8 @@ class AmericanCheckers < Rules
 
     p    = turn
     opp  = (p    == :red) ? :white : :red
-    k    = (p    == :red) ? :RED   : :WHITE
-    oppk = (opp  == :red) ? :RED   : :WHITE
+    k    = KING[p]
+    oppk = KING[opp]
 
     jd  = (turn == :red) ? [:se, :sw] : [:ne, :nw]
     kjd = [:se, :sw, :ne, :nw]
@@ -115,9 +117,9 @@ class AmericanCheckers < Rules
     end
 
     if p == :red && coords.last.y == 7
-      board[coords.last] = :RED
+      board[coords.last] = KING[:red]
     elsif p == :white && coords.last.y == 0
-      board[coords.last] = :WHITE
+      board[coords.last] = KING[:white]
     end
 
     self
@@ -137,7 +139,7 @@ class AmericanCheckers < Rules
 
   def score( player )
     opp = player == :red ? :white : :red
-    oppk =   opp == :red ? :RED : :WHITE
+    oppk = KING[opp]
     12 - board.count( opp ) - board.count( oppk )
   end
 
