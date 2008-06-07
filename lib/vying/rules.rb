@@ -509,6 +509,7 @@ class Rules
 
     def method_missing( m, *args )
       @info ||= {}
+      @info[:options] ||= {}
       if info.key?( m ) && args.length == 0
         info[m]
       elsif ! info.key?( m ) && args.length == 1
