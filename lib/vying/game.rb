@@ -616,7 +616,12 @@ class Game
   # provide #id, #time_limit, and #updated_at.
 
   def Game.replay( results )
-    g = Game.new( results.rules, results.seed, results.options || {} )
+    if results.respond_to?( :options )
+      g = Game.new( results.rules, results.seed, results.options || {} )
+    else
+      g = Game.new( results.rules, results.seed )
+    end
+
     g << results.sequence
 
     results.rules.players.each do |p|
