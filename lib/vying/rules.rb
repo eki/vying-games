@@ -251,6 +251,12 @@ class Rules
     end
   end
 
+  # A little kludgy, but provides validate as a class method.
+
+  def self.validate( opts )
+    new.validate( opts )
+  end
+
   # Create's an option for the Rules subclass.  These are stored in 
   # info[:options], and are used for setting defaults and valid values for
   # the options passed to Rules#initialize.
