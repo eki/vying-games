@@ -11,6 +11,10 @@ class Kalah < Rules
 
   players [:one, :two]
 
+  option :seeds_per_cup, :default => 6, :values => [3,4,5,6]
+
+  pie_rule
+
   score_determines_outcome
 
   attr_reader :board, :scoring_pits, :annotation
@@ -19,7 +23,7 @@ class Kalah < Rules
   def initialize( seed=nil, options={} )
     super
 
-    @board = MancalaBoard.new( 6, 2, 6 )
+    @board = MancalaBoard.new( 6, 2, @options[:seeds_per_cup] )
     @annotation = MancalaBoard.new( 6, 2, "0" )
 
     @scoring_pits = { :one => 0, :two => 0 }
@@ -82,7 +86,8 @@ class Kalah < Rules
 
     # Capturing
 
-    if last.kind_of?( Coord ) && board[last] == 1
+    opp_y = last.y == 1 ? 0 : 1
+    if last.kind_of?( Coord ) && board[last] == 1 && board[last.x,opp_y] > 0
       if last.y == 0 && turn == :one ||
          last.y == 1 && turn == :two
         scoring_pits[turn] += board[last.x,1]
@@ -117,7 +122,7 @@ class Kalah < Rules
   end
 
   def final?
-    @moves_cache[turn].all? { |c| board[c] == 0 }
+    players.any? { |p| @moves_cache[p].all? { |c| board[c] == 0 } }
   end
 
   def score( player )

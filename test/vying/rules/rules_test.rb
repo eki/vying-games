@@ -1,4 +1,22 @@
 module RulesTests
+
+  def rules_version
+    if respond_to?( :version )
+      version
+    else
+      rules.version
+    end
+  end
+
+  def new_game( seed=nil, options={} )
+    if seed.class == Hash
+      seed, options = nil, seed
+    end
+
+    options.merge!( :version => rules_version )
+    Game.new( rules, seed, options )
+  end
+
   def test_interface
     r = rules.new
     assert( r.respond_to?( :move? ) )
@@ -17,7 +35,7 @@ module RulesTests
   def test_dup
     srand 123456789  # We do random things, but should still be repeatable
 
-    g = Game.new( rules )
+    g = new_game
     30.times do                          # Take two steps forward,
       p = g.history.last.dup             # one step back, check for corruption
       break if g.final?
@@ -30,7 +48,7 @@ module RulesTests
   end
 
   def play_sequence( s )
-    g = Game.new( rules )
+    g = new_game
     g << s[0,s.size-1]
     assert( !g.final? )
     g << s[-1]
@@ -41,7 +59,7 @@ module RulesTests
   end
 
   def test_move?
-    g = Game.new( rules )
+    g = new_game
 
     g.moves.each do |move|
       assert( g.move?( move ) )
@@ -61,7 +79,7 @@ module RulesTests
   end
 
   def test_has_moves
-    g = Game.new( rules )
+    g = new_game
     10.times do
       g.has_moves.each do |p|
         assert( g.has_moves?( p ) )
@@ -73,7 +91,7 @@ module RulesTests
   end
 
   def test_marshal
-    g = Game.new( rules )
+    g = new_game
     g2 = nil
     assert_nothing_raised { g2 = Marshal::load( Marshal::dump( g ) ) }
     #assert_equal( g, g2 ) #Game doesn't implement ==
@@ -81,7 +99,7 @@ module RulesTests
   end
 
   def test_yaml
-    g = Game.new( rules )
+    g = new_game
     g2 = nil
     assert_nothing_raised { g2 = YAML::load( YAML::dump( g ) ) }
     #assert_equal( g, g2 ) #Game doesn't implement ==
@@ -90,11 +108,11 @@ module RulesTests
 
   def test_hash
     if rules.info[:random]
-      g1 = Game.new( rules, 1234 ) 
-      g2 = Game.new( rules, 1234 ) 
+      g1 = new_game( 1234 )
+      g2 = new_game( 1234 )
     else
-      g1 = Game.new( rules ) 
-      g2 = Game.new( rules ) 
+      g1 = new_game
+      g2 = new_game
     end
 
     10.times do

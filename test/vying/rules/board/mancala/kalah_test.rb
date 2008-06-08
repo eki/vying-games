@@ -3,29 +3,25 @@ require 'test/unit'
 require 'vying'
 require 'vying/rules/rules_test'
 
-class TestKalah_1_0_0 < Test::Unit::TestCase
+class TestKalah < Test::Unit::TestCase
   include RulesTests
 
   def rules
     Kalah
   end
 
-  def version
-    "1.0.0"
-  end
-
   def test_info
-    assert_equal( "Kalah", Kalah_1_0_0.name )
+    assert_equal( "Kalah", rules.name )
   end
 
   def test_players
-    assert_equal( [:one,:two], Kalah_1_0_0.new.players )
+    assert_equal( [:one,:two], rules.new.players )
   end
 
   def test_initialize
     g = new_game
 
-    b = MancalaBoard.new( 6, 2, 4 )
+    b = MancalaBoard.new( 6, 2, 6 )
 
     assert_equal( b, g.board )
     assert_equal( :one, g.turn )
@@ -49,10 +45,20 @@ class TestKalah_1_0_0 < Test::Unit::TestCase
     assert_equal( :one, g.turn )
     assert_equal( ['b1', 'c1', 'd1', 'e1', 'f1'], g.moves )
 
-    g << :e1
+    g << :f1
+
+    assert_equal( :two, g.turn )
+    assert_equal( ['a2', 'b2', 'c2', 'd2', 'e2'], g.moves )
+
+    g << :e2
 
     assert_equal( :one, g.turn )
-    assert_equal( ['a1', 'b1', 'c1', 'd1', 'f1'], g.moves )
+    assert_equal( ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'], g.moves )
+
+    g << :a1
+
+    assert_equal( :one, g.turn )
+    assert_equal( ['b1', 'c1', 'd1', 'e1', 'f1'], g.moves )
 
     g << g.moves.first until g.final?
 
@@ -70,48 +76,37 @@ class TestKalah_1_0_0 < Test::Unit::TestCase
 
   def test_capture
     g = new_game
-    g << :a1 << :f2
+    g << [:d1, :a2, :e1, :a2, :f1, :b2, :e1]
 
-    assert_equal( 1, g.score( :one ) )
-    assert_equal( 5, g.board[:a2] )
-    assert_equal( 0, g.board[:a1] )
-    assert_equal( 5, g.board[:f1] )
-
-    g << :f1
-
-    assert_equal( 7, g.score( :one ) )
-    assert_equal( 0, g.board[:a2] )
-    assert_equal( 0, g.board[:a1] )
-    assert_equal( 0, g.board[:f1] )
-  end
-
-  def test_no_capture
-    g = new_game
-
-    g << :a1 << :a2
-
-    assert_equal( 1, g.score( :one ) )
-    assert_equal( 0, g.board[:a2] )
-    assert_equal( 0, g.board[:a1] )
-    assert_equal( 4, g.board[:c1] )
-
-    g << :c1
-
-    assert_equal( 2, g.score( :one ) )
+    assert_equal( 3, g.score( :one ) )
+    assert_equal( 2, g.score( :two ) )
     assert_equal( 1, g.board[:a2] )
-    assert_equal( 1, g.board[:a1] )
-    assert_equal( 0, g.board[:c1] )
+    assert_equal( 0, g.board[:b2] )
+    assert_equal( 9, g.board[:a1] )
+    assert_equal( 9, g.board[:b1] )
+
+    g << :a2
+
+    assert_equal( 3, g.score( :one ) )
+    assert_equal( 12, g.score( :two ) )
+    assert_equal( 0, g.board[:a2] )
+    assert_equal( 0, g.board[:b2] )
+    assert_equal( 9, g.board[:a1] )
+    assert_equal( 0, g.board[:b1] )
   end
 
   def test_extra_turn
     g = new_game
-    g << :a1 << :f2
+
+    assert_equal( :one, g.turn )
+
+    g << :f1
     
     assert_equal( :one, g.turn )
 
     g << :e1
 
-    assert_equal( :one, g.turn )
+    assert_equal( :two, g.turn )
   end
 
   def test_final
@@ -120,6 +115,8 @@ class TestKalah_1_0_0 < Test::Unit::TestCase
     # Doctor the board
 
     g.board[:b1,:c1,:d1,:e1,:f1] = 0
+    g.board[:a1] = 1
+    g.board[:a2,:b2,:c2,:d2,:e2,:f2] = 3
 
     assert( !g.final? )
     assert_equal( 0, g.score( :one ) )
@@ -128,13 +125,9 @@ class TestKalah_1_0_0 < Test::Unit::TestCase
 
     g << :a1
 
-    assert( !g.final? )  # :one's side is empty, but player two can still move
-
-    g << :a2
-
     assert( g.final? )
     assert_equal( 1, g.score( :one ) )
-    assert_equal( 27, g.score( :two ) )
+    assert_equal( 18, g.score( :two ) )
     assert( !g.winner?( :one ) )
     assert( g.winner?( :two ) )
     assert( g.loser?( :one ) )
