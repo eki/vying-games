@@ -695,7 +695,7 @@ class Game
         s
       end
     else
-      s = player_names.map { |p| "#{self[p]} (#{p})" }.join( " vs " )
+      s = player_names.map { |p| "#{self[p] || '?'} (#{p})" }.join( " vs " )
 
       if has_score?
         s = "#{s} (#{player_names.map { |p| score( p ) }.join( '-' )})"
