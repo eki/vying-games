@@ -221,8 +221,11 @@ class Rules
     end
 
     if v = options.delete( :version )
-      klass = Kernel.const_get( "#{name}_#{v.gsub( /\./, '_' )}" )
-      return klass.new( seed, options ) if klass
+      ks = "#{to_s}_#{v.gsub( /\./, '_' )}"
+      if Object.const_defined?( ks )
+        klass = Object.const_get( ks )
+        return klass.new( seed, options )
+      end
     end
 
     super( seed, options )
