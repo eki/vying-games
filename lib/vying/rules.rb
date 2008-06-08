@@ -203,6 +203,31 @@ class Rules
     end
   end
 
+  # Attempt to find the exact version as requested, and instantiate it.
+  # If the version cannot be found, fall back to creating an instance of
+  # self.
+  #
+  # Example, given classes Kalah and Kalah_1_0_0:
+  #
+  #   Kalah.new( :version => "2.0.0" )  => #<Kalah ...>
+  #   Kalah.new( :version => "1.0.0" )  => #<Kalah_1_0_0 ...>
+  #
+  # The special option :version is deleted from the options hash in either
+  # case.
+
+  def self.new( seed=nil, options={} )
+    if seed.class == Hash
+      seed, options = nil, seed
+    end
+
+    if v = options.delete( :version )
+      klass = Kernel.const_get( "#{name}_#{v.gsub( /\./, '_' )}" )
+      return klass.new( seed, options ) if klass
+    end
+
+    super( seed, options )
+  end
+
   # A Rules instance represents a position in a game, so #initialize should
   # provide the starting position.  If the position contains random elements
   # it should accept a seed to provide repeatability.  If no seed is provided
@@ -659,6 +684,11 @@ class Rules
           require "#{f}"
         end
       end
+    end
+
+    @@rules_list.reject! do |r|
+      r.to_s =~ /\w+_\d+_\d+_\d+/ &&  # Evict old versions of rules
+      r.name !~ /\w+_\d+_\d+_\d+/
     end
   end
 

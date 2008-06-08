@@ -4,10 +4,10 @@
 require 'vying/rules'
 require 'vying/board/mancala'
 
-class Kalah < Rules
+class Kalah_1_0_0 < Rules
 
   name    "Kalah"
-  version "2.0.0"
+  version "1.0.0"
 
   players [:one, :two]
 
@@ -19,7 +19,7 @@ class Kalah < Rules
   def initialize( seed=nil, options={} )
     super
 
-    @board = MancalaBoard.new( 6, 2, 6 )
+    @board = MancalaBoard.new( 6, 2, 4 )
     @annotation = MancalaBoard.new( 6, 2, "0" )
 
     @scoring_pits = { :one => 0, :two => 0 }
