@@ -666,6 +666,10 @@ class Game
       g.instance_variable_set( "@id", results.id )
     end
 
+    if results.respond_to?( :unrated )
+      g.instance_variable_set( "@unrated", results.unrated? )
+    end
+
     if results.respond_to?( :time_limit )
       g.instance_variable_set( "@time_limit", results.time_limit )
     end
