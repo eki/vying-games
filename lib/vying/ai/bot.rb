@@ -13,6 +13,14 @@ class Bot < User
     true
   end
 
+  def self.plays?( rules )
+    self.const_defined?( "#{rules}".intern )
+  end
+
+  def plays?( rules )
+    self.class.const_defined?( "#{rules}".intern )
+  end
+
   def delegate_for( position )
     if self.class.const_defined?( "#{position.class}".intern )
       self.class.const_get( "#{position.class}".intern ).new
@@ -150,7 +158,7 @@ class Bot < User
   end
 
   def Bot.list( rules=nil )
-    return @@bots_list.select { |b| b.to_s[rules.to_s] } if rules
+    return @@bots_list.select { |b| b.plays?( rules ) } if rules
     @@bots_list
   end
 
