@@ -554,8 +554,12 @@ class Game
     end
 
     if unrated?
-      players.each do |p|
-        moves << "#{p.name}_leaves" if p.user
+      if player.nil?
+        players.each do |p|
+          moves << "#{p.name}_leaves" if p.user
+        end
+      else
+        moves << "#{player}_leaves" if self[player]
       end
     end
 
@@ -706,7 +710,7 @@ class Game
   def description
     if final?
       if draw?
-        s = player_names.map { |p| "#{self[p]} (#{p})" }.join( " and " )
+        s = player_names.map { |p| "#{self[p] || '?'} (#{p})" }.join( " and " )
         s += " played to a draw"
         s += " (by agreement)" if draw_by_agreement?
         s
@@ -715,8 +719,8 @@ class Game
         winners = player_names.select { |p| winner?( p ) }
         losers  = player_names.select { |p| loser?( p ) }
 
-        ws = winners.map { |p| "#{self[p]} (#{p})" }.join( " and " )
-        ls = losers.map  { |p| "#{self[p]} (#{p})" }.join( " and " )
+        ws = winners.map { |p| "#{self[p] || '?'} (#{p})" }.join( " and " )
+        ls = losers.map  { |p| "#{self[p] || '?'} (#{p})" }.join( " and " )
 
         s = "#{ws} defeated #{ls}"
 

@@ -491,10 +491,14 @@ class TestGame < Test::Unit::TestCase
     assert( g.special_moves.include?( "black_leaves" ) )
     assert( g.special_moves.include?( "white_leaves" ) )
   
+    assert( g.special_moves( :black ).include?( "black_leaves" ) )
+    assert( ! g.special_moves( :black ).include?( "white_leaves" ) )
+  
     g << "black_leaves"
 
     assert_equal( nil, g[:black] )
     assert( ! g.special_moves.include?( "black_leaves" ) )
+    assert( ! g.special_moves( :black ).include?( "black_leaves" ) )
     assert( g.special_moves.include?( "white_leaves" ) )
 
     g[:black] = Human.new "dude"
