@@ -514,5 +514,51 @@ class TestGame < Test::Unit::TestCase
 
   end
 
+  def test_kick
+    g = Game.new Othello
+
+    assert( ! g.unrated? )
+
+    assert( ! g.special_moves.include?( "kick_black" ) )
+    assert( ! g.special_moves.include?( "kick_white" ) )
+  
+    g[:black] = Human.new "john_doe"
+    g[:white] = Human.new "jane_doe"
+
+    assert( ! g.special_moves.include?( "kick_black" ) )
+    assert( ! g.special_moves.include?( "kick_white" ) )
+  
+    g.instance_variable_set( "@unrated", true )
+
+    assert( g.unrated? )
+
+    assert( g.special_moves.include?( "kick_black" ) )
+    assert( g.special_moves.include?( "kick_white" ) )
+  
+    assert( g.special_moves( :black ).include?( "kick_white" ) )
+    assert( ! g.special_moves( :black ).include?( "kick_black" ) )
+  
+    g << "kick_white"
+
+    assert_equal( nil, g[:white] )
+    assert( ! g.special_moves.include?( "kick_white" ) )
+    assert( ! g.special_moves( :black ).include?( "kick_white" ) )
+    assert( g.special_moves.include?( "kick_black" ) )
+    assert( ! g.special_moves( :white ).include?( "kick_black" ) )
+
+    g[:white] = Human.new "dude"
+  
+    assert( g.special_moves.include?( "kick_black" ) )
+    assert( g.special_moves.include?( "kick_white" ) )
+
+    g << "kick_black"
+  
+    assert_equal( nil, g[:black] )
+    assert( g.special_moves.include?( "kick_white" ) )
+    assert( ! g.special_moves.include?( "kick_black" ) )
+
+    # Can't we all just get along?
+  end
+
 end
 

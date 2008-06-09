@@ -266,6 +266,8 @@ class Game
         send( msym )
       elsif player_names.any? { |p| move =~ /^(#{p})_leaves$/ }
         leave( $1.intern )
+      elsif player_names.any? { |p| move =~ /^kick_(#{p})$/ }
+        kick( $1.intern )
       else
         history << move
       end
@@ -558,8 +560,19 @@ class Game
         players.each do |p|
           moves << "#{p.name}_leaves" if p.user
         end
+        players.each do |p|
+          moves << "kick_#{p.name}" if p.user
+        end
       else
         moves << "#{player}_leaves" if self[player]
+      end
+    end
+
+    if unrated?
+      players.each do |p|
+        if p.user && (player.nil? || (p.name != player && self[player]))
+          moves << "kick_#{p.name}"
+        end
       end
     end
 
@@ -619,6 +632,13 @@ class Game
   # executed for special moves like <player>_leaves.
 
   def leave( player )
+    self[player] = nil
+  end
+
+  # The user for the given player is kicked from the game.  This is the method
+  # that's executed for special moves like kick_<player>.
+
+  def kick( player )
     self[player] = nil
   end
 
