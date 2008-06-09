@@ -184,7 +184,14 @@ end
 #  It is heavily backed by a subclass of Rules.
 
 class Game
-  attr_reader :options, :players, :history, :id, :time_limit, :updated_at
+
+  # Core attributes
+
+  attr_reader :options, :players, :history
+
+  # Extended (unnecessary) attributes
+
+  attr_reader :id, :unrated, :time_limit, :updated_at
 
   # Create a game from the given Rules subclass, and an optional seed.  If
   # the game has random elements and a seed is not provided, one will be 
@@ -257,6 +264,8 @@ class Game
       msym = move.intern
       if respond_to?( msym )
         send( msym )
+      elsif player_names.any? { |p| move =~ /^(#{p})_leaves$/ }
+        leave( $1.intern )
       else
         history << move
       end
@@ -544,6 +553,12 @@ class Game
       end
     end
 
+    if unrated?
+      players.each do |p|
+        moves << "#{p.name}_leaves" if p.user
+      end
+    end
+
     moves
   end
 
@@ -596,6 +611,13 @@ class Game
     undo if special_move?( "reject_undo" )
   end
 
+  # The user for the given player leaves the game.  This is the method that's
+  # executed for special moves like <player>_leaves.
+
+  def leave( player )
+    self[player] = nil
+  end
+
   # Takes a User and returns which player he/she is.  If given a player
   # returns that player.
 
@@ -605,6 +627,15 @@ class Game
     return user if user.class == Symbol
 
     player_names.find { |p| self[p] == user }
+  end
+
+  # Is this a unrated game?  This is a wrapper around the :unrated attribute.
+  # The only effect a unrated game has on this library is whether or not
+  # the leave special move is available.  In an unrated game the users
+  # can drop out by using leave.
+
+  def unrated?
+    unrated
   end
 
   # Creates a new game instance by replaying from a results object.

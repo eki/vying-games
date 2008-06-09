@@ -470,5 +470,45 @@ class TestGame < Test::Unit::TestCase
     assert_equal( Human.new( "john_doe" ), g[:red] )
   end
 
+  def test_leave
+    g = Game.new Othello
+
+    assert( ! g.unrated? )
+
+    assert( ! g.special_moves.include?( "black_leaves" ) )
+    assert( ! g.special_moves.include?( "white_leaves" ) )
+  
+    g[:black] = Human.new "john_doe"
+    g[:white] = Human.new "jane_doe"
+
+    assert( ! g.special_moves.include?( "black_leaves" ) )
+    assert( ! g.special_moves.include?( "white_leaves" ) )
+  
+    g.instance_variable_set( "@unrated", true )
+
+    assert( g.unrated? )
+
+    assert( g.special_moves.include?( "black_leaves" ) )
+    assert( g.special_moves.include?( "white_leaves" ) )
+  
+    g << "black_leaves"
+
+    assert_equal( nil, g[:black] )
+    assert( ! g.special_moves.include?( "black_leaves" ) )
+    assert( g.special_moves.include?( "white_leaves" ) )
+
+    g[:black] = Human.new "dude"
+  
+    assert( g.special_moves.include?( "black_leaves" ) )
+    assert( g.special_moves.include?( "white_leaves" ) )
+
+    g << "white_leaves"
+  
+    assert_equal( nil, g[:white] )
+    assert( g.special_moves.include?( "black_leaves" ) )
+    assert( ! g.special_moves.include?( "white_leaves" ) )
+
+  end
+
 end
 
