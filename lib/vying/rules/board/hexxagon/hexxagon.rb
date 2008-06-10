@@ -45,7 +45,11 @@ class Hexxagon < Rules
 
   def moves( player=nil )
     return []          unless player.nil? || has_moves.include?( player )
-    return []          if players.any? { |p| board.count( p ) == 0 }
+
+    np = @options[:number_of_players]
+    zero_count = players.select { |p| board.count( p ) == 0 }.length
+
+    return []          if np - 1 == zero_count
     return moves_cache if moves_cache != :ns
 
     p   = turn
@@ -88,8 +92,10 @@ class Hexxagon < Rules
     turn( :rotate )
     @moves_cache = :ns
 
-    turn( :rotate ) if moves.empty?
-    @moves_cache = :ns
+    (@options[:number_of_players] - 1).times do
+      turn( :rotate ) if moves.empty?
+      @moves_cache = :ns
+    end
 
     self
   end
