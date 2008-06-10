@@ -239,7 +239,13 @@ class Rules
   # If Rules.random has been called, #initialize will automatically create
   # @seed and @rng instance variables and attributes.
   #
-  # @turn is also set automatically to a copy of the players array.
+  # The given options are validated against info[:options].  Defaults are
+  # merged in and the @options instance variable initialized.
+  #
+  # If the :number_of_players option is specified, @players is adjusted to
+  # contain the first N players from info[:players].
+  #
+  # @turn is also set automatically to a copy of the @players array.
 
   def initialize( seed=nil, options={} )
     if seed.class == Hash
