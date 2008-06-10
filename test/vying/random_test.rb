@@ -1,80 +1,84 @@
 require 'test/unit'
 
-require 'vying/rules'
+require 'vying'
 
-class TestRandomNumberGenerator < Test::Unit::TestCase
-  def test_initialize
-    rng = RandomNumberGenerator.new 1234
-    rng2 = RandomNumberGenerator.new 1234
-    rng3 = RandomNumberGenerator.new 5678
+if Vying::RandomSupport
 
-    assert_equal( 1234, rng.seed )
-    assert_equal( 1234, rng2.seed )
-    assert_equal( 5678, rng3.seed )
+  class TestRandomNumberGenerator < Test::Unit::TestCase
+    def test_initialize
+      rng = RandomNumberGenerator.new 1234
+      rng2 = RandomNumberGenerator.new 1234
+      rng3 = RandomNumberGenerator.new 5678
 
-    assert_equal( 0, rng.count )
-    assert_equal( 0, rng2.count )
-    assert_equal( 0, rng3.count )
-  end
+      assert_equal( 1234, rng.seed )
+      assert_equal( 1234, rng2.seed )
+      assert_equal( 5678, rng3.seed )
 
-  def test_repeatability
-    rng = RandomNumberGenerator.new 1234
-    rng2 = RandomNumberGenerator.new 1234
+      assert_equal( 0, rng.count )
+      assert_equal( 0, rng2.count )
+      assert_equal( 0, rng3.count )
+    end
 
-    assert_equal( rng.rand( 2000 ), rng2.rand( 2000 ) )
-    assert_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
-    assert_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
-    assert_equal( rng.rand( 7000 ), rng2.rand( 7000 ) )
+    def test_repeatability
+      rng = RandomNumberGenerator.new 1234
+      rng2 = RandomNumberGenerator.new 1234
 
-    rng = RandomNumberGenerator.new 1234
-    rng3 = RandomNumberGenerator.new 5678
+      assert_equal( rng.rand( 2000 ), rng2.rand( 2000 ) )
+      assert_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
+      assert_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
+      assert_equal( rng.rand( 7000 ), rng2.rand( 7000 ) )
 
-    # Note, this is actually a very *bad* test because there's no guarantee
-    # the first 4 numbers drawn for two different seeds *can't* be the same
+      rng = RandomNumberGenerator.new 1234
+      rng3 = RandomNumberGenerator.new 5678
 
-    assert_not_equal( rng.rand( 2000 ), rng2.rand( 2000 ) )
-    assert_not_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
-    assert_not_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
-    assert_not_equal( rng.rand( 7000 ), rng2.rand( 7000 ) )
-  end
+      # Note, this is actually a very *bad* test because there's no guarantee
+      # the first 4 numbers drawn for two different seeds *can't* be the same
 
-  def test_dup
-    rng = RandomNumberGenerator.new 1234
+      assert_not_equal( rng.rand( 2000 ), rng2.rand( 2000 ) )
+      assert_not_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
+      assert_not_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
+      assert_not_equal( rng.rand( 7000 ), rng2.rand( 7000 ) )
+    end
 
-    rng.rand
+    def test_dup
+      rng = RandomNumberGenerator.new 1234
 
-    rng2 = rng.dup
+      rng.rand
 
-    assert_equal( rng.count, rng2.count )
-    assert_equal( rng.seed, rng2.seed )
-    assert_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
-    assert_equal( rng2.rand( 1000 ), rng.rand( 1000 ) )
-  end
+      rng2 = rng.dup
 
-  def test_marshal
-    rng = RandomNumberGenerator.new 1234
+      assert_equal( rng.count, rng2.count )
+      assert_equal( rng.seed, rng2.seed )
+      assert_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
+      assert_equal( rng2.rand( 1000 ), rng.rand( 1000 ) )
+    end
 
-    rng.rand
+    def test_marshal
+      rng = RandomNumberGenerator.new 1234
 
-    rng2 = Marshal.load( Marshal.dump( rng ) )
+      rng.rand
 
-    assert_equal( rng.count, rng2.count )
-    assert_equal( rng.seed, rng2.seed )
-    assert_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
-    assert_equal( rng2.rand( 1000 ), rng.rand( 1000 ) )
-  end
+      rng2 = Marshal.load( Marshal.dump( rng ) )
 
-  def test_yaml
-    rng = RandomNumberGenerator.new 1234
+      assert_equal( rng.count, rng2.count )
+      assert_equal( rng.seed, rng2.seed )
+      assert_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
+      assert_equal( rng2.rand( 1000 ), rng.rand( 1000 ) )
+    end
 
-    rng.rand
+    def test_yaml
+      rng = RandomNumberGenerator.new 1234
 
-    rng2 = YAML::load( rng.to_yaml )
+      rng.rand
 
-    assert_equal( rng.count, rng2.count )
-    assert_equal( rng.seed, rng2.seed )
-    assert_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
-    assert_equal( rng2.rand( 1000 ), rng.rand( 1000 ) )
+      rng2 = YAML::load( rng.to_yaml )
+
+      assert_equal( rng.count, rng2.count )
+      assert_equal( rng.seed, rng2.seed )
+      assert_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
+      assert_equal( rng2.rand( 1000 ), rng.rand( 1000 ) )
+    end
+
   end
 
 end

@@ -13,6 +13,8 @@ class TestGame < Test::Unit::TestCase
     assert_equal( nil, g.seed )
     assert( ! g.respond_to?( :rng ) )
 
+    return unless Vying::RandomSupport
+
     g = Game.new Ataxx, 1234
     assert_equal( Ataxx, g.rules )
     assert_equal( [], g.sequence )
@@ -37,6 +39,8 @@ class TestGame < Test::Unit::TestCase
   end
 
   def test_censor
+    return unless Vying::RandomSupport
+
     g = Game.new Ataxx, 1234
     assert_equal( :hidden, g.censor( :red ).rng )
     assert_equal( :hidden, g.censor( :blue ).rng )
@@ -390,6 +394,9 @@ class TestGame < Test::Unit::TestCase
   end
 
   def test_undo_by_request_three_players
+    return unless Vying::RandomSupport  # TODO: replace Hexxagon with a 
+                                        #       non-random 3-player game
+
     g = Game.new Hexxagon, :number_of_players => 3
     g[:red] = Human.new "john_doe"
     g[:white] = Human.new "jane_doe"

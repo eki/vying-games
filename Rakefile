@@ -126,7 +126,6 @@ if defined?( Gem ) && pkg_version
     s.has_rdoc = true
     s.files = PKG_FILES_NO_EXT.to_a
     s.executables = ['vying']
-    s.add_dependency "random", ">= 0.2.1"
     s.author = 'Eric K Idema'
     s.email = 'eki@vying.org'
   end

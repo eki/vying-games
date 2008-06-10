@@ -222,6 +222,9 @@ class Game
     end
 
     @rules = rules.to_s
+
+    raise "#{rules} not supported!" if self.rules.nil?
+
     @history = History.new( self.rules.new( seed, options ) )
     @options = history.first.options.dup.freeze
     @players = history.first.players.map { |p| Player.new( p, self ) }

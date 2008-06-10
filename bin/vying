@@ -15,6 +15,12 @@ elsif ARGV.first == "--version" || ARGV.first == "-v"
 
   puts Vying.version
 
+  if Vying::RandomSupport
+    puts "  random support available"
+  else
+    puts "  'random' gem missing -- some games disabled"
+  end
+
 else
 
   puts "Usage: vying <subcommand> [options] [args]"

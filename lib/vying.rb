@@ -33,6 +33,7 @@ require 'vying/board/yinsh'
 require 'vying/dice'
 
 require 'vying/user'
+require 'vying/random'
 require 'vying/rules'
 require 'vying/game'
 require 'vying/ai/search'
