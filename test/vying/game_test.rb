@@ -22,6 +22,20 @@ class TestGame < Test::Unit::TestCase
     assert( g.respond_to?( :rng ) )
   end
 
+  def test_replay
+    g = Game.new TicTacToe
+
+    g2 = Game.replay( g )
+
+    assert_equal( g.history, g2.history )  # Game doesn't define ==
+                                           # so we can only check history
+    until g.final?
+      g << g.moves.first
+      g2 = Game.replay( g )
+      assert_equal( g.history, g2.history )
+    end
+  end
+
   def test_censor
     g = Game.new Ataxx, 1234
     assert_equal( :hidden, g.censor( :red ).rng )
@@ -158,12 +172,12 @@ class TestGame < Test::Unit::TestCase
       assert( ! g.move?( move ) )
     end
 
-    assert( g.special_move?( "accept_draw", :white ) )
+    assert( g.special_move?( "draw_accepted_by_white", :white ) )
     assert( g.special_move?( "reject_draw", :white ) )
-    assert( ! g.special_move?( "accept_draw", :red ) )
+    assert( ! g.special_move?( "draw_accepted_by_red", :red ) )
     assert( ! g.special_move?( "reject_draw", :red ) )
 
-    assert_equal( ["accept_draw", "reject_draw"], 
+    assert_equal( ["draw_accepted_by_white", "reject_draw"], 
                   g.special_moves( :white).sort )
 
     g[:white] << "accept_draw"
@@ -217,12 +231,12 @@ class TestGame < Test::Unit::TestCase
       assert( ! g.move?( move ) )
     end
 
-    assert( g.special_move?( "accept_draw", :white ) )
+    assert( g.special_move?( "draw_accepted_by_white", :white ) )
     assert( g.special_move?( "reject_draw", :white ) )
-    assert( ! g.special_move?( "accept_draw", :red ) )
+    assert( ! g.special_move?( "draw_accepted_by_red", :red ) )
     assert( ! g.special_move?( "reject_draw", :red ) )
 
-    assert_equal( ["accept_draw", "reject_draw"], 
+    assert_equal( ["draw_accepted_by_white", "reject_draw"], 
                   g.special_moves( :white).sort )
 
     g[:white] << "reject_draw"
@@ -233,7 +247,7 @@ class TestGame < Test::Unit::TestCase
 
     assert( ! g.final? )
 
-    assert( ! g.special_move?( "accept_draw" ) )
+    assert( ! g.special_move?( "draw_accepted_by_white" ) )
     assert( ! g.special_move?( "reject_draw" ) )
 
     moves.each do |move|
@@ -333,12 +347,12 @@ class TestGame < Test::Unit::TestCase
     assert( g.undo_requested_by?( :x ) )
     assert_equal( [:o], g.has_moves )
 
-    assert( g.special_move?( "accept_undo", :o ) )
+    assert( g.special_move?( "undo_accepted_by_o", :o ) )
     assert( g.special_move?( "reject_undo", :o ) )
-    assert( ! g.special_move?( "accept_undo", :x ) )
+    assert( ! g.special_move?( "undo_accepted_by_x", :x ) )
     assert( ! g.special_move?( "reject_undo", :x ) )
 
-    assert_equal( ["accept_undo", "reject_undo"],
+    assert_equal( ["undo_accepted_by_o", "reject_undo"].sort,
                   g.special_moves( :o ).sort )
 
     g[:o] << "reject_undo"
@@ -357,18 +371,113 @@ class TestGame < Test::Unit::TestCase
     assert( g.undo_requested_by?( :o ) )
     assert_equal( [:x], g.has_moves )
 
-    assert( g.special_move?( "accept_undo", :x ) )
+    assert( g.special_move?( "undo_accepted_by_x", :x ) )
     assert( g.special_move?( "reject_undo", :x ) )
-    assert( ! g.special_move?( "accept_undo", :o ) )
+    assert( ! g.special_move?( "undo_accepted_by_o", :o ) )
     assert( ! g.special_move?( "reject_undo", :o ) )
 
-    assert_equal( ["accept_undo", "reject_undo"],
+    assert_equal( ["undo_accepted_by_x", "reject_undo"].sort,
                   g.special_moves( :x ).sort )
 
     g[:x] << "accept_undo"
     g.step
 
-    assert( ! g.special_move?( "accept_undo" ) )
+    assert( ! g.special_move?( "undo_accepted_by_x" ) )
+    assert( ! g.special_move?( "reject_undo" ) )
+
+    assert_equal( 0, g.sequence.length )
+    assert_equal( 1, g.history.length )
+  end
+
+  def test_undo_by_request_three_players
+    g = Game.new Hexxagon, :number_of_players => 3
+    g[:red] = Human.new "john_doe"
+    g[:white] = Human.new "jane_doe"
+    g[:blue] = Human.new "dude"
+
+    assert_equal( 0, g.sequence.length )
+    assert_equal( 1, g.history.length )
+
+    move = g.moves.first
+    g << move
+
+    assert_equal( 1, g.sequence.length )
+    assert_equal( 2, g.history.length )
+    assert_equal( move, g.sequence.last )
+
+    assert( g.special_move?( "undo_requested_by_red" ) )
+    assert( g.special_move?( "undo_requested_by_white" ) )
+    assert( g.special_move?( "undo_requested_by_blue" ) )
+
+    g[:red] << "request_undo"
+    g.step
+
+    assert( g.undo_requested? )
+    assert_equal( "undo_requested_by_red", g.sequence.last )
+    assert_equal( :red, g.undo_requested_by )
+    assert( g.undo_requested_by?( :red ) )
+    assert( g.has_moves?( :white ) )
+    assert( g.has_moves?( :blue ) )
+    assert( ! g.has_moves?( :red ) )
+
+    assert( g.special_move?( "undo_accepted_by_white", :white ) )
+    assert( g.special_move?( "undo_accepted_by_blue", :blue ) )
+    assert( g.special_move?( "reject_undo", :white ) )
+    assert( g.special_move?( "reject_undo", :blue ) )
+    assert( ! g.special_move?( "undo_accepted_by_red", :red ) )
+    assert( ! g.special_move?( "reject_undo", :red ) )
+
+    assert_equal( ["undo_accepted_by_white", 
+                   "undo_accepted_by_blue",
+                   "time_exceeded_by_white",
+                   "time_exceeded_by_red",
+                   "time_exceeded_by_blue",
+                   "reject_undo"].sort,
+                  g.special_moves.sort )
+
+    g[:white] << "accept_undo"
+    g.step
+
+    assert( g.undo_requested? )
+    assert_equal( "undo_accepted_by_white", g.sequence.last )
+    assert_equal( "undo_requested_by_red", g.sequence[g.sequence.length - 2] )
+    assert_equal( :red, g.undo_requested_by )
+    assert( g.undo_requested_by?( :red ) )
+    assert( ! g.has_moves?( :white ) )
+    assert( g.has_moves?( :blue ) )
+    assert( ! g.has_moves?( :red ) )
+
+    assert( ! g.special_move?( "undo_accepted_by_white", :white ) )
+    assert( g.special_move?( "undo_accepted_by_blue", :blue ) )
+    assert( ! g.special_move?( "reject_undo", :white ) )
+    assert( g.special_move?( "reject_undo", :blue ) )
+    assert( ! g.special_move?( "undo_accepted_by_red", :red ) )
+    assert( ! g.special_move?( "reject_undo", :red ) )
+
+    assert_equal( ["undo_accepted_by_blue",
+                   "time_exceeded_by_white",
+                   "time_exceeded_by_red",
+                   "time_exceeded_by_blue",
+                   "reject_undo"].sort,
+                  g.special_moves.sort )
+
+    g2 = Game.replay( g )
+
+    g[:blue] << "reject_undo"
+    g.step
+
+    assert_equal( 1, g.sequence.length )
+    assert_equal( 2, g.history.length )
+    assert_equal( move, g.sequence.last )
+
+    g = g2
+
+    g[:blue] << "accept_undo"
+    g.step
+
+    assert( ! g.special_move?( "undo_accepted_by_blue" ) )
+    assert( ! g.special_move?( "undo_accepted_by_red" ) )
+    assert( ! g.special_move?( "undo_accepted_by_white" ) )
     assert( ! g.special_move?( "reject_undo" ) )
 
     assert_equal( 0, g.sequence.length )

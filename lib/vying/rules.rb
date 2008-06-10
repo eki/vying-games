@@ -768,107 +768,159 @@ class Rules
     private :allow_draws_by_agreement
   end
 
-  def forfeit?;                      false;                     end
-  def forfeit_by;                    nil;                       end
-  def forfeit_by?( player )          false;                     end
-  def time_exceeded?;                false                      end
-  def time_exceeded_by;              nil;                       end
-  def time_exceeded_by?( player );   false;                     end
-  def draw_by_agreement?;            false;                     end
-  def draw_offered?;                 false;                     end
-  def draw_offered_by;               nil;                       end
-  def draw_offered_by?( player );    false;                     end
-  def undo_requested?;               false;                     end
-  def undo_requested_by;             nil;                       end
-  def undo_requested_by?( player );  false;                     end
+  def forfeit?;                      false;                           end
+  def forfeit_by;                    nil;                             end
+  def forfeit_by?( player )          false;                           end
+  def time_exceeded?;                false                            end
+  def time_exceeded_by;              nil;                             end
+  def time_exceeded_by?( player );   false;                           end
+  def draw_by_agreement?;            false;                           end
+  def draw_offered?;                 false;                           end
+  def draw_offered_by;               nil;                             end
+  def draw_offered_by?( player );    false;                           end
+  def draw_accepted_by?( player );   false;                           end
+  def undo_requested?;               false;                           end
+  def undo_requested_by;             nil;                             end
+  def undo_requested_by?( player );  false;                           end
+  def undo_accepted_by?( player );   false;                           end
 end
 
 module Forfeit
-  def special_move=( special_move )
-    if special_move =~ /^forfeit_by_(\w+)/
+  def special_moves=( special_moves )
+    if special_moves.last =~ /^forfeit_by_(\w+)/
       @forfeit_by = $1.intern
     end
   end
 
-  def forfeit?;                      true;                      end
-  def forfeit_by;                    @forfeit_by;               end
-  def forfeit_by?( player );         @forfeit_by == player;     end
-  def final?;                        true;                      end
-  def winner?( player );             player != @forfeit_by;     end
-  def loser?( player );              player == @forfeit_by;     end
-  def draw?;                         false;                     end
-  def moves( player=nil );           [];                        end
-  def move?( move, player=nil );     false;                     end
-  def has_moves;                     [];                        end
+  def forfeit?;                      true;                            end
+  def forfeit_by;                    @forfeit_by;                     end
+  def forfeit_by?( player );         @forfeit_by == player;           end
+  def final?;                        true;                            end
+  def winner?( player );             player != @forfeit_by;           end
+  def loser?( player );              player == @forfeit_by;           end
+  def draw?;                         false;                           end
+  def moves( player=nil );           [];                              end
+  def move?( move, player=nil );     false;                           end
+  def has_moves;                     [];                              end
 end
 
 module TimeExceeded
-  def special_move=( special_move )
-    if special_move =~ /^time_exceeded_by_(\w+)/
+  def special_moves=( special_moves )
+    if special_moves.last =~ /^time_exceeded_by_(\w+)/
       @exceeded_by = $1.intern
     end
   end
 
-  def time_exceeded?;                true;                      end
-  def time_exceeded_by;              @exceeded_by;              end
-  def time_exceeded_by?( player );   @exceeded_by == player;    end
-  def final?;                        true;                      end
-  def winner?( player );             player != @exceeded_by;    end
-  def loser?( player );              player == @exceeded_by;    end
-  def draw?;                         false;                     end
-  def moves( player=nil );           [];                        end
-  def move?( move, player=nil );     false;                     end
-  def has_moves;                     [];                        end
+  def time_exceeded?;                true;                            end
+  def time_exceeded_by;              @exceeded_by;                    end
+  def time_exceeded_by?( player );   @exceeded_by == player;          end
+  def final?;                        true;                            end
+  def winner?( player );             player != @exceeded_by;          end
+  def loser?( player );              player == @exceeded_by;          end
+  def draw?;                         false;                           end
+  def moves( player=nil );           [];                              end
+  def move?( move, player=nil );     false;                           end
+  def has_moves;                     [];                              end
 end
 
 module NegotiatedDraw
-  def special_move=( special_move )
+  def special_moves=( special_moves )
   end
 
-  def draw_by_agreement?;            true;                      end
-  def final?;                        true;                      end
-  def winner?( player );             false;                     end
-  def loser?( player );              false;                     end
-  def draw?;                         true;                      end
-  def moves( player=nil );           [];                        end
-  def move?( move, player=nil );     false;                     end
-  def has_moves;                     [];                        end
+  def draw_by_agreement?;            true;                            end
+  def final?;                        true;                            end
+  def winner?( player );             false;                           end
+  def loser?( player );              false;                           end
+  def draw?;                         true;                            end
+  def moves( player=nil );           [];                              end
+  def move?( move, player=nil );     false;                           end
+  def has_moves;                     [];                              end
 end
 
 module DrawOffered
-  def special_move=( special_move )
-    if special_move =~ /^draw_offered_by_(\w+)/
+  def special_moves=( special_moves )
+    if special_moves.last =~ /^draw_offered_by_(\w+)/
       @offered_by = $1.intern
     end
   end
 
-  def draw_offered?;                 true;                      end
-  def draw_offered_by;               @offered_by;               end
-  def draw_offered_by?( player );    @offered_by == player;     end
-  def final?;                        false;                     end
-  def moves( player=nil );           [];                        end
-  def move?( move, player=nil );     false;                     end
-  def has_moves;                     players - [@offered_by];   end
+  def draw_offered?;                 true;                            end
+  def draw_offered_by;               @offered_by;                     end
+  def draw_offered_by?( player );    @offered_by == player;           end
+  def final?;                        false;                           end
+  def moves( player=nil );           [];                              end
+  def move?( move, player=nil );     false;                           end
+  def has_moves;                     players - [@offered_by];         end
+end
+
+module DrawAccepted
+  def special_moves=( special_moves )
+    @accepted_by = []
+
+    special_moves.each do |special_move|
+      if special_move =~ /^draw_offered_by_(\w+)/
+        @offered_by = $1.intern
+      elsif special_move =~ /^draw_accepted_by_(\w+)/
+        @accepted_by << $1.intern
+      end
+    end
+
+    @waiting_for = players - [@offered_by] - @accepted_by
+  end
+
+  def draw_offered?;                 true;                            end
+  def draw_offered_by;               @offered_by;                     end
+  def draw_offered_by?( player );    @offered_by == player;           end
+  def draw_accepted_by?( player );   @accepted_by.include?( player ); end
+  def final?;                        false;                           end
+  def moves( player=nil );           [];                              end
+  def move?( move, player=nil );     false;                           end
+  def has_moves;                     @waiting_for;                    end
 end
 
 module UndoRequested
-  def special_move=( special_move )
-    if special_move =~ /^undo_requested_by_(\w+)/
+  def special_moves=( special_moves )
+    if special_moves.last =~ /^undo_requested_by_(\w+)/
       @requested_by = $1.intern
     end
   end
 
-  def undo_requested?;               true;                      end
-  def undo_requested_by;             @requested_by;             end
-  def undo_requested_by?( player );  @requested_by == player;   end
-  def final?;                        false;                     end
-  def moves( player=nil );           [];                        end
-  def move?( move, player=nil );     false;                     end
-  def has_moves;                     players - [@requested_by]; end
+  def undo_requested?;               true;                            end
+  def undo_requested_by;             @requested_by;                   end
+  def undo_requested_by?( player );  @requested_by == player;         end
+  def final?;                        false;                           end
+  def moves( player=nil );           [];                              end
+  def move?( move, player=nil );     false;                           end
+  def has_moves;                     players - [@requested_by];       end
+end
+
+module UndoAccepted
+  def special_moves=( special_moves )
+    @accepted_by = []
+
+    special_moves.each do |special_move|
+      if special_move =~ /^undo_requested_by_(\w+)/
+        @requested_by = $1.intern
+      elsif special_move =~ /^undo_accepted_by_(\w+)/
+        @accepted_by << $1.intern
+      end
+    end
+
+    @waiting_for = players - [@requested_by] - @accepted_by
+  end
+
+  def undo_requested?;               true;                            end
+  def undo_requested_by;             @requested_by;                   end
+  def undo_requested_by?( player );  @requested_by == player;         end
+  def undo_accepted_by?( player );   @accepted_by.include?( player ); end
+  def final?;                        false;                           end
+  def moves( player=nil );           [];                              end
+  def move?( move, player=nil );     false;                           end
+  def has_moves;                     @waiting_for;                    end
 end
 
 module Swapped
-  def special_move=( special_move )
+  def special_moves=( special_moves )
   end
 end
 

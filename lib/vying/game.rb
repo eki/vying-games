@@ -12,7 +12,9 @@ class History
   attr_reader :sequence, :positions
 
   SPECIAL_MOVES = { /^draw_offered_by_/     => DrawOffered,
+                    /^draw_accepted_by_/    => DrawAccepted,
                     /^undo_requested_by_/   => UndoRequested,
+                    /^undo_accepted_by_/    => UndoAccepted,
                     /^forfeit_by_/          => Forfeit,
                     /^time_exceeded_by_/    => TimeExceeded,
                     /^draw$/                => NegotiatedDraw,
@@ -44,7 +46,7 @@ class History
         if sequence[j] =~ pattern
           p = positions[j].dup
           p.extend mod
-          p.special_move = sequence[j]
+          p.special_moves = last_special_moves( j )
         end
       end
 
@@ -75,6 +77,22 @@ class History
     SPECIAL_MOVES.keys.any? { |p| move =~ p }
   end
 
+  # Get all the special moves from the end of the sequence.  If a parameter
+  # is given it will be used as the index to start searching from (instead
+  # of the end of the sequence.
+
+  def last_special_moves( i=nil )
+    i ||= sequence.length - 1
+    sms = []
+
+    while i > 0 && special?( sequence[i] )
+      sms << sequence[i]
+      i -= 1
+    end
+
+    sms
+  end
+
   # How many positions are in this history?
 
   def length
@@ -92,7 +110,7 @@ class History
       if move =~ pattern
         p = last.dup
         p.extend mod
-        p.special_move = move
+        p.special_moves = [move] + last_special_moves
       end
     end
 
@@ -264,12 +282,21 @@ class Game
       msym = move.intern
       if respond_to?( msym )
         send( msym )
+
       elsif player_names.any? { |p| move =~ /^(#{p})_leaves$/ }
         leave( $1.intern )
+
       elsif player_names.any? { |p| move =~ /^kick_(#{p})$/ }
         kick( $1.intern )
+
       else
         history << move
+
+        if history.last.draw_offered? && history.last.has_moves.empty?
+          accept_draw
+        elsif history.last.undo_requested? && history.last.has_moves.empty?
+          accept_undo
+        end
       end
 
       return self
@@ -346,9 +373,20 @@ class Game
     player.user = u
   end
 
+  # Alias of #[]
+
+  def user( p )
+    self[p]
+  end
+
+  # Returns the users playing this game (in player order).
+
   def users
     player_names.map { |p| self[p] }
   end
+
+  # returns the names of the players for this game.  This is the equivalent
+  # of Rules#players (not Rules.players).
 
   def player_names
     history.first.players
@@ -378,30 +416,39 @@ class Game
   def step
 
     # Accept or reject offered draw
-    if allow_draws_by_agreement? && offered_by = draw_offered_by
-      accepted = player_names.all? do |p| 
-        position = history.last.censor( p )
-        p == offered_by || self[p].accept_draw?( sequence, position, p )
+    if allow_draws_by_agreement? && draw_offered?
+      players.each do |p| 
+        if p.user && p.user.ready? && p.has_moves?
+          
+          position = history.last.censor( p.name )
+          if p.user.accept_draw?( sequence, position, p.name )
+            self << "draw_accepted_by_#{p.name}"
+          else
+            self << "reject_draw"
+          end
+        end
       end
-
-      undo
-      history << "draw" if accepted
 
       return self
     end
 
     # Accept or reject undo request 
-    if requested_by = undo_requested_by
-      accepted = player_names.all? do |p| 
-        position = history.last.censor( p )
-        p == requested_by || self[p].accept_undo?( sequence, position, p )
+    if undo_requested?
+      players.each do |p| 
+        if p.user && p.user.ready? && p.has_moves?
+          
+          position = history.last.censor( p.name )
+          if p.user.accept_undo?( sequence, position, p.name )
+            self << "undo_accepted_by_#{p.name}"
+          else
+            self << "reject_undo"
+          end
+        end
       end
-
-      undo
-      undo if accepted
 
       return self
     end
+
 
     player_names.each do |p|
       if self[p].ready?
@@ -514,13 +561,37 @@ class Game
     end
 
     if draw_offered?
-      return [] if draw_offered_by == player
+      return [] if draw_offered_by?( player )
+      return [] if draw_accepted_by?( player )
 
-      moves << "accept_draw" << "reject_draw"
+      unless player.nil? || draw_accepted_by?( player )
+        return ["draw_accepted_by_#{player}", "reject_draw"]
+      end
+
+      player_names.each do |p|
+        unless draw_offered_by?( p ) || draw_accepted_by?( p )
+          moves << "draw_accepted_by_#{p}"
+        end
+      end
+
+      moves << "reject_draw"
+
     elsif undo_requested?
-      return [] if undo_requested_by == player
+      return [] if undo_requested_by?( player )
+      return [] if undo_accepted_by?( player )
 
-      moves << "accept_undo" << "reject_undo"
+      unless player.nil? || undo_accepted_by?( player )
+        return ["undo_accepted_by_#{player}", "reject_undo"]
+      end
+
+      player_names.each do |p|
+        unless undo_requested_by?( p ) || undo_accepted_by?( p )
+          moves << "undo_accepted_by_#{p}"
+        end
+      end
+
+      moves << "reject_undo"
+
     else
       normal_undo = false
 
@@ -533,7 +604,7 @@ class Game
             moves << "undo"  if player.nil? || p == player
           end
         end
-     end
+      end
 
       player_names.each do |p|
         if player.nil? || p == player
@@ -607,25 +678,21 @@ class Game
   end
 
   def accept_draw
-    if special_move?( "accept_draw" )
-      undo
-      history << "draw"
-    end
+    undo while history.last.draw_offered?
+    history << "draw"
   end
 
   def reject_draw
-    undo if special_move?( "reject_draw" )
+    undo while history.last.draw_offered?
   end
 
   def accept_undo
-    if special_move?( "accept_undo" )
-      undo
-      undo
-    end
+    undo while history.last.undo_requested?
+    undo
   end
 
   def reject_undo
-    undo if special_move?( "reject_undo" )
+    undo while history.last.undo_requested?
   end
 
   # The user for the given player leaves the game.  This is the method that's
@@ -672,7 +739,7 @@ class Game
 
   def Game.replay( results )
     if results.respond_to?( :options )
-      g = Game.new( results.rules, results.seed, results.options || {} )
+      g = Game.new( results.rules, results.seed, (results.options || {}).dup )
     else
       g = Game.new( results.rules, results.seed )
     end
