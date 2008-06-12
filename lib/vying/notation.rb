@@ -3,29 +3,36 @@ class Notation
 
   attr_reader :game
 
-  def initialize( game=nil )
+  def initialize( game )
     @game = game
   end
 
-  def to_move( s, player=nil )
+  def to_move( s, player )
     s
   end
 
-  def translate( move, player=nil )
+  def translate( move, player )
     move
   end
 
-  def sequence( game=nil )
-    g = game || @game
-
-    return [] unless g
-
+  def sequence
     s = []
     g.history.each do |move, player, position|
       s << translate( move, player )
     end
 
     s
+  end
+
+  def moves( player=nil )
+    game.moves( player ).map do |move|
+      if player
+        translate( move, player )
+      else
+        players = who_can_play?( move )
+        players.map { |p| translate( move, p ) }
+      end
+    end.flatten!
   end
 
   # Scans the RUBYLIB (unless overridden via path), for notation subclasses and
@@ -59,6 +66,12 @@ class Notation
 
   def Notation.list
     @@notation_list
+  end
+
+  # Find a specific Notation by name
+
+  def self.findo( name )
+    list.find { |n| n.name == name }
   end
 
 end

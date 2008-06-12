@@ -8,6 +8,7 @@ class Othello < Rules
 
   name    "Othello"
   version "1.0.0"
+  notation :othello_notation
 
   players [:black, :white]
 

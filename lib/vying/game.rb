@@ -214,7 +214,7 @@ class Game
 
   # Core attributes
 
-  attr_reader :options, :players, :history
+  attr_reader :options, :players, :history, :notation
 
   # Extended (unnecessary) attributes
 
@@ -237,6 +237,11 @@ class Game
     @history = History.new( self.rules.new( seed, options ) )
     @options = history.first.options.dup.freeze
     @players = history.first.players.map { |p| Player.new( p, self ) }
+
+    if self.rules.info[:notation]
+      @notation = Notation.findo( self.rules.notation ).new( self )
+    end
+
     yield self if block_given?
   end
 
