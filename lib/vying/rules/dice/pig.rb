@@ -24,7 +24,7 @@ class Pig < Rules
 
   def moves( player=nil )
     return []              if final?
-    return %w(1 2 3 4 5 6) if  rolling && (player.nil? || player == 'random')
+    return %w(1 2 3 4 5 6) if  rolling && (player.nil? || player == :random)
     return %w(pass roll)   if !rolling && (player.nil? || player == turn)
     []
   end
@@ -33,7 +33,7 @@ class Pig < Rules
     final? ? [] : [rolling ? :random : turn]
   end
 
-  def apply!( move )
+  def apply!( move, player=nil )
     case move 
       when 'pass'
         total[turn] += current_score

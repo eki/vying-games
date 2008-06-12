@@ -32,7 +32,7 @@ class Connect6 < Rules
     unused_moves
   end
 
-  def apply!( move )
+  def apply!( move, player=nil )
     c, p = Coord[move], turn
     board[c], @lastc, @lastp = p, c, p
     board.update_threats( c )

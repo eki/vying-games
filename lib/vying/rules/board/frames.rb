@@ -46,7 +46,7 @@ class Frames < Rules
     unused.values.flatten
   end
 
-  def apply!( move )
+  def apply!( move, player=nil )
     player, coord = move.to_s.split( /_/ )
     player = player.intern
     coord = Coord[coord]

@@ -36,7 +36,7 @@ class Phutball < Rules
     unused_moves + jumping_moves
   end
 
-  def apply!( move )
+  def apply!( move, player=nil )
     if move.to_s == "pass"
       @jumping = false
       turn( :rotate )

@@ -52,7 +52,7 @@ class PahTum < Rules
     unused_moves
   end
 
-  def apply!( move )
+  def apply!( move, player=nil )
     c = Coord[move]
 
     board[c] = turn

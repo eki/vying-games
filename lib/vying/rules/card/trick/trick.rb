@@ -117,7 +117,7 @@ module TrickTaking
     hand.map { |c| c.to_s }
   end
 
-  def apply!( move )
+  def apply!( move, player=nil )
     move = Card[move]
 
     if post_deal && pass?

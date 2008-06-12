@@ -77,7 +77,7 @@ class Yinsh < Rules
     a
   end
 
-  def apply!( move )
+  def apply!( move, player=nil )
     coords = move.to_coords
 
     if coords.length == 2

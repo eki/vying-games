@@ -99,7 +99,7 @@ class AmericanCheckers < Rules
     found
   end
 
-  def apply!( move )
+  def apply!( move, player=nil )
     coords, p = Coord.expand( move.to_coords ), turn
 
     board.move( coords.first, coords.last )

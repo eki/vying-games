@@ -74,7 +74,7 @@ class Hexxagon < Rules
     @moves_cache = found
   end
 
-  def apply!( move )
+  def apply!( move, player=nil )
     coords, p = move.to_coords, turn
 
     if board.ring( coords.first, 1 ).include?( coords.last )

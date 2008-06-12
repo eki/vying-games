@@ -53,7 +53,7 @@ class Footsteps < Rules
     ms.flatten
   end
 
-  def apply!( move )
+  def apply!( move, player=nil )
     p, bid = move.to_s.split( /_/ )
     p = p.intern
     bid = bid.to_i

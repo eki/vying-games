@@ -34,6 +34,7 @@ require 'vying/dice'
 
 require 'vying/user'
 require 'vying/random'
+require 'vying/notation'
 require 'vying/rules'
 require 'vying/game'
 require 'vying/ai/search'
@@ -47,8 +48,9 @@ rescue LoadError
   nil
 end
 
-# Load all Rules and Bots
+# Load all Rules, Notations, and Bots
 
 Rules.require_all
+Notation.require_all
 Bot.require_all
 

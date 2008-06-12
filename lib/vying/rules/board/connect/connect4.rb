@@ -32,7 +32,7 @@ class Connect4 < Rules
     unused_moves.map { |a| a.last }
   end
 
-  def apply!( move )
+  def apply!( move, player=nil )
     c, p = Coord[move], turn
     board[c], @lastc, @lastp = p, c, p
     unused_moves.each { |a| a.delete( c.to_s ) }

@@ -67,7 +67,7 @@ class Amazons < Rules
     a
   end
 
-  def apply!( move )
+  def apply!( move, player=nil )
     coords = move.to_coords
 
     if lastc.nil? || board[lastc] == :arrow

@@ -40,7 +40,7 @@ module RulesTests
       p = g.history.last.dup             # one step back, check for corruption
       break if g.final?
       g << g.moves[rand(g.moves.size)] 
-      assert_not_equal( p, g.undo.first )      
+      assert_not_equal( p, g.undo.last )      
       assert_equal( p, g.history.last )
       break if g.final?
       g << g.moves[rand(g.moves.size)]

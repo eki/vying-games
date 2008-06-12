@@ -97,7 +97,7 @@ class Cephalopod < Rules
     a
   end
 
-  def apply!( move )
+  def apply!( move, player=nil )
     c = Coord[move]
     if board[c].nil?
       np = board[*board.coords.neighbors( c, [:n, :e, :w, :s] )]

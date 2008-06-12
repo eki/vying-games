@@ -40,7 +40,7 @@ class DotsAndBoxes < Rules
       lines.map { |line| "#{line.first}:#{line.last}" }
     end
 
-    def apply!( move )
+    def apply!( move, player=nil )
       move =~ /(\d+):(\d+)/
 
       d1 = $1.to_i

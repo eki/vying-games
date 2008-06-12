@@ -43,7 +43,7 @@ class Othello < Rules
     @moves_cache = a
   end
 
-  def apply!( move )
+  def apply!( move, player=nil )
     c = Coord[move]
     board.place( c, turn )
 

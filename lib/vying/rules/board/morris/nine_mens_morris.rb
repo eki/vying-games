@@ -102,7 +102,7 @@ class NineMensMorris < Rules
     found
   end
 
-  def apply!( move )
+  def apply!( move, player=nil )
     coords, c = move.to_coords, nil
 
     if removing

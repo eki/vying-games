@@ -30,7 +30,7 @@ class TicTacToe < Rules
     unused_moves
   end
 
-  def apply!( move )
+  def apply!( move, player=nil )
     c, p = Coord[move], turn
     board[c], @lastc, @lastp = p, c, p
     unused_moves.delete( c.to_s )

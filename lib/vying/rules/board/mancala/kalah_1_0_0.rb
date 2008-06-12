@@ -32,7 +32,7 @@ class Kalah_1_0_0 < Rules
     @moves_cache[turn].select { |c| board[c] > 0 }
   end
 
-  def apply!( move )
+  def apply!( move, player=nil )
     # Reset annotation
     annotation[*annotation.coords.to_a] = "0"
 

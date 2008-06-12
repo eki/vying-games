@@ -9,7 +9,7 @@
 class History
   include Enumerable
 
-  attr_reader :sequence, :positions
+  attr_reader :sequence, :positions, :move_by
 
   SPECIAL_MOVES = { /^draw_offered_by_/     => DrawOffered,
                     /^draw_accepted_by_/    => DrawAccepted,
@@ -24,7 +24,7 @@ class History
   # arrays.
 
   def initialize( start )
-    @sequence, @positions = [], [start]
+    @sequence, @move_by, @positions = [], [], [start]
   end
 
   # Fetch a position from history.
@@ -101,9 +101,9 @@ class History
 
   # Add a new position to history.  The given move is applied to the last
   # position in history and the new position is appended to the end of the
-  # history.
+  # history.  The player is the player making the move.
 
-  def <<( move )
+  def append( move, player )
     p = nil
 
     SPECIAL_MOVES.each do |pattern, mod|
@@ -114,23 +114,26 @@ class History
       end
     end
 
-    p ||= last.apply( move )
+    p ||= last.apply( move, player )
 
     positions << p
     sequence << move
+    move_by << player
     self
   end
 
   # Iterate over the positions in this history.
 
   def each
-    sequence.length.times { |i| yield self[i] }
+    sequence.length.times { |i| yield sequence[i], move_by[i], self[i] }
   end
 
   # Compare History objects.
 
   def eql?( o )
-    positions.first == o.positions.first && sequence == o.sequence
+    positions.first == o.positions.first && 
+    sequence == o.sequence &&
+    move_by == o.move_by
   end
 
   # Compare History objects.
@@ -151,15 +154,16 @@ class History
       ps[r] = positions[r]
     end
 
-    Marshal.dump( [sequence, ps] )
+    Marshal.dump( [sequence, move_by, ps] )
   end
 
   # Load mashalled data.
 
   def self._load( s )
-    s, p = Marshal.load( s )
+    s, m, p = Marshal.load( s )
     h = self.allocate
     h.instance_variable_set( "@sequence", s )
+    h.instance_variable_set( "@move_by", m )
     h.instance_variable_set( "@positions", p )
     h
   end
@@ -191,6 +195,11 @@ class Player
 
   def score
     game.score( name )
+  end
+
+  def <<( move )
+    game.append( move, name )
+    self
   end
 
   def username
@@ -264,13 +273,36 @@ class Game
 
   # Append a move to the Game's sequence of moves.  Whatever token is used
   # to represent a move will be converted to a String via #to_s.  It's more
-  # common to use the more versatile Game#<< method.
+  # common to use the more versatile Game#<< method.  However, append must
+  # be used if the player argument cannot be inferred.  (Or, use Player#<<)
 
-  def append( move )
+  def append( move, player=nil )
     move = move.to_s
 
-    if move?( move )
-      history << move
+    # If player is nil, try to initialize it
+
+    if player.nil? 
+      if has_moves == [:random]
+        player = :random
+      else
+        ps = player_names.select do |p| 
+          special_move?( move, p ) || move?( move, p )
+        end
+
+        if ps.length == 1
+          player = ps.first
+        elsif ps.length > 1
+          raise "'#{move}' is ambiguous (available to #{ps.inspect})"
+        end
+      end
+    end
+
+    if player.nil? && ! special_move?( move )
+      raise "Unable to determine player for move '#{move}'"
+    end
+
+    if move?( move, player )
+      history.append( move, player )
 
       if history.last.class.check_cycles?
         (0...(history.length-1)).each do |i|
@@ -280,7 +312,7 @@ class Game
 
       return self
 
-    elsif special_move?( move )
+    elsif special_move?( move, player )
 
       msym = move.intern
       if respond_to?( msym )
@@ -293,7 +325,7 @@ class Game
         kick( $1.intern )
 
       else
-        history << move
+        history.append( move, player )
 
         if history.last.draw_offered? && history.last.has_moves.empty?
           accept_draw
@@ -341,11 +373,11 @@ class Game
     end
   end
 
-  # Undo a single move.  This returns [position, move] that have been undone
-  # as an array.
+  # Undo a single move.  This returns [position, move, move_by] that have been
+  # undone as an array.
 
   def undo
-    [history.positions.pop, history.sequence.pop]
+    [history.sequence.pop, history.move_by.pop, history.positions.pop]
   end
 
   # Get the User playing as the given player.
@@ -460,19 +492,19 @@ class Game
         # Handle draw offers
         if allow_draws_by_agreement? && 
            self[p].offer_draw?( sequence, position, p )
-          history << "draw_offered_by_#{p}"
+          history.append( "draw_offered_by_#{p}", p )
           return self
         end
 
         # Handle undo requests 
         if self[p].request_undo?( sequence, position, p )
-          history << "undo_requested_by_#{p}"
+          history.append( "undo_requested_by_#{p}", p )
           return self
         end
 
         # Ask for forfeit
         if self[p].forfeit?( sequence, position, p )
-          history << "forfeit_by_#{p}"
+          history.append( "forfeit_by_#{p}", p )
           return self
         end
       end
@@ -676,13 +708,13 @@ class Game
       self[player_names.first], self[player_names.last] = 
         self[player_names.last], self[player_names.first]
 
-      history << "swap"
+      history.append( "swap", has_moves.first )
     end
   end
 
   def accept_draw
     undo while history.last.draw_offered?
-    history << "draw"
+    history.append( "draw", nil )
   end
 
   def reject_draw

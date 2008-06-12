@@ -49,7 +49,7 @@ class Oware < Rules
     valid
   end
 
-  def apply!( move )
+  def apply!( move, player=nil )
     # Reset annotation
     annotation[*annotation.coords.to_a] = "0"
 

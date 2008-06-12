@@ -593,8 +593,8 @@ class Rules
   # an implementation of #apply!, which should do the same thing without making
   # a dup first.
 
-  def apply( move )
-    self.dup.apply!( move )
+  def apply( move, player=nil )
+    self.dup.apply!( move, player=nil )
   end
 
   # Scans the RUBYLIB (unless overridden via path), for rules subclasses and

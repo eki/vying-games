@@ -72,7 +72,7 @@ class Y < Rules
     board.unoccupied
   end
 
-  def apply!( move )
+  def apply!( move, player=nil )
     coord = Coord[move]
 
     board[coord] = turn

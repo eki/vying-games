@@ -169,6 +169,7 @@ class TestGame < Test::Unit::TestCase
 
     assert( g.draw_offered? )
     assert_equal( :red, g.draw_offered_by )
+    assert_equal( :red, g.history.move_by.last )
     
     assert( g.moves.empty? )
 
@@ -187,6 +188,8 @@ class TestGame < Test::Unit::TestCase
     g[:white] << "accept_draw"
     g.step
     
+    assert_equal( nil, g.history.move_by.last )
+
     assert( ! g.draw_offered? )
     assert( g.draw_by_agreement? )
 
@@ -272,6 +275,8 @@ class TestGame < Test::Unit::TestCase
 
     g << "time_exceeded_by_x"
 
+    assert_equal( nil, g.history.move_by.last )
+
     assert( g.final? )
     assert( !g.draw? )
     assert( !g.winner?( :x ) )
@@ -303,12 +308,14 @@ class TestGame < Test::Unit::TestCase
     assert_equal( 1, g.sequence.length )
     assert_equal( 2, g.history.length )
     assert_equal( move, g.sequence.last )
+    assert( :x, g.history.move_by.last )
 
-    p, m = g.undo
+    m, mb, p = g.undo
 
     assert_equal( 0, g.sequence.length )
     assert_equal( 1, g.history.length )
     assert_equal( move, m )
+    assert( g.history.move_by.empty? )
 
     move = "forfeit_by_x"
     g << move
@@ -316,12 +323,14 @@ class TestGame < Test::Unit::TestCase
     assert_equal( 1, g.sequence.length )
     assert_equal( 2, g.history.length )
     assert_equal( move, g.sequence.last )
+    assert( :x, g.history.move_by.last )
     
-    p, m = g.undo
+    m, mb, p = g.undo
 
     assert_equal( 0, g.sequence.length )
     assert_equal( 1, g.history.length )
     assert_equal( move, m )
+    assert( g.history.move_by.empty? )
   end
 
   def test_undo_by_request
@@ -338,6 +347,7 @@ class TestGame < Test::Unit::TestCase
     assert_equal( 1, g.sequence.length )
     assert_equal( 2, g.history.length )
     assert_equal( move, g.sequence.last )
+    assert( :x, g.history.move_by.last )
 
     assert( g.special_move?( "undo_requested_by_x" ) )
     assert( g.special_move?( "undo_requested_by_o" ) )
@@ -350,6 +360,7 @@ class TestGame < Test::Unit::TestCase
     assert_equal( :x, g.undo_requested_by )
     assert( g.undo_requested_by?( :x ) )
     assert_equal( [:o], g.has_moves )
+    assert( :x, g.history.move_by.last )
 
     assert( g.special_move?( "undo_accepted_by_o", :o ) )
     assert( g.special_move?( "reject_undo", :o ) )
@@ -365,6 +376,7 @@ class TestGame < Test::Unit::TestCase
     assert_equal( 1, g.sequence.length )
     assert_equal( 2, g.history.length )
     assert_equal( move, g.sequence.last )
+    assert( :x, g.history.move_by.last )
 
     g[:o] << "request_undo"
     g.step
@@ -374,6 +386,7 @@ class TestGame < Test::Unit::TestCase
     assert_equal( :o, g.undo_requested_by )
     assert( g.undo_requested_by?( :o ) )
     assert_equal( [:x], g.has_moves )
+    assert( :o, g.history.move_by.last )
 
     assert( g.special_move?( "undo_accepted_by_x", :x ) )
     assert( g.special_move?( "reject_undo", :x ) )
@@ -388,6 +401,7 @@ class TestGame < Test::Unit::TestCase
 
     assert( ! g.special_move?( "undo_accepted_by_x" ) )
     assert( ! g.special_move?( "reject_undo" ) )
+    assert( g.history.move_by.empty? )
 
     assert_equal( 0, g.sequence.length )
     assert_equal( 1, g.history.length )
@@ -411,6 +425,7 @@ class TestGame < Test::Unit::TestCase
     assert_equal( 1, g.sequence.length )
     assert_equal( 2, g.history.length )
     assert_equal( move, g.sequence.last )
+    assert( :red, g.history.move_by.last )
 
     assert( g.special_move?( "undo_requested_by_red" ) )
     assert( g.special_move?( "undo_requested_by_white" ) )
@@ -426,6 +441,7 @@ class TestGame < Test::Unit::TestCase
     assert( g.has_moves?( :white ) )
     assert( g.has_moves?( :blue ) )
     assert( ! g.has_moves?( :red ) )
+    assert( :red, g.history.move_by.last )
 
     assert( g.special_move?( "undo_accepted_by_white", :white ) )
     assert( g.special_move?( "undo_accepted_by_blue", :blue ) )
@@ -453,6 +469,7 @@ class TestGame < Test::Unit::TestCase
     assert( ! g.has_moves?( :white ) )
     assert( g.has_moves?( :blue ) )
     assert( ! g.has_moves?( :red ) )
+    assert( :white, g.history.move_by.last )
 
     assert( ! g.special_move?( "undo_accepted_by_white", :white ) )
     assert( g.special_move?( "undo_accepted_by_blue", :blue ) )
@@ -476,6 +493,7 @@ class TestGame < Test::Unit::TestCase
     assert_equal( 1, g.sequence.length )
     assert_equal( 2, g.history.length )
     assert_equal( move, g.sequence.last )
+    assert( :red, g.history.move_by.last )
 
     g = g2
 
@@ -489,6 +507,7 @@ class TestGame < Test::Unit::TestCase
 
     assert_equal( 0, g.sequence.length )
     assert_equal( 1, g.history.length )
+    assert( g.history.move_by.empty? )
   end
 
   def test_special_moves_undo
@@ -584,6 +603,7 @@ class TestGame < Test::Unit::TestCase
     assert_equal( "swap", g.sequence.last )
     assert_equal( Human.new( "jane_doe" ), g[:blue] )
     assert_equal( Human.new( "john_doe" ), g[:red] )
+    assert( :red, g.history.move_by.last )
   end
 
   def test_leave
@@ -616,6 +636,7 @@ class TestGame < Test::Unit::TestCase
     assert( ! g.special_moves.include?( "black_leaves" ) )
     assert( ! g.special_moves( :black ).include?( "black_leaves" ) )
     assert( g.special_moves.include?( "white_leaves" ) )
+    assert( :black, g.history.move_by.last )
 
     g[:black] = Human.new "dude"
   
@@ -627,6 +648,7 @@ class TestGame < Test::Unit::TestCase
     assert_equal( nil, g[:white] )
     assert( g.special_moves.include?( "black_leaves" ) )
     assert( ! g.special_moves.include?( "white_leaves" ) )
+    assert( :white, g.history.move_by.last )
 
   end
 
@@ -661,6 +683,7 @@ class TestGame < Test::Unit::TestCase
     assert( ! g.special_moves( :black ).include?( "kick_white" ) )
     assert( g.special_moves.include?( "kick_black" ) )
     assert( ! g.special_moves( :white ).include?( "kick_black" ) )
+    assert( :white, g.history.move_by.last )
 
     g[:white] = Human.new "dude"
   
@@ -672,6 +695,7 @@ class TestGame < Test::Unit::TestCase
     assert_equal( nil, g[:black] )
     assert( g.special_moves.include?( "kick_white" ) )
     assert( ! g.special_moves.include?( "kick_black" ) )
+    assert( :black, g.history.move_by.last )
 
     # Can't we all just get along?
   end

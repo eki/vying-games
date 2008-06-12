@@ -56,7 +56,7 @@ class Breakthrough < Rules
     found
   end
 
-  def apply!( move )
+  def apply!( move, player )
     coords = move.to_coords
 
     board.move( coords.first, coords.last )

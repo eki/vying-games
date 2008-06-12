@@ -58,7 +58,7 @@ class ThreeMusketeers < Rules
     a
   end
 
-  def apply!( move )
+  def apply!( move, player=nil )
     coords = move.to_coords
 
     board.move( coords.first, coords.last )

@@ -67,7 +67,7 @@ class Ataxx < Rules
     @moves_cache = found
   end
 
-  def apply!( move )
+  def apply!( move, player=nil )
     coords, p = move.to_coords, turn
     opp = (p == :red) ? :blue : :red
 
