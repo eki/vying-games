@@ -4,7 +4,7 @@
 
 # This file contains the block configurations for Hexxagon.
 
-class Hexxagon < Rules
+module HexxagonBlocks
 
   BLOCKS = %w( x   # 1 block
 

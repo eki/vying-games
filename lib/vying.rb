@@ -34,6 +34,9 @@ require 'vying/dice'
 
 require 'vying/user'
 require 'vying/random'
+require 'vying/dup'
+require 'vying/option'
+require 'vying/position'
 require 'vying/notation'
 require 'vying/rules'
 require 'vying/game'
@@ -51,6 +54,6 @@ end
 # Load all Rules, Notations, and Bots
 
 Rules.require_all
-Notation.require_all
+#Notation.require_all
 Bot.require_all
 

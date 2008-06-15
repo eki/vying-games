@@ -4,7 +4,7 @@
 
 # This file contains the block configurations for Ataxx.
 
-class Ataxx < Rules
+module AtaxxBlocks
 
   BLOCKS = %w( x         # 1 block
 

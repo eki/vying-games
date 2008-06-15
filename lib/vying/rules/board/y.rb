@@ -1,7 +1,7 @@
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
-require 'vying/rules'
+require 'vying'
 
 class YGroup
   attr_reader :coords, :side_map, :size
@@ -46,76 +46,76 @@ end
 #
 # For detailed rules see:  http://vying.org/games/y
 
-class Y < Rules
-
+Rules.create( "Y" ) do
   name    "Y"
   version "0.8.0"
+
+  players :blue, :red
 
   option :board_size, :default => 12, :values => [12, 13, 14]
 
   pie_rule
 
-  players [:blue, :red]
+  position do
+    attr_reader :board, :groups
 
-  attr_reader :board, :groups
+    def init
+      @board = YBoard.new( @options[:board_size] )
+      @groups = { :blue => [], :red => [] }
+    end
 
-  def initialize( seed=nil, options={} )
-    super
+    def moves( player=nil )
+      return []          unless player.nil? || has_moves.include?( player )
 
-    @board = YBoard.new( @options[:board_size] )
-    @groups = { :blue => [], :red => [] }
-  end
+      board.unoccupied
+    end
 
-  def moves( player=nil )
-    return []          unless player.nil? || has_moves.include?( player )
+    def apply!( move, player=nil )
+      coord = Coord[move]
 
-    board.unoccupied
-  end
+      board[coord] = turn
 
-  def apply!( move, player=nil )
-    coord = Coord[move]
+      new_groups = []
+      YBoard::DIRECTIONS.each do |d|
+        n = board.coords.next( coord, d )
 
-    board[coord] = turn
-
-    new_groups = []
-    YBoard::DIRECTIONS.each do |d|
-      n = board.coords.next( coord, d )
-
-      groups[turn].delete_if do |g|
-        if g.coords.include?( n )
-          g << coord
-          new_groups << g
+        groups[turn].delete_if do |g|
+          if g.coords.include?( n )
+            g << coord
+            new_groups << g
+          end
         end
       end
+
+      if new_groups.empty?
+        groups[turn] << YGroup.new( board.width, coord )
+      else
+        g = YGroup.new( board.width )
+        groups[turn] << new_groups.inject( g ) { |m,a| m | a }
+      end
+
+      rotate_turn
+
+      self
     end
 
-    if new_groups.empty?
-      groups[turn] << YGroup.new( board.width, coord )
-    else
-      g = YGroup.new( board.width )
-      groups[turn] << new_groups.inject( g ) { |m,a| m | a }
+    def final?
+      players.any? { |p| winner?( p ) }
     end
 
-    turn( :rotate )
+    def winner?( player )
+      groups[player].any? { |group| group.winning? }
+    end
 
-    self
+    def loser?( player )
+      opp = player == :blue ? :red : :blue
+      winner?( opp )
+    end
+
+    def hash
+      [board,turn].hash
+    end
   end
 
-  def final?
-    players.any? { |p| winner?( p ) }
-  end
-
-  def winner?( player )
-    groups[player].any? { |group| group.winning? }
-  end
-
-  def loser?( player )
-    opp = player == :blue ? :red : :blue
-    winner?( opp )
-  end
-
-  def hash
-    [board,turn].hash
-  end
 end
 

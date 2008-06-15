@@ -56,7 +56,7 @@ class TestThreeMusketeers < Test::Unit::TestCase
     g.board.clear
     g.board[:a1] = :blue
     g.board[:a2,:b2,:b1] = :red
-    g.turn( :rotate )
+    g.rotate_turn
 
     assert_equal( :blue, g.turn )
     assert_equal( [], g.moves )

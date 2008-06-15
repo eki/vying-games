@@ -12,7 +12,7 @@ class RandomBot < Bot
 
   Rules.list.each do |r|
     class_eval <<-EVAL
-      class #{r} < Bot
+      class #{r.class_name} < Bot
         def select( sequence, position, player )
           RandomBot.select( sequence, position, player )
         end

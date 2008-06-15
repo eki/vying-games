@@ -1,26 +1,24 @@
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
-require 'vying/rules'
+require 'vying'
 
 # Dots and Boxes
 #
 # For detailed rules see:  http://vying.org/games/dots_and_boxes
 
-class DotsAndBoxes < Rules
+Rules.create( "DotsAndBoxes" ) do
+  name    "Dots and Boxes"
+  version "1.0.0"
 
-    name    "Dots and Boxes"
-    version "1.0.0"
+  players :black, :white
 
-    players [:black, :white]
+  score_determines_outcome
 
-    score_determines_outcome
-  
+  position do  
     attr_reader :grid
 
-    def initialize( seed=nil, options={} )
-      super
-
+    def init
       @grid = Grid.new
     end
 
@@ -61,7 +59,7 @@ class DotsAndBoxes < Rules
         end
       end
 
-      turn( :rotate ) unless completed_box
+      rotate_turn unless completed_box
 
       self
     end
@@ -77,6 +75,7 @@ class DotsAndBoxes < Rules
     def hash
       [grid,turn].hash
     end
+  end
 
 end
 

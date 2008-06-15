@@ -5,59 +5,49 @@ require 'vying/cards/card'
 
 module TrickTaking
 
-  module Meta
-    def trump( a )
-      info[:trump] = a.map { |s| Card[s] }
-      class << self; undef_method( :trump ); end
-    end
-
-    def suits( h )
-      h.each { |k,v| h[k] = v.map { |s| Card[s] } }
-      info[:suits] = h
-      class << self; undef_method( :suits ); end
-    end
-
-    def deck( a )
-      a = a.map { |s| Card[s] }
-      info[:deck] = a
-      class << self; undef_method( :deck ); end
-    end
-
-    def wait_until_broken( a )
-      info[:wait_until_broken] = a.map { |s| Card[s] }
-      class << self; undef_method( :wait_until_broken ); end
-    end
+  def trump
+    @trump ||= rules.trump.map { |c| Card[c] }
   end
 
-  def self.append_features(klass)
-    super
-    klass.extend( Meta )
+  def suits
+    unless @suits
+      @suits = {}
+      rules.suits.each { |s,cs| @suits[s] = cs.map { |c| Card[c] } }
+    end
+
+    @suits
   end
 
-  #position :dealer, :hands, :tricks, :trick
+  def deck
+    @deck ||= rules.deck.map { |c| Card[c] }
+  end
+
+  def wait_until_broken
+    @wait_until_broken ||= rules.wait_until_broken.map { |c| Card[c] }
+  end
 
   def pass_before_deal?
-    info.key? :pass_before_deal
+    rules.respond_to?( :pass_before_deal )
   end
 
   def no_pass?
-    pass_before_deal? && pass_before_deal[:directions].first == :no_pass
+    pass_before_deal? && rules.pass_before_deal[:directions].first == :no_pass
   end
 
   def pass?
-    pass_before_deal? && pass_before_deal[:directions].first != :no_pass
+    pass_before_deal? && rules.pass_before_deal[:directions].first != :no_pass
   end
 
   def pass_left?
-    pass_before_deal? && pass_before_deal[:directions].first == :left
+    pass_before_deal? && rules.pass_before_deal[:directions].first == :left
   end
 
   def pass_right?
-    pass_before_deal? && pass_before_deal[:directions].first == :right
+    pass_before_deal? && rules.pass_before_deal[:directions].first == :right
   end
 
   def pass_across?
-    pass_before_deal? && pass_before_deal[:directions].first == :across
+    pass_before_deal? && rules.pass_before_deal[:directions].first == :across
   end
 
   def has_moves
@@ -66,7 +56,7 @@ module TrickTaking
     elsif post_deal && pass?
       can_pass = []
       selected.each do |k,v|
-        can_pass << k if v.length < pass_before_deal[:number]
+        can_pass << k if v.length < rules.pass_before_deal[:number]
       end
 
       return can_pass
@@ -92,7 +82,7 @@ module TrickTaking
     hand = hands[turn]
 
     if trick.empty?
-      lead.each do |rule|
+      rules.lead.each do |rule|
         if rule.kind_of?( Card )
           return [rule.to_s] if hand.include?( rule )
         elsif rule == :any
@@ -102,13 +92,13 @@ module TrickTaking
     else
       led = trick.first[1].suit
 
-      follow.each do |rule|
+      rules.follow.each do |rule|
         case rule
           when :must_follow_suit
             on_suit = hand.select { |c| c.suit == led }
             return on_suit.map { |c| c.to_s } unless on_suit.empty?
           when :must_trump
-            in_trump = hand & trump
+            in_trump = hand & rules.trump
             return in_trump.map { |c| c.to_s } unless in_trump.empty?
         end
       end
@@ -122,7 +112,7 @@ module TrickTaking
 
     if post_deal && pass?
       hands.each { |k,v| selected[k] << move if v.include?( move ) }
-      if selected.all? { |k,v| v.length == pass_before_deal[:number] }
+      if selected.all? { |k,v| v.length == rules.pass_before_deal[:number] }
         if pass_left?
           hands[:n] += selected[:w]
           hands[:w] += selected[:s]
@@ -143,14 +133,14 @@ module TrickTaking
         hands.each { |k,v| hands[k] -= selected[k] }
 
         @post_deal = false
-        pass_before_deal[:directions] << 
-          pass_before_deal[:directions].delete_at( 0 )
+        rules.pass_before_deal[:directions] << 
+          rules.pass_before_deal[:directions].delete_at( 0 )
         @selected = { :n => [], :e => [], :w => [], :s => [] }
-        turn( :rotate ) until hands[turn].include?( Card[:C2] )
+        rotate_turn until hands[turn].include?( Card[:C2] )
         hands.each { |k,v| v.sort! }
       end
 
-      turn( :rotate ) until has_moves.include?( turn )
+      rotate_turn until has_moves.include?( turn )
 
       return self
     end
@@ -194,31 +184,31 @@ module TrickTaking
       tricks[capture_by] ||= []
       tricks[capture_by] << trick
       @trick = []
-      turn( :rotate ) until turn == capture_by
+      rotate_turn until turn == capture_by
 
       if hands[turn].empty?
         score_hand
 
         @tricks = {}
 
-        d = Deck.new( deck, rng ).shuffle.deal( players.size, deal_out )
+        d = Deck.new( deck, rng ).shuffle.deal( players.size, rules.deal_out )
         d.zip( players ) { |h,p| hands[p] = h }
         hands.each { |k,v| v.sort! }
 
         @post_deal = true
 
         if no_pass?
-          pass_before_deal[:directions] << 
-            pass_before_deal[:directions].delete_at( 0 )
+          rules.pass_before_deal[:directions] << 
+            rules.pass_before_deal[:directions].delete_at( 0 )
           @post_deal = false
-          turn( :rotate ) until hands[turn].include?( Card[:C2] )
+          rotate_turn until hands[turn].include?( Card[:C2] )
         end
       end
     else
-      turn( :rotate )
+      rotate_turn
     end
 
-    turn( :rotate ) until has_moves.include?( turn )
+    rotate_turn until has_moves.include?( turn )
 
     self
   end

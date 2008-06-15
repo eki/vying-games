@@ -1,8 +1,7 @@
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
-require 'vying/rules'
-require 'vying/board/board'
+require 'vying'
 
 # This is an implementation of American Checkers, or Straight Checkers, or
 # British Draughts, or, etc, etc, depending on what part of the world you're
@@ -10,141 +9,141 @@ require 'vying/board/board'
 #
 # For more detailed rules, etc:  http://vying.org/games/american_checkers
 
-class AmericanCheckers < Rules
-
+Rules.create( "AmericanCheckers" ) do
   name    "American Checkers"
   version "1.0.0"
 
-  players [:red, :white]
+  players :red, :white
+
+  king :red   => :RED_KING,
+       :white => :WHITE_KING
 
   allow_draws_by_agreement
 
-  attr_reader :board, :jumping
+  position do
+    attr_reader :board, :jumping
 
-  KING = { :red => :RED_KING, :white => :WHITE_KING }
+    def init
+      @board = Board.new( 8, 8 )
+      @board[:b1,:d1,:f1,:h1,:a2,:c2,:e2,:g2,:b3,:d3,:f3,:h3] = :red
+      @board[:a8,:c8,:e8,:g8,:b7,:d7,:f7,:h7,:a6,:c6,:e6,:g6] = :white
 
-  def initialize( seed=nil, options={} )
-    super
-
-    @board = Board.new( 8, 8 )
-    @board[:b1,:d1,:f1,:h1,:a2,:c2,:e2,:g2,:b3,:d3,:f3,:h3] = :red
-    @board[:a8,:c8,:e8,:g8,:b7,:d7,:f7,:h7,:a6,:c6,:e6,:g6] = :white
-
-    @jumping = false
-  end
-
-  def moves( player=nil )
-    return [] unless player.nil? || has_moves.include?( player )
-
-    p    = turn
-    opp  = (p    == :red) ? :white : :red
-    k    = KING[p]
-    oppk = KING[opp]
-
-    jd  = (turn == :red) ? [:se, :sw] : [:ne, :nw]
-    kjd = [:se, :sw, :ne, :nw]
-
-    found = []
-
-    if jumping
-      c = jumping
-
-      (board[c] == k ? kjd : jd).each do |d|
-        p1 = board[c1 = board.coords.next( c, d )]
-        p2 = board[c2 = board.coords.next( c1, d )] if c1
-        if (p1 == opp || p1 == oppk) && p2.nil? && !c2.nil?
-          found << "#{c}#{c2}"
-        end
-      end
-
-      return found
+      @jumping = false
     end
 
-    board.occupied[p].each do |c|
-      jd.each do |d|
-        p1 = board[c1 = board.coords.next( c, d )]
-        p2 = board[c2 = board.coords.next( c1, d )] if c1
-        if (p1 == opp || p1 == oppk) && p2.nil? && !c2.nil?
-          found << "#{c}#{c2}"
+    def moves( player=nil )
+      return [] unless player.nil? || has_moves.include?( player )
+
+      p    = turn
+      opp  = (p    == :red) ? :white : :red
+      k    = rules.king[p]
+      oppk = rules.king[opp]
+
+      jd  = (turn == :red) ? [:se, :sw] : [:ne, :nw]
+      kjd = [:se, :sw, :ne, :nw]
+
+      found = []
+
+      if jumping
+        c = jumping
+
+        (board[c] == k ? kjd : jd).each do |d|
+          p1 = board[c1 = board.coords.next( c, d )]
+          p2 = board[c2 = board.coords.next( c1, d )] if c1
+          if (p1 == opp || p1 == oppk) && p2.nil? && !c2.nil?
+            found << "#{c}#{c2}"
+          end
         end
-      end
-    end if board.occupied[p]
 
-    board.occupied[k].each do |c|
-      kjd.each do |d|
-        p1 = board[c1 = board.coords.next( c, d )]
-        p2 = board[c2 = board.coords.next( c1, d )] if c1
-        if (p1 == opp || p1 == oppk) && p2.nil? && !c2.nil?
-          found << "#{c}#{c2}"
+        return found
+      end
+
+      board.occupied[p].each do |c|
+        jd.each do |d|
+          p1 = board[c1 = board.coords.next( c, d )]
+          p2 = board[c2 = board.coords.next( c1, d )] if c1
+          if (p1 == opp || p1 == oppk) && p2.nil? && !c2.nil?
+            found << "#{c}#{c2}"
+          end
         end
-      end
-    end if board.occupied[k]
+      end if board.occupied[p]
 
-    return found unless found.empty?
+      board.occupied[k].each do |c|
+        kjd.each do |d|
+          p1 = board[c1 = board.coords.next( c, d )]
+          p2 = board[c2 = board.coords.next( c1, d )] if c1
+          if (p1 == opp || p1 == oppk) && p2.nil? && !c2.nil?
+            found << "#{c}#{c2}"
+          end
+        end
+      end if board.occupied[k]
 
-    board.occupied[p].each do |c|
-      jd.each do |d|
-        p1 = board[c1 = board.coords.next( c, d )]
-        found << "#{c}#{c1}" if p1.nil? && ! c1.nil?
-      end
-    end if board.occupied[p]
+      return found unless found.empty?
 
-    board.occupied[k].each do |c|
-      kjd.each do |d|
-        p1 = board[c1 = board.coords.next( c, d )]
-        found << "#{c}#{c1}" if p1.nil? && ! c1.nil?
-      end
-    end if board.occupied[k]
+      board.occupied[p].each do |c|
+        jd.each do |d|
+          p1 = board[c1 = board.coords.next( c, d )]
+          found << "#{c}#{c1}" if p1.nil? && ! c1.nil?
+        end
+      end if board.occupied[p]
 
-    found
-  end
+      board.occupied[k].each do |c|
+        kjd.each do |d|
+          p1 = board[c1 = board.coords.next( c, d )]
+          found << "#{c}#{c1}" if p1.nil? && ! c1.nil?
+        end
+      end if board.occupied[k]
 
-  def apply!( move, player=nil )
-    coords, p = Coord.expand( move.to_coords ), turn
-
-    board.move( coords.first, coords.last )
-
-    if coords.length == 3
-      board[coords[1]] = nil
-      @jumping = coords.last
-
-      if moves.empty?
-        turn( :rotate )
-        @jumping = false
-      end
-    else
-      turn( :rotate )
+      found
     end
 
-    if p == :red && coords.last.y == 7
-      board[coords.last] = KING[:red]
-    elsif p == :white && coords.last.y == 0
-      board[coords.last] = KING[:white]
+    def apply!( move, player=nil )
+      coords, p = Coord.expand( move.to_coords ), turn
+
+      board.move( coords.first, coords.last )
+
+      if coords.length == 3
+        board[coords[1]] = nil
+        @jumping = coords.last
+
+        if moves.empty?
+          rotate_turn
+          @jumping = false
+        end
+      else
+        rotate_turn
+      end
+
+      if p == :red && coords.last.y == 7
+        board[coords.last] = rules.king[:red]
+      elsif p == :white && coords.last.y == 0
+        board[coords.last] = rules.king[:white]
+      end
+
+      self
     end
 
-    self
-  end
+    def final?
+      moves.empty?
+    end
 
-  def final?
-    moves.empty?
-  end
+    def winner?( player )
+      player != turn
+    end
 
-  def winner?( player )
-    player != turn
-  end
+    def loser?( player )
+      player == turn
+    end
 
-  def loser?( player )
-    player == turn
-  end
+    def score( player )
+      opp = player == :red ? :white : :red
+      oppk = rules.king[opp]
+      12 - board.count( opp ) - board.count( oppk )
+    end
 
-  def score( player )
-    opp = player == :red ? :white : :red
-    oppk = KING[opp]
-    12 - board.count( opp ) - board.count( oppk )
-  end
-
-  def hash
-    [board,turn].hash
+    def hash
+      [board,turn].hash
+    end
   end
 
 end

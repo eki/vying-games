@@ -21,7 +21,7 @@ class TestDotsAndBoxes < Test::Unit::TestCase
   def test_initialize
     p = rules.new
 
-    assert_equal( DotsAndBoxes::Grid.new, p.grid )
+    assert_equal( Grid.new, p.grid )
     assert_equal( 6, p.grid.width )
     assert_equal( 6, p.grid.height )
     assert_equal( 60, p.grid.lines.keys.length )

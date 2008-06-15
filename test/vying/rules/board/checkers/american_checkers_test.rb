@@ -148,7 +148,7 @@ class TestAmericanCheckers < Test::Unit::TestCase
 
     g.board[:b1] = nil
     g.board[:a2] = :white
-    g.turn( :rotate )
+    g.rotate_turn
 
     g << "a2b1"
 

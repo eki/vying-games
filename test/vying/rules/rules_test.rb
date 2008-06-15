@@ -1,19 +1,10 @@
 module RulesTests
 
-  def rules_version
-    if respond_to?( :version )
-      version
-    else
-      rules.version
-    end
-  end
-
   def new_game( seed=nil, options={} )
     if seed.class == Hash
       seed, options = nil, seed
     end
 
-    options.merge!( :version => rules_version )
     Game.new( rules, seed, options )
   end
 
@@ -107,7 +98,7 @@ module RulesTests
   end
 
   def test_hash
-    if rules.info[:random]
+    if rules.random?
       g1 = new_game( 1234 )
       g2 = new_game( 1234 )
     else

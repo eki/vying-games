@@ -7,19 +7,15 @@ class TestKalah_1_0_0 < Test::Unit::TestCase
   include RulesTests
 
   def rules
-    Kalah
-  end
-
-  def version
-    "1.0.0"
+    Rules.find Kalah, "1.0.0"
   end
 
   def test_info
-    assert_equal( "Kalah", Kalah_1_0_0.name )
+    assert_equal( "Kalah", rules.name )
   end
 
   def test_players
-    assert_equal( [:one,:two], Kalah_1_0_0.new.players )
+    assert_equal( [:one,:two], rules.new.players )
   end
 
   def test_initialize

@@ -1,7 +1,7 @@
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
-require 'vying/rules'
+require 'vying'
 
 class HavannahGroup
   attr_reader :coords, :side_map, :corner_map, :size
@@ -123,75 +123,75 @@ end
 #
 # For detailed rules see:  http://vying.org/games/havannah
 
-class Havannah < Rules
-
+Rules.create( "Havannah" ) do
   name    "Havannah"
   version "0.0.1"
 
   pie_rule
 
-  players [:blue, :red]
+  players :blue, :red
 
-  attr_reader :board, :groups
+  position do
+    attr_reader :board, :groups
 
-  def initialize( seed=nil, options={} )
-    super
+    def init
+      @board = HexHexBoard.new
+      @groups = { :blue => [], :red => [] }
+    end
 
-    @board = HexHexBoard.new
-    @groups = { :blue => [], :red => [] }
-  end
+    def moves( player=nil )
+      return []  unless player.nil? || has_moves.include?( player )
+      return []  if final?
 
-  def moves( player=nil )
-    return []  unless player.nil? || has_moves.include?( player )
-    return []  if final?
+      board.unoccupied
+    end
 
-    board.unoccupied
-  end
+    def apply!( move, player=nil )
+      coord = Coord[move]
 
-  def apply!( move, player=nil )
-    coord = Coord[move]
+      board[coord] = turn
 
-    board[coord] = turn
+      new_groups = []
+      HexHexBoard::DIRECTIONS.each do |d|
+        n = board.coords.next( coord, d )
 
-    new_groups = []
-    HexHexBoard::DIRECTIONS.each do |d|
-      n = board.coords.next( coord, d )
-
-      groups[turn].delete_if do |g|
-        if g.coords.include?( n )
-          g << coord
-          new_groups << g
+        groups[turn].delete_if do |g|
+          if g.coords.include?( n )
+            g << coord
+            new_groups << g
+          end
         end
       end
+
+      if new_groups.empty?
+        groups[turn] << HavannahGroup.new( board.length, coord )
+      else
+        g = HavannahGroup.new( board.length )
+        groups[turn] << new_groups.inject( g ) { |m,a| m | a }
+      end
+
+      rotate_turn
+
+      self
     end
 
-    if new_groups.empty?
-      groups[turn] << HavannahGroup.new( board.length, coord )
-    else
-      g = HavannahGroup.new( board.length )
-      groups[turn] << new_groups.inject( g ) { |m,a| m | a }
+    def final?
+      players.any? { |p| winner?( p ) }
     end
 
-    turn( :rotate )
+    def winner?( player )
+      groups[player].any? { |group| group.winning? }
+    end
 
-    self
+    def loser?( player )
+      opp = player == :blue ? :red : :blue
+      winner?( opp )
+    end
+
+    def hash
+      [board,turn].hash
+    end
   end
 
-  def final?
-    players.any? { |p| winner?( p ) }
-  end
-
-  def winner?( player )
-    groups[player].any? { |group| group.winning? }
-  end
-
-  def loser?( player )
-    opp = player == :blue ? :red : :blue
-    winner?( opp )
-  end
-
-  def hash
-    [board,turn].hash
-  end
 end
 

@@ -86,7 +86,7 @@ class TestBreakthrough < Test::Unit::TestCase
    
     g.board[:e4] = :black 
     g.board[:e5] = :white
-    g.turn( :rotate ) until g.turn == :white
+    g.rotate_turn until g.turn == :white
 
     assert_not_equal( ["e5e4"], g.moves )
     
@@ -119,7 +119,7 @@ class TestBreakthrough < Test::Unit::TestCase
     assert_equal( ["a2a3", "a2b3", "b2c3", "b2a3", 
                    "c2c3", "c2d3", "c2b3"], g.moves )
 
-    g.turn( :rotate )
+    g.rotate_turn
 
     assert_equal( ["b3c2", "b3a2"], g.moves )
 

@@ -214,7 +214,7 @@ class Game
 
   # Core attributes
 
-  attr_reader :options, :players, :history, :notation
+  attr_reader :rules, :options, :players, :history, :notation
 
   # Extended (unnecessary) attributes
 
@@ -230,17 +230,19 @@ class Game
       seed, options = nil, seed
     end
 
-    @rules = rules.to_s
+    @rules = Rules.find( rules )
 
-    raise "#{rules} not supported!" if self.rules.nil?
+    raise "#{rules} not supported!" if rules.nil?
 
-    @history = History.new( self.rules.new( seed, options ) )
+    #@rules = rules.class_name
+
+    @history = History.new( rules.new( seed, options ) )
     @options = history.first.options.dup.freeze
     @players = history.first.players.map { |p| Player.new( p, self ) }
 
-    if self.rules.info[:notation]
-      @notation = Notation.findo( self.rules.notation ).new( self )
-    end
+    #if self.rules.info[:notation]
+    #  @notation = Notation.findo( self.rules.notation ).new( self )
+    #end
 
     yield self if block_given?
   end
@@ -253,9 +255,9 @@ class Game
   # purposes the @rules instance variable actually stores a string, but this
   # returns the class (which is more useful).
 
-  def rules
-    Rules.find( @rules )
-  end
+  #def rules
+  #  Rules.find( @rules )
+  #end
 
   # Missing method calls are passed on to the last position in the history,
   # if it responds to the call.
@@ -264,6 +266,8 @@ class Game
     # These extra checks that history is not nil are required for yaml-ization
     if history && history.last.respond_to?( method_id )
       history.last.send( method_id, *args )
+    elsif rules && rules.respond_to?( method_id )
+      rules.send( method_id, *args )
     else
       super
     end
@@ -273,7 +277,8 @@ class Game
 
   def respond_to?( method_id )
     # double !! to force false instead of nil
-    super || !!(history && history.last.respond_to?( method_id ))
+    super || !!(history && history.last.respond_to?( method_id )) ||
+             !!(rules && rules.respond_to?( method_id ))
   end
 
   # Append a move to the Game's sequence of moves.  Whatever token is used
@@ -309,7 +314,7 @@ class Game
     if move?( move, player )
       history.append( move, player )
 
-      if history.last.class.check_cycles?
+      if check_cycles?
         (0...(history.length-1)).each do |i|
           history.last.cycle_found if history[i] == history.last
         end

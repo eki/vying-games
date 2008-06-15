@@ -11,7 +11,7 @@ class TestGame < Test::Unit::TestCase
     assert_equal( Board.new( 3, 3 ), g.board )
     assert_equal( :x, g.turn )
     assert_equal( nil, g.seed )
-    assert( ! g.respond_to?( :rng ) )
+    assert( ! g.rng )
 
     return unless Vying::RandomSupport
 
@@ -51,25 +51,24 @@ class TestGame < Test::Unit::TestCase
   def test_turn
     g = Game.new TicTacToe
     assert_equal( :x, g.turn )
-    assert_equal( :x, g.turn( :now ) )
-    assert_equal( :o, g.turn( :next ) )
-    assert_equal( :o, g.turn( :rotate ) )
+    assert_equal( :o, g.next_turn )
+    assert_equal( :o, g.rotate_turn )
     assert_equal( :o, g.turn )
-    assert_equal( :x, g.turn( :rotate ) )
+    assert_equal( :x, g.rotate_turn )
     assert_equal( :x, g.turn )
-    assert_equal( :o, g.turn( :next ) )
-    assert_equal( :o, g.turn( :rotate ) )
+    assert_equal( :o, g.next_turn )
+    assert_equal( :o, g.rotate_turn )
     assert_equal( :o, g.turn )
   end
 
   def test_has_moves
     g = Game.new TicTacToe
     assert_equal( [:x], g.has_moves )
-    g.turn( :rotate )
+    g.rotate_turn
     assert_equal( [:o], g.has_moves )
-    g.turn( :rotate )
+    g.rotate_turn
     assert_equal( [:x], g.has_moves )
-    g.turn( :rotate )
+    g.rotate_turn
     assert_equal( [:o], g.has_moves )
 
     g = Game.new Footsteps
