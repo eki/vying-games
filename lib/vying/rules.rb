@@ -283,6 +283,19 @@ class Rules
     to_snake_case
   end
 
+  # Only need to dump the name, version.
+
+  def _dump( depth=-1 )
+    Marshal.dump( [class_name, version] )
+  end
+
+  # Load mashalled data.
+
+  def self._load( s )
+    class_name, version = Marshal.load( s )
+    Rules.find( class_name, version )
+  end
+
   # Namespace for all the Position subclasses.
 
   module Positions

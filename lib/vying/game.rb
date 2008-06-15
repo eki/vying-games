@@ -276,6 +276,8 @@ class Game
   # We respond to any methods provided by the last position in history.
 
   def respond_to?( method_id )
+    return false if method_id == :_dump
+
     # double !! to force false instead of nil
     super || !!(history && history.last.respond_to?( method_id )) ||
              !!(rules && rules.respond_to?( method_id ))
