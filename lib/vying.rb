@@ -54,6 +54,6 @@ end
 # Load all Rules, Notations, and Bots
 
 Rules.require_all
-#Notation.require_all
+Notation.require_all
 Bot.require_all
 

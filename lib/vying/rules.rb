@@ -243,6 +243,12 @@ class Rules
     @check_cycles
   end
 
+  # The prefered notation for this game.
+
+  def notation
+    @notation
+  end
+
   # Terse inspect string for a Rules instance.
 
   def inspect

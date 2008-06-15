@@ -240,9 +240,11 @@ class Game
     @options = history.first.options.dup.freeze
     @players = history.first.players.map { |p| Player.new( p, self ) }
 
-    #if self.rules.info[:notation]
-    #  @notation = Notation.findo( self.rules.notation ).new( self )
-    #end
+    if rules.notation
+      @notation = Notation.find( self.rules.notation ).new( self )
+    else
+      @notation = Notation.new( self )
+    end
 
     yield self if block_given?
   end
@@ -250,14 +252,6 @@ class Game
   def sequence
     history.sequence
   end
-
-  # Returns the Rules subclass that this Game is based on.  For serialization
-  # purposes the @rules instance variable actually stores a string, but this
-  # returns the class (which is more useful).
-
-  #def rules
-  #  Rules.find( @rules )
-  #end
 
   # Missing method calls are passed on to the last position in the history,
   # if it responds to the call.
@@ -594,6 +588,12 @@ class Game
 
   def has_moves?( player )
     has_moves.include?( who?( player ) )
+  end
+
+  # Who can play the given move?
+
+  def who_can_play?( move )
+    has_moves.select { |p| move?( move, p ) }
   end
 
   # Returns a list of special moves (forfeit, offer draw, and the like).

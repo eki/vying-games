@@ -1,7 +1,7 @@
 
 class OthelloNotation < Notation
 
-  def self.name
+  def self.notation_name
     :othello_notation
   end
 

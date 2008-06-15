@@ -17,7 +17,7 @@ class Notation
 
   def sequence
     s = []
-    g.history.each do |move, player, position|
+    game.history.each do |move, player, position|
       s << translate( move, player )
     end
 
@@ -29,7 +29,7 @@ class Notation
       if player
         translate( move, player )
       else
-        players = who_can_play?( move )
+        players = game.who_can_play?( move )
         players.map { |p| translate( move, p ) }
       end
     end.flatten!
@@ -70,8 +70,8 @@ class Notation
 
   # Find a specific Notation by name
 
-  def self.findo( name )
-    list.find { |n| n.name == name }
+  def self.find( name )
+    list.find { |n| n.notation_name == name }
   end
 
 end
