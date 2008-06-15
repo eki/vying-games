@@ -14,16 +14,16 @@ class Bot < User
   end
 
   def self.plays?( rules )
-    self.const_defined?( "#{rules}".intern )
+    self.const_defined?( "#{rules.class_name}".intern )
   end
 
   def plays?( rules )
-    self.class.const_defined?( "#{rules}".intern )
+    self.class.const_defined?( "#{rules.class_name}".intern )
   end
 
   def delegate_for( position )
-    if self.class.const_defined?( "#{position.class}".intern )
-      self.class.const_get( "#{position.class}".intern ).new
+    if self.class.const_defined?( "#{position.rules.class_name}".intern )
+      self.class.const_get( "#{position.rules.class_name}".intern ).new
     end
   end
 
