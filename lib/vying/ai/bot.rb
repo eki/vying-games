@@ -188,8 +188,8 @@ class Bot < User
   end
 
   def self.difficulty_for( rules )
-    if self.const_defined?( "#{rules}".intern )
-      d = self.const_get( "#{rules}".intern ).difficulty
+    if self.const_defined?( "#{rules.class_name}".intern )
+      d = self.const_get( "#{rules.class_name}".intern ).difficulty
       return DIFFICULTY_LEVELS.invert[d] if d && DIFFICULTY_LEVELS.invert[d]
     end
     return :unknown
