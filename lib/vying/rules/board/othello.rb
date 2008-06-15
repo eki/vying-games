@@ -41,7 +41,7 @@ Rules.create( "Othello" ) do
       rotate_turn
       @moves_cache = :ns
 
-      unless moves.empty?
+      if moves.empty?
         rotate_turn
         @moves_cache = :ns
       end
