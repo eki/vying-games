@@ -91,7 +91,7 @@ class TestGame < Test::Unit::TestCase
     assert_equal( [move], g.sequence )
   end
 
-  def test_forfeit
+  def test_resign
     g = Game.new TicTacToe
 
     g[:x] = Human.new "john_doe"
@@ -102,10 +102,10 @@ class TestGame < Test::Unit::TestCase
     assert( !g.final? )
     assert( !g.draw? )
 
-    assert( g.special_move?( "forfeit_by_x" ) )
-    assert( g.special_move?( "forfeit_by_o" ) )
+    assert( g.special_move?( "x_resigns" ) )
+    assert( g.special_move?( "o_resigns" ) )
 
-    g[:x] << "forfeit"
+    g[:x] << "resign"
     g.step
 
     assert( g.final? )
@@ -121,21 +121,21 @@ class TestGame < Test::Unit::TestCase
       assert( ! g.move?( move ) )
     end
 
-    assert_equal( "forfeit_by_x", g.sequence.last )
-    assert_equal( "randombot (o) defeated john_doe (x) (forfeit by john_doe)",
+    assert_equal( "x_resigns", g.sequence.last )
+    assert_equal( "randombot (o) defeated john_doe (x) (john_doe resigns)",
                   g.description )
   end
 
-  def test_forfeit_off_turn
+  def test_resign_off_turn
     g = Game.new TicTacToe
 
     g[:x] = Human.new "john_doe"
     g[:o] = Human.new "jane_doe"
 
-    assert( g.special_move?( "forfeit_by_x" ) )
-    assert( g.special_move?( "forfeit_by_o" ) )
+    assert( g.special_move?( "x_resigns" ) )
+    assert( g.special_move?( "o_resigns" ) )
 
-    g[:o] << "forfeit"
+    g[:o] << "resign"
 
     assert( ! g[:x].ready? )
     assert(   g[:o].ready? )
@@ -145,8 +145,8 @@ class TestGame < Test::Unit::TestCase
     g.step
 
     assert( g.final? )
-    assert( g.forfeit? )
-    assert_equal( :o, g.forfeit_by )
+    assert( g.resigned? )
+    assert_equal( :o, g.resigned_by )
   end
 
   def test_draw_by_agreement_accept
@@ -316,7 +316,7 @@ class TestGame < Test::Unit::TestCase
     assert_equal( move, m )
     assert( g.history.move_by.empty? )
 
-    move = "forfeit_by_x"
+    move = "x_resigns"
     g << move
 
     assert_equal( 1, g.sequence.length )
@@ -543,10 +543,10 @@ class TestGame < Test::Unit::TestCase
     assert( u.offer_draw?( nil, nil, nil ) )
     assert( ! u.offer_draw?( nil, nil, nil ) )
 
-    u << "forfeit"
+    u << "resign"
 
-    assert( u.forfeit?( nil, nil, nil ) )
-    assert( ! u.forfeit?( nil, nil, nil ) )
+    assert( u.resign?( nil, nil, nil ) )
+    assert( ! u.resign?( nil, nil, nil ) )
   end
 
   def test_who

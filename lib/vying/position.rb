@@ -277,9 +277,9 @@ class Position
     "#<Position rules: #{rules.class_name}>"
   end
 
-  def forfeit?;                      false;                           end
-  def forfeit_by;                    nil;                             end
-  def forfeit_by?( player )          false;                           end
+  def resigned?;                     false;                           end
+  def resigned_by;                   nil;                             end
+  def resigned_by?( player )         false;                           end
   def time_exceeded?;                false                            end
   def time_exceeded_by;              nil;                             end
   def time_exceeded_by?( player );   false;                           end
@@ -295,19 +295,19 @@ class Position
 
 end
 
-module Forfeit
+module Resign
   def special_moves=( special_moves )
-    if special_moves.last =~ /^forfeit_by_(\w+)/
-      @forfeit_by = $1.intern
+    if special_moves.last =~ /(\w+)_resigns$/
+      @resigned_by = $1.intern
     end
   end
 
-  def forfeit?;                      true;                            end
-  def forfeit_by;                    @forfeit_by;                     end
-  def forfeit_by?( player );         @forfeit_by == player;           end
+  def resigned?;                     true;                            end
+  def resigned_by;                   @resigned_by;                    end
+  def resigned_by?( player );        @resigned_by == player;          end
   def final?;                        true;                            end
-  def winner?( player );             player != @forfeit_by;           end
-  def loser?( player );              player == @forfeit_by;           end
+  def winner?( player );             player != @resigned_by;          end
+  def loser?( player );              player == @resigned_by;          end
   def draw?;                         false;                           end
   def moves( player=nil );           [];                              end
   def move?( move, player=nil );     false;                           end

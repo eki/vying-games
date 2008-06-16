@@ -15,7 +15,7 @@ class History
                     /^draw_accepted_by_/    => DrawAccepted,
                     /^undo_requested_by_/   => UndoRequested,
                     /^undo_accepted_by_/    => UndoAccepted,
-                    /^forfeit_by_/          => Forfeit,
+                    /_resigns$/             => Resign,
                     /^time_exceeded_by_/    => TimeExceeded,
                     /^draw$/                => NegotiatedDraw,
                     /^swap$/                => Swapped }
@@ -448,7 +448,7 @@ class Game
   #
   #   *  AI::Bot#offer_draw?
   #   *  AI::Bot#accept_draw?
-  #   *  AI::Bot#forfeit?
+  #   *  AI::Bot#resign?
   #   *  AI::Bot#select
   #
   # If these methods aren't implemented (select in particular) by the
@@ -508,9 +508,9 @@ class Game
           return self
         end
 
-        # Ask for forfeit
-        if self[p].forfeit?( sequence, position, p )
-          history.append( "forfeit_by_#{p}", p )
+        # Ask for resignation
+        if self[p].resign?( sequence, position, p )
+          history.append( "#{p}_resigns", p )
           return self
         end
       end
@@ -596,7 +596,7 @@ class Game
     has_moves.select { |p| move?( move, p ) }
   end
 
-  # Returns a list of special moves (forfeit, offer draw, and the like).
+  # Returns a list of special moves (resign, offer draw, and the like).
 
   def special_moves( player=nil )
     return [] if final?
@@ -658,7 +658,7 @@ class Game
           moves << "undo_requested_by_#{p}" unless normal_undo ||
                                                    sequence.length == 0
           if player_names.length == 2
-            moves << "forfeit_by_#{p}"
+            moves << "#{p}_resigns"
             moves << "draw_offered_by_#{p}" if allow_draws_by_agreement?
           end
         end
@@ -863,7 +863,7 @@ class Game
           s = "#{s}, #{ss}"
         end
 
-        s += " (forfeit by #{self[forfeit_by]})" if forfeit?
+        s += " (#{self[resigned_by]} resigns)"   if resigned?
         s += " (time exceeded)"                  if time_exceeded?
         s
       end

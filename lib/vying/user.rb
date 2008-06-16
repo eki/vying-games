@@ -18,7 +18,7 @@ class User
     raise "User doesn't implement #select"
   end
 
-  def forfeit?( sequence, position, player )
+  def resign?( sequence, position, player )
     false
   end
 
@@ -80,8 +80,8 @@ class Human < User
     queue.shift
   end
 
-  def forfeit?( sequence, position, player )
-    queue.shift if queue.first == "forfeit"
+  def resign?( sequence, position, player )
+    queue.shift if queue.first == "resign"
   end
 
   def offer_draw?( sequence, position, player )

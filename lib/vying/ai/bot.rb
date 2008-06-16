@@ -40,10 +40,10 @@ class Bot < User
     move 
   end
 
-  def forfeit?( sequence, position, player )
+  def resign?( sequence, position, player )
     delegate = delegate_for( position )
-    if delegate && delegate.respond_to?( :forfeit? )
-      return delegate.forfeit?( sequence, position, player )
+    if delegate && delegate.respond_to?( :resign? )
+      return delegate.resign?( sequence, position, player )
     end
 
     false
