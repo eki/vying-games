@@ -12,6 +12,7 @@ require 'vying'
 Rules.create( "AmericanCheckers" ) do
   name    "American Checkers"
   version "1.0.0"
+  notation :checkers_notation
 
   players :red, :white
 
