@@ -605,48 +605,48 @@ class TestGame < Test::Unit::TestCase
     assert( :red, g.history.move_by.last )
   end
 
-  def test_leave
+  def test_withdraw
     g = Game.new Othello
 
     assert( ! g.unrated? )
 
-    assert( ! g.special_moves.include?( "black_leaves" ) )
-    assert( ! g.special_moves.include?( "white_leaves" ) )
+    assert( ! g.special_moves.include?( "black_withdraws" ) )
+    assert( ! g.special_moves.include?( "white_withdraws" ) )
   
     g[:black] = Human.new "john_doe"
     g[:white] = Human.new "jane_doe"
 
-    assert( ! g.special_moves.include?( "black_leaves" ) )
-    assert( ! g.special_moves.include?( "white_leaves" ) )
+    assert( ! g.special_moves.include?( "black_withdraws" ) )
+    assert( ! g.special_moves.include?( "white_withdraws" ) )
   
     g.instance_variable_set( "@unrated", true )
 
     assert( g.unrated? )
 
-    assert( g.special_moves.include?( "black_leaves" ) )
-    assert( g.special_moves.include?( "white_leaves" ) )
+    assert( g.special_moves.include?( "black_withdraws" ) )
+    assert( g.special_moves.include?( "white_withdraws" ) )
   
-    assert( g.special_moves( :black ).include?( "black_leaves" ) )
-    assert( ! g.special_moves( :black ).include?( "white_leaves" ) )
+    assert( g.special_moves( :black ).include?( "black_withdraws" ) )
+    assert( ! g.special_moves( :black ).include?( "white_withdraws" ) )
   
-    g << "black_leaves"
+    g << "black_withdraws"
 
     assert_equal( nil, g[:black] )
-    assert( ! g.special_moves.include?( "black_leaves" ) )
-    assert( ! g.special_moves( :black ).include?( "black_leaves" ) )
-    assert( g.special_moves.include?( "white_leaves" ) )
+    assert( ! g.special_moves.include?( "black_withdraws" ) )
+    assert( ! g.special_moves( :black ).include?( "black_withdraws" ) )
+    assert( g.special_moves.include?( "white_withdraws" ) )
     assert( :black, g.history.move_by.last )
 
     g[:black] = Human.new "dude"
   
-    assert( g.special_moves.include?( "black_leaves" ) )
-    assert( g.special_moves.include?( "white_leaves" ) )
+    assert( g.special_moves.include?( "black_withdraws" ) )
+    assert( g.special_moves.include?( "white_withdraws" ) )
 
-    g << "white_leaves"
+    g << "white_withdraws"
   
     assert_equal( nil, g[:white] )
-    assert( g.special_moves.include?( "black_leaves" ) )
-    assert( ! g.special_moves.include?( "white_leaves" ) )
+    assert( g.special_moves.include?( "black_withdraws" ) )
+    assert( ! g.special_moves.include?( "white_withdraws" ) )
     assert( :white, g.history.move_by.last )
 
   end

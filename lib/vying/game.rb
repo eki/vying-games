@@ -324,8 +324,8 @@ class Game
       if respond_to?( msym )
         send( msym )
 
-      elsif player_names.any? { |p| move =~ /^(#{p})_leaves$/ }
-        leave( $1.intern )
+      elsif player_names.any? { |p| move =~ /^(#{p})_withdraws$/ }
+        withdraw( $1.intern )
 
       elsif player_names.any? { |p| move =~ /^kick_(#{p})$/ }
         kick( $1.intern )
@@ -676,13 +676,13 @@ class Game
     if unrated?
       if player.nil?
         players.each do |p|
-          moves << "#{p.name}_leaves" if p.user
+          moves << "#{p.name}_withdraws" if p.user
         end
         players.each do |p|
           moves << "kick_#{p.name}" if p.user
         end
       else
-        moves << "#{player}_leaves" if self[player]
+        moves << "#{player}_withdraws" if self[player]
       end
     end
 
@@ -742,10 +742,10 @@ class Game
     undo while history.last.undo_requested?
   end
 
-  # The user for the given player leaves the game.  This is the method that's
-  # executed for special moves like <player>_leaves.
+  # The user for the given player withdraws the game.  This is the method that's
+  # executed for special moves like <player>_withdraws.
 
-  def leave( player )
+  def withdraw( player )
     self[player] = nil
   end
 
@@ -769,8 +769,8 @@ class Game
 
   # Is this a unrated game?  This is a wrapper around the :unrated attribute.
   # The only effect a unrated game has on this library is whether or not
-  # the leave special move is available.  In an unrated game the users
-  # can drop out by using leave.
+  # the withdraw special move is available.  In an unrated game the users
+  # can drop out by using withdraw.
 
   def unrated?
     unrated
