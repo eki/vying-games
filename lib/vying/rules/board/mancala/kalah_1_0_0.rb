@@ -8,6 +8,8 @@ Rules.create( "Kalah" ) do
   version "1.0.0"
   broken
 
+  notation :mancala_notation
+
   players :one, :two
 
   score_determines_outcome

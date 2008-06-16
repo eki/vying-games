@@ -6,6 +6,7 @@ require 'vying'
 Rules.create( "Oware" ) do
   name    "Oware"
   version "1.0.0"
+  notation :mancala_notation
 
   players :one, :two
 
