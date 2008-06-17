@@ -27,7 +27,7 @@ class MancalaNotation < Notation
            ['a', 'b', 'c', 'd', 'e', 'f'] ]
 
   def translate( move, player )
-    FROM[move.y][move.x]
+    FROM[move.y][move.x] || move
   end
 
 end

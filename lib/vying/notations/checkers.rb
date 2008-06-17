@@ -20,13 +20,17 @@ class CheckersNotation < Notation
   end
 
   def translate( move, player )
-    c1, c2 = move.to_coords
-    b = game.board
+    if move =~ /\w\d+\w\d+/
+      c1, c2 = move.to_coords
+      b = game.board
 
-    n1 = (c1.x + c1.y * b.width) / 2 + 1
-    n2 = (c2.x + c2.y * b.width) / 2 + 1
+      n1 = (c1.x + c1.y * b.width) / 2 + 1
+      n2 = (c2.x + c2.y * b.width) / 2 + 1
 
-    "#{n1}-#{n2}"
+      "#{n1}-#{n2}"
+    else
+      move
+    end
   end
 
 end
