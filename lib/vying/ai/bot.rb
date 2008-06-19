@@ -6,8 +6,10 @@ require 'vying/rules'
 class Bot < User
   attr_accessor :cache, :delegates
 
-  def initialize( *args )
-    super
+  def initialize( username=nil, id=nil )
+    username ||= name
+
+    super( username, id )
 
     @cache = Search::Cache::FallThrough.new
     @delegates = {}
