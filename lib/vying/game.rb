@@ -541,7 +541,7 @@ class Game
 
   def play
     step until final?
-    results
+    self
   end
 
   # Returns this Game's seed.  If this game's rules don't allow for any random
