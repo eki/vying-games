@@ -14,6 +14,8 @@ module Minimax
   end
 
   def search( position, player, depth=0 )
+    return cache.get( position, player ) if cache.include?( position, player )
+
     @nodes += 1 if respond_to? :nodes
 
     return evaluate( position, player ) if cutoff( position, depth )
@@ -22,7 +24,9 @@ module Minimax
       search( position.apply( move ), player, depth+1 )
     end
 
-    position.turn == player ? scores.max : scores.min
+    score = (position.turn == player) ? scores.max : scores.min
+    
+    cache.put( position, player, score )
   end
 end
 

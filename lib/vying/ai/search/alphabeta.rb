@@ -18,6 +18,8 @@ module AlphaBeta
   end
 
   def search( position, player, a, b, depth=0 )
+    return cache.get( position, player ) if cache.include?( position, player )
+
     @nodes += 1 if respond_to? :nodes
 
     return evaluate( position, player ) if cutoff( position, depth )
@@ -41,7 +43,9 @@ module AlphaBeta
       v
     end
 
-    position.turn == player ? scores.max : scores.min
+    score = (position.turn == player) ? scores.max : scores.min
+    
+    cache.put( position, player, score )
   end
 end
 

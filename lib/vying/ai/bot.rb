@@ -4,6 +4,14 @@
 require 'vying/rules'
 
 class Bot < User
+  attr_accessor :cache, :delegates
+
+  def initialize( *args )
+    super
+
+    @cache = Search::Cache::FallThrough.new
+    @delegates = {}
+  end
 
   def bot?
     true
@@ -14,16 +22,22 @@ class Bot < User
   end
 
   def self.plays?( rules )
-    self.const_defined?( "#{rules.class_name}".intern )
+    self.const_defined?( rules.class_name.intern )
   end
 
   def plays?( rules )
-    self.class.const_defined?( "#{rules.class_name}".intern )
+    self.class.const_defined?( rules.class_name.intern )
   end
 
   def delegate_for( position )
-    if self.class.const_defined?( "#{position.rules.class_name}".intern )
-      self.class.const_get( "#{position.rules.class_name}".intern ).new
+    k = position.rules.class_name.intern
+
+    return @delegates[k] if @delegates.key?( k )
+
+    if self.class.const_defined?( k )
+      @delegates[k] = self.class.const_get( k ).new
+      @delegates[k].cache = cache
+      @delegates[k]
     end
   end
 
@@ -127,6 +141,10 @@ class Bot < User
     self.to_s
   end
 
+  def inspect
+    "#<Bot #{name}>"
+  end
+
   def Bot.require_all( path=$: )
     required = []
     path.each do |d|
@@ -168,8 +186,11 @@ class Bot < User
 
   def Bot.find( name )
     Bot.list.each do |b|
-      return b if name.downcase == b.to_s.downcase ||
-                  name.downcase == b.name.downcase
+      return b if name.to_s.downcase == b.to_s.downcase ||
+                  name.to_s.downcase == b.name.downcase
+
+      a = name.to_s.split( "::" )
+      return Bot.find( a.first ) if a.length > 1
     end
     nil
   end
