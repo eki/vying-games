@@ -250,6 +250,13 @@ class Position
     self.dup.apply!( move, player=nil )
   end
 
+  # Return the successors to this position (that is, map the results of
+  # #moves to the positions created by those moves).
+
+  def successors( player=nil )
+    moves( player ).map { |move| apply( move, player ) }
+  end
+
   # Returns a very basic string representation of this position.
 
   def to_s
