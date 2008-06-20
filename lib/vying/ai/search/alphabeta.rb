@@ -8,44 +8,86 @@ module AlphaBeta
     h = {}
 
     moves = prune( position, player, position.moves ) if respond_to? :prune
-    moves = order( position, player, position.moves ) if respond_to? :order
     moves ||= position.moves
 
-    moves.each do |move|
-      h[move] = search( position.apply( move ), player, -10**10, 10**10, 1 )
+    p2m = {}
+    moves.each { |m| p2m[position.apply( m )] = m }
+
+    positions = p2m.keys
+
+    if respond_to?( :order )
+      positions = order( positions, player )
+    else
+      positions = order_by_cache( positions, player )
+    end
+
+    positions.each do |p|
+      h[p2m[p]] = search( p, player, -10**10, 10**10, 1 ).first
     end
     h
   end
 
   def search( position, player, a, b, depth=0 )
-    return cache.get( position, player ) if cache.include?( position, player )
+    if cache.include?( position, player, depth )
+      return cache.get( position, player )
+    end
 
     @nodes += 1 if respond_to? :nodes
 
-    return evaluate( position, player ) if cutoff( position, depth )
+    if cutoff( position, depth )
+      score = evaluate( position, player )
+      distance = position.final? ? 10**10 : 0
+      cache.put( position, player, score, distance )
+      return [score, distance]
+    end
 
-    moves = prune( position, player, position.moves ) if respond_to? :prune
-    moves = order( position, player, position.moves ) if respond_to? :order
-    moves ||= position.moves
-
-    scores = moves.map_until do |move|
-      v = search( position.apply( move ), player, a, b, depth+1 )
+    scores = successors( position, player ).map do |p|
+      v, d = search( p, player, a, b, depth+1 )
 
       # Check for alpha-beta cutoffs
       if position.turn == player
         a = [a,v].max
-        return b if a >= b
+        return [b, d] if a >= b
       elsif position.turn != player
         b = [b,v].min
-        return a if b <= a
+        return [a, d] if b <= a
       end
 
-      v
+      [v, d]
     end
 
-    score = (position.turn == player) ? scores.max : scores.min
+    if position.turn == player
+      score, distance = scores.max { |i,j| i.first <=> j.first }
+    else
+      score, distance = scores.min { |i,j| i.first <=> j.first }
+    end
     
-    cache.put( position, player, score )
+    cache.put( position, player, score, distance+1 )
+  end
+
+  def successors( position, player )
+    if respond_to?( :prune )
+      moves = prune( position, player, position.moves )
+      moves ||= position.moves
+      ss = moves.map { |move| position.apply( move ) }
+    else
+      ss = position.successors
+    end
+
+    if respond_to?( :order )
+      ss = order( ss, player )
+    else
+      ss = order_by_cache( ss, player )
+    end
+
+    ss
+  end
+
+  def order_by_cache( positions, player )
+    positions.sort_by do |p| 
+      a = cache.get( p, player )
+      a ? a.first : 0
+    end
   end
 end
 

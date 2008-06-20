@@ -48,6 +48,8 @@ class TestSearch < Test::Unit::TestCase
   def test_alphabeta_01
     mini = MiniMaxBot.new
     alpha = AlphaBetaBot.new
+    cached_alpha = AlphaBetaBot.new
+    cached_alpha.cache = Search::Cache::Memory.new
 
     g = Game.new( TicTacToe )
     g << :a1 << :b2 << :a2 << :c3
@@ -56,6 +58,7 @@ class TestSearch < Test::Unit::TestCase
 
     m_score, m_move = mini.select( position, position.turn )
     a_score, a_move = alpha.select( position, position.turn )
+    ca_score, ca_move = cached_alpha.select( position, position.turn )
 
     assert_equal( "a3", m_move )
     assert_equal( 1, m_score )
@@ -64,6 +67,18 @@ class TestSearch < Test::Unit::TestCase
     assert_equal( m_move, a_move )
     assert( mini.leaf >= alpha.leaf )
     assert( mini.nodes >= alpha.nodes )
+
+    assert_equal( m_score, ca_score )
+    assert_equal( m_move, ca_move )
+    assert( mini.leaf >= cached_alpha.leaf )
+    assert( mini.nodes >= cached_alpha.nodes )
+
+    ca_score, ca_move = cached_alpha.select( position, position.turn )
+
+    assert_equal( m_score, ca_score )
+    assert_equal( m_move, ca_move )
+    assert_equal( 0, cached_alpha.leaf )
+    assert_equal( 0, cached_alpha.nodes )
   end
 
   def test_alphabeta_02
