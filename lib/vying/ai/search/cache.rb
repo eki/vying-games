@@ -99,7 +99,7 @@ module Search
         hit_limit = 1
 
         until size < limit - limit / 10
-          @cache.reject! { |cr| cr.hits < hit_limit }
+          @cache.reject! { |k,cr| cr.hits < hit_limit }
           hit_limit += 1
         end
       end
