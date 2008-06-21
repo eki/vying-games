@@ -118,7 +118,16 @@ Rules.create( "Ataxx" ) do
     end
   end
 
-  blocks %w(   x
+
+  # BUG:  See all those comments like "# 2 blocks:"?  Yeah, those aren't
+  # comments at all.  Those are data in the blocks array.  "#", "2", "blocks:".
+  # So they all need to go away... But!  Deleting them throws off historic
+  # games (because the value at the randomly selected index will be wrong).
+  #
+  # So, this version of Ataxx needs to be labeled as broken, and replaced
+  # with a newer version.
+
+  blocks %w(   x   # 1 block
 
 # 2 blocks:
                1 2 3
