@@ -220,6 +220,8 @@ class Game
 
   attr_reader :id, :unrated, :time_limit, :updated_at
 
+  alias_method :game_id, :id
+
   # Create a game from the given Rules subclass, and an optional seed.  If
   # the game has random elements and a seed is not provided, one will be 
   # created.  If you'd like to replay a game with random elements you must

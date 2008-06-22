@@ -2,6 +2,8 @@
 class User
   attr_reader :id, :username
 
+  alias_method :user_id, :id
+
   def initialize( username=nil, id=nil )
     @username, @id = username, id
   end
