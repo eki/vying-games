@@ -218,7 +218,7 @@ class Game
 
   # Extended (unnecessary) attributes
 
-  attr_reader :id, :unrated, :time_limit, :updated_at
+  attr_reader :id, :unrated, :time_limit, :last_move_at
 
   alias_method :game_id, :id
 
@@ -784,7 +784,7 @@ class Game
   # to #rules, #seed, and #sequence.  It may also define #user( player )
   # that returns a user object for a player (it may return nil, or a
   # proxy object that responds to #to_user).  The results object may also
-  # provide #id, #time_limit, and #updated_at.
+  # provide #id, #time_limit, and #last_move_at.
 
   def Game.replay( results )
     if results.respond_to?( :options )
@@ -814,8 +814,8 @@ class Game
       g.instance_variable_set( "@time_limit", results.time_limit )
     end
     
-    if results.respond_to?( :updated_at )
-      g.instance_variable_set( "@updated_at", results.updated_at )
+    if results.respond_to?( :last_move_at )
+      g.instance_variable_set( "@last_move_at", results.last_move_at )
     end
     
     g
