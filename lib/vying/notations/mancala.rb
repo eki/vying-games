@@ -27,7 +27,7 @@ class MancalaNotation < Notation
            ['a', 'b', 'c', 'd', 'e', 'f'] ]
 
   def translate( move, player )
-    FROM[move.y][move.x] || move
+    game.history.special?( move ) ? move : FROM[move.y][move.x]
   end
 
 end
