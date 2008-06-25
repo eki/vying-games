@@ -1,5 +1,5 @@
-require 'test/unit'
 
+require 'test/unit'
 require 'vying'
 
 class TestDie < Test::Unit::TestCase

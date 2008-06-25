@@ -1,6 +1,6 @@
-require 'test/unit'
 
-require 'vying/cards/card'
+require 'test/unit'
+require 'vying'
 
 class TestCard < Test::Unit::TestCase
 

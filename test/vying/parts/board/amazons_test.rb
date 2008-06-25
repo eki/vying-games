@@ -1,6 +1,6 @@
-require 'test/unit'
 
-require 'vying/board/amazons'
+require 'test/unit'
+require 'vying'
 
 class TestAmazonsBoard < Test::Unit::TestCase
 

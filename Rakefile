@@ -41,7 +41,7 @@ end
 
 desc "compile the C extension part of the vying library"
 task :compile do 
-  sh %{cd ext/vying/board && ruby ./extconf.rb && make}
+  sh %{cd ext/vying/parts/board && ruby ./extconf.rb && make}
 end
 
 ###

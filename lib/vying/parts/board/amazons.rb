@@ -1,8 +1,7 @@
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
-require 'vying/board/board'
-require 'vying/memoize'
+require 'vying'
 
 # An AmazonsBoard Territory is block of connected (8-way) empty squares on an
 # AmazonsBoard.  The properties white and black represent the queens that are

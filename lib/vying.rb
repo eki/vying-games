@@ -21,16 +21,11 @@ end
 
 require 'yaml'
 
-require 'vying/board/board'
-require 'vying/board/amazons'
-require 'vying/board/connect6'
-require 'vying/board/hexhex'
-require 'vying/board/mancala'
-require 'vying/board/othello'
-require 'vying/board/y'
-require 'vying/board/yinsh'
+require 'vying/memoize'
 
-require 'vying/dice'
+require 'vying/parts/board'
+require 'vying/parts/dice'
+require 'vying/parts/cards/card'
 
 require 'vying/user'
 require 'vying/random'

@@ -1,4 +1,6 @@
 
+require 'vying'
+
 # This file contains pure ruby implementation of the C extension.
 #
 # This file should only be loaded if the C extension is unavailable.

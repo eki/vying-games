@@ -1,3 +1,6 @@
+
+require 'vying'
+
 module RulesTests
 
   def new_game( seed=nil, options={} )

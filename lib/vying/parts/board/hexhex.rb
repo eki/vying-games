@@ -1,5 +1,5 @@
-require 'vying/board/coord'
-require 'vying/board/coords'
+
+require 'vying'
 
 class HexHexBoard < Board
 

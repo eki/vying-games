@@ -1,7 +1,7 @@
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
-require 'vying/rules'
+require 'vying'
 
 # Three Musketeers is a simple board game with nonsymmetric objectives.  The
 # red player wins by running out of moves.  The blue player wins by aligning
