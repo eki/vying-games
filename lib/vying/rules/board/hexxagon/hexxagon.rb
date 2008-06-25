@@ -124,29 +124,29 @@ Rules.create( "Hexxagon" ) do
     end
   end
 
-  blocks   %w( x   # 1 block
+  blocks   %w( x
 
-# 2 blocks:    
+
                1 2 3 4 5
 
-# 3 blocks:
+
                1x 2x 3x 4x 5x
 
-# 4 blocks:
+
                12 13 23 14 24 34 15 25 35 45 a b c d e f g h i j k
 
-# 5 blocks:
+
                12x 13x 23x 14x 24x 34x 15x 25x 35x 45x 
                ax bx cx dx ex fx gx hx ix jx kx
 
-# 6 blocks:
+
                123 124 134 234 125 135 235 145 245 345 
                1a 2a 3a 4a 5a 1b 2b 3b 4b 5b 1c 2c 3c 4c 5c 
                1d 2d 3d 4d 5d 1e 2e 3e 4e 5e 1f 2f 3f 4f 5f 
                1g 2g 3g 4g 5g 1h 2h 3h 4h 5h 1i 2i 3i 4i 5i 
                1j 2j 3j 4j 5j 1k 2k 3k 4k 5k
 
-# 7 blocks:
+
                123x 124x 134x 234x 125x 135x 235x 145x 245x 345x 
                1ax 2ax 3ax 4ax 5ax 1bx 2bx 3bx 4bx 5bx 
                1cx 2cx 3cx 4cx 5cx 1dx 2dx 3dx 4dx 5dx 
@@ -155,7 +155,7 @@ Rules.create( "Hexxagon" ) do
                1ix 2ix 3ix 4ix 5ix 1jx 2jx 3jx 4jx 5jx 
                1kx 2kx 3kx 4kx 5kx
 
-# 8 blocks:
+
                1234 1235 1245 1345 2345 
                12a 13a 23a 14a 24a 34a 15a 25a 35a 45a 12b 13b 23b
                14b 24b 34b 15b 25b 35b 45b ab 12c 13c 23c 14c 24c 34c 
@@ -171,7 +171,7 @@ Rules.create( "Hexxagon" ) do
                12k 13k 23k 14k 24k 34k 15k 25k 35k 45k 
                ak bk ck dk ek fk gk hk ik jk
 
-# 9 blocks:
+
                1234x 1235x 1245x 1345x 2345x 
                12ax 13ax 23ax 14ax 24ax 34ax 15ax 25ax 35ax 45ax 
                12bx 13bx 23bx 14bx 24bx 34bx 15bx 25bx 35bx 45bx 
@@ -189,7 +189,7 @@ Rules.create( "Hexxagon" ) do
                12kx 13kx 23kx 14kx 24kx 34kx 15kx 25kx 35kx 45kx 
                akx bkx ckx dkx ekx fkx gkx hkx ikx jkx
 
-# 10 blocks:
+
                12345 123a 124a 134a 234a 125a 135a 235a 145a 245a 345a 123b 
                124b 134b 234b 125b 135b 235b 145b 245b 345b 
                1ab 2ab 3ab 4ab 5ab 123c 124c 134c 234c 125c 135c 235c 145c 
@@ -219,7 +219,7 @@ Rules.create( "Hexxagon" ) do
                5fk 1gk 2gk 3gk 4gk 5gk 1hk 2hk 3hk 4hk 5hk 1ik 2ik 3ik 4ik 5ik
                1jk 2jk 3jk 4jk 5jk 
 
-# 11 blocks:
+
                12345x 123ax 124ax 134ax 234ax 125ax 135ax 235ax 145ax 245ax 
                345ax 123bx 124bx 134bx 234bx 125bx 135bx 235bx 145bx 245bx 
                345bx 1abx 2abx 3abx 4abx 5abx 123cx 124cx 134cx 234cx 125cx 
@@ -254,7 +254,7 @@ Rules.create( "Hexxagon" ) do
                3dkx 4dkx 5dkx 1ekx 2ekx 3ekx 4ekx 5ekx 1fkx 2fkx 3fkx 4fkx 
                5fkx 1gkx 2gkx 3gkx 4gkx 5gkx 1hkx 2hkx 3hkx 4hkx 5hkx 1ikx
                2ikx 3ikx 4ikx 5ikx 1jkx 2jkx 3jkx 4jkx 5jkx
-# 12 blocks:
+
                1234a 1235a 1245a 1345a 2345a 1234b 1235b 1245b 1345b 2345b 
                12ab 13ab 23ab 14ab 24ab 34ab 15ab 25ab 35ab 45ab 1234c 1235c 
                1245c 1345c 2345c 12ac 13ac 23ac 14ac 24ac 34ac 15ac 25ac 35ac 
@@ -317,7 +317,7 @@ Rules.create( "Hexxagon" ) do
                hik 12jk 13jk 23jk 14jk 24jk 34jk 15jk 25jk 35jk 45jk ajk bjk 
                cjk djk ejk fjk gjk hjk ijk 
 
-# 13 blocks:
+
                1234ax 1235ax 1245ax 1345ax 2345ax 1234bx 1235bx 1245bx 1345bx
                2345bx 12abx 13abx 23abx 14abx 24abx 34abx 15abx 25abx
                35abx 45abx 1234cx 1235cx 1245cx 1345cx 2345cx 12acx 
