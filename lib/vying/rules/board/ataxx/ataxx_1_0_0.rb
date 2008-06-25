@@ -1,12 +1,134 @@
-# --
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
-# This file contains the block configurations for Ataxx.
+require 'vying'
 
-module AtaxxBlocks
+# Ataxx is territory game where each player tries to populate a majority of
+# board with his pieces.  This game has a random starting position, but past
+# the initial position there are no more random elements.
+#
+# For detailed rules, etc:  http://vying.org/games/ataxx
 
-  BLOCKS = %w( x         # 1 block
+Rules.create( "Ataxx" ) do
+  name    "Ataxx"
+  version "1.0.0"
+  broken
+
+  players :red, :blue
+
+  score_determines_outcome
+  random
+
+  position do
+    attr_reader :board, :block_pattern, :moves_cache
+    ignore :moves_cache
+
+    def init
+      @board = Board.new( 7, 7 )
+      @board[:a1,:g7] = :red
+      @board[:a7,:g1] = :blue
+
+      @block_pattern = set_rand_blocks
+
+      @moves_cache = :ns
+    end
+
+    def moves( player=nil )
+      return []          unless player.nil? || has_moves.include?( player )
+      return []          if players.any? { |p| board.count( p ) == 0 }
+      return moves_cache if moves_cache != :ns
+
+      p   = turn
+      opp = (p == :red) ? :blue : :red
+
+      cd = [:n, :s, :e, :w, :se, :sw, :ne, :nw]
+
+      found = []
+
+      # Adjacent moves
+
+      board.occupied[p].each do |c|
+        board.coords.ring( c, 1 ).each do |c1|
+          found << "#{c}#{c1}" if board[c1].nil? && !c1.nil?
+        end
+      end
+
+      # Jump moves
+
+      board.occupied[p].each do |c|
+        board.coords.ring( c, 2 ).each do |c2|
+          found << "#{c}#{c2}" if board[c2].nil? && !c2.nil?
+        end
+      end
+
+      @moves_cache = found
+    end
+
+    def apply!( move, player=nil )
+      coords, p = move.to_coords, turn
+      opp = (p == :red) ? :blue : :red
+
+      dx = (coords.first.x - coords.last.x).abs
+      dy = (coords.first.y - coords.last.y).abs
+
+      if dx <= 1 && dy <= 1 && (dx == 1 || dy == 1)
+        board[coords.last] = turn
+      else
+        board.move( coords.first, coords.last )
+      end
+
+      board.coords.neighbors( coords.last ).each do |c|
+        board[c] = turn if board[c] == opp
+      end
+
+      rotate_turn
+      @moves_cache = :ns
+
+      rotate_turn if moves.empty?
+      @moves_cache = :ns
+
+      self
+    end
+
+    def final?
+      moves.empty?
+    end
+
+    def score( player )
+      board.count( player )
+    end
+
+    def hash
+      [board,turn].hash
+    end
+
+    def set_blocks( p )
+      p.scan( /./m ) do |c|
+        board[*rules.block_coords[c]] = :x
+      end
+      p
+    end
+
+    def set_rand_blocks
+      set_blocks( rules.blocks[rand( rules.blocks.length )] )
+    end
+
+    def clear_blocks
+      board[*board.occupied[:x]] = nil
+      @block_pattern = ""
+    end
+  end
+
+
+  # BUG:  See all those comments like "# 2 blocks:"?  Yeah, those aren't
+  # comments at all.  Those are data in the blocks array.  "#", "2", "blocks:".
+  # So they all need to go away... But!  Deleting them throws off historic
+  # games (because the value at the randomly selected index will be wrong).
+  #
+  # So, this version of Ataxx needs to be labeled as broken, and replaced
+  # with a newer version.
+
+  blocks %w(   x   # 1 block
 
 # 2 blocks:
                1 2 3
@@ -91,39 +213,20 @@ module AtaxxBlocks
                12356x ) + 
                [""]  # 0 blocks
 
-  BLOCK_COORDS = { 
-    '1' => [:a4, :g4],
-    '2' => [:b4, :f4],
-    '3' => [:c4, :e4],
-    '4' => [:d1, :d7],
-    '5' => [:d2, :d6],
-    '6' => [:d3, :d5],
-    'a' => [:a2, :a6, :g2, :g6],
-    'b' => [:a3, :a5, :g3, :g5],
-    'c' => [:b3, :b5, :f3, :f5],
-    'd' => [:b1, :b7, :f1, :f7],
-    'e' => [:c1, :c7, :e1, :e7],
-    'f' => [:c2, :c6, :e2, :e6],
-    'g' => [:b2, :b6, :f2, :f6],
-    'h' => [:c3, :c5, :e3, :e5],
-    'x' => [:d4]
-  }
-
-  def set_blocks( p )
-    p.scan( /./m ) do |c|
-      board[*BLOCK_COORDS[c]] = :x
-    end
-    p
-  end
-
-  def set_rand_blocks
-    set_blocks( BLOCKS[rand( BLOCKS.length )] )
-  end
-
-  def clear_blocks
-    board[*board.occupied[:x]] = nil
-    @block_pattern = ""
-  end
-
+  block_coords  '1' => [:a4, :g4],
+                '2' => [:b4, :f4],
+                '3' => [:c4, :e4],
+                '4' => [:d1, :d7],
+                '5' => [:d2, :d6],
+                '6' => [:d3, :d5],
+                'a' => [:a2, :a6, :g2, :g6],
+                'b' => [:a3, :a5, :g3, :g5],
+                'c' => [:b3, :b5, :f3, :f5],
+                'd' => [:b1, :b7, :f1, :f7],
+                'e' => [:c1, :c7, :e1, :e7],
+                'f' => [:c2, :c6, :e2, :e6],
+                'g' => [:b2, :b6, :f2, :f6],
+                'h' => [:c3, :c5, :e3, :e5],
+                'x' => [:d4]
 end
 

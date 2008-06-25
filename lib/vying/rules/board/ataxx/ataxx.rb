@@ -11,7 +11,7 @@ require 'vying'
 
 Rules.create( "Ataxx" ) do
   name    "Ataxx"
-  version "1.0.0"
+  version "2.0.0"
 
   players :red, :blue
 
@@ -118,33 +118,23 @@ Rules.create( "Ataxx" ) do
     end
   end
 
+  blocks %w(   x
 
-  # BUG:  See all those comments like "# 2 blocks:"?  Yeah, those aren't
-  # comments at all.  Those are data in the blocks array.  "#", "2", "blocks:".
-  # So they all need to go away... But!  Deleting them throws off historic
-  # games (because the value at the randomly selected index will be wrong).
-  #
-  # So, this version of Ataxx needs to be labeled as broken, and replaced
-  # with a newer version.
-
-  blocks %w(   x   # 1 block
-
-# 2 blocks:
                1 2 3
-# 3 blocks:
+
                1x 2x 3x
-# 4 blocks:
+
                12 13 14 15 16 23 25 26 36 a b c g h
-# 5 blocks:
+
                12x 13x 14x 15x 16x 23x 25x 26x 36x ax bx cx gx hx
-# 6 blocks:
+
                123 124 125 126 134 135 136 234 235 236 1a 1b 1c 1d
                1e 1f 1g 1h 2a 2b 2c 2d 2e 2f 2g 2h 3a 3b 3c 3d 3e 3f 3g 3h
-# 7 blocks:
+
                123x 124x 125x 126x 134x 135x 136x 234x 235x 236x 1ax
                1bx 1cx 1dx 1ex 1fx 1gx 1hx 2ax 2bx 2cx 2dx 2ex 2fx 2gx 2hx
                3ax 3bx 3cx 3dx 3ex 3fx 3gx 3hx
-# 8 blocks:
+
                12a 12b 12c 12d 12e 12f 12g 12h
                13a 13b 13c 13d 13e 13f 13g 12h
                14a 14b 14c 14g 14h
@@ -155,7 +145,7 @@ Rules.create( "Ataxx" ) do
                34a 34b 34c 35a 35b 35c 36a 36b 36c 36g 36h
                ab ac ad ae af ag ah bc be bf bg bh cf cg ch gh
                1234 1245 1246 1256 2345 2346 2356 1345 1346 1356 2345 2346 2356
-# 9 blocks:
+
                12ax 12bx 12cx 12dx 12ex 12fx 12gx
                13ax 13bx 13cx 13dx 13ex 13fx 13gx
                14ax 14bx 14cx 14g 14hx
@@ -167,7 +157,7 @@ Rules.create( "Ataxx" ) do
                abx acx adx aex afx agx ahx bcx bex bfx bgx bhx cfx cgx chx ghx
                1234x 1245x 1246x 1256x 2345x 2346x 2356x 1345x 1346x 1356x 2345x
                2346x 2356x
-# 10 blocks:
+
                123a 123b 123c 123d 123e 123f 123g 123h
                124a 124b 124c 124g 124h
                125a 125b 125c 125d 125e 125f 125g 125h
@@ -188,7 +178,7 @@ Rules.create( "Ataxx" ) do
                3ab 3ac 3ad 3ae 3af 3ag 3ah 3bc 3be 3bf 3bg 3bh 3cf 3cg 3ch 3gh
                3dg 3dh 3gh
                4ab 5ab 6ab 4ac 5ac 6ac 4bc 5bc 6bc 12345x 12346x 12356x
-# 11 blocks:
+
                123ax 123bx 123cx 123dx 123ex 123fx 123gx 123hx
                124ax 124bx 124cx 124gx 124hx
                125ax 125bx 125cx 125dx 125ex 125fx 125gx 125hx
