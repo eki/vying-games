@@ -624,6 +624,12 @@ class Game
     history.last.to_s
   end
 
+  # Abbreviated inspect string for this game.
+ 
+  def inspect
+    "#<Game #{id} rules: '#{rules}' description: '#{description}'>"
+  end
+
   # This is being defined so that we don't pass through to Rules#to_yaml_type.
   # And, because #name get's passed to Rules#name which overrides Class#name
   # which YAML normally depends on.
