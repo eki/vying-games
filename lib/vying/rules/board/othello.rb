@@ -23,7 +23,9 @@ Rules.create( "Othello" ) do
 
     def move?( move, player=nil )
       return false unless player.nil? || has_moves.include?( player )
-      board.valid?( Coord[move], turn )
+      cs = move.to_coords
+
+      board.valid?( cs.first, turn ) unless cs.length != 1
     end
 
     def moves( player=nil )

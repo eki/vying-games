@@ -25,20 +25,19 @@ Rules.create( "Amazons" ) do
     def move?( move, player=nil )
       return false unless player.nil? || has_moves.include?( player )
       return false if final?
-      return false unless move.to_s =~ /(\w\d+)(\w\d+)/
 
-      sc = Coord[$1]
-      ec = Coord[$2]
+      cs = move.to_coords
+      return false unless cs.length == 2
 
       queens = board.occupied[turn]
 
-      return false unless queens.include?( sc )
-      return false unless d = sc.direction_to( ec )
+      return false unless queens.include?( cs.first )
+      return false unless d = cs.first.direction_to( cs.last )
 
-      ic = sc
+      ic = cs.first
       while (ic = board.coords.next( ic, d ))
         return false if !board[ic].nil?
-        break        if ic == ec
+        break        if ic == cs.last
       end
 
       return true
