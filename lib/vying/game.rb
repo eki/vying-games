@@ -251,6 +251,10 @@ class Game
   #
   # If these methods aren't implemented (select in particular) by the
   # registered user, Game#step and Game#play cannot be used.
+  #
+  # Returns an array of the [move, player_name] that were taken.  If no move
+  # was made returns nil (this will only occur if you call #step on a #final?
+  # game or no players are #ready?.
 
   def step
 
@@ -261,14 +265,15 @@ class Game
           
           position = history.last.censor( p.name )
           if p.user.accept_draw?( sequence, position, p.name )
-            self << "draw_accepted_by_#{p.name}"
+            move = "draw_accepted_by_#{p.name}"
           else
-            self << "reject_draw"
+            move = "reject_draw"
           end
+
+          self << move
+          return [move, p.name]
         end
       end
-
-      return self
     end
 
     # Accept or reject undo request 
@@ -278,10 +283,13 @@ class Game
           
           position = history.last.censor( p.name )
           if p.user.accept_undo?( sequence, position, p.name )
-            self << "undo_accepted_by_#{p.name}"
+            move = "undo_accepted_by_#{p.name}"
           else
-            self << "reject_undo"
+            move = "reject_undo"
           end
+
+          self << move
+          return [move, p.name]
         end
       end
 
@@ -291,25 +299,27 @@ class Game
 
     player_names.each do |p|
       if self[p].ready?
-        position = history.last.censor( p )
+        position, move = history.last.censor( p ), nil
 
         # Handle draw offers
         if allow_draws_by_agreement? && 
            self[p].offer_draw?( sequence, position, p )
-          history.append( "draw_offered_by_#{p}", p )
-          return self
+          move = "draw_offered_by_#{p}"
         end
 
         # Handle undo requests 
         if self[p].request_undo?( sequence, position, p )
-          history.append( "undo_requested_by_#{p}", p )
-          return self
+          move = "undo_requested_by_#{p}"
         end
 
         # Ask for resignation
         if self[p].resign?( sequence, position, p )
-          history.append( "#{p}_resigns", p )
-          return self
+          move = "#{p}_resigns"
+        end
+
+        unless move.nil?
+          history.append( move, p )
+          return [move, p]
         end
       end
     end
@@ -323,16 +333,20 @@ class Game
           move = self[p].select( sequence, position, p )
           if move?( move, p )
             self << move 
+            return [move, p]
           else
             raise "#{self[p].username} attempted invalid move: #{move}"
           end
         end
       elsif p == :random
         moves = history.last.moves
-        self << moves[history.last.rng.rand(moves.size)]
+        move = moves[history.last.rng.rand(moves.size)]
+        self << move
+        return [move, :random]
       end
     end
-    self
+
+    nil
   end
 
   # Repeatedly calls Game#step until the game is final.
@@ -386,6 +400,13 @@ class Game
 
   def has_moves?( player )
     has_moves.include?( who?( player ) )
+  end
+
+  # You shouldn't rely on turn.  Use #has_moves instead.  Game#turn provides
+  # has_moves.first anyway, not the underlying Position#turn.
+
+  def turn
+    has_moves.first
   end
 
   # Who can play the given move?
