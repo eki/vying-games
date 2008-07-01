@@ -119,7 +119,7 @@ Rules.create( "Cephalopod" ) do
 
       elsif board[c] == "?"
         rv = @removed.values.inject( 0 ) { |m,d| m + d.up }
-        board[c] = Die.new( rv )
+        board[c] = Die.new( rv, turn )
         @dice[turn] += 1
         @removed.clear
         rotate_turn
