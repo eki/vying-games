@@ -35,6 +35,14 @@ class Player
     self
   end
 
+  def moves
+    game.moves( name )
+  end
+
+  def move?( move )
+    game.move?( move, name )
+  end
+
   def username
     user && user.username
   end
