@@ -92,6 +92,9 @@ Rules.create( "LinesOfAction" ) do
       return false
     end
 
+    # TODO: If both players are simultaneously connected the game should end
+    # with the player who just moved as the winner
+
     def winner?( player )
       coords = board.occupied[player].dup
       all_connected?( coords )
