@@ -406,7 +406,7 @@ class Game
   # has_moves.first anyway, not the underlying Position#turn.
 
   def turn
-    has_moves.first
+    has_moves.first || history.last.turn
   end
 
   # Who can play the given move?
