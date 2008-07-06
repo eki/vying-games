@@ -9,8 +9,8 @@ include FileUtils
 ### cleanup tasks
 ###
 
-CLEAN.include( 'ext/**/*.o', 'ext/**/*.so', 'lib/version.rb' )
-CLOBBER.include( 'pkg', 'doc/api', 'doc/coverage' )
+CLEAN.include( 'ext/**/*.o', 'ext/**/*.so' )
+CLOBBER.include( 'pkg', 'doc/api', 'doc/coverage', 'lib/version.rb' )
 
 ###
 ### test task
