@@ -77,7 +77,7 @@ rescue Exception
 end
 
 if defined?( Gem ) && Vying.const_defined?( 'VERSION' )
-  task :gem => [:clean, :compile, :test, :version]
+  task :gem => [:clean, :compile, :test]
 
   PKG_FILES = FileList[
     'lib/**/*',
@@ -99,7 +99,7 @@ if defined?( Gem ) && Vying.const_defined?( 'VERSION' )
     s.rubyforge_project = 'silence stupid WARNINGS'
     s.has_rdoc = true
     s.files = PKG_FILES.to_a
-    s.extensions = "ext/vying/board/extconf.rb"
+    s.extensions = "ext/vying/parts/board/extconf.rb"
     s.executables = ['vying']
     s.add_dependency "random", ">= 0.2.1"
     s.require_paths << "ext"
