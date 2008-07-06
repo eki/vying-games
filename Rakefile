@@ -5,6 +5,14 @@ require 'rake/clean'
 require 'fileutils'
 include FileUtils
 
+# Try to load the version number -- it's okay if it's not available
+
+begin
+  require 'lib/version.rb'
+rescue Exception
+  nil
+end
+
 ###
 ### cleanup tasks
 ###
@@ -54,13 +62,11 @@ task :default => [:clean, :compile, :test]
 ###  RubyGems related tasks follow:
 ###
 
-wd = Dir.pwd
-wd =~ /\/v([\d\.]*)$/
-pkg_version = $1
-
 desc "Appends the tagged version to lib/vying.rb"
 task :version do
-  sh %{echo 'module Vying; VERSION = "#{pkg_version}"; end' >> lib/version.rb}
+  v = ENV['VERSION']
+  raise 'provide a VERSION via the environment variable" unless v
+  sh %{echo 'module Vying; VERSION = "#{v}"; end' >> lib/version.rb}
 end
 
 begin
@@ -70,7 +76,7 @@ rescue Exception
   nil
 end
 
-if defined?( Gem ) && pkg_version
+if defined?( Gem ) && Vying::VERSION
   task :gem => [:clean, :compile, :test, :version]
 
   PKG_FILES = FileList[
@@ -86,7 +92,7 @@ if defined?( Gem ) && pkg_version
 
   spec = Gem::Specification.new do |s|
     s.name = 'vying'
-    s.version = pkg_version
+    s.version = Vying.version
     s.summary = 'Vying Game Library'
     s.description = 'Vying is a game library.'
     s.homepage = 'http://vying.org/dev/public'
@@ -118,7 +124,7 @@ if defined?( Gem ) && pkg_version
 
   spec_pure = Gem::Specification.new do |s|
     s.name = 'vying-pure'
-    s.version = pkg_version
+    s.version = Vying.version
     s.summary = 'Vying Game Library (Pure Ruby)'
     s.description = 'Vying is a game library.'
     s.homepage = 'http://vying.org/dev/public'

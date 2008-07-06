@@ -8,8 +8,8 @@ module Vying
   # Returns the version of this vying codebase.
 
   def self.version
-    v = const_defined?( :VERSION ) ? VERSION : "svn trunk"
-    "vying #{v}"
+    v = const_defined?( :VERSION ) ? VERSION : "git master"
+    "#{v}"
   end
 end
 
