@@ -5,14 +5,6 @@ require 'rake/clean'
 require 'fileutils'
 include FileUtils
 
-# Try to load the version number -- it's okay if it's not available
-
-begin
-  require 'lib/version.rb'
-rescue Exception
-  nil
-end
-
 ###
 ### cleanup tasks
 ###
@@ -62,10 +54,18 @@ task :default => [:clean, :compile, :test]
 ###  RubyGems related tasks follow:
 ###
 
-desc "Appends the tagged version to lib/vying.rb"
+# Try to load the version number -- it's okay if it's not available
+
+begin
+  require 'lib/version.rb'
+rescue Exception
+  module Vying; end
+end
+
+desc "Appends the value in VERSION to lib/version.rb"
 task :version do
   v = ENV['VERSION']
-  raise 'provide a VERSION via the environment variable" unless v
+  raise "provide a VERSION via the environment variable" unless v
   sh %{echo 'module Vying; VERSION = "#{v}"; end' >> lib/version.rb}
 end
 
@@ -76,7 +76,7 @@ rescue Exception
   nil
 end
 
-if defined?( Gem ) && Vying::VERSION
+if defined?( Gem ) && Vying.const_defined?( 'VERSION' )
   task :gem => [:clean, :compile, :test, :version]
 
   PKG_FILES = FileList[
