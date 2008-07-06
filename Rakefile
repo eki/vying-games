@@ -92,7 +92,7 @@ if defined?( Gem ) && Vying.const_defined?( 'VERSION' )
 
   spec = Gem::Specification.new do |s|
     s.name = 'vying'
-    s.version = Vying.version
+    s.version = Vying::VERSION
     s.summary = 'Vying Game Library'
     s.description = 'Vying is a game library.'
     s.homepage = 'http://vying.org/dev/public'
@@ -124,7 +124,7 @@ if defined?( Gem ) && Vying.const_defined?( 'VERSION' )
 
   spec_pure = Gem::Specification.new do |s|
     s.name = 'vying-pure'
-    s.version = Vying.version
+    s.version = Vying::VERSION
     s.summary = 'Vying Game Library (Pure Ruby)'
     s.description = 'Vying is a game library.'
     s.homepage = 'http://vying.org/dev/public'
