@@ -218,5 +218,9 @@ class Bot < User
     return :unknown
   end
 
+  def difficulty_for( rules )
+    self.class.difficulty_for( rules )
+  end
+
 end
 
