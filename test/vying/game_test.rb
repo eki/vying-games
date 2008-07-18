@@ -586,8 +586,8 @@ class TestGame < Test::Unit::TestCase
     g[:blue] = Human.new "john_doe"
     g[:red]  = Human.new "jane_doe"
 
-
     assert( ! g.special_move?( "swap" ) )
+    assert( ! g.swapped? )
 
     g << g.moves.first
 
@@ -598,6 +598,7 @@ class TestGame < Test::Unit::TestCase
     g << "swap"
 
     assert( ! g.special_move?( "swap" ) )
+    assert_equal( 1, g.swapped? )
     assert_equal( g.history[1], g.history.last )
     assert_equal( "swap", g.sequence.last )
     assert_equal( Human.new( "jane_doe" ), g[:blue] )
@@ -610,17 +611,19 @@ class TestGame < Test::Unit::TestCase
     g[:one] = Human.new "john_doe"
     g[:two]  = Human.new "jane_doe"
 
-
     assert( ! g.special_move?( "swap" ) )
+    assert( ! g.swapped? )
 
     g << "c1"
 
+    assert( ! g.swapped? )
     assert( ! g.special_move?( "swap" ) )
     assert( ! g.special_move?( "swap", :one ) )
     assert( ! g.special_move?( "swap", :two ) )
 
     g << g.moves.first
 
+    assert( ! g.swapped? )
     assert( g.special_move?( "swap" ) )
     assert( ! g.special_move?( "swap", :one ) )
     assert( g.special_move?( "swap", :two ) )
@@ -630,11 +633,42 @@ class TestGame < Test::Unit::TestCase
     assert( ! g.special_move?( "swap" ) )
     assert( ! g.special_move?( "swap", :one ) )
     assert( ! g.special_move?( "swap", :two ) )
+    assert_equal( 2, g.swapped? )
     assert_equal( g.history[2], g.history.last )
     assert_equal( "swap", g.sequence.last )
     assert_equal( Human.new( "jane_doe" ), g[:one] )
     assert_equal( Human.new( "john_doe" ), g[:two] )
     assert( :red, g.history.move_by.last )
+  end
+
+  def test_pie_rule_03
+    g = Game.new Kalah, :seeds_per_cup => 3
+    g[:one] = Human.new "john_doe"
+    g[:two]  = Human.new "jane_doe"
+
+    assert( ! g.special_move?( "swap" ) )
+    assert( ! g.swapped? )
+
+    g << "c1"
+
+    assert( ! g.swapped? )
+    assert( ! g.special_move?( "swap" ) )
+    assert( ! g.special_move?( "swap", :one ) )
+    assert( ! g.special_move?( "swap", :two ) )
+
+    g << g.moves.first
+
+    assert( ! g.swapped? )
+    assert( g.special_move?( "swap" ) )
+    assert( ! g.special_move?( "swap", :one ) )
+    assert( g.special_move?( "swap", :two ) )
+
+    g << g.moves.first 
+
+    assert( ! g.swapped? )
+    assert( ! g.special_move?( "swap" ) )
+    assert( ! g.special_move?( "swap", :one ) )
+    assert( ! g.special_move?( "swap", :two ) )
   end
 
   def test_withdraw

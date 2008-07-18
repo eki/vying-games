@@ -537,6 +537,9 @@ class Game
     ! special_moves( player ).empty?
   end
 
+  # Have the players swap sides.  This is a special move is available if
+  # the game supports the pie_rule.
+
   def swap
     if special_move?( "swap" )
       self[player_names.first], self[player_names.last] = 
@@ -544,6 +547,21 @@ class Game
 
       history.append( "swap", has_moves.first )
     end
+  end
+
+  # Did the players swap sides during the game (in accordance with the
+  # pie_rule)?  Returns the index at which the swap took place or false
+  # if the players didn't swap sides.
+
+  def swapped?
+    i = 0
+    until i >= sequence.length
+      return i     if history.sequence[i] == "swap"
+      return false if history.move_by[i]  != player_names.first
+      i += 1
+    end
+
+    false
   end
 
   def accept_draw
