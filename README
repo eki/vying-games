@@ -23,14 +23,13 @@ Some of vying's features are:
 == Development Info
 
 This README is just a brief introduction to this library.  For more detailed /
-up-to-date info see the dev wiki: <http://vying.org/dev/public/wiki/vying>.
+up-to-date info see the dev wiki: <http://vying.org/wiki/dev>.
 
 
 == The Games
 
-See doc/games.txt[link:files/doc/games_txt.html] for a list of games that have 
-already been implemented.  There's a list of planned games on the development
-wiki <http://vying.org/dev/public/wiki/PlannedGames>.
+See <http://vying.org/wiki/games> for a list of games that have 
+already been implemented.  Planned games are also listed there.
 
 
 == Installation
@@ -39,9 +38,9 @@ Vying is available as a gem:
 
   gem install vying --source http://vying.org
 
-Or, if you'd rather check the code out from subversion:
+Or, if you prefer, the code is available at Github:
 
-  svn co svn://code.vying.org/vying/trunk vying
+  git clone git://github.com/eki/vying.git
 
 
 == Command-Line Interface
@@ -70,39 +69,56 @@ type:
 
 == Example Code
 
-At the heart of the library are subclasses of the Rules class.  For example:
+At the heart of the library are the Rules for a game.  For example:
 
-  class TicTacToe < Rules
+  Rules.create( "TicTacToe" ) do
+    name    "Tic Tac Toe"
+    version "1.0.0"
   end
 
-An instance of TicTacToe represents a position in a game of TicTacToe.  It
-should have as instance variables the game board and who's turn it is.  The
-initialize method should setup the starting position for the game.  In the case
-of TicTacToe, this means creating an empty board.  For example, the code could
-look like this:
 
-  class TicTacToe < Rules
-    players [:x, :o]
-    attr_reader :board
+The above is a start at defining the Rules for Tic Tac Toe.  The Rules contain
+largely static information about the game, such as the name of the game or
+the player names.  Below, we start to define what a Position in a game of
+Tic Tac Toe would look like.  A Game will be made up (in part) of a series
+of Position, each position is created by changing the previous position by
+playing a move.
 
-    def initialize( seed=nil )
-      @board = Board.new( 3, 3 )
+  Rules.create( "TicTacToe" ) do
+    name    "Tic Tac Toe"
+    version "1.0.0"
+
+    players :x, :o
+
+    position do
+      attr_reader :board
+
+      def init
+        @board = Board.new( 3, 3 )
+      end
     end
   end
+
 
 In the above example the players (:x, :o) were defined.  The player symbols
 declared in the order that the players take turns.  In this case, :x will go
 first, and the :o.  
 
-If we were to continue this example, we'd need to define a #moves method to
-return tokens representing each move.  In Tic Tac Toe, we'd probably return the
-coordinates representing where the player would place an X or O on the board.
-We'd also define an #apply! method which would take a move token and alter the
-position state.
+In addition, the position is defined to include a 3x3 board.  It can be
+accessed through a method 'board', like so:
 
-Finally, we'd define a #final? method that would return true if the position is
-final (the game is over).  We'd also define #winner?, #loser?, and #draw?
-methods.
+  position = TicTacToe.new
+  puts position.board
+
+If we were to continue this example, we'd need to define a #moves method to
+return tokens (Strings) representing each move.  In Tic Tac Toe, we'd probably 
+return the coordinates representing where the player would place an X or O on 
+the board.  We'd also define an #apply! method which would take a move token 
+and alter the position state.
+
+Finally (no pun intended), we'd define a #final? method that would return true 
+if the position is final (the game is over).  We'd also define #winner?, 
+#loser?, and #draw? methods.
 
 There are more methods that can be defined depending on the game being
 implemented but those are the basics at the core of every game.
@@ -143,7 +159,8 @@ A Game represents an entire tree of positions.
   # Setup a random game..
 
   g = Game.new TicTacToe
-  g.register_users :x => RandomBot.new, :o => RandomBot.new
+  g[:x] = RandomBot.new
+  g[:o] = RandomBot.new
  
   g.step   # Play a single move (Game asks the appropriate Bot for it's move) 
   g.play   # Play out the entire game.
