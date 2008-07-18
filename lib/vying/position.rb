@@ -163,6 +163,18 @@ class Position
     @turn.first
   end
 
+  # Returns the given player's opponent.  In a two-player game (where this
+  # makes the most sense), the player name of the opponent is returned.  In
+  # a game of more than 2 players, an array of all opponents is returned.
+
+  def opponent( player )
+    if players.length == 2
+      return players.first == player ? players.last : players.first
+    else
+      players.dup - [player]
+    end
+  end
+
   # Is the given move valid for the given player?  If the given player is
   # nil, is the move? valid for any player?  This default implementation is
   # based on #moves.  The move is first forced into a string and then looked

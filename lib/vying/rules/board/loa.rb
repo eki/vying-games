@@ -33,8 +33,6 @@ Rules.create( "LinesOfAction" ) do
 
       coords = board.occupied[turn]
 
-      opp = turn == :black ? :white : :black
-
       coords.each do |c|
         [:n,:e,:w,:s,:ne,:nw,:se,:sw].each do |d|
            count = count( c, d )
@@ -45,7 +43,7 @@ Rules.create( "LinesOfAction" ) do
 
              unless (board[nc].nil? && board.in_bounds?( nc.x, nc.y )) ||
                     (board[nc] == turn && i+1 < count) || 
-                    (board[nc] == opp && i+1 == count)
+                    (board[nc] == opponent( turn ) && i+1 == count)
                break
              end
 

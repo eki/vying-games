@@ -137,7 +137,7 @@ Rules.create( "AmericanCheckers" ) do
     end
 
     def score( player )
-      opp = player == :red ? :white : :red
+      opp = opponent( player )
       oppk = rules.king[opp]
       12 - board.count( opp ) - board.count( oppk )
     end

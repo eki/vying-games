@@ -45,11 +45,9 @@ Rules.create( "NineMensMorris" ) do
       # Removing an opponent's stone
 
       if removing
-        opp = turn == :black ? :white : :black
-
         all = []
 
-        board.occupied[opp].each do |c|
+        board.occupied[opponent( turn )].each do |c|
           all << cs = "#{c}"
           found << cs unless mill?( c )
         end
@@ -122,23 +120,19 @@ Rules.create( "NineMensMorris" ) do
     end
 
     def winner?( player )
-      opp = player == :black ? :white : :black
-
       final? && (
-      (board.count( player ) > 2 && board.count( opp ) == 2) ||
+      (board.count( player ) > 2 && board.count( opponent( player ) ) == 2) ||
       (turn != player) )
     end
 
     def loser?( player )
-      opp = player == :black ? :white : :black
-
       final? && (
-      (board.count( player ) == 2 && board.count( opp ) > 2) ||
+      (board.count( player ) == 2 && board.count( opponent( player ) ) > 2) ||
       (turn == player) )
     end
 
     def score( player )
-      opp = player == :black ? :white : :black
+      opp = opponent( player )
       9 - remaining[opp] - board.count( opp )
     end
 

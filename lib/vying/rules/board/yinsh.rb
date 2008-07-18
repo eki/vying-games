@@ -206,23 +206,6 @@ Rules.create( "Yinsh" ) do
       players.any? { |p| score( p ) == 3 } || markers_remaining == 0
     end
 
-#    def winner?( player )
-#      opp = player == :white ? :black : :white
-#      score( player ) == 3 || 
-#      (markers_remaining == 0 && score( player ) > score( opp ))
-#    end
-#
-#    def loser?( player )
-#      opp = player == :white ? :black : :white
-#      sp, so = score( player ), score( opp )
-#
-#      markers_remaining == 0 ? sp < so : sp != 3
-#    end
-#
-#    def draw?
-#      markers_remaining == 0 && score( :white ) == score( :black )
-#    end
-
     def score( player )
       removed[rules.ring[player]]
     end

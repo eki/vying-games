@@ -108,8 +108,7 @@ Rules.create( "Y" ) do
     end
 
     def loser?( player )
-      opp = player == :blue ? :red : :blue
-      winner?( opp )
+      winner?( opponent( player ) )
     end
 
     def hash

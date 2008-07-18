@@ -85,8 +85,7 @@ Rules.create( "Breakthrough" ) do
     end
 
     def score( player )
-      opp = player == :black ? :white : :black
-      16 - board.occupied[opp].length
+      16 - board.occupied[opponent( player )].length
     end
 
     def hash

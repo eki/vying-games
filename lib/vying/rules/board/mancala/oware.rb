@@ -33,8 +33,7 @@ Rules.create( "Oware" ) do
       valid = @moves_cache[turn].select { |c| board[c] > 0 }
 
       # Check starvation rule
-      opp = turn == :one ? :two : :one
-      if @moves_cache[opp].all? { |c| board[c] == 0 }
+      if @moves_cache[opponent( turn )].all? { |c| board[c] == 0 }
         still_valid = []
         valid.each do |c|
           still_valid << c unless dup.apply!( c ).final?
@@ -97,8 +96,7 @@ Rules.create( "Oware" ) do
         h -= 1 if r == 1 && h > 0
       end
 
-      opp = turn == :one ? :two : :one
-      opp_empties = @moves_cache[opp].select { |c| board[c] == 0 }
+      opp_empties = @moves_cache[opponent( turn )].select { |c| board[c] == 0 }
 
       cap = [] if cap.length + opp_empties.length == 6   # Grand slam forfeit
 

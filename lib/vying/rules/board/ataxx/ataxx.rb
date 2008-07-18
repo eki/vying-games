@@ -38,7 +38,6 @@ Rules.create( "Ataxx" ) do
       return moves_cache if moves_cache != :ns
 
       p   = turn
-      opp = (p == :red) ? :blue : :red
 
       cd = [:n, :s, :e, :w, :se, :sw, :ne, :nw]
 
@@ -65,7 +64,6 @@ Rules.create( "Ataxx" ) do
 
     def apply!( move, player=nil )
       coords, p = move.to_coords, turn
-      opp = (p == :red) ? :blue : :red
 
       dx = (coords.first.x - coords.last.x).abs
       dy = (coords.first.y - coords.last.y).abs
@@ -77,7 +75,7 @@ Rules.create( "Ataxx" ) do
       end
 
       board.coords.neighbors( coords.last ).each do |c|
-        board[c] = turn if board[c] == opp
+        board[c] = turn if board[c] == opponent( turn )
       end
 
       rotate_turn
