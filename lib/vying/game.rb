@@ -422,7 +422,10 @@ class Game
 
     moves = []
 
-    if pie_rule? && sequence.length == 1 && (player.nil? || player == turn)
+    if pie_rule? && sequence.length >= 1 && 
+       (player.nil? || player != player_names.first) &&
+       ! has_moves?( player_names.first ) &&
+       history.move_by.all? { |p| p == player_names.first }
       moves << "swap"
     end
 
