@@ -115,7 +115,8 @@ module CLI
     opts.on( "-c", "--curses" ) { curses = true }
     opts.on( "-p", "--player PLAYER=BOT" ) do |s|
       s =~ /(\w*)=([\w:]*)/
-      p2b[$1.downcase.intern] = Bot.find( $2 ).new
+      b = Bot.find( $2 )
+      p2b[$1.downcase.intern] = (b ? b.new : Human.new( $2 ))
     end
 
     opts.parse( ARGV )
@@ -129,7 +130,7 @@ module CLI
     number.times do |n|
 
       g = Game.new( rules )
-      g.register_users( p2b )
+      p2b.each { |p,b| g[p] = b }
 
       until g.final?
         if g[g.turn].class == Human
