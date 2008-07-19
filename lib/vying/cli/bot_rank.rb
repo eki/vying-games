@@ -56,7 +56,7 @@ module CLI
       number.times do |n|
         g = Game.new( rules )
         h = Hash[*rules.players.zip(m.map { |bc| bc.new } ).flatten]
-        g.register_users( h )
+        h.each { |p,u| g[p] = u }
         g.play
         games << g
     
