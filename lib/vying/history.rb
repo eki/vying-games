@@ -32,7 +32,7 @@ class History
   # Fetch a position from history.
 
   def []( i )
-    return nil          if i > length
+    return nil          if i >= length
     return positions[i] if positions[i]
 
     # Need to recreate a missing position
