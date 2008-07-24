@@ -5,6 +5,12 @@ require 'vying/ai/bot'
 require 'vying/rules'
 
 class RandomBot < Bot
+  def initialize( username=nil, id=nil )
+    id ||= 387
+
+    super( username, id )
+  end
+
   def RandomBot.select( sequence, position, player )
     moves = position.moves( player )
     moves[rand(moves.size)]
