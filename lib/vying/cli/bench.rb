@@ -83,17 +83,25 @@ module CLI
           end
         end
 
+        p_a.each { |p,m| p.instance_variable_set( "@moves_cache", :ns ) }
+
         x.report( "#{r} move?" ) do
           p_a.each { |p,m| p.move?( m ) }
         end
+
+        p_a.each { |p,m| p.instance_variable_set( "@moves_cache", :ns ) }
 
         x.report( "#{r} moves" ) do
           p_a.each { |p,m| p.moves }
         end
 
+        p_a.each { |p,m| p.instance_variable_set( "@moves_cache", :ns ) }
+
         x.report( "#{r} apply" ) do
           p_a.each { |p,m| p.apply( m ) }
         end
+
+        p_a.each { |p,m| p.instance_variable_set( "@moves_cache", :ns ) }
 
         x.report( "#{r} final?" ) do
           p_a.each { |p,m| p.final? }
