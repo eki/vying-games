@@ -19,7 +19,9 @@ Rules.create( "Yinsh" ) do
   score_determines_outcome
 
   position do
-    attr_reader :board, :removed, :rows, :removed_markers, :completed_row
+    attr_reader :board, :removed, :rows, :removed_markers, :completed_row,
+                :moves_cache
+    ignore :moves_cache
 
     def init
       @board = YinshBoard.new
@@ -27,11 +29,13 @@ Rules.create( "Yinsh" ) do
       @rows = []
       @removed_markers = []
       @completed_row = nil
+      @moves_cache = :ns
     end
 
     def moves( player=nil )
-      return []  unless player.nil? || has_moves.include?( player )
-      return []  if final?
+      return []          unless player.nil? || has_moves.include?( player )
+      return moves_cache if moves_cache != :ns
+      return []          if final?
 
       a = []
 
@@ -74,7 +78,7 @@ Rules.create( "Yinsh" ) do
 
       end
 
-      a
+      @moves_cache = a
     end
 
     def apply!( move, player=nil )
@@ -198,6 +202,8 @@ Rules.create( "Yinsh" ) do
         end
 
       end
+
+      @moves_cache = :ns
 
       self
     end
