@@ -66,5 +66,49 @@ class TestLinesOfAction < Test::Unit::TestCase
     assert_equal( 12, g.board.occupied[:white].length )
     assert_equal( 11, g.board.occupied[:black].length )
   end
+
+  def test_final
+    g = play_sequence( ["a2c4", "e8e6", "h6e6", "g1a1", "h7f5", "f8d6", 
+                        "h2e5", "c1a3", "a4d4", "e1e4", "a7c5", "b1b3", 
+                        "a6d6", "b3b5", "a5c7", "d8h8", "h3d7", "a3a5", 
+                        "h5b5", "e4d5", "h4e4"] )
+
+    assert( !g.draw? )
+    assert( g.winner?( :black ) )
+    assert( !g.loser?( :black ) )
+    assert( !g.winner?( :white ) )
+    assert( g.loser?( :white ) )
+  end
+
+  def test_simultaneous_connection
+    g = Game.new( rules )
+
+    g.board.clear
+    g.board[:a1,:a2,:e1] = :black
+    g.board[:b1,:h8,:g7,:g6,:f5,:e4] = :white
+    g.counts.clear
+    g.history.last.send( :init_counts )
+
+    assert( ! g.final? )
+    assert( g.moves.include?( "e1b1" ) )
+
+    g << "e1b1"
+
+    assert( g.all_connected?( g.board.occupied[:black] ) )
+    assert( g.all_connected?( g.board.occupied[:white] ) )
+
+    assert_equal( :white, g.turn )
+
+    assert( g.final? )
+
+    assert( g.winner?( :black ) )
+    assert( ! g.winner?( :white ) )
+
+    assert( g.loser?( :white ) )
+    assert( ! g.loser?( :black ) )
+
+    assert( ! g.draw? )
+  end
+
 end
 

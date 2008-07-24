@@ -15,6 +15,7 @@ Rules.create( "LinesOfAction" ) do
 
   position do
     attr_reader :board, :counts
+    ignore :final_cache
 
     def init
       @board = Board.new( 8, 8 )
@@ -24,11 +25,13 @@ Rules.create( "LinesOfAction" ) do
       @board[:b8,:c8,:d8,:e8,:f8,:g8] = :white
 
       @counts = {}
+      @final_cache = false
       init_counts
     end
 
     def moves( player=nil )
       return [] unless player.nil? || has_moves.include?( player )
+      return []     if final?
       a = []
 
       coords = board.occupied[turn]
@@ -78,29 +81,35 @@ Rules.create( "LinesOfAction" ) do
 
       rotate_turn
 
+      @final_cache = nil
+
       self
     end
 
     def final?
+      return @final_cache unless @final_cache.nil?
+
       players.each do |p|
         coords = board.occupied[p].dup
-        return true if all_connected?( coords )
+        return @final_cache = true if all_connected?( coords )
       end
 
-      return false
+      return @final_cache = false
     end
 
-    # TODO: If both players are simultaneously connected the game should end
+    # If both players are simultaneously connected the game should end
     # with the player who just moved as the winner
 
     def winner?( player )
       coords = board.occupied[player].dup
-      all_connected?( coords )
+      if all_connected?( coords )
+        turn != player || 
+        ! all_connected?( board.occupied[opponent( player )].dup )
+      end
     end
 
     def loser?( player )
-      coords = board.occupied[player].dup
-      ! all_connected?( coords )
+      ! winner?( player )
     end
 
     def hash
