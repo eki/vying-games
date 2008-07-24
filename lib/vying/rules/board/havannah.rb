@@ -121,6 +121,11 @@ end
 
 # Havannah
 #
+# TODO: The definition of ring used by this code is likely wrong.  Currently
+# a ring must surround at least one cell that is either empty or occupied by
+# the opponent.  It is very likely that the cell can be empty or occupied by
+# either player.
+#
 # For detailed rules see:  http://vying.org/games/havannah
 
 Rules.create( "Havannah" ) do
