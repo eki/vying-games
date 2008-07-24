@@ -73,20 +73,30 @@ module CLI
           n.times { r.new }
         end
 
+        p_a[0] = [r.new, r.new.moves.first]
+        (p_a.length - 1).times do |i|
+          p = p_a[i].first.apply( p_a[i].last )
+          if p.final?
+            p_a[i+1] = [r.new, r.new.moves.first]
+          else
+            p_a[i+1] = [p, p.moves.first]
+          end
+        end
+
         x.report( "#{r} move?" ) do
-          n.times { pos.move?( move ) }
+          p_a.each { |p,m| p.move?( m ) }
         end
 
         x.report( "#{r} moves" ) do
-          n.times { pos.moves }
+          p_a.each { |p,m| p.moves }
         end
 
         x.report( "#{r} apply" ) do
-          p_a.each { |p| p.apply( move ) }
+          p_a.each { |p,m| p.apply( m ) }
         end
 
         x.report( "#{r} final?" ) do
-          n.times { pos.final? }
+          p_a.each { |p,m| p.final? }
         end
 
         x.report( "#{r} random play" ) do
