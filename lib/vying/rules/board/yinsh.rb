@@ -8,7 +8,7 @@ require 'vying'
 # For detailed rules see:  http://vying.org/games/yinsh
 
 Rules.create( "Yinsh" ) do
-  name    "Yinsh"
+  name    "YINSH"
   version "0.8.0"
 
   players :white, :black

@@ -11,7 +11,7 @@ class TestYinsh < Test::Unit::TestCase
   end
 
   def test_info
-    assert_equal( "Yinsh", rules.name )
+    assert_equal( "YINSH", rules.name )
   end
 
   def test_players

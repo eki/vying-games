@@ -279,7 +279,9 @@ class Rules
 
   def to_snake_case
     s = class_name.dup
-    s.gsub!( /(.)([A-Z])/ ) { "#{$1}_#{$2.downcase}" }
+    unless s =~ /^[A-Z\d]+$/
+      s.gsub!( /(.)([A-Z])/ ) { "#{$1}_#{$2.downcase}" }
+    end
     s.downcase
   end
 
