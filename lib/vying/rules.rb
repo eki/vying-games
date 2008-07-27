@@ -353,6 +353,9 @@ class Rules
                        name.to_s.downcase == r.to_snake_case) &&
                       version == r.version
         end
+
+        return Rules.find( name ) # couldn't find the exact version
+                                  # try the most recent version
       end
       nil
     end
