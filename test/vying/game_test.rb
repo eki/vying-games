@@ -765,5 +765,26 @@ class TestGame < Test::Unit::TestCase
     # Can't we all just get along?
   end
 
+  def test_last_special_moves
+    g = Game.new( PahTum )
+
+    g << g.moves.first
+
+    assert_equal( [], g.history.last_special_moves )
+
+    g << "swap"
+
+    assert_equal( ["swap"], g.history.last_special_moves )
+
+    g << "time_exceeded_by_black"
+
+    assert_equal( ["swap", "time_exceeded_by_black"], 
+                  g.history.last_special_moves )
+
+    assert( g.time_exceeded? )
+    assert( g.time_exceeded_by?( :black ) )
+    assert_equal( :black, g.time_exceeded_by )
+  end
+
 end
 
