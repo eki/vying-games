@@ -14,7 +14,7 @@ class Game
 
   # Extended (unnecessary) attributes
 
-  attr_reader :id, :unrated, :time_limit, :last_move_at
+  attr_reader :id, :unrated, :time_limit
 
   alias_method :game_id, :id
 
@@ -34,8 +34,8 @@ class Game
 
     #@rules = rules.class_name
 
-    @history = History.new( rules.new( seed, options ) )
-    @options = history.first.options.dup.freeze
+    @history = History.new( rules, seed, options )
+    @options = history.options.dup.freeze
     @players = history.first.players.map { |p| Player.new( p, self ) }
 
     if rules.notation
@@ -47,8 +47,103 @@ class Game
     yield self if block_given?
   end
 
+  # Create a game from the given history.  The history contains rules, seed,
+  # options and a list of moves.  It doesn't contain any info about the Users
+  # though.  Be careful to dup the history if it's already in use by another
+  # Game.  This happens automatically if you pass a Game to Game.replay.
+
+  def Game.adopt_history( history )
+    g = allocate
+    g.instance_variable_set( "@history", history )
+    g.instance_variable_set( "@rules", history.rules )
+    g.instance_variable_set( "@seed", history.seed )
+    g.instance_variable_set( "@options", history.options.dup.freeze )
+    g.instance_variable_set( "@players", 
+      history.first.players.map { |p| Player.new( p, g ) } )
+
+    if history.rules.notation
+      g.instance_variable_set( "@notation", 
+        Notation.find( history.rules.notation ).new( g ) )
+    else
+      g.instance_variable_set( "@notation", Notation.new( g ) )
+    end
+
+    g
+  end
+
+  # Creates a new game instance by replaying from a results object.
+  # The results object is a momento, containing only the minimal info
+  # needed to recreate a full Game.  The results object must respond
+  # to #rules, #seed, and #sequence.  It may also define #user( player )
+  # that returns a user object for a player (it may return nil, or a
+  # proxy object that responds to #to_user).  The results object may also
+  # provide #id, #time_limit, and #last_move_at.
+  #
+  # As an alternative to the above, if the results object responds to
+  # #history, Game.adopt_history will be used to setup the game.  Instead
+  # of #rules, #seed, and #sequence.  This is the preferred method of
+  # replaying a game.  The other methods (#user, #id, #time_limit) are still
+  # used.  The #last_move_at method is only used when a history is unavailable.
+
+  def Game.replay( results )
+    if results.respond_to?( :history ) && results.history
+      h = results.class == Game ? results.history.dup : results.history
+      g = Game.adopt_history( h )
+
+    else
+
+      if results.respond_to?( :options )
+        g = Game.new( results.rules, results.seed, (results.options || {}).dup )
+      else
+        g = Game.new( results.rules, results.seed )
+      end
+
+      g.history.no_timestamps = true
+      g << results.sequence
+      g.history.no_timestamps = false
+
+    end
+
+    results.rules.players.each do |p|
+      if results.respond_to?( :user )
+        u = results.user( p )
+        g[p] = u.to_user if u
+      end
+    end
+
+    if results.respond_to?( :id )
+      g.instance_variable_set( "@id", results.id )
+    end
+
+    if results.respond_to?( :unrated )
+      g.instance_variable_set( "@unrated", results.unrated? )
+    end
+
+    if results.respond_to?( :time_limit )
+      g.instance_variable_set( "@time_limit", results.time_limit )
+    end
+    
+    if results.respond_to?( :last_move_at )
+      m = g.history.moves.last
+      if m && m.at.nil?
+        m.instance_variable_set( "@at", results.last_move_at )
+      end
+    end
+    
+    g
+  end
+
+  # Deprecated.  This is the equivalent of history.sequence, which is
+  # also deprecated.  Use history.moves instead.
+
   def sequence
     history.sequence
+  end
+
+  # Deprecated.  This is the equivalent of Game#history.moves.last.at.
+
+  def last_move_at
+    history.moves.last.at
   end
 
   # Missing method calls are passed on to the last position in the history,
@@ -118,25 +213,17 @@ class Game
 
     elsif special_move?( move, player )
 
-      msym = move.intern
-      if respond_to?( msym )
-        send( msym )
+      m = Move.new( move, player )
 
-      elsif player_names.any? { |p| move =~ /^(#{p})_withdraws$/ }
-        withdraw( $1.intern )
+      sym, args = m.before_call
+      send( sym, *args ) if sym
 
-      elsif player_names.any? { |p| move =~ /^kick_(#{p})$/ }
-        kick( $1.intern )
-
-      else
+      if m.add_to_history?
         history.append( move, player )
-
-        if history.last.draw_offered? && history.last.has_moves.empty?
-          accept_draw
-        elsif history.last.undo_requested? && history.last.has_moves.empty?
-          accept_undo
-        end
       end
+
+      sym, args = m.after_call
+      send( sym, *args ) if sym
 
       return self
     end
@@ -181,7 +268,7 @@ class Game
   # undone as an array.
 
   def undo
-    [history.sequence.pop, history.move_by.pop, history.positions.pop]
+    history.undo
   end
 
   # Get the User playing as the given player.
@@ -354,13 +441,6 @@ class Game
   def play
     step until final?
     self
-  end
-
-  # Returns this Game's seed.  If this game's rules don't allow for any random
-  # elements the seed will be nil.
-
-  def seed
-    history.last.respond_to?( :seed ) ? history.last.seed : nil
   end
 
   # Is the given player the winner of this game?  The results of this method
@@ -544,8 +624,6 @@ class Game
     if special_move?( "swap" )
       self[player_names.first], self[player_names.last] = 
         self[player_names.last], self[player_names.first]
-
-      history.append( "swap", has_moves.first )
     end
   end
 
@@ -565,8 +643,10 @@ class Game
   end
 
   def accept_draw
-    undo while history.last.draw_offered?
-    history.append( "draw", nil )
+    if draw_accepted?
+      undo while draw_offered?
+      history.append( "draw", nil )
+    end
   end
 
   def reject_draw
@@ -574,8 +654,10 @@ class Game
   end
 
   def accept_undo
-    undo while history.last.undo_requested?
-    undo
+    if undo_accepted?
+      undo while undo_requested?
+      undo
+    end
   end
 
   def reject_undo
@@ -586,14 +668,14 @@ class Game
   # executed for special moves like <player>_withdraws.
 
   def withdraw( player )
-    self[player] = nil
+    self[player.to_sym] = nil
   end
 
   # The user for the given player is kicked from the game.  This is the method
   # that's executed for special moves like kick_<player>.
 
   def kick( player )
-    self[player] = nil
+    self[player.to_sym] = nil
   end
 
   # Takes a User and returns which player he/she is.  If given a player
@@ -616,49 +698,6 @@ class Game
     unrated
   end
 
-  # Creates a new game instance by replaying from a results object.
-  # The results object is a momento, containing only the minimal info
-  # needed to recreate a full Game.  The results object must respond
-  # to #rules, #seed, and #sequence.  It may also define #user( player )
-  # that returns a user object for a player (it may return nil, or a
-  # proxy object that responds to #to_user).  The results object may also
-  # provide #id, #time_limit, and #last_move_at.
-
-  def Game.replay( results )
-    if results.respond_to?( :options )
-      g = Game.new( results.rules, results.seed, (results.options || {}).dup )
-    else
-      g = Game.new( results.rules, results.seed )
-    end
-
-    g << results.sequence
-
-    results.rules.players.each do |p|
-      if results.respond_to?( :user )
-        u = results.user( p )
-        g[p] = u.to_user if u
-      end
-    end
-
-    if results.respond_to?( :id )
-      g.instance_variable_set( "@id", results.id )
-    end
-
-    if results.respond_to?( :unrated )
-      g.instance_variable_set( "@unrated", results.unrated? )
-    end
-
-    if results.respond_to?( :time_limit )
-      g.instance_variable_set( "@time_limit", results.time_limit )
-    end
-    
-    if results.respond_to?( :last_move_at )
-      g.instance_variable_set( "@last_move_at", results.last_move_at )
-    end
-    
-    g
-  end
-
   # The string representation of a Game is the string representation of the
   # last position in its history.
 
@@ -673,8 +712,6 @@ class Game
   end
 
   # This is being defined so that we don't pass through to Rules#to_yaml_type.
-  # And, because #name get's passed to Rules#name which overrides Class#name
-  # which YAML normally depends on.
 
   def to_yaml_type
     "!ruby/object:#{self.class}"

@@ -304,6 +304,24 @@ class Rules
     Rules.find( class_name, version )
   end
 
+  # Returns the YAML type for a Rules object.
+
+  def to_yaml_type
+    "!vying.org,2008/rules"
+  end
+
+  # Dumps this Rules object to YAML.  Only the name (#to_sc actually) and
+  # version are dumped.
+
+  def to_yaml( opts = {} )
+    YAML::quick_emit( self.object_id, opts ) do |out|
+      out.map( taguri, to_yaml_style ) do |map|
+        map.add( 'name', to_sc )
+        map.add( 'version', version )
+      end
+    end
+  end
+
   # Namespace for all the Position subclasses.
 
   module Positions
@@ -436,7 +454,12 @@ class Rules
 
   end
 
+end
 
+# Add the domain type processing for Rules to YAML.  This does a Rules.find
+# on the name and version encoded in YAML.
 
+YAML.add_domain_type( "vying.org,2008", "rules" ) do |type, val|
+  Rules.find( val['name'], val['version'] )
 end
 

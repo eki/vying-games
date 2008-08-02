@@ -7,7 +7,7 @@ class TestGame < Test::Unit::TestCase
     g = Game.new TicTacToe
     assert_equal( TicTacToe, g.rules )
     assert_equal( [], g.sequence )
-    assert_equal( History.new( TicTacToe.new ), g.history )
+    assert_equal( History.new( TicTacToe, nil, TicTacToe.options ), g.history )
     assert_equal( Board.new( 3, 3 ), g.board )
     assert_equal( :x, g.turn )
     assert_equal( nil, g.seed )
@@ -18,7 +18,7 @@ class TestGame < Test::Unit::TestCase
     g = Game.new Ataxx, 1234
     assert_equal( Ataxx, g.rules )
     assert_equal( [], g.sequence )
-    assert_equal( History.new( Ataxx.new( 1234 ) ), g.history )
+    assert_equal( History.new( Ataxx, 1234, Ataxx.options ), g.history )
     assert_equal( :red, g.turn )
     assert_equal( 1234, g.seed )
     assert( g.respond_to?( :rng ) )
@@ -274,7 +274,7 @@ class TestGame < Test::Unit::TestCase
 
     g << "time_exceeded_by_x"
 
-    assert_equal( nil, g.history.move_by.last )
+    assert_equal( :x, g.history.move_by.last )
 
     assert( g.final? )
     assert( !g.draw? )
@@ -309,11 +309,11 @@ class TestGame < Test::Unit::TestCase
     assert_equal( move, g.sequence.last )
     assert( :x, g.history.move_by.last )
 
-    m, mb, p = g.undo
+    m, p = g.undo
 
     assert_equal( 0, g.sequence.length )
     assert_equal( 1, g.history.length )
-    assert_equal( move, m )
+    assert_equal( move, m.to_s )
     assert( g.history.move_by.empty? )
 
     move = "x_resigns"
@@ -324,11 +324,11 @@ class TestGame < Test::Unit::TestCase
     assert_equal( move, g.sequence.last )
     assert( :x, g.history.move_by.last )
     
-    m, mb, p = g.undo
+    m, p = g.undo
 
     assert_equal( 0, g.sequence.length )
     assert_equal( 1, g.history.length )
-    assert_equal( move, m )
+    assert_equal( move, m.to_s )
     assert( g.history.move_by.empty? )
   end
 
@@ -493,6 +493,8 @@ class TestGame < Test::Unit::TestCase
     assert_equal( 2, g.history.length )
     assert_equal( move, g.sequence.last )
     assert( :red, g.history.move_by.last )
+
+    assert( g.history != g2.history )
 
     g = g2
 
@@ -765,21 +767,14 @@ class TestGame < Test::Unit::TestCase
     # Can't we all just get along?
   end
 
-  def test_last_special_moves
+  def test_consecutive_special_moves
     g = Game.new( PahTum )
 
     g << g.moves.first
 
-    assert_equal( [], g.history.last_special_moves )
-
     g << "swap"
 
-    assert_equal( ["swap"], g.history.last_special_moves )
-
     g << "time_exceeded_by_black"
-
-    assert_equal( ["swap", "time_exceeded_by_black"], 
-                  g.history.last_special_moves )
 
     assert( g.time_exceeded? )
     assert( g.time_exceeded_by?( :black ) )

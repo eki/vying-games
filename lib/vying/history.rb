@@ -6,65 +6,62 @@ require 'vying'
 #  History component of a Game.  This is the sequence and position cache.
 #  It behaves much like an array but doesn't write out every position when
 #  being serialized (and thus needs to be able to recreate positions based
-#  on the sequence when necessary.
+#  on the move history as necessary.
 
 class History
   include Enumerable
 
-  attr_reader :sequence, :positions, :move_by
+  attr_reader :rules, :seed, :options, :moves
 
-  SPECIAL_MOVES = { /^draw_offered_by_/     => DrawOffered,
-                    /^draw_accepted_by_/    => DrawAccepted,
-                    /^undo_requested_by_/   => UndoRequested,
-                    /^undo_accepted_by_/    => UndoAccepted,
-                    /_resigns$/             => Resign,
-                    /^time_exceeded_by_/    => TimeExceeded,
-                    /^draw$/                => NegotiatedDraw,
-                    /^swap$/                => Swapped }
+  attr_accessor :no_timestamps
 
-  # Takes the initial position and initializes the sequence and positions
-  # arrays.
+  # Takes the ingredients for the first position (rules, seed, options) and
+  # initializes a history.
 
-  def initialize( start )
-    @sequence, @move_by, @positions = [], [], [start]
+  def initialize( rules, seed, options )
+    @rules, @seed, @options = rules, seed, options
+    @moves, @positions = [], [rules.new( seed, options )]
+    @seed ||= @positions.last.seed
   end
 
-  # Fetch a position from history.
+  # Initialize as a deep copy of the given history.
+
+  def initialize_copy( o )
+    @rules, @seed, @options = o.rules, o.seed, o.options.dup
+    @moves = o.moves.dup
+  end
+
+  # Fetch a position from history.  This recreates / caches positions as
+  # necessary.
 
   def []( i )
-    return nil          if i >= length
-    return positions[i] if positions[i]
+    @positions ||= []  # may have been erased during YAML serialization
+
+    return nil           if i >= length
+    return @positions[i] if @positions[i]
+
+    if i == 0
+      return @positions[i] = rules.new( seed, options )
+    end
 
     # Need to recreate a missing position
     j = i
-    until positions[j]
+    until @positions[j]
       j -= 1
     end
 
     until j == i
-      p = nil
-
-      SPECIAL_MOVES.each do |pattern, mod|
-        if sequence[j] =~ pattern
-          p = positions[j].dup
-          p.extend mod
-          p.special_moves = last_special_moves( j )
-        end
-      end
-
-      p ||= positions[j].apply( sequence[j] )
-
-      positions[j+1] = p
+      @positions[j+1] = moves[j].apply_to( @positions[j] )
       j += 1
     end
 
-    positions[i]
+    @positions[i]
   end
 
   # Fetch the first position from history.
 
   def first
-    positions[0]
+    self[0]
   end
 
   # Fetch the last position from history.
@@ -73,69 +70,72 @@ class History
     self[length-1] # Use [] -- positions could be missing
   end
 
-  # Is the last move special?
-
-  def special?( move )
-    SPECIAL_MOVES.keys.any? { |p| move =~ p }
-  end
-
-  # Get all the special moves from the end of the sequence.  If a parameter
-  # is given it will be used as the index to start searching from (instead
-  # of the end of the sequence.
-
-  def last_special_moves( i=nil )
-    i ||= sequence.length - 1
-    sms = []
-
-    while i > 0 && special?( sequence[i] )
-      sms << sequence[i]
-      i -= 1
-    end
-
-    sms
-  end
-
-  # How many positions are in this history?
+  # How many positions are in this history?  This is based on #moves, and
+  # does not represent how many positions are actually stored in the
+  # history at any given moment.  Rather it is the number of positions
+  # that can be pulled out.
 
   def length
-    sequence.length + 1
+    moves.length + 1
+  end
+
+  # The sequence of moves.  This is deprecated.  History#moves should be
+  # used instead.
+
+  def sequence
+    moves.map { |m| m.to_s }
+  end
+
+  # A list of who made each move.  This is deprecated.  History#moves should
+  # be used instead.
+
+  def move_by
+    moves.map { |m| m.by }
   end
 
   # Add a new position to history.  The given move is applied to the last
   # position in history and the new position is appended to the end of the
   # history.  The player is the player making the move.
+  #
+  # The move should be a String, it will be wrapped in a Move.  However,
+  # passing a Move object is also acceptable.  The move is appended to the
+  # History#moves list, but the position is not created until it's accessed
+  # through History#[] (or History#last).
 
   def append( move, player )
-    p = nil
-
-    SPECIAL_MOVES.each do |pattern, mod|
-      if move =~ pattern
-        p = last.dup
-        p.extend mod
-        p.special_moves = [move] + last_special_moves
-      end
+    if no_timestamps
+      m = Move.new( move, player, nil )
+    else
+      m = Move.new( move, player )
     end
 
-    p ||= last.apply( move, player )
-
-    positions << p
-    sequence << move
-    move_by << player
+    moves << m    # this is tricky, the move is applied lazily
     self
+  end
+
+  # Delete the last move / position from history.  Returns an array of the
+  # [deleted_move, deleted_position].
+
+  def undo
+    last  # make sure the last position is available
+    [moves.pop, @positions.pop]
   end
 
   # Iterate over the positions in this history.
 
   def each
-    sequence.length.times { |i| yield sequence[i], move_by[i], self[i] }
+    moves.length.times { |i| yield moves[i], self[i] }
   end
 
-  # Compare History objects.
+  # Compare History objects.  Positions are not compared.  If the rules,
+  # seed, options and moves list are equal, the histories are considered
+  # equal.
 
   def eql?( o )
-    positions.first == o.positions.first && 
-    sequence == o.sequence &&
-    move_by == o.move_by
+    rules == o.rules &&
+    seed == o.seed &&
+    options == o.options &&
+    moves == o.moves
   end
 
   # Compare History objects.
@@ -147,27 +147,38 @@ class History
   # For efficiency's sake don't dump the entire positions array
 
   def _dump( depth=-1 )
-    ps = positions
+    ps = @positions
 
     if length > 6
       ps = [nil] * length
-      ps[0] = positions.first
+      ps[0] = @positions.first
       r = ( (ps.length - 6)..(ps.length - 1) )
-      ps[r] = positions[r]
+      ps[r] = @positions[r]
     end
 
-    Marshal.dump( [sequence, move_by, ps] )
+    Marshal.dump( [rules, seed, options, moves, ps] )
   end
 
   # Load mashalled data.
 
   def self._load( s )
-    s, m, p = Marshal.load( s )
+    r, s, o, m, p = Marshal.load( s )
     h = self.allocate
-    h.instance_variable_set( "@sequence", s )
-    h.instance_variable_set( "@move_by", m )
+    h.instance_variable_set( "@rules", r )
+    h.instance_variable_set( "@seed", s )
+    h.instance_variable_set( "@options", o )
+    h.instance_variable_set( "@moves", m )
     h.instance_variable_set( "@positions", p )
     h
+  end
+
+  # Only the rules, seed, options, and moves are written to yaml.  The 
+  # positions are left out because they can be recreated.  Note: this behavior
+  # is different from Marshal dump which simply omits parts of the positions
+  # array.
+
+  def to_yaml_properties
+    ["@rules","@seed", "@options", "@moves"]
   end
 
 end
