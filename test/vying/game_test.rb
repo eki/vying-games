@@ -781,5 +781,28 @@ class TestGame < Test::Unit::TestCase
     assert_equal( :black, g.time_exceeded_by )
   end
 
+  def test_history_since
+    t = Time.now
+    g = Game.new TicTacToe
+
+    assert_equal( [], g.history.since( t ) )
+
+    g << g.moves.first
+
+    assert_equal( [g.history.last], g.history.since( t ) )
+
+    g << g.moves.first
+
+    assert_equal( [g.history[1], g.history[2]], g.history.since( t ) )
+
+    t = Time.now
+
+    assert_equal( [], g.history.since( t ) )
+
+    g << g.moves.first
+
+    assert_equal( [g.history[3]], g.history.since( t ) )
+  end
+
 end
 

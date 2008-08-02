@@ -127,6 +127,20 @@ class History
     moves.length.times { |i| yield moves[i], self[i] }
   end
 
+  # Retrieve positions created since the given time (based on Move#at and
+  # History#moves).  Note, because this is based on Move#at, there isn't
+  # a timestamp for when the first position was created (TODO).
+
+  def since( time )
+    ps, i = [], moves.length - 1
+    time += 0.00001
+    while i >= 0 && (m = moves[i]) && m.at && m.at > time
+      ps.unshift self[i+1]
+      i -= 1
+    end
+    ps
+  end
+
   # Compare History objects.  Positions are not compared.  If the rules,
   # seed, options and moves list are equal, the histories are considered
   # equal.
