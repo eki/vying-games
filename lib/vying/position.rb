@@ -312,13 +312,19 @@ class Position
   def undo_requested_by?( player );  false;                           end
   def undo_accepted_by?( player );   false;                           end
 
+  def draw_accepted?
+    draw_offered? && has_moves.empty?
+  end
+
+  def undo_accepted?
+    undo_requested? && has_moves.empty?
+  end
+
 end
 
 module Resign
-  def special_moves=( special_moves )
-    if special_moves.last =~ /(\w+)_resigns$/
-      @resigned_by = $1.intern
-    end
+  def apply_special( move, player )
+    @resigned_by = player
   end
 
   def resigned?;                     true;                            end
@@ -334,10 +340,8 @@ module Resign
 end
 
 module TimeExceeded
-  def special_moves=( special_moves )
-    if special_moves.last =~ /^time_exceeded_by_(\w+)/
-      @exceeded_by = $1.intern
-    end
+  def apply_special( move, player )
+    @exceeded_by = player
   end
 
   def time_exceeded?;                true;                            end
@@ -353,7 +357,7 @@ module TimeExceeded
 end
 
 module NegotiatedDraw
-  def special_moves=( special_moves )
+  def apply_special( move, player )
   end
 
   def draw_by_agreement?;            true;                            end
@@ -367,10 +371,8 @@ module NegotiatedDraw
 end
 
 module DrawOffered
-  def special_moves=( special_moves )
-    if special_moves.last =~ /^draw_offered_by_(\w+)/
-      @offered_by = $1.intern
-    end
+  def apply_special( move, player )
+    @offered_by = player
   end
 
   def draw_offered?;                 true;                            end
@@ -383,17 +385,9 @@ module DrawOffered
 end
 
 module DrawAccepted
-  def special_moves=( special_moves )
-    @accepted_by = []
-
-    special_moves.each do |special_move|
-      if special_move =~ /^draw_offered_by_(\w+)/
-        @offered_by = $1.intern
-      elsif special_move =~ /^draw_accepted_by_(\w+)/
-        @accepted_by << $1.intern
-      end
-    end
-
+  def apply_special( move, player )
+    @accepted_by ||= []
+    @accepted_by << player
     @waiting_for = players - [@offered_by] - @accepted_by
   end
 
@@ -408,10 +402,8 @@ module DrawAccepted
 end
 
 module UndoRequested
-  def special_moves=( special_moves )
-    if special_moves.last =~ /^undo_requested_by_(\w+)/
-      @requested_by = $1.intern
-    end
+  def apply_special( move, player )
+      @requested_by = player
   end
 
   def undo_requested?;               true;                            end
@@ -424,17 +416,9 @@ module UndoRequested
 end
 
 module UndoAccepted
-  def special_moves=( special_moves )
-    @accepted_by = []
-
-    special_moves.each do |special_move|
-      if special_move =~ /^undo_requested_by_(\w+)/
-        @requested_by = $1.intern
-      elsif special_move =~ /^undo_accepted_by_(\w+)/
-        @accepted_by << $1.intern
-      end
-    end
-
+  def apply_special( move, player )
+    @accepted_by ||= []
+    @accepted_by << player
     @waiting_for = players - [@requested_by] - @accepted_by
   end
 
@@ -449,7 +433,7 @@ module UndoAccepted
 end
 
 module Swapped
-  def special_moves=( special_moves )
+  def apply_special( move, player )
   end
 end
 
