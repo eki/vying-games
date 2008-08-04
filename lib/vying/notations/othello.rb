@@ -11,7 +11,7 @@ class OthelloNotation < Notation
 
   def translate( move )
     if move =~ /\w\d+/
-      player == game.player_names.first ? move.to_s.upcase : move
+      move.by == game.player_names.first ? move.to_s.upcase : move
     else
       move
     end
