@@ -143,7 +143,11 @@ class Game
   # Deprecated.  This is the equivalent of Game#history.moves.last.at.
 
   def last_move_at
-    history.moves.last.at
+    if history.moves.empty?
+      @last_move_at || Time.now
+    else
+      history.moves.last.at || @last_move_at || Time.now
+    end
   end
 
   # Missing method calls are passed on to the last position in the history,
