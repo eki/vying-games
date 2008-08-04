@@ -11,14 +11,14 @@ class Notation
     s
   end
 
-  def translate( move, player )
+  def translate( move )
     move
   end
 
   def sequence
     s = []
-    game.history.each do |move, player, position|
-      s << translate( move, player )
+    game.history.each do |move, position|
+      s << translate( move )
     end
 
     s

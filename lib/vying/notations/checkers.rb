@@ -19,7 +19,7 @@ class CheckersNotation < Notation
     "#{c1}#{c2}"
   end
 
-  def translate( move, player )
+  def translate( move )
     if move =~ /\w\d+\w\d+/
       c1, c2 = move.to_coords
       b = game.board

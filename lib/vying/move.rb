@@ -192,5 +192,23 @@ class Move
     end
   end
 
+  # Forwards #x to String#x
+
+  def x
+    @move.x
+  end
+
+  # Forwards #y to String#y
+
+  def y
+    @move.y
+  end
+
+  # Forwards #to_coords to String#to_coords
+
+  def to_coords
+    @move.to_coords
+  end
+
 end
 
