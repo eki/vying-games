@@ -804,5 +804,41 @@ class TestGame < Test::Unit::TestCase
     assert_equal( [g.history[3]], g.history.since( t ) )
   end
 
+  def test_history_last_move
+    g = Game.new Phutball
+
+    assert_equal( [], g.history.last_turn.map { |m| m.to_s } )
+
+    g << "h10"
+
+    assert_equal( ["h10"], g.history.last_turn.map { |m| m.to_s } )
+
+    g << "i12"
+
+    assert_equal( ["i12"], g.history.last_turn.map { |m| m.to_s } )
+
+    g << "h8"
+
+    assert_equal( ["h8"], g.history.last_turn.map { |m| m.to_s } )
+
+    g << "k14"
+
+    assert_equal( ["k14"], g.history.last_turn.map { |m| m.to_s } )
+
+    g << "h11h9"
+
+    assert_equal( ["h11h9"], g.history.last_turn.map { |m| m.to_s } )
+
+    g << "h9h7"
+
+    assert_equal( ["h11h9", "h9h7"], g.history.last_turn.map { |m| m.to_s } )
+
+    g << "undo_requested_by_ohs"
+
+    assert_equal( [], g.history.last_turn.map { |m| m.to_s } )
+
+
+  end
+
 end
 

@@ -141,6 +141,34 @@ class History
     ps
   end
 
+  # Get the moves made during the last turn.  The special parameter indicates
+  # whether or not to include special moves.  The default is to filter them
+  # out (which means the array of moves returned may be empty).
+  #
+  # Also note that last_turn may not represent a complete turn (imagine that
+  # a player has already made two moves, and it's still his or her turn.  The
+  # first two moves will be returned even though the turn is not complete.
+
+  def last_turn( special=false )
+    ms, i = [], moves.length - 1
+
+    while i >= 0 && (m = moves[i])
+      break if ! special && m.special?
+
+      if ms.empty?
+        ms << m
+      elsif m.by == ms.last.by
+        ms.unshift m
+      else
+        break
+      end
+
+      i -= 1
+    end
+
+    ms
+  end
+
   # Compare History objects.  Positions are not compared.  If the rules,
   # seed, options and moves list are equal, the histories are considered
   # equal.
