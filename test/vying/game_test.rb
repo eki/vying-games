@@ -833,11 +833,18 @@ class TestGame < Test::Unit::TestCase
 
     assert_equal( ["h11h9", "h9h7"], g.history.last_turn.map { |m| m.to_s } )
 
+    i = g.history.moves.length - 1
+
+    assert_equal( ["h11h9", "h9h7"], 
+      g.history.last_turn( i ).map { |m| m.to_s } )
+
     g << "undo_requested_by_ohs"
 
     assert_equal( [], g.history.last_turn.map { |m| m.to_s } )
 
-
+    assert_equal( ["h11h9", "h9h7"], 
+      g.history.last_turn( i ).map { |m| m.to_s } )
+    
   end
 
 end

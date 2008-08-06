@@ -149,8 +149,8 @@ class History
   # a player has already made two moves, and it's still his or her turn.  The
   # first two moves will be returned even though the turn is not complete.
 
-  def last_turn( special=false )
-    ms, i = [], moves.length - 1
+  def last_turn( i=moves.length-1, special=false )
+    ms = []
 
     while i >= 0 && (m = moves[i])
       break if ! special && m.special?
