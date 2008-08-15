@@ -358,6 +358,8 @@ class Rules
     # exact match.
 
     def Rules.find( name, version=nil )
+      return name if name.kind_of?( Rules ) && version.nil?
+
       if version.nil?
         Rules.latest_versions.each do |r|
           return r if name == r ||
