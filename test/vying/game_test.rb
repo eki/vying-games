@@ -844,6 +844,43 @@ class TestGame < Test::Unit::TestCase
     assert_equal( g.history.moves.last.at, g.last_move_at )
   end
 
+  def test_time_limit
+
+    # This test is timing specific == BAD!
+    # On a reasonably fast machine, this should pass without problems, but
+    # on a slow machine it's possible it could fail...
+
+    g = Game.new TicTacToe
+    g.time_limit = 1  # seconds
+   
+    assert( g.timed? ) 
+    assert( g.time_remaining > 0 )
+    assert( g.expiration > Time.now )
+    assert( ! g.time_up? )
+    assert( ! g.timeout! )
+
+    sleep 2
+
+    assert( g.time_remaining < 0 )
+    assert( g.expiration < Time.now )
+    assert_equal( :x, g.time_up? )
+    assert( g.timeout! )
+
+    assert( g.final? )
+    assert( g.winner?( :o ) )
+    assert( g.loser?( :x ) )
+
+    assert_equal( "time_exceeded_by_x", g.history.moves.last.to_s )
+
+    g = Game.new TicTacToe
+
+    assert( ! g.timed? )
+    assert( ! g.time_remaining )
+    assert( ! g.expiration )
+    assert( ! g.time_up? )
+    assert( ! g.timeout! )
+  end
+
   def test_history_last_move
     g = Game.new Phutball
 

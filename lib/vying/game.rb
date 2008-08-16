@@ -14,7 +14,9 @@ class Game
 
   # Extended (unnecessary) attributes
 
-  attr_reader :id, :unrated, :time_limit
+  attr_reader :id, :unrated
+
+  attr_accessor :time_limit
 
   alias_method :game_id, :id
 
@@ -120,7 +122,7 @@ class Game
     end
 
     if results.respond_to?( :time_limit )
-      g.instance_variable_set( "@time_limit", results.time_limit )
+      g.time_limit = results.time_limit
     end
     
     if results.respond_to?( :created_at )
@@ -159,6 +161,56 @@ class Game
 
   def created_at
     history.created_at
+  end
+
+  # Is this a timed game?  The other time related methods #time_remaining,
+  # #expiration, #time_up?, and #timeout all return nil if timed? is false.
+
+  def timed?
+    !! time_limit
+  end
+
+  # How much time is remaining in this game?  This returns a float representing
+  # the seconds remaining in the game.
+
+  def time_remaining
+    last_move_at + time_limit - Time.now if timed?
+  end
+
+  # When will this game expire?  Returns a Time object.  This value changes
+  # as moves are made (or if the time_limit were to be changed.
+
+  def expiration
+    Time.at( last_move_at + time_limit ) if timed?
+  end
+
+  # Has a player run out of time?  That is to say, the game is timed and
+  # the time_remaining is now negative.  This returns the player name
+  # (for example, :black or :white) for the player who is out of time.  If
+  # time is not up, nil is returned.  Additionally, in games with sealed
+  # (simultaneous) moves, nil is returned if more than one player has
+  # run out of time.  That is, only a single player can run out of time.
+
+  def time_up?
+    if timed? && time_remaining < 0
+      if (to = has_moves).length == 1
+        to.first
+      end
+    end
+  end
+
+  # This method will end the game if it is timed and a player has run out
+  # of time (according to #time_up?). 
+  #
+  # This method is not called automatically.  That is, if a timed game is
+  # started, #append will continue to accepted moves, even if a player has
+  # run out of time.  So, for timed games, this method should always be called
+  # prior to accepting moves.
+
+  def timeout!
+    if p = time_up?
+      self << "time_exceeded_by_#{p}"
+    end
   end
 
   # Missing method calls are passed on to the last position in the history,
