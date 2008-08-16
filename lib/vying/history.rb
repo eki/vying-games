@@ -202,18 +202,20 @@ class History
       ps[r] = @positions[r]
     end
 
-    Marshal.dump( [rules, seed, options, moves, ps] )
+    Marshal.dump( [rules, seed, options, moves, last_move_at, created_at, ps] )
   end
 
   # Load mashalled data.
 
   def self._load( s )
-    r, s, o, m, p = Marshal.load( s )
+    r, s, o, m, lma, ca, p = Marshal.load( s )
     h = self.allocate
     h.instance_variable_set( "@rules", r )
     h.instance_variable_set( "@seed", s )
     h.instance_variable_set( "@options", o )
     h.instance_variable_set( "@moves", m )
+    h.instance_variable_set( "@last_move_at", lma )
+    h.instance_variable_set( "@created_at", ca )
     h.instance_variable_set( "@positions", p )
     h
   end
@@ -224,7 +226,7 @@ class History
   # array.
 
   def to_yaml_properties
-    ["@rules","@seed", "@options", "@moves"]
+    ["@rules","@seed", "@options", "@moves", "@created_at", "@last_move_at"]
   end
 
 end
