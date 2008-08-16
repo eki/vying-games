@@ -11,7 +11,7 @@ require 'vying'
 class History
   include Enumerable
 
-  attr_reader :rules, :seed, :options, :moves
+  attr_reader :rules, :seed, :options, :moves, :last_move_at, :created_at
 
   attr_accessor :no_timestamps
 
@@ -22,6 +22,7 @@ class History
     @rules, @seed, @options = rules, seed, options
     @moves, @positions = [], [rules.new( seed, options )]
     @seed ||= @positions.last.seed
+    @created_at = @last_move_at = Time.now
   end
 
   # Initialize as a deep copy of the given history.
@@ -110,6 +111,9 @@ class History
     end
 
     moves << m    # this is tricky, the move is applied lazily
+
+    @last_move_at = m.at
+
     self
   end
 

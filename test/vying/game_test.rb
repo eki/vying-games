@@ -804,6 +804,46 @@ class TestGame < Test::Unit::TestCase
     assert_equal( [g.history[3]], g.history.since( t ) )
   end
 
+  def test_history_last_move_at
+    t = Time.now
+    g = Game.new TicTacToe
+
+    assert( g.created_at > t )
+    assert( g.history.created_at > t )
+
+    assert_equal( g.created_at, g.last_move_at )
+
+    g << g.moves.first
+
+    assert( g.created_at < g.last_move_at )
+    assert_equal( g.history.moves.last.at, g.last_move_at )
+
+    g << g.moves.first
+
+    assert( g.created_at < g.last_move_at )
+    assert_equal( g.history.moves.last.at, g.last_move_at )
+    assert( g.history.moves.first.at > g.created_at )
+    assert( g.history.moves.last.at > g.history.moves.first.at )
+
+    g << "undo_requested_by_x"
+
+    assert( g.created_at < g.last_move_at )
+    assert_equal( g.history.moves.last.at, g.last_move_at )
+    assert( g.history.moves[2].at > g.history.moves[1].at )
+
+    t2 = g.history.moves.last.at
+    g << "undo_accepted_by_o"
+
+    assert( g.created_at < g.last_move_at )
+    assert( g.history.moves.last.at < g.last_move_at )
+    assert( g.history.moves.last.at < t2 )
+    assert( t2 < g.last_move_at )
+
+    g << g.moves.first
+
+    assert_equal( g.history.moves.last.at, g.last_move_at )
+  end
+
   def test_history_last_move
     g = Game.new Phutball
 

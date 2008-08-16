@@ -123,11 +123,16 @@ class Game
       g.instance_variable_set( "@time_limit", results.time_limit )
     end
     
+    if results.respond_to?( :created_at )
+      g.history.instance_variable_set( "@created_at", results.created_at )
+    end
+    
     if results.respond_to?( :last_move_at )
       m = g.history.moves.last
       if m && m.at.nil?
         m.instance_variable_set( "@at", results.last_move_at )
       end
+      g.history.instance_variable_set( "@last_move_at", results.last_move_at )
     end
     
     g
@@ -140,14 +145,20 @@ class Game
     history.sequence
   end
 
-  # Deprecated.  This is the equivalent of Game#history.moves.last.at.
+  # Note, this is different from history.moves.last.at in this sense: sometimes
+  # a move will not leave an entry in history (for example, undo which actually
+  # *removes* entries).  When this happens history.last_move_at will be out
+  # of sync with the timestamp of the last move in history.
 
   def last_move_at
-    if history.moves.empty?
-      @last_move_at || Time.now
-    else
-      history.moves.last.at || @last_move_at || Time.now
-    end
+    history.last_move_at
+  end
+
+  # When was this game created?  This is equivalent to calling
+  # history.created_at.
+
+  def created_at
+    history.created_at
   end
 
   # Missing method calls are passed on to the last position in the history,
@@ -224,6 +235,8 @@ class Game
 
       if m.add_to_history?
         history.append( move, player )
+      else
+        history.instance_variable_set( "@last_move_at", Time.now )
       end
 
       sym, args = m.after_call
