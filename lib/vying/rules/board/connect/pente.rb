@@ -9,31 +9,24 @@ Rules.create( "Pente" ) do
 
   players :white, :black
 
-  init_moves Coords.new( 19, 19 ).map { |c| c.to_s }
-
   position do
-    attr_reader :board, :lastc, :lastp, :unused_moves, :captured
-    ignore :lastc, :lastp, :unused_moves
+    attr_reader :board, :captured
 
     def init
       @board = Connect6Board.new( 5 )
-      @lastc, @lastp = nil, :noone
-      @unused_moves = rules.init_moves.dup
-
       @captured = { :black => 0, :white => 0 }
     end
 
     def moves( player=nil )
       return [] unless player.nil? || has_moves.include?( player )
       return [] if final?
-      unused_moves
+      board.unoccupied
     end
 
     def apply!( move, player=nil )
       c, p = Coord[move], turn
-      board[c], @lastc, @lastp = p, c, p
+      board[c] = p
       board.update_threats( c )
-      @unused_moves.delete( c.to_s )
 
       # Custodian capture
       cap = []
@@ -59,7 +52,6 @@ Rules.create( "Pente" ) do
         board[cc] = nil
         board.update_threats( cc )
         captured[turn] += 1
-        @unused_moves << cc.to_s
       end
 
       rotate_turn
@@ -67,38 +59,24 @@ Rules.create( "Pente" ) do
     end
 
     def final?
-      return false if lastc.nil?
-      return true  if unused_moves.empty?
-
-      return true if captured[:black] >= 10 || captured[:white] >= 10
-
-      board.each_from( lastc, [:e,:w] ) { |p| p == lastp } >= 4 ||
-      board.each_from( lastc, [:n,:s] ) { |p| p == lastp } >= 4 ||
-      board.each_from( lastc, [:ne,:sw] ) { |p| p == lastp } >= 4 ||
-      board.each_from( lastc, [:nw,:se] ) { |p| p == lastp } >= 4
+      board.unoccupied.empty? ||
+      captured.any? { |p, t| t >= 10 } ||
+      board.threats.any? { |t| t.degree == 0 }
     end
 
     def winner?( player )
       captured[player] >= 10 ||
-      lastp == player &&
-      (board.each_from( lastc, [:e,:w] ) { |p| p == player } >= 4 ||
-       board.each_from( lastc, [:n,:s] ) { |p| p == player } >= 4 ||
-       board.each_from( lastc, [:ne,:sw] ) { |p| p == player } >= 4 ||
-       board.each_from( lastc, [:nw,:se] ) { |p| p == player } >= 4)
+      board.threats.any? { |t| t.degree == 0 && t.player == player }
     end
 
     def loser?( player )
-      !draw? && player != lastp
+      winner?( opponent( player ) )
     end
 
     def draw?
-      captured[:black] < 10 &&
-      captured[:white] < 10 &&
-      unused_moves.empty? &&
-      board.each_from( lastc, [:e,:w] ) { |p| p == lastp } < 4 &&
-      board.each_from( lastc, [:n,:s] ) { |p| p == lastp } < 4 &&
-      board.each_from( lastc, [:ne,:sw] ) { |p| p == lastp } < 4 &&
-      board.each_from( lastc, [:nw,:se] ) { |p| p == lastp } < 4
+      board.unoccupied.empty? &&
+      ! captured.any? { |p, t| t >= 10 } &&
+      ! board.threats.any? { |t| t.degree == 0 }
     end
 
     def score( player )

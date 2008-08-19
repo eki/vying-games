@@ -22,9 +22,7 @@ class TestKeryoPente < Test::Unit::TestCase
     g = Game.new( rules )
     assert_equal( Board.new( 19, 19 ), g.board )
     assert_equal( :white, g.turn )
-    assert_equal( 19*19, g.unused_moves.length )
-    assert_equal( 'a1', g.unused_moves.first )
-    assert_equal( 's19', g.unused_moves.last )
+    assert_equal( 19*19, g.board.unoccupied.length )
   end
 
   def test_has_score
@@ -43,14 +41,14 @@ class TestKeryoPente < Test::Unit::TestCase
     g = Game.new( rules )
     moves = g.moves
 
-    assert_equal( 'a1', moves[0] )
-    assert_equal( 'b1', moves[1] )
-    assert_equal( 'c1', moves[2] )
-    assert_equal( 'd1', moves[3] )
-    assert_equal( 'e1', moves[4] )
-    assert_equal( 'f1', moves[5] )
-    assert_equal( 'g1', moves[6] )
-    assert_equal( 's19', moves[19*19-1] )
+    assert_equal( 'a1', moves[0].to_s )
+    assert_equal( 'b1', moves[1].to_s )
+    assert_equal( 'c1', moves[2].to_s )
+    assert_equal( 'd1', moves[3].to_s )
+    assert_equal( 'e1', moves[4].to_s )
+    assert_equal( 'f1', moves[5].to_s )
+    assert_equal( 'g1', moves[6].to_s )
+    assert_equal( 's19', moves[19*19-1].to_s )
 
     g << g.moves.first until g.final?
 

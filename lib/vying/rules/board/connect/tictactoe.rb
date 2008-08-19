@@ -9,35 +9,31 @@ Rules.create( "TicTacToe" ) do
 
   players :x, :o
 
-  init_moves Coords.new( 3, 3 ).map { |c| c.to_s }
-
   position do
-    attr_reader :board, :lastc, :lastp, :unused_moves
-    ignore :lastc, :lastp, :unused_moves
+    attr_reader :board, :lastc, :lastp
+    ignore :lastc, :lastp
   
     def init
       @board = Board.new( 3, 3 )
       @lastc, @lastp = nil, :noone
-      @unused_moves = rules.init_moves.dup
     end
 
     def moves( player=nil )
       return [] unless player.nil? || has_moves.include?( player )
       return [] if final?
-      unused_moves
+      board.unoccupied
     end
 
     def apply!( move, player=nil )
       c, p = Coord[move], turn
       board[c], @lastc, @lastp = p, c, p
-      unused_moves.delete( c.to_s )
       rotate_turn
       self
     end
 
     def final?
       return false if lastc.nil?
-      return true  if unused_moves.empty?
+      return true  if board.unoccupied.empty?
 
       board.each_from( lastc, [:e,:w] ) { |p| p == lastp } == 2 ||
       board.each_from( lastc, [:n,:s] ) { |p| p == lastp } == 2 ||
@@ -54,7 +50,7 @@ Rules.create( "TicTacToe" ) do
     end
 
     def draw?
-      unused_moves.empty? &&
+      board.unoccupied.empty? &&
       board.each_from( lastc, [:e,:w] ) { |p| p == lastp } != 2 &&
       board.each_from( lastc, [:n,:s] ) { |p| p == lastp } != 2 &&
       board.each_from( lastc, [:ne,:sw] ) { |p| p == lastp } != 2 &&

@@ -28,15 +28,15 @@ class TestTicTacToe < Test::Unit::TestCase
     g = Game.new( rules )
     moves = g.moves
 
-    assert_equal( 'a1', moves[0] )
-    assert_equal( 'b1', moves[1] )
-    assert_equal( 'c1', moves[2] )
-    assert_equal( 'a2', moves[3] )
-    assert_equal( 'b2', moves[4] )
-    assert_equal( 'c2', moves[5] )
-    assert_equal( 'a3', moves[6] )
-    assert_equal( 'b3', moves[7] )
-    assert_equal( 'c3', moves[8] )
+    assert_equal( 'a1', moves[0].to_s )
+    assert_equal( 'b1', moves[1].to_s )
+    assert_equal( 'c1', moves[2].to_s )
+    assert_equal( 'a2', moves[3].to_s )
+    assert_equal( 'b2', moves[4].to_s )
+    assert_equal( 'c2', moves[5].to_s )
+    assert_equal( 'a3', moves[6].to_s )
+    assert_equal( 'b3', moves[7].to_s )
+    assert_equal( 'c3', moves[8].to_s )
 
     g << g.moves.first until g.final?
 
