@@ -28,7 +28,7 @@ module CLI
 
     opts.parse( ARGV )
 
-    rules = Rules.list if rules.empty?
+    rules = Rules.latest_versions if rules.empty?
     exclude.each { |r| rules.delete( r ) }
 
     Benchmark.bm( 30 ) do |x|

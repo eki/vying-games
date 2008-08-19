@@ -18,20 +18,20 @@ Rules.create( "Kalah" ) do
 
   position do
     attr_reader :board, :scoring_pits, :annotation
-    ignore :moves_cache, :annotation
+    ignore :sides, :annotation
 
     def init
       @board = MancalaBoard.new( 6, 2, @options[:seeds_per_cup] )
       @annotation = MancalaBoard.new( 6, 2, "0" )
 
       @scoring_pits = { :one => 0, :two => 0 }
-      @moves_cache = { :one => ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'],
-                       :two => ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }
+      @sides = { :one => ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'],
+                 :two => ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }
     end
 
     def moves( player=nil )
       return [] unless player.nil? || has_moves.include?( player )
-      @moves_cache[turn].select { |c| board[c] > 0 }
+      @sides[turn].select { |c| board[c] > 0 }
     end
 
     def apply!( move, player=nil )
@@ -107,7 +107,7 @@ Rules.create( "Kalah" ) do
 
       if final?
         players.each do |p|
-          @moves_cache[p].each do |c|
+          @sides[p].each do |c|
             scoring_pits[p] += board[c]
             board[c] = 0
             annotation[c] = "c" if annotation[c] == "0"
@@ -120,7 +120,7 @@ Rules.create( "Kalah" ) do
     end
 
     def final?
-      players.any? { |p| @moves_cache[p].all? { |c| board[c] == 0 } }
+      players.any? { |p| @sides[p].all? { |c| board[c] == 0 } }
     end
 
     def score( player )
