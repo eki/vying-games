@@ -88,6 +88,16 @@ class TestHavannah < Test::Unit::TestCase
     assert( g.loser?( :red ) )
   end
 
+  def test_filled_ring_02
+    g = Game.new rules
+
+    g << ["s19", "o8", "s18", "o9", "r18", "o10", 
+          "r19", "o11", "q18", "o12", "q19"]
+
+    assert_equal( 1, g.groups[:blue].length )
+    assert( ! g.groups[:blue].first.ring? )
+  end
+
 
 end
 

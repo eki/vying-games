@@ -80,7 +80,8 @@ class HavannahGroup
     # check for a "blob" -- a 7-cell hexagon pattern
 
     (ms + [c]).each do |bc|
-      if neighbors( bc ).all? { |bnc| coords.include?( bnc ) }
+      bns = neighbors( bc )
+      if bns.length == 6 && bns.all? { |bnc| coords.include?( bnc ) }
         @ring = true
         return self
       end
