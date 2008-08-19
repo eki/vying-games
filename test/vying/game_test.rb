@@ -565,11 +565,11 @@ class TestGame < Test::Unit::TestCase
     assert_equal( :x, g.who?( g[:x] ) )
     assert_equal( :o, g.who?( g[:o] ) )
 
-    assert_equal( g.move?( g.moves( :x ), :x ),
-                  g.move?( g.moves( g[:x] ), g[:x] ) )
+    assert_equal( g.move?( g.moves( :x ).first, :x ),
+                  g.move?( g.moves( g[:x] ).first, g[:x] ) )
 
-    assert_equal( g.move?( g.moves( :o ), :o ),
-                  g.move?( g.moves( g[:o] ), g[:o] ) )
+    assert_equal( g.move?( g.moves( :o ).first, :o ),
+                  g.move?( g.moves( g[:o] ).first, g[:o] ) )
 
     assert_equal( g.has_moves?( :x ), g.has_moves?( g[:x] ) )
     assert_equal( g.has_moves?( :o ), g.has_moves?( g[:o] ) )

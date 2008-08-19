@@ -545,6 +545,14 @@ class Game
     history.last.move?( move, who?( player ) )
   end
 
+  # Does the given player have any moves?  If no player is given all valid
+  # moves are returned.  If given value is passed through #who?, so this
+  # method accepts either a player or a User.
+
+  def moves( player=nil )
+    history.last.moves( who?( player ) )
+  end
+
   # Returns true if the given player has any valid moves.
 
   def has_moves?( player )

@@ -184,7 +184,7 @@ class Position
   # all possible moves.
 
   def move?( move, player=nil )
-    moves( player ).include?( move.to_s )
+    moves( player ).any? { |m| m.to_s == move.to_s }
   end
 
   # If the position is final?, is the given player a winner?  Note, that
