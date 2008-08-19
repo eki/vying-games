@@ -171,13 +171,14 @@ class Board
      if in_bounds?( x, y )
       old = @cells[ci( x, y )]
 
-      unless old.nil?
-        @occupied[old].delete( Coord.new( x, y ) )
-      end
+      before_set( x, y, old )
 
+      @occupied[old].delete( Coord.new( x, y ) ) if @occupied[old]
       (@occupied[p] ||= []) << Coord.new( x, y )
 
       @cells[ci( x, y )] = p
+
+      after_set( x, y, old )
     end
 
     p
