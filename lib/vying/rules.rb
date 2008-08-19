@@ -419,7 +419,8 @@ class Rules
     #   end
     #
     # Yes, the position subclass is anonymous.  A new instance of the subclass
-    # can be had by calling Rules#new.
+    # can be had by calling Rules#new.  If you must get access to the position
+    # class itself, try Rules#position_class.
 
     def position( &block )
       class_name = "#{@rules.class_name}_#{@rules.version.gsub( /\./, '_' )}"
