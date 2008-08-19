@@ -92,8 +92,6 @@ if Vying::RandomSupport
         p.board[c] = :x if p.board[c].nil?
       end
 
-      p.unused_moves.clear
-
       assert( p.final? )
       assert( p.winner?( :black ) )
       assert( p.loser?( :white ) )

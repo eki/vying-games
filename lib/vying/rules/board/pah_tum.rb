@@ -25,41 +25,36 @@ Rules.create( "PahTum" ) do
   random
 
   position do
-    attr_reader :board, :unused_moves
-    ignore :unused_moves
+    attr_reader :board
 
     def init
       w, h = 7, 7
       @board = Board.new( w, h )
 
-      @unused_moves = @board.coords.to_a.dup
- 
       num_blocks = [5,7,9,11,13][rand( 5 )]
       num_blocks.times do
         c = Coord[rand( w ), rand( h )] until c != nil && board[c].nil?
         board[c] = :x
-        unused_moves.delete( c )
       end
     end
 
     def moves( player=nil )
       return [] unless player.nil? || has_moves.include?( player )
 
-      unused_moves
+      board.unoccupied
     end
 
     def apply!( move, player=nil )
       c = Coord[move]
 
       board[c] = turn
-      unused_moves.delete( c )
       rotate_turn
 
       self
     end
 
     def final?
-      unused_moves.empty?
+      board.unoccupied.empty?
     end
 
     def score( player )
