@@ -49,7 +49,7 @@ class Rules
   attr_reader :class_name, :name, :version, :players, :options, :defaults
 
   def initialize( class_name )
-    @class_name, @options, @defaults, = class_name, {}, {}
+    @class_name, @options, @defaults = class_name, {}, {}
   end
 
   # Create a new Rules instance.  This takes a class name and block.  Example:
