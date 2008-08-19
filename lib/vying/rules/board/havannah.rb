@@ -70,33 +70,59 @@ class HavannahGroup
 
     # ring detection
 
-    ns = HexHexBoard::DIRECTIONS.map { |d| c + Coords::DIRECTIONS[d] }
-    ns.reject! do |nc| 
-      nc.x < 0          || nc.y < 0   || 
-      nc.x > s12        || nc.y > s12 ||
-      nc.x - nc.y > s12 || nc.y - nc.x > s12
+    return self if coords.length < 6  # minimum ring needs 6 cells
+
+    ns = neighbors( c )
+    ms = ns.select { |nc| coords.include?( nc ) }
+    return self unless ms.length >= 2  # can't form a ring without connecting
+                                       # at least two cells
+
+    # check for a "blob" -- a 7-cell hexagon pattern
+
+    (ms + [c]).each do |bc|
+      if neighbors( bc ).all? { |bnc| coords.include?( bnc ) }
+        @ring = true
+        return self
+      end
     end
 
-    ms = ns.select { |nc| coords.include?( nc ) }
-    return self unless ms.length >= 2
+    # check for rings with holes
+    #
+    # Iterate over empty neighbors and their neighbors, marking them as we
+    # go.  If we can find an edge, the empty neighbor is not contained in
+    # a ring.  Note, the "empty" neighbors are simply not a part of this
+    # group.  That means they may be empty or owned by an opponent.
+    #
+    # Break and return immediately if a ring is found.
+    #
+    # On subsequent passes it's enough to find a previously marked coord,
+    # because we know it must be connected to an edge.
+    #
+    # This doesn't find blob patterns, hence the previous check.
 
     es = ns - ms
 
-    es.each do |sc|
-      check, marked, found = [sc], [], true
+    marked = []
+    es.each_with_index do |sc, i|
+      check, found_marked, found = [sc], false, true
 
       until check.empty?
         nc = check.pop
         marked << nc
 
         if nc == sc || ! coords.include?( nc )
-          nss = HexHexBoard::DIRECTIONS.map { |d| nc + Coords::DIRECTIONS[d] }
-          nss.each do |nnc|
+          neighbors( nc ).each do |nnc|
+            if i > 0 && marked.include?( nnc )
+              found_marked = true
+              break
+            end
+
             check << nnc unless marked.include?( nnc ) || coords.include?( nnc )
           end
         end
 
-        if nc.x == 0          || nc.y == 0   || 
+        if found_marked       ||
+           nc.x == 0          || nc.y == 0   || 
            nc.x == s12        || nc.y == s12 ||
            nc.x - nc.y == s12 || nc.y - nc.x == s12
 
@@ -117,14 +143,15 @@ class HavannahGroup
   def ==( o )
     o && coords == o.coords
   end
+
+  private
+
+  def neighbors( c )
+    HexHexBoard.coords( size ).neighbors( c, HexHexBoard::DIRECTIONS )
+  end
 end
 
 # Havannah
-#
-# TODO: The definition of ring used by this code is likely wrong.  Currently
-# a ring must surround at least one cell that is either empty or occupied by
-# the opponent.  It is very likely that the cell can be empty or occupied by
-# either player.
 #
 # For detailed rules see:  http://vying.org/games/havannah
 
