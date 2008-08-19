@@ -11,7 +11,7 @@ class HexHexBoard < Board
     @length, @width, @height = length, length*2-1, length*2-1
     @cells = Array.new( @width * @height, nil )
     @coords = HexHexBoard.coords( length )
-    @occupied = {}
+    @occupied = { nil => @coords.to_a.dup }
   end
 
   def self.coords( length=10 )

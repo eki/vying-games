@@ -21,7 +21,7 @@ class YinshBoard < Board
     @width, @height = 11, 11
     @cells = Array.new( @width * @height, nil )
     @coords = Coords.new( @width, @height, OMIT_COORDS )
-    @occupied = {}
+    @occupied = { nil => @coords.to_a.dup }
   end
 
 end

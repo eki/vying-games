@@ -109,9 +109,7 @@ VALUE board_set( VALUE self, VALUE x, VALUE y, VALUE p ) {
   if( RTEST(board_in_bounds( self, x, y )) ) {
     VALUE cells = rb_iv_get( self, "@cells" );
     VALUE old = rb_funcall( cells, id_subscript, 1, board_ci( self, x, y ) );
-    if( old != Qnil ) {
-      board_unoccupy( self, x, y, old );
-    }
+    board_unoccupy( self, x, y, old );
     board_occupy( self, x, y, p );
     rb_funcall( cells, id_subscript_assign, 2, board_ci( self, x, y ), p );
   }
@@ -194,7 +192,9 @@ VALUE board_unoccupy( VALUE self, VALUE x, VALUE y, VALUE p ) {
   VALUE occupied = rb_iv_get( self, "@occupied" );
   VALUE c = rb_funcall( Coord, id_new, 2, x, y );
   VALUE ary = rb_hash_aref( occupied, p );
-  rb_funcall( ary, id_delete, 1, c );
+  if( ary != Qnil ) {
+    rb_funcall( ary, id_delete, 1, c );
+  }
   return occupied;
 }
 

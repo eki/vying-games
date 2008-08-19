@@ -17,7 +17,7 @@ class YBoard < Board
     end
 
     @coords = Coords.new( @width, @height, omit )
-    @occupied = {}
+    @occupied = { nil => @coords.to_a.dup }
   end
 
 end

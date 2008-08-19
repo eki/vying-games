@@ -10,7 +10,7 @@ class Board
   def initialize( w=8, h=8 )
     @width, @height, @cells = w, h, Array.new( w*h, nil )
     @coords = Coords.new( width, height )
-    @occupied = {}
+    @occupied = { nil => @coords.to_a.dup }
   end
 
   def initialize_copy( original )
@@ -47,7 +47,7 @@ class Board
   end
 
   def unoccupied
-    coords.select { |c| self[c].nil? }
+    occupied[nil] || []
   end
 
   def each
