@@ -40,7 +40,18 @@ class Connect6Board < Board
     super
   end
 
-  def update_threats( c )
+  # The #update_threats method is called automatically after each set call.
+
+  def after_set( x, y, p )
+    update_threats( x, y )
+  end
+
+  # Update #threats after a piece has been placed or removed.  There is no
+  # need to call this manually.
+
+  def update_threats( x, y )
+    c = Coord[x,y]
+
     threats.reject! do |t|
       t.empty_coords.include?( c ) || t.occupied.include?( c )
     end
@@ -67,6 +78,8 @@ class Connect6Board < Board
     threats
   end
 
+  # Create threat windows.  There is no need to call this manually.
+
   def create_windows( c, directions )
     n = window_size - 1
 
@@ -85,10 +98,15 @@ class Connect6Board < Board
     list.select { |w| window_in_bounds?( w ) }
   end
 
+  # Is the given window in bounds.  There is no need to call this manually.
+
   def window_in_bounds?( w )
     0 <= w.first.x && w.first.x < 19 && 0 <= w.first.y && w.first.y < 19 &&
     0 <= w.last.x  && w.last.x  < 19 && 0 <= w.last.y  && w.last.y  < 19
   end
+
+  # Does the given coord have a neighbor (piece)?  There is no need to call
+  # this manually.
 
   def has_neighbor?( c )
     coords.neighbors( Coord[c] ).find { |n| ! self[n].nil? }

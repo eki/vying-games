@@ -17,9 +17,6 @@ class TestConnect6Board < Test::Unit::TestCase
     b2 = b.dup
 
     b[10,10] = b[9,9] = b[8,8] = :black
-    b.update_threats( Coord[10,10] )
-    b.update_threats( Coord[9,9] )
-    b.update_threats( Coord[8,8] )
     
     assert_not_equal( b, b2 )
     assert_not_equal( b.threats, b2.threats )
@@ -29,9 +26,6 @@ class TestConnect6Board < Test::Unit::TestCase
     b = Connect6Board.new
 
     b[10,10] = b[9,9] = b[8,8] = :black
-    b.update_threats( Coord[10,10] )
-    b.update_threats( Coord[9,9] )
-    b.update_threats( Coord[8,8] )
 
     assert_equal( 6, b.threats.length )
 
@@ -44,9 +38,6 @@ class TestConnect6Board < Test::Unit::TestCase
     b = Connect6Board.new
 
     b[10,10] = b[9,9] = b[8,8] = :black
-    b.update_threats( Coord[10,10] )
-    b.update_threats( Coord[9,9] )
-    b.update_threats( Coord[8,8] )
 
     assert_equal( 6, b.threats.length )
 

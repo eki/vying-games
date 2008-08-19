@@ -109,9 +109,14 @@ VALUE board_set( VALUE self, VALUE x, VALUE y, VALUE p ) {
   if( RTEST(board_in_bounds( self, x, y )) ) {
     VALUE cells = rb_iv_get( self, "@cells" );
     VALUE old = rb_funcall( cells, id_subscript, 1, board_ci( self, x, y ) );
+
+    rb_funcall( self, id_before_set, 3, x, y, old );
+
     board_unoccupy( self, x, y, old );
     board_occupy( self, x, y, p );
     rb_funcall( cells, id_subscript_assign, 2, board_ci( self, x, y ), p );
+
+    rb_funcall( self, id_after_set, 3, x, y, p );
   }
   return p;
 }

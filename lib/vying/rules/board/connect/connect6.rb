@@ -28,7 +28,6 @@ Rules.create( "Connect6" ) do
     def apply!( move, player=nil )
       c, p = Coord[move], turn
       board[c] = p
-      board.update_threats( c )
       rotate_turn
       self
     end

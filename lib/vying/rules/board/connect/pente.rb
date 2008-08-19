@@ -26,7 +26,6 @@ Rules.create( "Pente" ) do
     def apply!( move, player=nil )
       c, p = Coord[move], turn
       board[c] = p
-      board.update_threats( c )
 
       # Custodian capture
       cap = []
@@ -50,7 +49,6 @@ Rules.create( "Pente" ) do
 
       cap.each do |cc|  
         board[cc] = nil
-        board.update_threats( cc )
         captured[turn] += 1
       end
 
