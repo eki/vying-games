@@ -28,21 +28,42 @@ module Memoizable
     ([Class, Module].include?(self.class) ? self : self.class).class_eval do
       alias_method original, name
       private      original
-      define_method(name) do |*args| 
-        # Remove trailing nils from args (but keep placeholder nils)
-        args.pop while args.last == nil && ! args.empty?
 
-        n = name.to_s.gsub( /[?!]/, '_' )
-        iv = "@__#{n}_cache"
-        h = instance_variable_get( iv ) || {}
-        v = h[args]
+      if instance_method( original ).arity == 0
 
-        return v unless v.nil?
+        define_method( name ) do ||   # empty pipes needed to get right arity
 
-        h[args] = v = send( original, *args ).freeze
-        instance_variable_set( iv, h )
+          n = name.to_s.gsub( /[?!]/, '_' )
+          iv = "@__#{n}_cache"
+          v = instance_variable_get( iv )
 
-        v
+          return v unless v.nil?
+
+          v = send( original ).freeze
+          instance_variable_set( iv, v )
+
+          v
+        end
+
+      else
+
+        define_method( name ) do |*args| 
+          # Remove trailing nils from args (but keep placeholder nils)
+          args.pop while args.last == nil && ! args.empty?
+
+          n = name.to_s.gsub( /[?!]/, '_' )
+          iv = "@__#{n}_cache"
+          h = instance_variable_get( iv ) || {}
+          v = h[args]
+
+          return v unless v.nil?
+
+          h[args] = v = send( original, *args ).freeze
+          instance_variable_set( iv, h )
+
+          v
+        end
+
       end
     end
   end
