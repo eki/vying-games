@@ -17,9 +17,10 @@ Rules.create( "Hexxagon" ) do
   score_determines_outcome
   random
 
+  cache :moves
+
   position do
-    attr_reader :board, :block_pattern, :moves_cache
-    ignore :moves_cache
+    attr_reader :board, :block_pattern
 
     def init
       @board = HexHexBoard.new( 5 )
@@ -34,8 +35,6 @@ Rules.create( "Hexxagon" ) do
       end
 
       @block_pattern = set_rand_blocks
-
-      @moves_cache = :ns
     end
 
     def moves( player=nil )
@@ -45,7 +44,6 @@ Rules.create( "Hexxagon" ) do
       zero_count = players.select { |p| board.count( p ) == 0 }.length
 
       return []          if np - 1 == zero_count
-      return moves_cache if moves_cache != :ns
 
       p   = turn
       found = []
@@ -66,7 +64,7 @@ Rules.create( "Hexxagon" ) do
         end
       end
 
-      @moves_cache = found
+      found
     end
 
     def apply!( move, player=nil )
@@ -85,11 +83,12 @@ Rules.create( "Hexxagon" ) do
       end
 
       rotate_turn
-      @moves_cache = :ns
 
       (options[:number_of_players] - 1).times do
-        rotate_turn if moves.empty?
-        @moves_cache = :ns
+        if moves.empty?
+          rotate_turn
+          clear_cache
+        end
       end
 
       self
