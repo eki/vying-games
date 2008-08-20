@@ -33,7 +33,7 @@ class TestOthello < Test::Unit::TestCase
     g = Game.new( rules )
     moves = g.moves
 
-    assert_equal( ['d3','c4','f5','e6'].sort, moves.sort )
+    assert_equal( ['d3','c4','f5','e6'].sort, moves.map { |m| m.to_s }.sort )
 
     g << g.moves.first until g.final?
 

@@ -12,13 +12,13 @@ Rules.create( "Othello" ) do
 
   score_determines_outcome
 
+  cache :moves
+
   position do
-    attr_reader :board, :moves_cache
-    ignore :moves_cache
+    attr_reader :board
 
     def init
       @board = OthelloBoard.new
-      @moves_cache = :ns
     end
 
     def move?( move, player=nil )
@@ -30,22 +30,18 @@ Rules.create( "Othello" ) do
 
     def moves( player=nil )
       return []          unless player.nil? || has_moves.include?( player )
-      return moves_cache if moves_cache != :ns
 
-      a = board.frontier.select { |c| board.valid?( c, turn ) }
-      @moves_cache = a.map { |c| c.to_s }
+      board.frontier.select { |c| board.valid?( c, turn ) }
     end
 
     def apply!( move, player=nil )
-      c = Coord[move]
-      board.place( c, turn )
+      board.place( move.to_coords.first, turn )
 
       rotate_turn
-      @moves_cache = :ns
 
       if moves.empty?
         rotate_turn
-        @moves_cache = :ns
+        clear_cache
       end
 
       self
