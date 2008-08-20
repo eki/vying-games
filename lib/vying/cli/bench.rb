@@ -16,6 +16,7 @@ module CLI
     n = 100
     benchmark_game = false
     benchmark_marshal = false
+    clear_cache = false
 
     opts = OptionParser.new
     opts.banner = "Usage: vying bench [options]"
@@ -25,6 +26,7 @@ module CLI
     opts.on( "-g", "--game" )          { benchmark_game = true }
     opts.on( "-m", "--marshal" )       { benchmark_marshal = true }
     opts.on( "-p", "--profile"       ) { require 'profile' }
+    opts.on( "-c", "--clear-cache"   ) { clear_cache = true }
 
     opts.parse( ARGV )
 
@@ -83,35 +85,35 @@ module CLI
           end
         end
 
-        p_a.each { |p,m| p.instance_variable_set( "@moves_cache", :ns ) }
+        p_a.each { |p,m| p.clear_cache } if clear_cache
 
         x.report( "#{r} move?" ) do
           p_a.each { |p,m| p.move?( m ) }
         end
 
-        p_a.each { |p,m| p.instance_variable_set( "@moves_cache", :ns ) }
+        p_a.each { |p,m| p.clear_cache } if clear_cache
 
         x.report( "#{r} moves" ) do
           p_a.each { |p,m| p.moves }
         end
 
-        p_a.each { |p,m| p.instance_variable_set( "@moves_cache", :ns ) }
+        p_a.each { |p,m| p.clear_cache } if clear_cache
 
         x.report( "#{r} apply" ) do
           p_a.each { |p,m| p.apply( m ) }
         end
 
-        p_a.each { |p,m| p.instance_variable_set( "@moves_cache", :ns ) }
+        p_a.each { |p,m| p.clear_cache } if clear_cache
 
         x.report( "#{r} final?" ) do
           p_a.each { |p,m| p.final? }
         end
 
         x.report( "#{r} random play" ) do
-          g = Game.new( r )
+          p = r.new
           n.times do
-            g = Game.new( r ) if g.final?
-            g << g.moves[rand(g.moves.length)]
+            p = r.new if p.final?
+            p.apply!( p.moves[rand( p.moves.length )] )
           end
         end
       end
