@@ -86,7 +86,10 @@ module TrickTaking
         if rule.kind_of?( Card )
           return [rule.to_s] if hand.include?( rule )
         elsif rule == :any
-          return (broken ? hand : hand - wait_until_broken).map { |c| c.to_s }
+          return hand.map { |c| c.to_s } if broken
+
+          diff = hand - wait_until_broken
+          return (diff.empty? ? hand : diff).map { |c| c.to_s }
         end
       end
     else
