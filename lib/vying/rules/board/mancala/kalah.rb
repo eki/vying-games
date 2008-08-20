@@ -16,6 +16,8 @@ Rules.create( "Kalah" ) do
 
   option :seeds_per_cup, :default => 6, :values => [3,4,5,6]
 
+  cache :init
+
   position do
     attr_reader :board, :scoring_pits, :annotation
     ignore :sides, :annotation

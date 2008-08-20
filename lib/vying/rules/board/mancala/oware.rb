@@ -14,6 +14,8 @@ Rules.create( "Oware" ) do
   allow_draws_by_agreement
   check_cycles
 
+  cache :init
+
   position do 
     attr_reader :board, :scoring_pits, :annotation
     ignore :sides, :annotation
