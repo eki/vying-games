@@ -11,6 +11,8 @@ Rules.create( "NineMensMorris" ) do
 
   allow_draws_by_agreement
 
+  cache :init, :moves
+
   position do
     attr_reader :board, :remaining, :removing
 
