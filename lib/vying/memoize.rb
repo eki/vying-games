@@ -21,6 +21,31 @@ module Memoizable
       end
     end
   end
+
+  def immutable_memoize( name )
+    original = "__unmemoized_#{name}__"
+
+    ([Class, Module].include?(self.class) ? self : self.class).class_eval do
+      alias_method original, name
+      private      original
+      define_method(name) do |*args| 
+        # Remove trailing nils from args (but keep placeholder nils)
+        args.pop while args.last == nil && ! args.empty?
+
+        n = name.to_s.gsub( /[?!]/, '_' )
+        iv = "@__#{n}_cache"
+        h = instance_variable_get( iv ) || {}
+        v = h[args]
+
+        return v unless v.nil?
+
+        h[args] = v = send( original, *args ).freeze
+        instance_variable_set( iv, h )
+
+        v
+      end
+    end
+  end
 end
 
 class Class

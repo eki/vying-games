@@ -39,5 +39,11 @@ class Hash
   def hash
     [keys, values].hash
   end
+
+  # Define eql? in terms of == which seems to behave in a nicer manner
+
+  def eql?( o )
+    self == o
+  end
 end
 

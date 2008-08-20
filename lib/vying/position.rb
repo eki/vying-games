@@ -63,10 +63,14 @@ class Position
   def initialize_copy( original )
     nd = [Symbol, NilClass, Fixnum, TrueClass, FalseClass]
     instance_variables.each do |iv|
-      v = instance_variable_get( iv )
-      if !nd.include?( v.class )
-        instance_variable_set( iv,
-          v.respond_to?( :deep_dup ) ? v.deep_dup : v.dup )
+      if iv.to_s =~ /^@__.*_cache$/
+        instance_variable_set( iv, nil )
+      else
+        v = instance_variable_get( iv )
+        if !nd.include?( v.class )
+          instance_variable_set( iv,
+            v.respond_to?( :deep_dup ) ? v.deep_dup : v.dup )
+        end
       end
     end
   end
@@ -76,7 +80,6 @@ class Position
   # two positions, use Rules#ignore to omit it from this check.
 
   def eql?( o )
-    return false if instance_variables.sort != o.instance_variables.sort
     instance_variables.each do |iv|
       if instance_variable_get(iv) != o.instance_variable_get(iv) &&
          ! self.class.ignored?( iv )
@@ -109,7 +112,13 @@ class Position
   # Tests whether or not an instance variable has been ignored.
 
   def self.ignored?( iv )
-    @ignore && @ignore.include?( iv.to_s )
+    !! ((@ignore && @ignore.include?( iv.to_s )) || iv.to_s =~ /^@__/)
+  end
+
+  def clear_cache
+    instance_variables.each do |iv|
+      instance_variable_set( iv, nil ) if iv.to_s =~ /^@__.*_cache$/
+    end
   end
 
   # This rand provides the same interface as Kernel.rand but is backed by

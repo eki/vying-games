@@ -49,7 +49,7 @@ class Rules
   attr_reader :class_name, :name, :version, :players, :options, :defaults
 
   def initialize( class_name )
-    @class_name, @options, @defaults = class_name, {}, {}
+    @class_name, @options, @defaults, @cached = class_name, {}, {}, []
   end
 
   # Create a new Rules instance.  This takes a class name and block.  Example:
@@ -179,6 +179,21 @@ class Rules
 
   def random?
     @random
+  end
+
+  # Should caching be applied to the given method?
+  #
+  # Example:
+  #
+  #   Rules.create( "AmericanCheckers" ) do
+  #     cache :init
+  #   end
+  #
+  #   > AmericanCheckers.cached?( :init )
+  #   => true
+
+  def cached?( m )
+    @cached.include?( m )
   end
 
   # Does the game defined by these rules allow the players to call a draw
@@ -412,7 +427,7 @@ class Rules
     #     # ...
     #   end
     #
-    # Is the equivalent of:
+    # Is (mostly) the equivalent of:
     #
     #   class AnonymousSubClass < Position
     #     # ...
@@ -428,6 +443,16 @@ class Rules
 
       klass.class_eval( &block )
       klass.instance_variable_set( "@rules", @rules )
+
+      @rules.cached.each do |m|
+        if m == :init
+          klass.class_eval { prototype }
+        else
+          klass.extend Memoizable
+          klass.immutable_memoize m
+        end
+      end
+
       klass
     end
 
@@ -453,6 +478,20 @@ class Rules
       defaults = @rules.instance_variable_get( "@defaults" )
       defaults[name] = opts[name].default
       @rules.instance_variable_set( "@defaults", defaults )
+    end
+
+    # Specify which methods should be cached.
+    #
+    # For example:
+    #
+    #   Rules.create( "AmericanCheckers" ) do
+    #     cache :init, :moves, :final?
+    #   end
+    #
+
+    def cache( *args )
+      args.delete( :init ) if @rules.random?
+      @rules.instance_variable_set( "@cached", args )
     end
 
   end
