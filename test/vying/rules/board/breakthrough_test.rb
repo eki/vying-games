@@ -68,15 +68,19 @@ class TestBreakthrough < Test::Unit::TestCase
             :a8,:b8,:c8,:d8,:e8,:f8,:g8,:h8] = nil
 
     g.board[:e4] = :black
+    g.clear_cache
     assert_equal( ["e4e5", "e4f5", "e4d5"], g.moves )
 
     g.board[:e5] = :white
+    g.clear_cache
     assert_equal( ["e4f5", "e4d5"], g.moves )
     
     g.board[:e5] = :black
+    g.clear_cache
     assert_equal( ["e4f5", "e4d5", "e5e6", "e5f6", "e5d6"], g.moves )
    
     g.board[:e5] = nil
+    g.clear_cache
     assert_equal( ["e4e5", "e4f5", "e4d5"], g.moves )
 
     g << "e4e5"
@@ -87,16 +91,20 @@ class TestBreakthrough < Test::Unit::TestCase
     g.board[:e4] = :black 
     g.board[:e5] = :white
     g.rotate_turn until g.turn == :white
+    g.clear_cache
 
     assert_not_equal( ["e5e4"], g.moves )
     
     g.board[:e4] = nil
+    g.clear_cache
     assert_equal( ["e5e4", "e5f4", "e5d4"], g.moves )
     
     g.board[:e4] = :white
+    g.clear_cache
     assert_equal( ["e5f4", "e5d4", "e4e3", "e4f3", "e4d3"], g.moves )
 
     g.board[:e4] = nil
+    g.clear_cache
 
     g << "e5e4"
 
@@ -115,11 +123,13 @@ class TestBreakthrough < Test::Unit::TestCase
 
     g.board[:a2, :b2, :c2] = :black
     g.board[:b3] = :white
+    g.clear_cache
 
     assert_equal( ["a2a3", "a2b3", "b2c3", "b2a3", 
                    "c2c3", "c2d3", "c2b3"], g.moves )
 
     g.rotate_turn
+    g.clear_cache
 
     assert_equal( ["b3c2", "b3a2"], g.moves )
 

@@ -14,6 +14,8 @@ Rules.create( "Breakthrough" ) do
 
   players :black, :white
 
+  cache :init, :moves
+
   position do
     attr_reader :board
 
@@ -60,7 +62,10 @@ Rules.create( "Breakthrough" ) do
 
       rotate_turn
 
-      rotate_turn if moves.empty?
+      if moves.empty?
+        rotate_turn
+        clear_cache
+      end
 
       self
     end
