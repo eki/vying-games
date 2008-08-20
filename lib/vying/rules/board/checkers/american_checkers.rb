@@ -21,6 +21,8 @@ Rules.create( "AmericanCheckers" ) do
 
   allow_draws_by_agreement
 
+  cache :init, :moves
+
   position do
     attr_reader :board, :jumping
 
@@ -110,6 +112,8 @@ Rules.create( "AmericanCheckers" ) do
         if moves.empty?
           rotate_turn
           @jumping = false
+
+          clear_cache
         end
       else
         rotate_turn

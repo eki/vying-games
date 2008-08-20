@@ -185,6 +185,8 @@ class TestAmericanCheckers < Test::Unit::TestCase
 
     g.board[:h3] = nil
 
+    g.clear_cache
+
     assert( g.final? )
     assert( g.winner?( :white ) )
     assert( g.loser?( :red ) )
