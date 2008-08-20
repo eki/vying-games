@@ -34,8 +34,6 @@ class Game
 
     raise "#{rules} not supported!" if rules.nil?
 
-    #@rules = rules.class_name
-
     @history = History.new( rules, seed, options )
     @options = history.options.dup.freeze
     @players = history.first.players.map { |p| Player.new( p, self ) }
@@ -250,9 +248,11 @@ class Game
     if player.nil? 
       if has_moves == [:random]
         player = :random
+      elsif has_moves.length == 1 && move?( move, has_moves.first )
+        player = has_moves.first
       else
         ps = player_names.select do |p| 
-          special_move?( move, p ) || move?( move, p )
+          move?( move, p ) || special_move?( move, p )
         end
 
         if ps.length == 1
