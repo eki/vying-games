@@ -38,7 +38,11 @@ class HexHexBoard < Board
   def ring( coord, d )
     dc = Coord[coord.x - d, coord.y - d]
     ring = HexHexBoard.edges( d+1 ).map { |c| c + dc }
-    ring.select { |c| coords.include?( c ) }
+    ring.select { |c| in_bounds?( c.x, c.y ) }
+  end
+
+  def in_bounds?( x, y )
+    super( x, y ) && ! ((x - y).abs >= length)
   end
 
   extend Memoizable
