@@ -13,9 +13,10 @@ Rules.create( "LinesOfAction" ) do
 
   players :black, :white
 
+  cache :init, :moves, :final?
+
   position do
     attr_reader :board, :counts
-    ignore :final_cache
 
     def init
       @board = Board.new( 8, 8 )
@@ -25,7 +26,6 @@ Rules.create( "LinesOfAction" ) do
       @board[:b8,:c8,:d8,:e8,:f8,:g8] = :white
 
       @counts = {}
-      @final_cache = false
       init_counts
     end
 
@@ -81,20 +81,16 @@ Rules.create( "LinesOfAction" ) do
 
       rotate_turn
 
-      @final_cache = nil
-
       self
     end
 
     def final?
-      return @final_cache unless @final_cache.nil?
-
       players.each do |p|
         coords = board.occupied[p].dup
-        return @final_cache = true if all_connected?( coords )
+        return true if all_connected?( coords )
       end
 
-      return @final_cache = false
+      return false
     end
 
     # If both players are simultaneously connected the game should end
