@@ -18,9 +18,10 @@ Rules.create( "Ataxx" ) do
   score_determines_outcome
   random
 
+  cache :moves
+
   position do
-    attr_reader :board, :block_pattern, :moves_cache
-    ignore :moves_cache
+    attr_reader :board, :block_pattern
 
     def init
       @board = Board.new( 7, 7 )
@@ -28,14 +29,11 @@ Rules.create( "Ataxx" ) do
       @board[:a7,:g1] = :blue
 
       @block_pattern = set_rand_blocks
-
-      @moves_cache = :ns
     end
 
     def moves( player=nil )
       return []          unless player.nil? || has_moves.include?( player )
       return []          if players.any? { |p| board.count( p ) == 0 }
-      return moves_cache if moves_cache != :ns
 
       p   = turn
 
@@ -59,7 +57,7 @@ Rules.create( "Ataxx" ) do
         end
       end
 
-      @moves_cache = found
+      found
     end
 
     def apply!( move, player=nil )
@@ -79,10 +77,11 @@ Rules.create( "Ataxx" ) do
       end
 
       rotate_turn
-      @moves_cache = :ns
 
-      rotate_turn if moves.empty?
-      @moves_cache = :ns
+      if moves.empty?
+        rotate_turn
+        clear_cache
+      end
 
       self
     end
