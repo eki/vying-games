@@ -53,7 +53,7 @@ Rules.create( "Breakthrough" ) do
       found
     end
 
-    def apply!( move, player )
+    def apply!( move, player=nil )
       coords = move.to_coords
 
       board.move( coords.first, coords.last )

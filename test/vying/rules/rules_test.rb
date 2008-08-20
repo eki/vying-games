@@ -26,6 +26,22 @@ module RulesTests
     assert( r.respond_to?( :draw? ) )
   end
 
+  def test_arity
+    r = rules.new
+
+    assert_equal( -2, r.method( :move? ).arity )
+    assert_equal( -1, r.method( :moves ).arity )
+    assert_equal( -2, r.method( :apply ).arity )
+    assert_equal( -2, r.method( :apply! ).arity )
+    assert_equal(  0, r.method( :has_moves ).arity )
+    assert_equal(  1, r.method( :has_moves? ).arity )
+    assert_equal(  1, r.method( :censor ).arity )
+    assert_equal(  0, r.method( :final? ).arity )
+    assert_equal(  1, r.method( :winner? ).arity )
+    assert_equal(  1, r.method( :loser? ).arity )
+    assert_equal(  0, r.method( :draw? ).arity )
+  end
+
   def test_dup
     srand 123456789  # We do random things, but should still be repeatable
 

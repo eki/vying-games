@@ -60,7 +60,7 @@ Rules.create( "LinesOfAction" ) do
       a
     end
 
-    def apply!( move, player )
+    def apply!( move, player=nil )
       coords = move.to_coords
 
       capture = board[coords.last]
