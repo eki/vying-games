@@ -36,9 +36,15 @@ class HexHexBoard < Board
   end
 
   def ring( coord, d )
-    dc = Coord[coord.x - d, coord.y - d]
-    ring = HexHexBoard.edges( d+1 ).map { |c| c + dc }
-    ring.select { |c| in_bounds?( c.x, c.y ) }
+    if d == 0
+      coord
+    elsif d == 1
+      coords.neighbors( coord, DIRECTIONS )
+    else
+      dc = Coord[coord.x - d, coord.y - d]
+      ring = HexHexBoard.edges( d+1 ).map { |c| c + dc }
+      ring.select { |c| in_bounds?( c.x, c.y ) }
+    end
   end
 
   def in_bounds?( x, y )
