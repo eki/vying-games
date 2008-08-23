@@ -164,6 +164,8 @@ Rules.create( "Havannah" ) do
 
   players :blue, :red
 
+  cache :moves
+
   position do
     attr_reader :board, :groups
 
@@ -172,14 +174,13 @@ Rules.create( "Havannah" ) do
       @groups = { :blue => [], :red => [] }
     end
 
-    def moves( player=nil )
-      return []  unless player.nil? || has_moves.include?( player )
+    def moves
       return []  if final?
 
       board.unoccupied
     end
 
-    def apply!( move, player=nil )
+    def apply!( move ) # , player=nil )
       coord = Coord[move]
 
       board[coord] = turn

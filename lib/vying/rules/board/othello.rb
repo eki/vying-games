@@ -21,20 +21,17 @@ Rules.create( "Othello" ) do
       @board = OthelloBoard.new
     end
 
-    def move?( move, player=nil )
-      return false unless player.nil? || has_moves.include?( player )
+    def move?( move )
       cs = move.to_coords
 
       board.valid?( cs.first, turn ) unless cs.length != 1
     end
 
-    def moves( player=nil )
-      return []          unless player.nil? || has_moves.include?( player )
-
+    def moves
       board.frontier.select { |c| board.valid?( c, turn ) }
     end
 
-    def apply!( move, player=nil )
+    def apply!( move )
       board.place( move.to_coords.first, turn )
 
       rotate_turn

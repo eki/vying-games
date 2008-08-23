@@ -329,6 +329,60 @@ class Position
     undo_requested? && has_moves.empty?
   end
 
+  private
+
+  def __move_q_arity_2( move, player=nil )
+    return false unless player.nil? || has_moves.include?( player )
+
+    ps = player ? [player] : players
+
+    ps.any? { |p| __original_move_q_arity_2( p ) }
+  end
+
+  def __move_q_arity_1( move, player=nil )
+    return false unless player.nil? || turn == player
+
+    __original_move_q_arity_1( move )
+  end
+
+  def __moves_arity_1( player=nil )
+    return [] unless player.nil? || has_moves.include?( player )
+
+    ps = player ? [player] : players
+
+    ps.each do |p|
+      __original_moves_arity_1( p ).map do |m| 
+        Move.new( m.to_s, p, nil )
+      end
+    end
+  end
+
+  def __moves_arity_0( player=nil )
+    return [] unless player.nil? || has_moves.include?( player )
+
+    __original_moves_arity_0.map { |m| Move.new( m.to_s, turn, nil ) }
+  end
+
+  def __apply_x_arity_2( move, player=nil )
+    if player.nil?
+      if move.respond_to?( :at ) && has_moves.include?( move.at )
+        player = move.at
+      end
+    end
+
+    if player.nil?
+      raise "player for #{move} is required"
+    end
+
+    __original_apply_x_arity_2( move, player )
+  end
+
+  def __apply_x_arity_1( move, player=nil )
+    raise "#{player} has no moves" unless player.nil? || turn == player
+
+    __original_apply_x_arity_1( move )
+  end
+
 end
 
 module Resign

@@ -258,6 +258,14 @@ class Rules
     @check_cycles
   end
 
+  # Do these rules use sealed moves (aka simultaneous moves)?  More than one
+  # player can move at a time, the moves are sealed until all (or some subset
+  # of more than one player) have moved.
+
+  def sealed_moves?
+    @sealed_moves
+  end
+
   # The prefered notation for this game.
 
   def notation
@@ -443,6 +451,60 @@ class Rules
 
       klass.class_eval( &block )
       klass.instance_variable_set( "@rules", @rules )
+
+      # arity checks
+
+      klass.class_eval do
+        if instance_method( :move? ).arity == 2
+          alias_method :__original_move_q_arity_2, :move?
+          alias_method :move?, :__move_q_arity_2
+          public :move?
+          private :__original_move_q_arity_2
+
+        elsif instance_method( :move? ).arity == 1
+          alias_method :__original_move_q_arity_1, :move?
+          alias_method :move?, :__move_q_arity_1
+          public :move?
+          private :__original_move_q_arity_1
+
+        end
+
+        if instance_method( :moves ).arity == 1
+          alias_method :__original_moves_arity_1, :moves
+          alias_method :moves, :__moves_arity_1
+          public :moves
+          private :__original_moves_arity_1
+
+        elsif instance_method( :moves ).arity == 0
+          alias_method :__original_moves_arity_0, :moves
+          alias_method :moves, :__moves_arity_0
+          public :moves
+          private :__original_moves_arity_0
+
+        end
+
+        if instance_method( :apply! ).arity == 2
+          alias_method :__original_apply_x_arity_2, :apply!
+          alias_method :apply!, :__apply_x_arity_2
+          public :apply!
+          private :__original_apply_x_arity_2
+
+        elsif instance_method( :apply! ).arity == 1
+          alias_method :__original_apply_x_arity_1, :apply!
+          alias_method :apply!, :__apply_x_arity_1
+          public :apply!
+          private :__original_apply_x_arity_1
+
+        end
+      end
+
+      if klass.respond_to?( :__original_moves_arity_1 ) &&
+         klass.respond_to?( :__original_apply_x_arity_2 ) 
+        @rules.instance_variable_set( "@sealed_moves", true )
+      end
+
+
+      # caching
 
       @rules.cached.each do |m|
         if m == :init
