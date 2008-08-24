@@ -37,9 +37,7 @@ Rules.create( "Hexxagon" ) do
       @block_pattern = set_rand_blocks
     end
 
-    def moves( player=nil )
-      return []          unless player.nil? || has_moves.include?( player )
-
+    def moves
       np = @options[:number_of_players]
       zero_count = players.select { |p| board.count( p ) == 0 }.length
 
@@ -67,7 +65,7 @@ Rules.create( "Hexxagon" ) do
       found
     end
 
-    def apply!( move, player=nil )
+    def apply!( move )
       coords, p = move.to_coords, turn
 
       if board.ring( coords.first, 1 ).include?( coords.last )
