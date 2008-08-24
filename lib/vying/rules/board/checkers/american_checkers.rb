@@ -34,9 +34,7 @@ Rules.create( "AmericanCheckers" ) do
       @jumping = false
     end
 
-    def moves( player=nil )
-      return [] unless player.nil? || has_moves.include?( player )
-
+    def moves
       p    = turn
       opp  = (p    == :red) ? :white : :red
       k    = rules.king[p]
@@ -100,7 +98,7 @@ Rules.create( "AmericanCheckers" ) do
       found
     end
 
-    def apply!( move, player=nil )
+    def apply!( move )
       coords, p = Coord.expand( move.to_coords ), turn
 
       board.move( coords.first, coords.last )
