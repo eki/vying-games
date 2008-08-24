@@ -33,9 +33,7 @@ Rules.create( "NineMensMorris" ) do
       @removing = false
     end
 
-    def moves( player=nil )
-      return [] unless player.nil? || has_moves.include?( player )
-
+    def moves
       if remaining[:black] == 0 && remaining[:white] == 0 &&
          (board.occupied[:black].length == 2 || 
           board.occupied[:white].length == 2)
@@ -92,7 +90,7 @@ Rules.create( "NineMensMorris" ) do
       found
     end
 
-    def apply!( move, player=nil )
+    def apply!( move )
       coords, c = move.to_coords, nil
 
       if removing
@@ -128,9 +126,7 @@ Rules.create( "NineMensMorris" ) do
     end
 
     def loser?( player )
-      final? && (
-      (board.count( player ) == 2 && board.count( opponent( player ) ) > 2) ||
-      (turn == player) )
+      winner?( opponent( player ) )
     end
 
     def score( player )
