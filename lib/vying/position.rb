@@ -268,7 +268,7 @@ class Position
   # thing without making a dup first.
 
   def apply( move, player=nil )
-    self.dup.apply!( move, player=nil )
+    self.dup.apply!( move, player )
   end
 
   # Return the successors to this position (that is, map the results of
@@ -334,7 +334,7 @@ class Position
   def __move_q_arity_2( move, player=nil )
     return false unless player.nil? || has_moves.include?( player )
 
-    ps = player ? [player] : players
+    ps = player ? [player] : has_moves
 
     ps.any? { |p| __original_move_q_arity_2( p ) }
   end
@@ -348,13 +348,13 @@ class Position
   def __moves_arity_1( player=nil )
     return [] unless player.nil? || has_moves.include?( player )
 
-    ps = player ? [player] : players
+    ps = player ? [player] : has_moves
 
-    ps.each do |p|
+    ps.map do |p|
       __original_moves_arity_1( p ).map do |m| 
         Move.new( m.to_s, p, nil )
       end
-    end
+    end.flatten
   end
 
   def __moves_arity_0( player=nil )
@@ -365,8 +365,8 @@ class Position
 
   def __apply_x_arity_2( move, player=nil )
     if player.nil?
-      if move.respond_to?( :at ) && has_moves.include?( move.at )
-        player = move.at
+      if move.respond_to?( :by ) && has_moves.include?( move.by )
+        player = move.by
       end
     end
 
