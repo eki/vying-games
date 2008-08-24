@@ -278,6 +278,33 @@ class Position
     moves( player ).map { |move| apply( move, player ) }
   end
 
+  # Marshal this position.  Don't dump any cache instance variables.
+
+  def _dump( depth=-1 )
+    ivs = {}
+
+    instance_variables.each do |iv|
+      ivs[iv] = instance_variable_get( iv ) if iv !~ /^@__.*_cache$/
+    end
+
+    Marshal.dump( ivs )
+  end
+
+  # Load a marshalled position.  See Position#_dump.
+
+  def self._load( s )
+    p, ivs = self.allocate, Marshal.load( s )
+    ivs.each { |iv, v| p.instance_variable_set( iv, v ) }
+    p
+  end
+
+  # Custom list of properties to be dumped to yaml.  Don't serialize any
+  # caches.
+
+  def to_yaml_properties
+    instance_variables.select { |iv| iv !~ /^@__.*_cache$/ }
+  end
+
   # Returns a very basic string representation of this position.
 
   def to_s
@@ -352,7 +379,7 @@ class Position
 
     ps.map do |p|
       __original_moves_arity_1( p ).map do |m| 
-        Move.new( m.to_s, p, nil )
+        Move.new( m, p, nil )
       end
     end.flatten
   end
@@ -360,7 +387,7 @@ class Position
   def __moves_arity_0( player=nil )
     return [] unless player.nil? || has_moves.include?( player )
 
-    __original_moves_arity_0.map { |m| Move.new( m.to_s, turn, nil ) }
+    __original_moves_arity_0.map { |m| Move.new( m, turn, nil ) }
   end
 
   def __apply_x_arity_2( move, player=nil )
@@ -375,12 +402,16 @@ class Position
     end
 
     __original_apply_x_arity_2( move, player )
+    clear_cache
+    self
   end
 
   def __apply_x_arity_1( move, player=nil )
     raise "#{player} has no moves" unless player.nil? || turn == player
 
     __original_apply_x_arity_1( move )
+    clear_cache
+    self
   end
 
 end
