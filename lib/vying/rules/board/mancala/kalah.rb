@@ -31,12 +31,11 @@ Rules.create( "Kalah" ) do
                  :two => ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }
     end
 
-    def moves( player=nil )
-      return [] unless player.nil? || has_moves.include?( player )
+    def moves
       @sides[turn].select { |c| board[c] > 0 }
     end
 
-    def apply!( move, player=nil )
+    def apply!( move )
       # Reset annotation
       annotation[*annotation.coords.to_a] = "0"
 
