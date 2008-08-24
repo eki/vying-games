@@ -51,7 +51,7 @@ class TestBreakthrough < Test::Unit::TestCase
     assert_equal( ["a2a3", "a2b3", "b2b3", "b2c3", "b2a3", "c2c3", "c2d3",
                    "c2b3", "d2d3", "d2e3", "d2c3", "e2e3", "e2f3", "e2d3",
                    "f2f3", "f2g3", "f2e3", "g2g3", "g2h3", "g2f3", "h2h3", 
-                   "h2g3"], g.moves )
+                   "h2g3"].sort, g.moves.map { |m| m.to_s }.sort )
 
     g << g.moves.first until g.final?
 
@@ -69,19 +69,20 @@ class TestBreakthrough < Test::Unit::TestCase
 
     g.board[:e4] = :black
     g.clear_cache
-    assert_equal( ["e4e5", "e4f5", "e4d5"], g.moves )
+    assert_equal( ["e4e5", "e4f5", "e4d5"], g.moves.map { |m| m.to_s } )
 
     g.board[:e5] = :white
     g.clear_cache
-    assert_equal( ["e4f5", "e4d5"], g.moves )
+    assert_equal( ["e4f5", "e4d5"], g.moves.map { |m| m.to_s } )
     
     g.board[:e5] = :black
     g.clear_cache
-    assert_equal( ["e4f5", "e4d5", "e5e6", "e5f6", "e5d6"], g.moves )
+    assert_equal( ["e4f5", "e4d5", "e5e6", "e5f6", "e5d6"], 
+                  g.moves.map { |m| m.to_s } )
    
     g.board[:e5] = nil
     g.clear_cache
-    assert_equal( ["e4e5", "e4f5", "e4d5"], g.moves )
+    assert_equal( ["e4e5", "e4f5", "e4d5"], g.moves.map { |m| m.to_s } )
 
     g << "e4e5"
 
@@ -93,15 +94,16 @@ class TestBreakthrough < Test::Unit::TestCase
     g.rotate_turn until g.turn == :white
     g.clear_cache
 
-    assert_not_equal( ["e5e4"], g.moves )
+    assert_not_equal( ["e5e4"], g.moves.map { |m| m.to_s } )
     
     g.board[:e4] = nil
     g.clear_cache
-    assert_equal( ["e5e4", "e5f4", "e5d4"], g.moves )
+    assert_equal( ["e5e4", "e5f4", "e5d4"], g.moves.map { |m| m.to_s } )
     
     g.board[:e4] = :white
     g.clear_cache
-    assert_equal( ["e5f4", "e5d4", "e4e3", "e4f3", "e4d3"], g.moves )
+    assert_equal( ["e5f4", "e5d4", "e4e3", "e4f3", "e4d3"], 
+                  g.moves.map { |m| m.to_s } )
 
     g.board[:e4] = nil
     g.clear_cache
@@ -126,12 +128,12 @@ class TestBreakthrough < Test::Unit::TestCase
     g.clear_cache
 
     assert_equal( ["a2a3", "a2b3", "b2c3", "b2a3", 
-                   "c2c3", "c2d3", "c2b3"], g.moves )
+                   "c2c3", "c2d3", "c2b3"], g.moves.map { |m| m.to_s } )
 
     g.rotate_turn
     g.clear_cache
 
-    assert_equal( ["b3c2", "b3a2"], g.moves )
+    assert_equal( ["b3c2", "b3a2"], g.moves.map { |m| m.to_s } )
 
     g << "b3c2"
 

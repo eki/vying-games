@@ -29,8 +29,7 @@ Rules.create( "Breakthrough" ) do
              :a8,:b8,:c8,:d8,:e8,:f8,:g8,:h8] = :white
     end
 
-    def moves( player=nil )
-      return [] unless player.nil? || has_moves.include?( player )
+    def moves
       return [] if final?
 
       opp  = (turn == :black) ? :white : :black
@@ -55,7 +54,7 @@ Rules.create( "Breakthrough" ) do
       found
     end
 
-    def apply!( move, player=nil )
+    def apply!( move )
       coords = move.to_coords
 
       board.move( coords.first, coords.last )
@@ -71,22 +70,19 @@ Rules.create( "Breakthrough" ) do
     end
 
     def final?
-      board[:a1, :b1, :c1, :d1, :e1, :f1, :g1, :h1].include?( :white ) ||
-      board[:a8, :b8, :c8, :d8, :e8, :f8, :g8, :h8].include?( :black ) 
+      board.coords.row( Coord[:a1] ).any? { |c| board[c] == :white } ||
+      board.coords.row( Coord[:a8] ).any? { |c| board[c] == :black }
     end
 
     def winner?( player )
       (player == :white &&
-       board[:a1, :b1, :c1, :d1, :e1, :f1, :g1, :h1].include?( :white ) ) ||
-      (player == :black && 
-       board[:a8, :b8, :c8, :d8, :e8, :f8, :g8, :h8].include?( :black ) )
+       board.coords.row( Coord[:a1] ).any? { |c| board[c] == :white }) ||
+      (player == :black &&
+       board.coords.row( Coord[:a8] ).any? { |c| board[c] == :black })
     end
 
     def loser?( player )
-      (player == :black &&
-       board[:a1, :b1, :c1, :d1, :e1, :f1, :g1, :h1].include?( :white ) ) ||
-      (player == :white && 
-       board[:a8, :b8, :c8, :d8, :e8, :f8, :g8, :h8].include?( :black ) )
+      winner?( opponent( player ) )
     end
 
     def score( player )
