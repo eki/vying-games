@@ -11,6 +11,8 @@ Rules.create( "Connect6" ) do
 
   allow_draws_by_agreement
 
+  cache :moves
+
   position do
     attr_reader :board
 
@@ -19,22 +21,18 @@ Rules.create( "Connect6" ) do
       @turn = [:black, :white, :white, :black]
     end
 
-    def moves( player=nil )
-      return [] unless player.nil? || has_moves.include?( player )
-      return [] if final?
-      board.unoccupied
+    def moves
+      final? ? [] : board.unoccupied
     end
 
-    def apply!( move, player=nil )
-      c, p = Coord[move], turn
-      board[c] = p
+    def apply!( move )
+      board[move] = turn
       rotate_turn
       self
     end
 
     def final?
-      board.unoccupied.empty? ||
-      board.threats.any? { |t| t.degree == 0 }
+      board.unoccupied.empty? || board.threats.any? { |t| t.degree == 0 }
     end
 
     def winner?( player )
@@ -46,8 +44,7 @@ Rules.create( "Connect6" ) do
     end
 
     def draw?
-      board.unoccupied.empty? &&
-      ! board.threats.any? { |t| t.degree == 0 }
+      board.unoccupied.empty? && ! board.threats.any? { |t| t.degree == 0 }
     end
 
     def hash
