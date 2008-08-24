@@ -26,11 +26,18 @@ class Move
   end
 
   # Moves are considered to be equal if they share the same #to_s and #by.
+  # Note:  For convenience sake, if compared to an object that is *not* a Move,
+  # the values of #to_s are compared.  So:
+  #
+  #   > Move.new( "a1", :black ) == Move.new( "a1", :white )
+  #   => false
+  #
+  #   > Move.new( "a1", :black ) == "a1"
+  #   => true
+  #
 
   def eql?( o )
-    o.kind_of?( Move ) &&
-    to_s == o.to_s &&
-    by == o.by
+    o.kind_of?( Move ) ? to_s == o.to_s && by == o.by : to_s == o.to_s
   end
 
   # See #eql?
