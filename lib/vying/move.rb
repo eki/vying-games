@@ -19,8 +19,8 @@ class Move
   # Initialize a Move with the String representation, the player who made the
   # move, and the time the move was made.
 
-  def initialize( s, by=nil, at=Time.now )
-    @move, @by, @at = s.to_s, by, at
+  def initialize( m, by=nil, at=Time.now )
+    @move, @by, @at = m, by, at
 
     @by ||= special_by
   end
@@ -63,7 +63,7 @@ class Move
   # are given.
 
   def to_s
-    @move
+    @move.to_s
   end
 
   # More detailed inspect string.
@@ -184,30 +184,44 @@ class Move
     if mod = special_module
       p = position.dup
       p.extend mod
-      p.apply_special( to_s, by )
+      p.apply_special( @move, by )
       p
 
     else
-      position.apply( to_s, by )
+      position.apply( @move, by )
     end
   end
 
-  # Forwards #x to String#x
+  # Move's respond to any methods the underlying move object responds to.
 
-  def x
-    @move.x
+  def respond_to?( m )
+    super || @move.respond_to?( m )
   end
 
-  # Forwards #y to String#y
+  # Forward method calls to the underlying move object.  This is mostly useful
+  # for conversion methods.  For example:
+  #
+  #   > Move.new( 3, :left ).to_i
+  #   => 3
+  #
+  # Or, methods that are shared by String and the underlying object:
+  #
+  #   > Move.new( Coord[:a1], :black ).x
+  #   => 0
+  #
+  #   > Move.new( "a1", :black ).x
+  #   => 0
+  #
+
+  def method_missing( m, *args )
+    @move.respond_to?( m ) ? @move.send( m, *args ) : super
+  end
+
+  # Can't fall back on method_missing to forward calls to #y because it's 
+  # (stupidly) defined by Kernel.
 
   def y
-    @move.y
-  end
-
-  # Forwards #to_coords to String#to_coords
-
-  def to_coords
-    @move.to_coords
+    method_missing( :y )
   end
 
 end
