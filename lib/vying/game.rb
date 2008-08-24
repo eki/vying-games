@@ -241,7 +241,11 @@ class Game
   # be used if the player argument cannot be inferred.  (Or, use Player#<<)
 
   def append( move, player=nil )
-    move = move.to_s
+    if move.kind_of?( Move )
+      player = move.by
+    else
+      move = move.to_s
+    end
 
     # If player is nil, try to initialize it
 
