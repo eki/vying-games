@@ -263,7 +263,10 @@ class Rules
   # of more than one player) have moved.
 
   def sealed_moves?
-    @sealed_moves
+    @sealed_moves ||= 
+      ['__original_moves_arity_1', '__original_apply_x_arity_2'].all? do |m|
+        position_class.private_instance_methods.include?( m )
+      end
   end
 
   # The prefered notation for this game.
@@ -497,12 +500,6 @@ class Rules
 
         end
       end
-
-      if klass.respond_to?( :__original_moves_arity_1 ) &&
-         klass.respond_to?( :__original_apply_x_arity_2 ) 
-        @rules.instance_variable_set( "@sealed_moves", true )
-      end
-
 
       # caching
 
