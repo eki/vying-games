@@ -5,14 +5,17 @@ require 'vying'
 
 Rules.create( "Footsteps" ) do
   name    "Footsteps"
-  version "2.0.0"
+  version "1.0.0"
+  broken
 
   players :left, :right
 
-  winner_direction :left => :w, :right => :e
+  init_moves_left  (1..50).to_a
+  init_moves_right (1..50).to_a
 
   position do
-    attr_reader :board, :points, :bids, :bid_history
+    attr_reader :board, :points, :bids, :unused_moves_left, :unused_moves_right,
+                :bid_history
 
     def init
       @board = Board.new( 7, 1 )
@@ -21,34 +24,50 @@ Rules.create( "Footsteps" ) do
       @points = { :left => 50, :right => 50 }
       @bids = { :left => nil, :right => nil }
       @bid_history = { :left => [], :right => [] }
+
+      @unused_moves_left  = rules.init_moves_left.dup
+      @unused_moves_right = rules.init_moves_right.dup
     end
 
     def has_moves
       final? ? [] : players.select { |p| ! bids[p] && points[p] > 0 }
     end
 
-    def moves( player )
+    def moves( player=nil )
+      return [] unless player.nil? || has_moves.include?( player )
       return [] if final?
 
-      (1..(points[player])).to_a
+      return unused_moves_left.map  { |i| "left_#{i}" }  if player == :left
+      return unused_moves_right.map { |i| "right_#{i}" } if player == :right
+
+      ms = has_moves.map do |p|
+        if p == :left
+          unused_moves_left.map  { |i| "left_#{i}" }  if p == :left
+        elsif p == :right
+          unused_moves_right.map { |i| "right_#{i}" } if p == :right
+        end
+      end
+
+      ms.flatten
     end
 
-    def apply!( move, player )
-      bid = move.to_i
+    def apply!( move, player=nil )
+      p, bid = move.to_s.split( /_/ )
+      p = p.intern
+      bid = bid.to_i
 
-      bids[player] = bid
+      bids[p] = bid
 
-      players.each { |p| bids[p]  ||= 0 if points[p]  == 0 }
+      bids[:left]  ||= 0 if points[:left]  == 0
+      bids[:right] ||= 0 if points[:right] == 0
 
-      if players.all? { |p| bids[p] }
+      if bids[:left] && bids[:right]
         c = board.occupied[:white].first
 
-        max_bid = bids.values.max
-        wps = players.select { |p| bids[p] == max_bid }
-
-        if wps.length == 1
-          d = Coords::DIRECTIONS[rules.winner_direction[wps.first]]
-          board.move( c, c + d )
+        if bids[:left] > bids[:right]
+          board[c], board[c.x-1,c.y] = nil, :white
+        elsif bids[:left] < bids[:right]
+          board[c], board[c.x+1,c.y] = nil, :white
         end
 
         players.each do |p| 
@@ -56,6 +75,9 @@ Rules.create( "Footsteps" ) do
           bid_history[p] << bids[p]
           bids[p] = nil 
         end
+
+        unused_moves_left.reject!  { |move| move > points[:left] }
+        unused_moves_right.reject! { |move| move > points[:right] }
       end
 
       self

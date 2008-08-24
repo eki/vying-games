@@ -7,12 +7,11 @@ class TestFootsteps < Test::Unit::TestCase
   include RulesTests
 
   def rules
-    Footsteps
+    Rules.find Footsteps, "1.0.0"
   end
 
   def test_info
     assert_equal( "Footsteps", rules.name )
-    assert( rules.sealed_moves? )
   end
 
   def test_players
@@ -37,13 +36,13 @@ class TestFootsteps < Test::Unit::TestCase
     g = Game.new( rules )
     assert_equal( [:left, :right], g.has_moves )
     assert( g.has_moves.include?( g.turn ) )
-    g.append( 1, :left )
+    g << "left_1"
     assert_equal( [:right], g.has_moves )
     assert( g.has_moves.include?( g.turn ) )
-    g.append( 1, :right )
+    g << "right_1"
     assert_equal( [:left, :right], g.has_moves )
     assert( g.has_moves.include?( g.turn ) )
-    g.append( 2, :right )
+    g << "right_2"
     assert_equal( [:left], g.has_moves )
     assert( g.has_moves.include?( g.turn ) )
   end
@@ -54,7 +53,7 @@ class TestFootsteps < Test::Unit::TestCase
     assert_equal( nil, p.bids[:left] )
     assert_equal( nil, p.bids[:right] )
 
-    g.append( 10, :right )
+    g << "right_10"
 
     p = g.censor( :left )
     assert_equal( nil, p.bids[:left] )
@@ -64,7 +63,7 @@ class TestFootsteps < Test::Unit::TestCase
     assert_equal( nil, p.bids[:left] )
     assert_equal( 10, p.bids[:right] )
 
-    g.append( 5, :left )
+    g << "left_5"
 
     p = g.censor( :left )
     assert_equal( nil, p.bids[:left] )
@@ -74,7 +73,7 @@ class TestFootsteps < Test::Unit::TestCase
     assert_equal( nil, p.bids[:left] )
     assert_equal( nil, p.bids[:right] )
 
-    g.append( 4, :left )
+    g << "left_4"
 
     p = g.censor( :left )
     assert_equal( 4, p.bids[:left] )
@@ -86,9 +85,8 @@ class TestFootsteps < Test::Unit::TestCase
   end
 
   def test_game01
-    g = play_sequence( [Move.new( "50", :left ), Move.new( "40", :right ),
-                        Move.new( "1", :right ), Move.new( "1", :right ),
-                        Move.new( "1", :right ), Move.new( "1", :right )] )
+    g = play_sequence( [:left_50, :right_40, 
+                        :right_1, :right_1, :right_1, :right_1] )
 
     assert( !g.draw? )
     assert( !g.winner?( :left ) )
@@ -98,9 +96,9 @@ class TestFootsteps < Test::Unit::TestCase
   end
 
   def test_game02
-    g = play_sequence( [Move.new( "10", :left ), Move.new( "9", :right ),
-                        Move.new( "8", :right ), Move.new( "9", :left ),
-                        Move.new( "2", :left ), Move.new( "1", :right )] )
+    g = play_sequence( [:left_10, :right_9, 
+                        :right_8,  :left_9,
+                         :left_2, :right_1] )
 
     assert( !g.draw? )
     assert( g.winner?( :left ) )
@@ -110,12 +108,11 @@ class TestFootsteps < Test::Unit::TestCase
   end
 
   def test_game03
-    g = play_sequence( [Move.new( "10", :left ), Move.new( "9", :right ),
-                        Move.new( "9", :right ), Move.new( "8", :left ),
-                        Move.new( "20", :left ), Move.new( "20", :right ),
-                        Move.new( "10", :right ), Move.new( "10", :left ),
-                        Move.new( "1", :left ), Move.new( "1", :right ),
-                        Move.new( "1", :left ), Move.new( "1", :right )] )
+    g = play_sequence( [:left_10, :right_9, 
+                        :right_9,  :left_8,
+                        :left_20, :right_20,
+                        :right_10, :left_10,
+                        :left_1, :right_1, :left_1, :right_1] )
 
     assert( g.draw? )
     assert( !g.winner?( :left ) )
