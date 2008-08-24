@@ -56,6 +56,8 @@ Rules.create( "Y" ) do
 
   pie_rule
 
+  cache :init, :moves
+
   position do
     attr_reader :board, :groups
 
@@ -64,13 +66,11 @@ Rules.create( "Y" ) do
       @groups = { :blue => [], :red => [] }
     end
 
-    def moves( player=nil )
-      return []          unless player.nil? || has_moves.include?( player )
-
+    def moves
       board.unoccupied
     end
 
-    def apply!( move, player=nil )
+    def apply!( move )
       coord = Coord[move]
 
       board[coord] = turn
