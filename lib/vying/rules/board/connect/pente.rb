@@ -9,6 +9,8 @@ Rules.create( "Pente" ) do
 
   players :white, :black
 
+  cache :moves
+
   position do
     attr_reader :board, :captured
 
@@ -17,15 +19,13 @@ Rules.create( "Pente" ) do
       @captured = { :black => 0, :white => 0 }
     end
 
-    def moves( player=nil )
-      return [] unless player.nil? || has_moves.include?( player )
-      return [] if final?
-      board.unoccupied
+    def moves
+      final? ? [] : board.unoccupied
     end
 
-    def apply!( move, player=nil )
-      c, p = Coord[move], turn
-      board[c] = p
+    def apply!( move )
+      c = Coord[move]
+      board[c] = turn
 
       # Custodian capture
       cap = []
@@ -57,8 +57,7 @@ Rules.create( "Pente" ) do
     end
 
     def final?
-      board.unoccupied.empty? ||
-      captured.any? { |p, t| t >= 10 } ||
+      board.unoccupied.empty? || captured.any? { |p, t| t >= 10 } ||
       board.threats.any? { |t| t.degree == 0 }
     end
 
@@ -72,8 +71,7 @@ Rules.create( "Pente" ) do
     end
 
     def draw?
-      board.unoccupied.empty? &&
-      ! captured.any? { |p, t| t >= 10 } &&
+      board.unoccupied.empty? && ! captured.any? { |p, t| t >= 10 } &&
       ! board.threats.any? { |t| t.degree == 0 }
     end
 
