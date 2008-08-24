@@ -15,6 +15,10 @@ Rules.create( "ThreeMusketeers" ) do
 
   players :red, :blue
 
+  can_move_to :red => :blue, :blue => nil
+
+  cache :init, :moves
+
   position do
     attr_reader :board
 
@@ -29,37 +33,15 @@ Rules.create( "ThreeMusketeers" ) do
       @board[:a5,:c3,:e1] = :red
     end
 
-    def moves( player=nil )
-      return [] unless player.nil? || has_moves.include?( player )
-      return [] if (turn == :blue && 
-       (board.occupied[:red].map { |c| c.x }.uniq.length == 1 ||
-        board.occupied[:red].map { |c| c.y }.uniq.length == 1))
+    def moves
+      return [] if red_in_a_line?
 
-      a = []
-
-      if turn == :red
-        musketeers = board.occupied[:red]
-        musketeers.each do |c|
-          board.coords.neighbors( c, [:n,:e,:w,:s] ).each do |n|
-            a << "#{c}#{n}" if board[n] == :blue
-          end
-        end
-      else
-        enemies = board.occupied[:blue]
-        enemies.each do |c|
-          board.coords.neighbors( c, [:n,:e,:w,:s] ).each do |n|
-            a << "#{c}#{n}" if board[n].nil?
-          end
-        end
-      end
-
-      a
+      men, p = board.occupied[turn], rules.can_move_to[turn]
+      men.map { |c| capture_moves( c, p ) }.flatten!
     end
 
-    def apply!( move, player=nil )
-      coords = move.to_coords
-
-      board.move( coords.first, coords.last )
+    def apply!( move )
+      board.move( * move.to_coords )
       rotate_turn
 
       self
@@ -70,19 +52,28 @@ Rules.create( "ThreeMusketeers" ) do
     end
 
     def winner?( player )
-       bw = (board.occupied[:red].map { |c| c.x }.uniq.length == 1 ||
-             board.occupied[:red].map { |c| c.y }.uniq.length == 1)
-       player == :red ? !bw : bw
+      bw = red_in_a_line?
+      player == :red ? !bw : bw
     end
 
     def loser?( player )
-       bw = (board.occupied[:red].map { |c| c.x }.uniq.length == 1 ||
-             board.occupied[:red].map { |c| c.y }.uniq.length == 1)
-       player == :red ? bw : !bw
+      winner?( opponent( player ) )
     end
 
     def hash
       [board,turn].hash
+    end
+
+    private
+
+    def red_in_a_line?
+       board.occupied[:red].map { |c| c.x }.uniq.length == 1 ||
+       board.occupied[:red].map { |c| c.y }.uniq.length == 1
+    end
+
+    def capture_moves( c, p )
+      ns = board.coords.neighbors( c, [:n, :e, :w, :s] )
+      ns.select { |n| board[n] == p }.map { |n| "#{c}#{n}" }
     end
   end
 
