@@ -38,16 +38,12 @@ Rules.create( "PahTum" ) do
       end
     end
 
-    def moves( player=nil )
-      return [] unless player.nil? || has_moves.include?( player )
-
+    def moves
       board.unoccupied
     end
 
-    def apply!( move, player=nil )
-      c = Coord[move]
-
-      board[c] = turn
+    def apply!( move )
+      board[move] = turn
       rotate_turn
 
       self
