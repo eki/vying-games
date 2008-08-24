@@ -27,9 +27,6 @@ class TestPhutball < Test::Unit::TestCase
     assert_equal( b, g.board )
 
     assert_equal( :ohs, g.turn )
-    assert_equal( 15*19-1, g.unused_moves.length )
-    assert_equal( 'a2', g.unused_moves.first )
-    assert_equal( 'o20', g.unused_moves.last )
     assert_equal( [Coord[:h11]], g.board.occupied[:white] )
     assert_equal( nil, g.board.occupied[:black] )
   end
@@ -50,14 +47,14 @@ class TestPhutball < Test::Unit::TestCase
     g = Game.new( rules )
     moves = g.moves
 
-    assert_equal( 'a2', moves[0] )
-    assert_equal( 'b2', moves[1] )
-    assert_equal( 'c2', moves[2] )
-    assert_equal( 'd2', moves[3] )
-    assert_equal( 'e2', moves[4] )
-    assert_equal( 'f2', moves[5] )
-    assert_equal( 'g2', moves[6] )
-    assert_equal( 'o20', moves.last )
+    assert_equal( 'a2', moves[0].to_s )
+    assert_equal( 'b2', moves[1].to_s )
+    assert_equal( 'c2', moves[2].to_s )
+    assert_equal( 'd2', moves[3].to_s )
+    assert_equal( 'e2', moves[4].to_s )
+    assert_equal( 'f2', moves[5].to_s )
+    assert_equal( 'g2', moves[6].to_s )
+    assert_equal( 'o20', moves.last.to_s )
 
     g << g.moves.first
 
@@ -214,12 +211,6 @@ class TestPhutball < Test::Unit::TestCase
 
     assert( g.moves.include?( "h11" ) )
     assert( g.moves.include?( "h10" ) )
-  end
-
-  def test_unused_moves
-    g = Game.new( rules ) 
-    g << "k14"
-    assert( ! g.moves.include?( "k14" ) )
   end
 
   def test_game01

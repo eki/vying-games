@@ -9,31 +9,25 @@ Rules.create( "Phutball" ) do
 
   players :ohs, :eks
 
-  init_moves Coords.new( 15, 21 ).select { |c| c.y != 0 && c.y != 20 }.
-                    map { |c| c.to_s }
+  cache :init, :moves
 
   position do
-    attr_reader :board, :jumping, :unused_moves
+    attr_reader :board, :jumping
 
     def init
       @board = Board.new( 15, 21 )
       @board[:h11] = :white
-
-      @unused_moves = rules.init_moves.dup
-      @unused_moves.delete( 'h11' )
       @jumping = false
     end
 
-    def moves( player=nil )
-      return []    unless player.nil? || has_moves.include?( player )
-      return []    if final?
-
+    def moves
+      return []                       if final?
       return jumping_moves + ["pass"] if jumping
 
-      unused_moves + jumping_moves
+      placement_moves + jumping_moves
     end
 
-    def apply!( move, player=nil )
+    def apply!( move )
       if move.to_s == "pass"
         @jumping = false
         rotate_turn
@@ -44,27 +38,11 @@ Rules.create( "Phutball" ) do
 
       if coords.length == 1
         board[coords.first] = :black
-        @unused_moves.delete( coords.first.to_s )
         rotate_turn
       else
-        sc = coords.shift
-        @unused_moves << sc
-
-        sc = Coord[sc]
-        board[sc] = nil
-
-        while ec = coords.shift
-          ec, c = Coord[ec], sc
-          d = sc.direction_to ec
-          while (c = board.coords.next( c, d )) != ec
-            board[c] = nil
-            @unused_moves << c
-          end
-          sc = ec
-        end
-
-        board[sc] = :white
-        @unused_moves.delete( sc.to_s )
+        coords = Coord.expand( coords )
+        board.move( coords.first, coords.last )
+        board[* coords[1,coords.length-2]] = nil
 
         if jumping_moves.empty?
           @jumping = false
@@ -89,9 +67,7 @@ Rules.create( "Phutball" ) do
     end
 
     def loser?( player )
-      c = board.occupied[:white].first
-      (player == :ohs && (c.y == 19 || c.y == 20)) ||
-      (player == :eks && (c.y == 1 || c.y == 0))
+      winner?( opponent( player ) )
     end
 
     def hash
@@ -116,6 +92,10 @@ Rules.create( "Phutball" ) do
       end
 
       jmoves
+    end
+
+    def placement_moves
+      board.unoccupied - board.coords.row( :a1 ) - board.coords.row( :a21 )
     end
   end
 
