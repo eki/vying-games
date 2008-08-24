@@ -47,9 +47,7 @@ Rules.create( "Cephalopod" ) do
       @removed = {}
     end
 
-    def moves( player=nil )
-      return [] unless player.nil? || has_moves.include?( player )
-
+    def moves
       a = []
 
       # Remove dice
@@ -95,7 +93,7 @@ Rules.create( "Cephalopod" ) do
       a
     end
 
-    def apply!( move, player=nil )
+    def apply!( move )
       c = Coord[move]
       if board[c].nil?
         np = board[*board.coords.neighbors( c, [:n, :e, :w, :s] )]
