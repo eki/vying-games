@@ -107,7 +107,7 @@ class Game
     results.rules.players.each do |p|
       if results.respond_to?( :user )
         u = results.user( p )
-        g[p] = u.to_user if u
+        g[p].user = u.to_user if u
       end
     end
 
@@ -344,38 +344,37 @@ class Game
     history.undo
   end
 
-  # Get the User playing as the given player.
+  # Get the Player object for the given player name.  The User can be
+  # obtained through Player#user and #user=.
   #
   # Example:
   #
   #   g = Game.new Othello
-  #   g[:black]                     => nil
-  #   g[:black] = RandomBot.new     => <RandomBot>
-  #   g[:black]                     => <RandomBot>
+  #   g[:black]                          => <Player>
+  #   g[:black].user = RandomBot.new     => <RandomBot>
+  #   g[:black].user                     => <RandomBot>
+  #
+  # This can be useful when you want to use the convenience of Game#<< but
+  # can't because the player must be specified (a game with sealed moves):
+  #
+  #   g = Game.new Footsteps
+  #   g[:left] << 1
+  #   g[:right] << 20
   #
 
   def []( p )
-    players.find { |player| player.name == p }.user
+    players.find { |player| player.name == p }
   end
 
-  # Assign an instance of the User playing as the given player.
-  #
-  # Example:
+  # Get the User associated with the given player name.  This is equivalent
+  # to:
   #
   #   g = Game.new Othello
-  #   g[:black] = RandomBot.new
-  #   g[:white] = Human.new
+  #   g[:black].user
   #
 
-  def []=( p, u )
-    player = players.find { |player| player.name == p }
-    player.user = u
-  end
-
-  # Alias of #[]
-
   def user( p )
-    self[p]
+    self[p].user
   end
 
   # Returns the users playing this game (in player order).
@@ -396,7 +395,7 @@ class Game
   def switch_sides
     if player_names.length == 2
       ps = player_names
-      self[ps[0]], self[ps[1]] = self[ps[1]], self[ps[0]]
+      self[ps[0]].user, self[ps[1]].user = self[ps[1]].user, self[ps[0]].user
     end
     self
   end
@@ -458,22 +457,22 @@ class Game
 
 
     player_names.each do |p|
-      if self[p].ready?
+      if self[p].user.ready?
         position, move = history.last.censor( p ), nil
 
         # Handle draw offers
         if allow_draws_by_agreement? && 
-           self[p].offer_draw?( sequence, position, p )
+           self[p].user.offer_draw?( sequence, position, p )
           move = "draw_offered_by_#{p}"
         end
 
         # Handle undo requests 
-        if self[p].request_undo?( sequence, position, p )
+        if self[p].user.request_undo?( sequence, position, p )
           move = "undo_requested_by_#{p}"
         end
 
         # Ask for resignation
-        if self[p].resign?( sequence, position, p )
+        if self[p].user.resign?( sequence, position, p )
           move = "#{p}_resigns"
         end
 
@@ -486,11 +485,11 @@ class Game
 
     has_moves.each do |p|
       if player_names.include?( p )
-        if self[p].ready?
+        if self[p].user.ready?
           position = history.last.censor( p )
 
           # Ask for an move
-          move = self[p].select( sequence, position, p )
+          move = self[p].user.select( sequence, position, p )
           if move?( move, p )
             self << move 
             return [move, p]
@@ -665,13 +664,13 @@ class Game
           moves << "kick_#{p.name}" if p.user
         end
       else
-        moves << "#{player}_withdraws" if self[player]
+        moves << "#{player}_withdraws" if self[player].user
       end
     end
 
     if unrated?
       players.each do |p|
-        if p.user && (player.nil? || (p.name != player && self[player]))
+        if p.user && (player.nil? || (p.name != player && self[player].user))
           moves << "kick_#{p.name}"
         end
       end
@@ -703,8 +702,8 @@ class Game
 
   def swap
     if special_move?( "swap" )
-      self[player_names.first], self[player_names.last] = 
-        self[player_names.last], self[player_names.first]
+      self[player_names.first].user, self[player_names.last].user = 
+        self[player_names.last].user, self[player_names.first].user
     end
   end
 
@@ -749,14 +748,14 @@ class Game
   # executed for special moves like <player>_withdraws.
 
   def withdraw( player )
-    self[player.to_sym] = nil
+    self[player.to_sym].user = nil
   end
 
   # The user for the given player is kicked from the game.  This is the method
   # that's executed for special moves like kick_<player>.
 
   def kick( player )
-    self[player.to_sym] = nil
+    self[player.to_sym].user = nil
   end
 
   # Takes a User and returns which player he/she is.  If given a player
@@ -767,7 +766,7 @@ class Game
 
     return user if user.class == Symbol
 
-    player_names.find { |p| self[p] == user }
+    player_names.find { |p| self[p].user == user }
   end
 
   # Is this a unrated game?  This is a wrapper around the :unrated attribute.
@@ -808,34 +807,34 @@ class Game
   def description
     if final?
       if draw?
-        s = player_names.map { |p| "#{self[p] || '?'} (#{p})" }.join( " and " )
+        s = players.join( " and " )
         s += " played to a draw"
         s += " (by agreement)" if draw_by_agreement?
         s
       else
 
-        winners = player_names.select { |p| winner?( p ) }
-        losers  = player_names.select { |p| loser?( p ) }
+        winners = players.select { |p| p.winner? }
+        losers  = players.select { |p| p.loser? }
 
-        ws = winners.map { |p| "#{self[p] || '?'} (#{p})" }.join( " and " )
-        ls = losers.map  { |p| "#{self[p] || '?'} (#{p})" }.join( " and " )
+        ws = winners.join( " and " )
+        ls = losers.join( " and " )
 
         s = "#{ws} defeated #{ls}"
 
         if has_score?
-          ss = (winners+losers).map { |p| "#{score(p)}" }.join( "-" )
+          ss = (winners+losers).map { |p| "#{p.score}" }.join( "-" )
           s = "#{s}, #{ss}"
         end
 
-        s += " (#{self[resigned_by]} resigns)"   if resigned?
-        s += " (time exceeded)"                  if time_exceeded?
+        s += " (#{self[resigned_by].user} resigns)"   if resigned?
+        s += " (time exceeded)"                       if time_exceeded?
         s
       end
     else
-      s = player_names.map { |p| "#{self[p] || '?'} (#{p})" }.join( " vs " )
+      s = players.join( " vs " )
 
       if has_score?
-        s = "#{s} (#{player_names.map { |p| score( p ) }.join( '-' )})"
+        s = "#{s} (#{players.map { |p| p.score }.join( '-' )})"
       end
 
       s

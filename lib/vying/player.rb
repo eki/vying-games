@@ -46,5 +46,9 @@ class Player
   def username
     user && user.username
   end
+
+  def to_s
+    "#{username || '?'} (#{name})"
+  end
 end
 

@@ -94,8 +94,8 @@ class TestGame < Test::Unit::TestCase
   def test_resign
     g = Game.new TicTacToe
 
-    g[:x] = Human.new "john_doe"
-    g[:o] = RandomBot.new "randombot"
+    g[:x].user = Human.new "john_doe"
+    g[:o].user = RandomBot.new "randombot"
 
     moves = g.moves
 
@@ -105,7 +105,7 @@ class TestGame < Test::Unit::TestCase
     assert( g.special_move?( "x_resigns" ) )
     assert( g.special_move?( "o_resigns" ) )
 
-    g[:x] << "resign"
+    g[:x].user << "resign"
     g.step
 
     assert( g.final? )
@@ -129,16 +129,16 @@ class TestGame < Test::Unit::TestCase
   def test_resign_off_turn
     g = Game.new TicTacToe
 
-    g[:x] = Human.new "john_doe"
-    g[:o] = Human.new "jane_doe"
+    g[:x].user = Human.new "john_doe"
+    g[:o].user = Human.new "jane_doe"
 
     assert( g.special_move?( "x_resigns" ) )
     assert( g.special_move?( "o_resigns" ) )
 
-    g[:o] << "resign"
+    g[:o].user << "resign"
 
-    assert( ! g[:x].ready? )
-    assert(   g[:o].ready? )
+    assert( ! g[:x].user.ready? )
+    assert(   g[:o].user.ready? )
     assert(   g.has_moves?( :x ) )
     assert( ! g.has_moves?( :o ) )
     
@@ -152,8 +152,8 @@ class TestGame < Test::Unit::TestCase
   def test_draw_by_agreement_accept
     g = Game.new AmericanCheckers
 
-    g[:red] = Human.new "john_doe"
-    g[:white] = Human.new "jane_doe"
+    g[:red].user = Human.new "john_doe"
+    g[:white].user = Human.new "jane_doe"
 
     moves = g.moves
 
@@ -163,7 +163,7 @@ class TestGame < Test::Unit::TestCase
     assert( g.special_move?( "draw_offered_by_red" ) )
     assert( g.special_move?( "draw_offered_by_white" ) )
 
-    g[:red] << "offer_draw"
+    g[:red].user << "offer_draw"
     g.step
 
     assert( g.draw_offered? )
@@ -184,7 +184,7 @@ class TestGame < Test::Unit::TestCase
     assert_equal( ["draw_accepted_by_white", "reject_draw"], 
                   g.special_moves( :white).sort )
 
-    g[:white] << "accept_draw"
+    g[:white].user << "accept_draw"
     g.step
     
     assert_equal( nil, g.history.move_by.last )
@@ -214,8 +214,8 @@ class TestGame < Test::Unit::TestCase
   def test_draw_by_agreement_reject
     g = Game.new AmericanCheckers
 
-    g[:red] = Human.new "john_doe"
-    g[:white] = Human.new "jane_doe"
+    g[:red].user = Human.new "john_doe"
+    g[:white].user = Human.new "jane_doe"
 
     moves = g.moves
 
@@ -225,7 +225,7 @@ class TestGame < Test::Unit::TestCase
     assert( g.special_move?( "draw_offered_by_red" ) )
     assert( g.special_move?( "draw_offered_by_white" ) )
 
-    g[:red] << "offer_draw"
+    g[:red].user << "offer_draw"
     g.step
 
     assert( g.draw_offered? )
@@ -264,8 +264,8 @@ class TestGame < Test::Unit::TestCase
   def test_time_exceeded
     g = Game.new TicTacToe
 
-    g[:x] = Human.new "john_doe"
-    g[:o] = RandomBot.new "randombot"
+    g[:x].user = Human.new "john_doe"
+    g[:o].user = RandomBot.new "randombot"
 
     moves = g.moves
 
@@ -295,8 +295,8 @@ class TestGame < Test::Unit::TestCase
 
   def test_undo
     g = Game.new TicTacToe
-    g[:x] = Human.new "john_doe"
-    g[:o] = Human.new "jane_doe"
+    g[:x].user = Human.new "john_doe"
+    g[:o].user = Human.new "jane_doe"
 
     assert_equal( 0, g.sequence.length )
     assert_equal( 1, g.history.length )
@@ -334,8 +334,8 @@ class TestGame < Test::Unit::TestCase
 
   def test_undo_by_request
     g = Game.new TicTacToe
-    g[:x] = Human.new "john_doe"
-    g[:o] = Human.new "jane_doe"
+    g[:x].user = Human.new "john_doe"
+    g[:o].user = Human.new "jane_doe"
 
     assert_equal( 0, g.sequence.length )
     assert_equal( 1, g.history.length )
@@ -351,7 +351,7 @@ class TestGame < Test::Unit::TestCase
     assert( g.special_move?( "undo_requested_by_x" ) )
     assert( g.special_move?( "undo_requested_by_o" ) )
 
-    g[:x] << "request_undo"
+    g[:x].user << "request_undo"
     g.step
 
     assert( g.undo_requested? )
@@ -377,7 +377,7 @@ class TestGame < Test::Unit::TestCase
     assert_equal( move, g.sequence.last )
     assert( :x, g.history.move_by.last )
 
-    g[:o] << "request_undo"
+    g[:o].user << "request_undo"
     g.step
 
     assert( g.undo_requested? )
@@ -395,7 +395,7 @@ class TestGame < Test::Unit::TestCase
     assert_equal( ["undo_accepted_by_x", "reject_undo"].sort,
                   g.special_moves( :x ).sort )
 
-    g[:x] << "accept_undo"
+    g[:x].user << "accept_undo"
     g.step
 
     assert( ! g.special_move?( "undo_accepted_by_x" ) )
@@ -411,9 +411,9 @@ class TestGame < Test::Unit::TestCase
                                         #       non-random 3-player game
 
     g = Game.new Hexxagon, :number_of_players => 3
-    g[:red] = Human.new "john_doe"
-    g[:white] = Human.new "jane_doe"
-    g[:blue] = Human.new "dude"
+    g[:red].user = Human.new "john_doe"
+    g[:white].user = Human.new "jane_doe"
+    g[:blue].user = Human.new "dude"
 
     assert_equal( 0, g.sequence.length )
     assert_equal( 1, g.history.length )
@@ -430,7 +430,7 @@ class TestGame < Test::Unit::TestCase
     assert( g.special_move?( "undo_requested_by_white" ) )
     assert( g.special_move?( "undo_requested_by_blue" ) )
 
-    g[:red] << "request_undo"
+    g[:red].user << "request_undo"
     g.step
 
     assert( g.undo_requested? )
@@ -457,7 +457,7 @@ class TestGame < Test::Unit::TestCase
                    "reject_undo"].sort,
                   g.special_moves.sort )
 
-    g[:white] << "accept_undo"
+    g[:white].user << "accept_undo"
     g.step
 
     assert( g.undo_requested? )
@@ -498,7 +498,7 @@ class TestGame < Test::Unit::TestCase
 
     g = g2
 
-    g[:blue] << "accept_undo"
+    g[:blue].user << "accept_undo"
     g.step
 
     assert( ! g.special_move?( "undo_accepted_by_blue" ) )
@@ -554,39 +554,39 @@ class TestGame < Test::Unit::TestCase
   def test_who
     g = Game.new TicTacToe
 
-    g[:x] = Human.new "john_doe"
-    g[:o] = Human.new "jane_doe"
+    g[:x].user = Human.new "john_doe"
+    g[:o].user = Human.new "jane_doe"
 
     assert_equal( :x, g.who?( :x ) )
     assert_equal( :o, g.who?( :o ) )
 
     assert_equal( nil, g.who?( nil ) )
 
-    assert_equal( :x, g.who?( g[:x] ) )
-    assert_equal( :o, g.who?( g[:o] ) )
+    assert_equal( :x, g.who?( g[:x].user ) )
+    assert_equal( :o, g.who?( g[:o].user ) )
 
     assert_equal( g.move?( g.moves( :x ).first, :x ),
-                  g.move?( g.moves( g[:x] ).first, g[:x] ) )
+                  g.move?( g.moves( g[:x].user ).first, g[:x].user ) )
 
     assert_equal( g.move?( g.moves( :o ).first, :o ),
-                  g.move?( g.moves( g[:o] ).first, g[:o] ) )
+                  g.move?( g.moves( g[:o].user ).first, g[:o].user ) )
 
-    assert_equal( g.has_moves?( :x ), g.has_moves?( g[:x] ) )
-    assert_equal( g.has_moves?( :o ), g.has_moves?( g[:o] ) )
+    assert_equal( g.has_moves?( :x ), g.has_moves?( g[:x].user ) )
+    assert_equal( g.has_moves?( :o ), g.has_moves?( g[:o].user ) )
 
     g = Game.new Othello
 
-    g[:black] = Human.new "john_doe"
-    g[:white] = Human.new "jane_doe"
+    g[:black].user = Human.new "john_doe"
+    g[:white].user = Human.new "jane_doe"
 
-    assert_equal( g.score( :black ), g.score( g[:black] ) )
-    assert_equal( g.score( :white ), g.score( g[:white] ) )
+    assert_equal( g.score( :black ), g.score( g[:black].user ) )
+    assert_equal( g.score( :white ), g.score( g[:white].user ) )
   end
 
   def test_pie_rule
     g = Game.new Y
-    g[:blue] = Human.new "john_doe"
-    g[:red]  = Human.new "jane_doe"
+    g[:blue].user = Human.new "john_doe"
+    g[:red].user  = Human.new "jane_doe"
 
     assert( ! g.special_move?( "swap" ) )
     assert( ! g.swapped? )
@@ -603,15 +603,15 @@ class TestGame < Test::Unit::TestCase
     assert_equal( 1, g.swapped? )
     assert_equal( g.history[1], g.history.last )
     assert_equal( "swap", g.sequence.last )
-    assert_equal( Human.new( "jane_doe" ), g[:blue] )
-    assert_equal( Human.new( "john_doe" ), g[:red] )
+    assert_equal( Human.new( "jane_doe" ), g[:blue].user )
+    assert_equal( Human.new( "john_doe" ), g[:red].user )
     assert( :red, g.history.move_by.last )
   end
 
   def test_pie_rule_02
     g = Game.new Kalah, :seeds_per_cup => 3
-    g[:one] = Human.new "john_doe"
-    g[:two]  = Human.new "jane_doe"
+    g[:one].user = Human.new "john_doe"
+    g[:two].user  = Human.new "jane_doe"
 
     assert( ! g.special_move?( "swap" ) )
     assert( ! g.swapped? )
@@ -638,15 +638,15 @@ class TestGame < Test::Unit::TestCase
     assert_equal( 2, g.swapped? )
     assert_equal( g.history[2], g.history.last )
     assert_equal( "swap", g.sequence.last )
-    assert_equal( Human.new( "jane_doe" ), g[:one] )
-    assert_equal( Human.new( "john_doe" ), g[:two] )
+    assert_equal( Human.new( "jane_doe" ), g[:one].user )
+    assert_equal( Human.new( "john_doe" ), g[:two].user )
     assert( :red, g.history.move_by.last )
   end
 
   def test_pie_rule_03
     g = Game.new Kalah, :seeds_per_cup => 3
-    g[:one] = Human.new "john_doe"
-    g[:two]  = Human.new "jane_doe"
+    g[:one].user = Human.new "john_doe"
+    g[:two].user  = Human.new "jane_doe"
 
     assert( ! g.special_move?( "swap" ) )
     assert( ! g.swapped? )
@@ -681,8 +681,8 @@ class TestGame < Test::Unit::TestCase
     assert( ! g.special_moves.include?( "black_withdraws" ) )
     assert( ! g.special_moves.include?( "white_withdraws" ) )
   
-    g[:black] = Human.new "john_doe"
-    g[:white] = Human.new "jane_doe"
+    g[:black].user = Human.new "john_doe"
+    g[:white].user = Human.new "jane_doe"
 
     assert( ! g.special_moves.include?( "black_withdraws" ) )
     assert( ! g.special_moves.include?( "white_withdraws" ) )
@@ -699,20 +699,20 @@ class TestGame < Test::Unit::TestCase
   
     g << "black_withdraws"
 
-    assert_equal( nil, g[:black] )
+    assert_equal( nil, g[:black].user )
     assert( ! g.special_moves.include?( "black_withdraws" ) )
     assert( ! g.special_moves( :black ).include?( "black_withdraws" ) )
     assert( g.special_moves.include?( "white_withdraws" ) )
     assert( :black, g.history.move_by.last )
 
-    g[:black] = Human.new "dude"
+    g[:black].user = Human.new "dude"
   
     assert( g.special_moves.include?( "black_withdraws" ) )
     assert( g.special_moves.include?( "white_withdraws" ) )
 
     g << "white_withdraws"
   
-    assert_equal( nil, g[:white] )
+    assert_equal( nil, g[:white].user )
     assert( g.special_moves.include?( "black_withdraws" ) )
     assert( ! g.special_moves.include?( "white_withdraws" ) )
     assert( :white, g.history.move_by.last )
@@ -727,8 +727,8 @@ class TestGame < Test::Unit::TestCase
     assert( ! g.special_moves.include?( "kick_black" ) )
     assert( ! g.special_moves.include?( "kick_white" ) )
   
-    g[:black] = Human.new "john_doe"
-    g[:white] = Human.new "jane_doe"
+    g[:black].user = Human.new "john_doe"
+    g[:white].user = Human.new "jane_doe"
 
     assert( ! g.special_moves.include?( "kick_black" ) )
     assert( ! g.special_moves.include?( "kick_white" ) )
@@ -745,21 +745,21 @@ class TestGame < Test::Unit::TestCase
   
     g << "kick_white"
 
-    assert_equal( nil, g[:white] )
+    assert_equal( nil, g[:white].user )
     assert( ! g.special_moves.include?( "kick_white" ) )
     assert( ! g.special_moves( :black ).include?( "kick_white" ) )
     assert( g.special_moves.include?( "kick_black" ) )
     assert( ! g.special_moves( :white ).include?( "kick_black" ) )
     assert( :white, g.history.move_by.last )
 
-    g[:white] = Human.new "dude"
+    g[:white].user = Human.new "dude"
   
     assert( g.special_moves.include?( "kick_black" ) )
     assert( g.special_moves.include?( "kick_white" ) )
 
     g << "kick_black"
   
-    assert_equal( nil, g[:black] )
+    assert_equal( nil, g[:black].user )
     assert( g.special_moves.include?( "kick_white" ) )
     assert( ! g.special_moves.include?( "kick_black" ) )
     assert( :black, g.history.move_by.last )
