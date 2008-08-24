@@ -13,49 +13,34 @@ Rules.create( "Frames" ) do
 
   score_determines_outcome
 
-  init_moves Coords.new( 19, 19 ).map { |c| c.to_s }
+  cache :moves
 
   position do
-    attr_reader :board, :sealed, :unused, :points, :frame
-    ignore :unused
+    attr_reader :board, :sealed, :points, :frame
 
     def init
       @board = Board.new( 19, 19 )
-      @sealed = { :black => nil, :white => nil }
+      @sealed = {}
       @points = { :black => 0, :white => 0 }
       @frame = []
-      @unused = {}
-      players.each do |p|
-        @unused[p] = rules.init_moves.dup.map { |m| "#{p}_#{m}" }
-      end
     end
 
     def has_moves
       final? ? [] : players.select { |p| ! sealed[p] }
     end
 
-    def moves( player=nil )
-      return [] unless player.nil? || has_moves.include?( player )
+    def moves( player )
       return [] if final?
 
-      return unused[player] if player
-
-      return unused[:white] if sealed[:black] && ! sealed[:white]
-      return unused[:black] if sealed[:white] && ! sealed[:black]
-
-      unused.values.flatten
+      board.unoccupied
     end
 
-    def apply!( move, player=nil )
-      player, coord = move.to_s.split( /_/ )
-      player = player.intern
-      coord = Coord[coord]
-
-      sealed[player] = coord
+    def apply!( move, player )
+      sealed[player] = Coord[move]
 
       if sealed[:black] && sealed[:white]
         if sealed[:black] == sealed[:white]
-          board[coord] = :neutral
+          board[move] = :neutral
           frame.clear
         else
           fb = sealed[:black]
@@ -84,18 +69,14 @@ Rules.create( "Frames" ) do
           end
         end
 
-        players.each do |p|
-          unused[:black].delete( "black_#{sealed[p]}" )
-          unused[:white].delete( "white_#{sealed[p]}" )
-          sealed[p] = nil
-        end
+        sealed.clear
       end
 
       self
     end
 
     def final?
-      points.any? { |n| n == 10 }
+      board.unoccupied.empty? || players.any? { |p| score( p ) >= 10 }
     end
 
     def score( player )

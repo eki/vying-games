@@ -12,6 +12,7 @@ class TestFrames < Test::Unit::TestCase
 
   def test_info
     assert_equal( "Frames", rules.name )
+    assert( Frames.sealed_moves? )
   end
 
   def test_players
@@ -34,13 +35,13 @@ class TestFrames < Test::Unit::TestCase
     assert_equal( 19*19, g.moves( :white ).length )
 
     g.board.coords.each do |c|
-      assert( g.move?( "black_#{c}" ) )
-      assert( g.move?( "white_#{c}" ) )
-      assert( g.move?( "black_#{c}", :black ) )
-      assert( g.move?( "white_#{c}", :white ) )
+      assert( g[:black].move?( c ) )
+      assert( g[:white].move?( c ) )
+      assert( g.move?( c, :black ) )
+      assert( g.move?( c, :white ) )
     end
 
-    g << "black_n9"
+    g[:black] << "n9"
 
     assert_equal( [:white], g.has_moves )
 
@@ -48,7 +49,7 @@ class TestFrames < Test::Unit::TestCase
     assert_equal( 0, g.moves( :black ).length )
     assert_equal( 19*19, g.moves( :white ).length )
 
-    g << "white_i2"
+    g[:white] << "i2"
 
     assert_equal( [:black, :white], g.has_moves )
 
