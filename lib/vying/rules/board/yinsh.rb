@@ -31,9 +31,8 @@ Rules.create( "Yinsh" ) do
       @completed_row = nil
     end
 
-    def moves( player=nil )
-      return []          unless player.nil? || has_moves.include?( player )
-      return []          if final?
+    def moves
+      return [] if final?
 
       a = []
 
@@ -79,7 +78,7 @@ Rules.create( "Yinsh" ) do
       a
     end
 
-    def apply!( move, player=nil )
+    def apply!( move )
       coords = move.to_coords
 
       if coords.length == 2
