@@ -54,6 +54,8 @@ Rules.create( "Hex" ) do
 
   pie_rule
 
+  cache :moves
+
   position do
     attr_reader :board, :groups
 
@@ -63,13 +65,11 @@ Rules.create( "Hex" ) do
       @groups = { :blue => [], :red => [] }
     end
 
-    def moves( player=nil )
-      return []          unless player.nil? || has_moves.include?( player )
-
+    def moves
       board.unoccupied
     end
 
-    def apply!( move, player=nil )
+    def apply!( move )
       coord = Coord[move]
 
       board[coord] = turn
