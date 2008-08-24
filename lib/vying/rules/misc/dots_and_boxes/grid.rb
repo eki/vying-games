@@ -1,12 +1,5 @@
 
 class Grid
-  extend Memoizable
-
-  class << self
-    extend Memoizable
-    memoize :new
-  end
-
   attr_reader :width, :height, :dots, :lines, :boxes
 
   def initialize( width=6, height=6 )
