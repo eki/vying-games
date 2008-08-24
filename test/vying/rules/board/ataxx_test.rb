@@ -34,7 +34,8 @@ if Vying::RandomSupport
       assert_equal( ["a1b1", "a1a2", "a1b2", 
                      "g7f6", "g7g6", "g7f7", 
                      "a1c1", "a1c2", "a1a3", "a1b3", "a1c3", 
-                     "g7e5", "g7f5", "g7g5", "g7e6", "g7e7"].sort, moves.sort )
+                     "g7e5", "g7f5", "g7g5", "g7e6", "g7e7"].sort, 
+                    moves.map { |m| m.to_s }.sort )
 
       g << g.moves.first until g.final?
 

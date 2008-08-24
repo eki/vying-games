@@ -31,14 +31,11 @@ Rules.create( "Ataxx" ) do
       @block_pattern = set_rand_blocks
     end
 
-    def moves( player=nil )
-      return []          unless player.nil? || has_moves.include?( player )
-      return []          if players.any? { |p| board.count( p ) == 0 }
+    def moves
+      return [] if players.any? { |p| board.count( p ) == 0 }
 
-      p   = turn
-
-      cd = [:n, :s, :e, :w, :se, :sw, :ne, :nw]
-
+      p     = turn
+      cd    = [:n, :s, :e, :w, :se, :sw, :ne, :nw]
       found = []
 
       # Adjacent moves
@@ -60,7 +57,7 @@ Rules.create( "Ataxx" ) do
       found
     end
 
-    def apply!( move, player=nil )
+    def apply!( move )
       coords, p = move.to_coords, turn
 
       dx = (coords.first.x - coords.last.x).abs
