@@ -29,9 +29,9 @@ Rules.create( "LinesOfAction" ) do
       init_counts
     end
 
-    def moves( player=nil )
-      return [] unless player.nil? || has_moves.include?( player )
-      return []     if final?
+    def moves
+      return [] if final?
+
       a = []
 
       coords = board.occupied[turn]
@@ -60,7 +60,7 @@ Rules.create( "LinesOfAction" ) do
       a
     end
 
-    def apply!( move, player=nil )
+    def apply!( move )
       coords = move.to_coords
 
       capture = board[coords.last]
