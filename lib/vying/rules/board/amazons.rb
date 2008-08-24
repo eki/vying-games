@@ -22,10 +22,7 @@ Rules.create( "Amazons" ) do
       @board, @lastc = AmazonsBoard.new, nil
     end
 
-    def move?( move, player=nil )
-      return false unless player.nil? || has_moves.include?( player )
-      return false if final?
-
+    def move?( move )
       cs = move.to_coords
       return false unless cs.length == 2
 
@@ -43,9 +40,7 @@ Rules.create( "Amazons" ) do
       return true
     end
 
-    def moves( player=nil )
-      return []          unless player.nil? || has_moves.include?( player )
-
+    def moves
       a = []
 
       queens = board.occupied[turn]
@@ -61,7 +56,7 @@ Rules.create( "Amazons" ) do
       a
     end
 
-    def apply!( move, player=nil )
+    def apply!( move )
       coords = move.to_coords
 
       if lastc.nil? || board[lastc] == :arrow

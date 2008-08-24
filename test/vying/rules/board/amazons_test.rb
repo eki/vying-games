@@ -41,12 +41,12 @@ class TestAmazons < Test::Unit::TestCase
     g = Game.new( rules )
     moves = g.moves
 
-    assert_equal( "a4a3", moves[0] )
-    assert_equal( "a4a2", moves[1] )
-    assert_equal( "a4a1", moves[2] )
-    assert_equal( "a4b4", moves[3] )
-    assert_equal( "j4f8", moves[-2] )
-    assert_equal( "j4e9", moves[-1] )
+    assert_equal( "a4a3", moves[0].to_s )
+    assert_equal( "a4a2", moves[1].to_s )
+    assert_equal( "a4a1", moves[2].to_s )
+    assert_equal( "a4b4", moves[3].to_s )
+    assert_equal( "j4f8", moves[-2].to_s )
+    assert_equal( "j4e9", moves[-1].to_s )
 
     g << g.moves.first until g.final?
 
