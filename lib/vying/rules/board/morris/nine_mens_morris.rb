@@ -11,7 +11,9 @@ Rules.create( "NineMensMorris" ) do
 
   allow_draws_by_agreement
 
-  cache :init, :moves
+  can_move_to :black => nil, :white => nil
+
+  cache :init, :moves, :final?
 
   position do
     attr_reader :board, :remaining, :removing
@@ -19,82 +21,72 @@ Rules.create( "NineMensMorris" ) do
     def init
       @board = Board.new( 7, 7 )
 
-      @board[:a2,:a3,:a5,:a6,
-             :b1,:c1,:e1,:f1,
-             :b7,:c7,:e7,:f7,
-             :g2,:g3,:g5,:g6,
-             :b3,:b5,
-             :c2,:e2,
-             :c6,:e6,
-             :f3,:f5] = :x
+      @board[     :b1, :c1,   :e1, :f1,
+             :a2,      :c2,   :e2,      :g2,
+             :a3, :b3,             :f3, :g3,
+                             
+             :a5, :b5,             :f5, :g5,
+             :a6,      :c6,   :e6,      :g6,
+                  :b7, :c7,   :e7, :f7       ] = :x
+
       @board[:d4] = :X
 
       @remaining = { :black => 9, :white => 9 }
       @removing = false
     end
 
-    def moves
-      if remaining[:black] == 0 && remaining[:white] == 0 &&
-         (board.occupied[:black].length == 2 || 
-          board.occupied[:white].length == 2)
+    def has_moves
+      if remaining[turn] > 0 || removing || board.occupied[turn].length == 3
+        return [turn]
+      end
+
+      if remaining[opponent( turn )] == 0 && 
+         players.any? { |p| board.count( p ) == 2 }
         return []
       end
 
-      found = []
+      board.occupied[turn].any? { |c| can_move?( c ) } ? [turn] : []
+    end
+
+    def moves
+      if remaining.all? { |p,n| n == 0 } &&
+         players.any? { |p| board.count( p ) == 2 }
+         
+        return []
+      end
 
       # Removing an opponent's stone
 
       if removing
-        all = []
+        ops = board.occupied[opponent( turn )]
+        ms = ops.select { |c| ! mill?( c ) }
 
-        board.occupied[opponent( turn )].each do |c|
-          all << cs = "#{c}"
-          found << cs unless mill?( c )
-        end
-
-        return found.empty? ? all : found
+        return ms.empty? ? ops : ms
       end
 
       # Placing stones
 
       if remaining[turn] > 0
-        return board.coords.select { |c| board[c].nil? }.map { |c| c.to_s }
+        return board.unoccupied
       end
 
       # Moving stones
 
       if board.occupied[turn].length > 3
-        board.occupied[turn].each do |c|
-          [:n, :e, :s, :w].each do |d|
-            p1 = board[c1 = board.coords.next( c, d )]
-            until p1 != :x
-              p1 = board[c1 = board.coords.next( c1, d)]
-            end
-
-            found << "#{c}#{c1}" if p1.nil? && ! c1.nil?
-          end
-        end
-
-        # If we couldn't find any moves, the game is over
-        return found
+        return board.occupied[turn].map { |c| moves_for( c ) }.flatten
       end
 
       # Flying
 
-      board.occupied[turn].each do |c|
-        board.unoccupied.each do |c1|
-          found << "#{c}#{c1}"
-        end
-      end
-
-      found
+      board.occupied[turn].map { |c| flying_moves_for( c ) }.flatten
     end
 
     def apply!( move )
       coords, c = move.to_coords, nil
 
       if removing
-        board[coords.first], @removing = nil, false
+        board[coords.first] = nil
+        @removing = false
 
       elsif coords.length == 1
         board[coords.first] = turn
@@ -102,7 +94,7 @@ Rules.create( "NineMensMorris" ) do
         c = coords.first
 
       elsif coords.length == 2
-        board.move( coords.first, coords.last )
+        board.move( * coords )
         c = coords.last
       end
 
@@ -116,13 +108,11 @@ Rules.create( "NineMensMorris" ) do
     end
 
     def final?
-      moves.empty?
+      has_moves.empty?
     end
 
     def winner?( player )
-      final? && (
-      (board.count( player ) > 2 && board.count( opponent( player ) ) == 2) ||
-      (turn != player) )
+      board.count( opponent( player ) ) == 2 || final? && turn != player
     end
 
     def loser?( player )
@@ -141,13 +131,42 @@ Rules.create( "NineMensMorris" ) do
     def mill?( coord )
       p = board[coord]
 
-      rules.mills.each do |mill|
-        if mill.include?( coord ) && board[*mill].all? { |p1| p1 == p }
-          return true
+      rules.mills.any? do |mill|
+        mill.include?( coord ) && board[*mill].all? { |p1| p1 == p }
+      end
+    end
+
+    private
+
+    def can_move?( c )
+      p = rules.can_move_to[board[c]]     
+      [:n, :e, :s, :w].any? do |d|
+        p1 = board[c1 = board.coords.next( c, d )]
+        until p1 != :x
+          p1 = board[c1 = board.coords.next( c1, d)]
         end
+
+        ! p1 && c1
+      end
+    end
+
+    def moves_for( c )
+      p, ms = rules.can_move_to[board[c]], []
+
+      [:n, :e, :s, :w].each do |d|
+        p1 = board[c1 = board.coords.next( c, d )]
+        until p1 != :x
+          p1 = board[c1 = board.coords.next( c1, d)]
+        end
+
+        ms << "#{c}#{c1}" if ! p1 && c1
       end
 
-      false
+      ms
+    end
+
+    def flying_moves_for( c )
+      board.unoccupied.map { |c1| "#{c}#{c1}" }
     end
   end
 
