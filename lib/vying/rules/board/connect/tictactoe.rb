@@ -18,13 +18,12 @@ Rules.create( "TicTacToe" ) do
       @lastc, @lastp = nil, :noone
     end
 
-    def moves( player=nil )
-      return [] unless player.nil? || has_moves.include?( player )
+    def moves
       return [] if final?
       board.unoccupied
     end
 
-    def apply!( move, player=nil )
+    def apply!( move )
       c, p = Coord[move], turn
       board[c], @lastc, @lastp = p, c, p
       rotate_turn

@@ -23,13 +23,12 @@ Rules.create( "Connect4" ) do
       @unused_moves = rules.init_moves.map { |a| a.dup }
     end
 
-    def moves( player=nil )
-      return [] unless player.nil? || has_moves.include?( player )
+    def moves
       return [] if final?
       unused_moves.map { |a| a.last }
     end
 
-    def apply!( move, player=nil )
+    def apply!( move )
       c, p = Coord[move], turn
       board[c], @lastc, @lastp = p, c, p
       unused_moves.each { |a| a.delete( c.to_s ) }
