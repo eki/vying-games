@@ -17,7 +17,7 @@ Rules.create( "Oware" ) do
   cache :init
 
   position do 
-    attr_reader :board, :scoring_pits, :annotation
+    attr_reader :board, :scoring_pits, :sides, :annotation
     ignore :sides, :annotation
 
     def init
@@ -29,11 +29,15 @@ Rules.create( "Oware" ) do
                 :two => ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }
     end
 
+    def has_moves
+      sides[turn].any? { |c| board[c] > 0 } ? [turn] : []
+    end
+
     def moves
-      valid = @sides[turn].select { |c| board[c] > 0 }
+      valid = sides[turn].select { |c| board[c] > 0 }
 
       # Check starvation rule
-      if @sides[opponent( turn )].all? { |c| board[c] == 0 }
+      if sides[opponent( turn )].all? { |c| board[c] == 0 }
         still_valid = []
         valid.each do |c|
           still_valid << c unless dup.apply!( c ).final?
@@ -96,7 +100,7 @@ Rules.create( "Oware" ) do
         h -= 1 if r == 1 && h > 0
       end
 
-      opp_empties = @sides[opponent( turn )].select { |c| board[c] == 0 }
+      opp_empties = sides[opponent( turn )].select { |c| board[c] == 0 }
 
       cap = [] if cap.length + opp_empties.length == 6   # Grand slam forfeit
 
@@ -119,7 +123,7 @@ Rules.create( "Oware" ) do
     end
 
     def final?
-      moves.empty?
+      has_moves.empty?
     end
 
     def score( player )
@@ -134,7 +138,7 @@ Rules.create( "Oware" ) do
 
     def clear
       players.each do |p|
-        @sides[p].each do |c|
+        sides[p].each do |c|
           scoring_pits[p] += board[c]
           board[c] = 0
           annotation[c] = "c" if annotation[c] == "0"
