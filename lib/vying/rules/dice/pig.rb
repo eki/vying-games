@@ -19,10 +19,10 @@ Rules.create( "Pig" ) do
       @total, @current_score, @rolling = Hash.new( 0 ), 0, false
     end
 
-    def moves( player=nil )
+    def moves
       return []              if final?
-      return %w(1 2 3 4 5 6) if  rolling && (player.nil? || player == :random)
-      return %w(pass roll)   if !rolling && (player.nil? || player == turn)
+      return %w(1 2 3 4 5 6) if  rolling
+      return %w(pass roll)   if !rolling
       []
     end
 
@@ -30,7 +30,7 @@ Rules.create( "Pig" ) do
       final? ? [] : [rolling ? :random : turn]
     end
 
-    def apply!( move, player=nil )
+    def apply!( move )
       case move 
         when 'pass'
           total[turn] += current_score
