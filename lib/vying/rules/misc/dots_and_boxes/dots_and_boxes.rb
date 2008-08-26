@@ -15,6 +15,8 @@ Rules.create( "DotsAndBoxes" ) do
 
   score_determines_outcome
 
+  cache :moves
+
   position do  
     attr_reader :grid
 
@@ -22,23 +24,19 @@ Rules.create( "DotsAndBoxes" ) do
       @grid = Grid.new
     end
 
-    def moves( player=nil )
-      return [] unless player.nil? || has_moves.include?( player )
-
+    def moves
       lines = grid.lines.keys.select { |k| ! grid.lines[k] }
       lines.map { |line| "#{line.first}:#{line.last}" }
     end
 
-    def moves_that_complete_boxes( player=nil )
-      return [] unless player.nil? || has_moves.include?( player )
-
+    def moves_that_complete_boxes
       lines = grid.lines.keys.select { |k| ! grid.lines[k] }
 
       lines = lines.select { |line| grid.will_complete_box?( *line ) }
       lines.map { |line| "#{line.first}:#{line.last}" }
     end
 
-    def apply!( move, player=nil )
+    def apply!( move )
       move =~ /(\d+):(\d+)/
 
       d1 = $1.to_i
