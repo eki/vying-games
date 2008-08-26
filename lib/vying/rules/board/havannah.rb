@@ -180,7 +180,7 @@ Rules.create( "Havannah" ) do
       board.unoccupied
     end
 
-    def apply!( move ) # , player=nil )
+    def apply!( move )
       coord = Coord[move]
 
       board[coord] = turn
@@ -210,15 +210,19 @@ Rules.create( "Havannah" ) do
     end
 
     def final?
-      players.any? { |p| winner?( p ) }
+      board.unoccupied.empty? || players.any? { |p| winner?( p ) }
     end
 
     def winner?( player )
-      groups[player].any? { |group| group.winning? }
+      (g = groups[player].last) && g.winning?
     end
 
     def loser?( player )
       winner?( opponent( player ) )
+    end
+
+    def draw?
+      board.unoccupied.empty? && players.all? { |p| ! winner?( p ) }
     end
 
     def hash
