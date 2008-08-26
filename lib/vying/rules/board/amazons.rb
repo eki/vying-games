@@ -40,6 +40,11 @@ Rules.create( "Amazons" ) do
       return true
     end
 
+    def has_moves
+      queens = board.occupied[turn]
+      queens.any? { |q| ! board.mobility[q].empty? } ? [turn] : []
+    end
+
     def moves
       a = []
 
@@ -72,7 +77,7 @@ Rules.create( "Amazons" ) do
     end
 
     def final?
-      moves.empty?
+      has_moves.empty?
     end
 
     def winner?( player )

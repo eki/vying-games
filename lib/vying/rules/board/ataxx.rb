@@ -84,7 +84,7 @@ Rules.create( "Ataxx" ) do
     end
 
     def final?
-      moves.empty?
+      board.unoccupied.empty? || players.any? { |p| board.count( p ) == 0 }
     end
 
     def score( player )

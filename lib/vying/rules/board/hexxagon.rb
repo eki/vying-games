@@ -38,10 +38,7 @@ Rules.create( "Hexxagon" ) do
     end
 
     def moves
-      np = @options[:number_of_players]
-      zero_count = players.select { |p| board.count( p ) == 0 }.length
-
-      return []          if np - 1 == zero_count
+      return [] if final?
 
       p   = turn
       found = []
@@ -93,7 +90,12 @@ Rules.create( "Hexxagon" ) do
     end
 
     def final?
-      moves.empty?
+      return true if board.unoccupied.empty?
+
+      np = @options[:number_of_players]
+      zero_count = players.select { |p| board.count( p ) == 0 }.length
+
+      np - 1 == zero_count
     end
 
     def score( player )

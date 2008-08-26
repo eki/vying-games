@@ -21,6 +21,10 @@ Rules.create( "Othello" ) do
       @board = OthelloBoard.new
     end
 
+    def has_moves
+      board.frontier.any? { |c| board.valid?( c, turn ) } ? [turn] : []
+    end
+
     def move?( move )
       cs = move.to_coords
 
@@ -45,7 +49,7 @@ Rules.create( "Othello" ) do
     end
 
     def final?
-      moves.empty?
+      has_moves.empty?
     end
 
     def score( player )
