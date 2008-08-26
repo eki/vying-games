@@ -33,11 +33,16 @@ Rules.create( "ThreeMusketeers" ) do
       @board[:a5,:c3,:e1] = :red
     end
 
+    def has_moves
+      return []     if red_in_a_line?
+
+      board.occupied[turn].any? { |c| can_move?( c ) } ? [turn] : []
+    end
+
     def moves
       return [] if red_in_a_line?
 
-      men, p = board.occupied[turn], rules.can_move_to[turn]
-      men.map { |c| capture_moves( c, p ) }.flatten!
+      board.occupied[turn].map { |c| moves_for( c ) }.flatten!
     end
 
     def apply!( move )
@@ -48,7 +53,7 @@ Rules.create( "ThreeMusketeers" ) do
     end
 
     def final?
-      moves.empty?
+      has_moves.empty?
     end
 
     def winner?( player )
@@ -71,7 +76,14 @@ Rules.create( "ThreeMusketeers" ) do
        board.occupied[:red].map { |c| c.y }.uniq.length == 1
     end
 
-    def capture_moves( c, p )
+    def can_move?( c )
+      p = rules.can_move_to[board[c]]     
+      ns = board.coords.neighbors( c, [:n, :e, :w, :s] )
+      ns.any? { |n| board[n] == p }
+    end
+
+    def moves_for( c )
+      p = rules.can_move_to[board[c]]     
       ns = board.coords.neighbors( c, [:n, :e, :w, :s] )
       ns.select { |n| board[n] == p }.map { |n| "#{c}#{n}" }
     end
