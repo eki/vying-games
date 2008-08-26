@@ -75,20 +75,24 @@ module CLI
           n.times { r.new }
         end
 
-        p_a[0] = [r.new, r.new.moves.first]
+        p = r.new
+        p_a[0] = [p, p.moves[rand( p.moves.length )]]
         (p_a.length - 1).times do |i|
           p = p_a[i].first.apply( p_a[i].last )
-          if p.final?
-            p_a[i+1] = [r.new, r.new.moves.first]
-          else
-            p_a[i+1] = [p, p.moves.first]
-          end
+          p = r.new if p.final?
+          p_a[i+1] = [p, p.moves[rand( p.moves.length )]]
         end
 
         p_a.each { |p,m| p.clear_cache } if clear_cache
 
         x.report( "#{r} move?" ) do
           p_a.each { |p,m| p.move?( m ) }
+        end
+
+        p_a.each { |p,m| p.clear_cache } if clear_cache
+
+        x.report( "#{r} has_moves" ) do
+          p_a.each { |p,m| p.has_moves }
         end
 
         p_a.each { |p,m| p.clear_cache } if clear_cache
