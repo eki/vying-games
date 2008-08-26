@@ -19,9 +19,28 @@ Rules.create( "AmericanCheckers" ) do
   king :red   => :RED_KING,
        :white => :WHITE_KING
 
+  pieces :red   => [:red, :RED_KING],
+         :white => [:white, :WHITE_KING]
+
+  step_directions :red        => [:se, :sw], 
+                  :white      => [:ne, :nw],
+                  :RED_KING   => [:se, :sw, :ne, :nw],
+                  :WHITE_KING => [:se, :sw, :ne, :nw]
+
+  jump_directions :red        => [:se, :sw], 
+                  :white      => [:ne, :nw],
+                  :RED_KING   => [:se, :sw, :ne, :nw],
+                  :WHITE_KING => [:se, :sw, :ne, :nw]
+
+  can_capture :red        => [:white, :WHITE_KING], 
+              :white      => [:red, :RED_KING],
+              :RED_KING   => [:white, :WHITE_KING],
+              :WHITE_KING => [:red, :RED_KING]
+
+
   allow_draws_by_agreement
 
-  cache :init, :moves
+  cache :init, :moves, :final?
 
   position do
     attr_reader :board, :jumping
@@ -34,68 +53,25 @@ Rules.create( "AmericanCheckers" ) do
       @jumping = false
     end
 
-    def moves
-      p    = turn
-      opp  = (p    == :red) ? :white : :red
-      k    = rules.king[p]
-      oppk = rules.king[opp]
+    def has_moves
+      return [turn] if jumping
 
-      jd  = (turn == :red) ? [:se, :sw] : [:ne, :nw]
-      kjd = [:se, :sw, :ne, :nw]
-
-      found = []
-
-      if jumping
-        c = jumping
-
-        (board[c] == k ? kjd : jd).each do |d|
-          p1 = board[c1 = board.coords.next( c, d )]
-          p2 = board[c2 = board.coords.next( c1, d )] if c1
-          if (p1 == opp || p1 == oppk) && p2.nil? && !c2.nil?
-            found << "#{c}#{c2}"
-          end
+      rules.pieces[turn].each do |p|
+        (board.occupied[p] || []).each do |c|
+          return [turn] if can_step?( c ) || can_jump?( c )
         end
-
-        return found
       end
 
-      board.occupied[p].each do |c|
-        jd.each do |d|
-          p1 = board[c1 = board.coords.next( c, d )]
-          p2 = board[c2 = board.coords.next( c1, d )] if c1
-          if (p1 == opp || p1 == oppk) && p2.nil? && !c2.nil?
-            found << "#{c}#{c2}"
-          end
-        end
-      end if board.occupied[p]
+      []
+    end
 
-      board.occupied[k].each do |c|
-        kjd.each do |d|
-          p1 = board[c1 = board.coords.next( c, d )]
-          p2 = board[c2 = board.coords.next( c1, d )] if c1
-          if (p1 == opp || p1 == oppk) && p2.nil? && !c2.nil?
-            found << "#{c}#{c2}"
-          end
-        end
-      end if board.occupied[k]
+    def moves
+      return jump_moves( jumping ) if jumping
 
-      return found unless found.empty?
+      ms = all_jump_moves( turn )
+      return ms unless ms.empty?
 
-      board.occupied[p].each do |c|
-        jd.each do |d|
-          p1 = board[c1 = board.coords.next( c, d )]
-          found << "#{c}#{c1}" if p1.nil? && ! c1.nil?
-        end
-      end if board.occupied[p]
-
-      board.occupied[k].each do |c|
-        kjd.each do |d|
-          p1 = board[c1 = board.coords.next( c, d )]
-          found << "#{c}#{c1}" if p1.nil? && ! c1.nil?
-        end
-      end if board.occupied[k]
-
-      found
+      all_step_moves( turn )
     end
 
     def apply!( move )
@@ -105,13 +81,12 @@ Rules.create( "AmericanCheckers" ) do
 
       if coords.length == 3
         board[coords[1]] = nil
-        @jumping = coords.last
 
-        if moves.empty?
+        if can_jump?( coords.last )
+          @jumping = coords.last
+        else
           rotate_turn
           @jumping = false
-
-          clear_cache
         end
       else
         rotate_turn
@@ -127,7 +102,7 @@ Rules.create( "AmericanCheckers" ) do
     end
 
     def final?
-      moves.empty?
+      has_moves.empty?
     end
 
     def winner?( player )
@@ -147,6 +122,57 @@ Rules.create( "AmericanCheckers" ) do
     def hash
       [board,turn].hash
     end
+
+    private
+
+    def can_step?( c )
+      rules.step_directions[board[c]].any? do |d|
+        p1 = board[c1 = board.coords.next( c, d )]
+        c1 && ! p1
+      end
+    end
+
+    def can_jump?( c )
+      p = board[c]
+      rules.step_directions[p].any? do |d|
+        p1 = board[c1 = board.coords.next( c, d )]
+        p2 = board[c2 = board.coords.next( c1, d )] if c1
+        c2 && ! p2 && rules.can_capture[p].include?( p1 )
+      end
+    end
+
+    def step_moves( c )
+      ms = []
+      rules.step_directions[board[c]].each do |d|
+        p1 = board[c1 = board.coords.next( c, d )]
+        ms << "#{c}#{c1}" if c1 && ! p1
+      end
+      ms
+    end
+
+    def jump_moves( c )
+      p = board[c]
+      ms = []
+      rules.step_directions[board[c]].each do |d|
+        p1 = board[c1 = board.coords.next( c, d )]
+        p2 = board[c2 = board.coords.next( c1, d )] if c1
+        ms << "#{c}#{c2}" if c2 && ! p2 && rules.can_capture[p].include?( p1 )
+      end
+      ms
+    end
+
+    def all_step_moves( player )
+      rules.pieces[player].map do |p|
+        (board.occupied[p] || []).map { |c| step_moves( c ) }
+      end.flatten
+    end
+
+    def all_jump_moves( player )
+      rules.pieces[player].map do |p|
+        (board.occupied[p] || []).map { |c| jump_moves( c ) }
+      end.flatten
+    end
+
   end
 
 end
