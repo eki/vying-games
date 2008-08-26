@@ -367,7 +367,7 @@ class Position
   end
 
   def __move_q_arity_1( move, player=nil )
-    return false unless player.nil? || turn == player
+    return false unless player.nil? || has_moves.include?( player )
 
     __original_move_q_arity_1( move )
   end
@@ -385,9 +385,9 @@ class Position
   end
 
   def __moves_arity_0( player=nil )
-    return [] unless player.nil? || has_moves.include?( player )
+    return [] unless player.nil? || (p = has_moves.first) == player
 
-    __original_moves_arity_0.map { |m| Move.new( m, turn, nil ) }
+    __original_moves_arity_0.map { |m| Move.new( m, p, nil ) }
   end
 
   def __apply_x_arity_2( move, player=nil )
@@ -401,16 +401,18 @@ class Position
       raise "player for #{move} is required"
     end
 
-    __original_apply_x_arity_2( move, player )
     clear_cache
+    __original_apply_x_arity_2( move, player )
     self
   end
 
   def __apply_x_arity_1( move, player=nil )
-    raise "#{player} has no moves" unless player.nil? || turn == player
+    unless player.nil? || has_moves.include?( player )
+      raise "invalide move (#{move}) for player #{player}"
+    end
 
-    __original_apply_x_arity_1( move )
     clear_cache
+    __original_apply_x_arity_1( move )
     self
   end
 
