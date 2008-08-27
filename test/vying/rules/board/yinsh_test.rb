@@ -146,7 +146,8 @@ class TestYinsh < Test::Unit::TestCase
 
     assert_equal( :white, g.turn )
     assert_equal( 2, g.rows.length )
-    assert_equal( ["b7", "c8", "d9", "g3"].sort, g.moves.sort )
+    assert_equal( ["b7", "c8", "d9", "g3"].sort, 
+                  g.moves.map { |m| m.to_s }.sort )
 
     g << "b7"
 
@@ -157,7 +158,8 @@ class TestYinsh < Test::Unit::TestCase
     
     assert_equal( :white, g.turn )
     assert_equal( 1, g.rows.length )
-    assert_equal( ["c8", "d9", "g3"].sort, g.moves.sort )
+    assert_equal( ["c8", "d9", "g3"].sort,
+                  g.moves.map { |m| m.to_s }.sort )
 
     g << "c8"
 
@@ -198,7 +200,8 @@ class TestYinsh < Test::Unit::TestCase
 
     assert_equal( :white, g.turn )
     assert_equal( 2, g.rows.length )
-    assert_equal( ["b7", "c8", "d9", "f3"].sort, g.moves.sort )
+    assert_equal( ["b7", "c8", "d9", "f3"].sort,
+                  g.moves.map { |m| m.to_s }.sort )
 
     g << "b7"
 
@@ -209,7 +212,8 @@ class TestYinsh < Test::Unit::TestCase
     
     assert_equal( :white, g.turn )
     assert_equal( 1, g.rows.length )
-    assert_equal( ["c8", "d9", "f3"].sort, g.moves.sort )
+    assert_equal( ["c8", "d9", "f3"].sort,
+                  g.moves.map { |m| m.to_s }.sort )
 
     g << "c8"
 
@@ -243,7 +247,8 @@ class TestYinsh < Test::Unit::TestCase
     g << ["c1", "c2", "c3", "c4", "c5"]
 
     assert_equal( :black, g.turn )
-    assert_equal( ["f10", "g10", "h10", "i10", "j10"].sort, g.moves.sort )
+    assert_equal( ["f10", "g10", "h10", "i10", "j10"].sort,
+                  g.moves.map { |m| m.to_s }.sort )
 
     g << "f10"
 
@@ -289,7 +294,8 @@ class TestYinsh < Test::Unit::TestCase
 
     assert_equal( :white, g.turn )
     assert_equal( 2, g.rows.length )
-    assert_equal( ["b7", "c8", "d9", "f3"].sort, g.moves.sort )
+    assert_equal( ["b7", "c8", "d9", "f3"].sort,
+                  g.moves.map { |m| m.to_s }.sort )
 
     g << "b7"
 
@@ -300,7 +306,8 @@ class TestYinsh < Test::Unit::TestCase
     
     assert_equal( :white, g.turn )
     assert_equal( 1, g.rows.length )
-    assert_equal( ["c8", "d9", "f3"].sort, g.moves.sort )
+    assert_equal( ["c8", "d9", "f3"].sort,
+                  g.moves.map { |m| m.to_s }.sort )
 
     g << "c8"
 

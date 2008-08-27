@@ -39,10 +39,10 @@ Rules.create( "Yinsh" ) do
       rings = board.occupied[rules.ring[turn]]
 
       if rings.length < 5 && removed[rules.ring[turn]] == 0
-        a = board.unoccupied.map { |c| c.to_s }
+        a = board.unoccupied
 
       elsif removed_markers.length == 5
-        a = rings.map { |c| c.to_s }
+        a = rings
 
       elsif ! rows.empty?
         if removed_markers.empty?
@@ -51,7 +51,7 @@ Rules.create( "Yinsh" ) do
           prows = rows.select { |row| row.include?( removed_markers.first ) }
         end
 
-        a = (prows.flatten - removed_markers).map { |c| c.to_s }     
+        a = prows.flatten - removed_markers
 
       else
         rings.each do |r|
