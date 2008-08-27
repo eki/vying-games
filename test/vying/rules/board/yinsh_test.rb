@@ -256,6 +256,47 @@ class TestYinsh < Test::Unit::TestCase
                                     # removed a row created by white
   end
 
+  def test_complete_own_row_and_opponent_row
+    g = Game.new( rules )
+    b = g.board
+
+    b[:c1, :c2, :c4, :c5, :c6] = :black
+    b[:b1, :b2, :b4, :b5, :b6] = :white
+    b[:c3] = :white
+    b[:b3] = :WHITE_RING
+
+    b[:b7, :c8, :d9, :e10] = :WHITE_RING
+    b[:f10, :g10, :h10, :i10, :j10] = :BLACK_RING
+
+    assert_equal( :white, g.turn )
+    assert( g.moves.include?( "b3d3" ) )
+
+    g << "b3d3"
+
+    assert_equal( :white, g.turn )
+
+    g << ["b1", "b2", "b3", "b4", "b5"]
+
+    assert_equal( :white, g.turn )
+    assert_equal( ["d3", "b7", "c8", "d9", "e10"].sort,
+                  g.moves.map { |m| m.to_s }.sort )
+
+    g << "d3"
+
+    assert_equal( :black, g.turn )
+    
+    g << ["c1", "c2", "c3", "c4", "c5"]
+
+    assert_equal( :black, g.turn )
+    assert_equal( ["f10", "g10", "h10", "i10", "j10"].sort,
+                  g.moves.map { |m| m.to_s }.sort )
+
+    g << "f10"
+
+    assert_equal( :black, g.turn )  # still black's turn because he only 
+                                    # removed a row created by white
+  end
+
   def test_two_overlines_butted
     g = Game.new( rules )
     b = g.board

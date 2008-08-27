@@ -179,8 +179,12 @@ Rules.create( "Yinsh" ) do
           board[coords.first] = nil
           rows.reject! { |row| row.sort == removed_markers.sort }
           removed_markers.clear
-          rotate_turn if turn == completed_row && rows.empty?
-          @completed_row = nil
+          if rows.empty?
+            rotate_turn if turn == completed_row
+            @completed_row = nil
+          else
+            rotate_turn unless rows.any? { |row| board[row.first] == turn }
+          end
 
         # remove a marker
         elsif ! rows.empty?
