@@ -385,7 +385,9 @@ class Position
   end
 
   def __moves_arity_0( player=nil )
-    return [] unless player.nil? || (p = has_moves.first) == player
+    p = has_moves.first
+
+    return [] unless player.nil? || p == player
 
     __original_moves_arity_0.map { |m| Move.new( m, p, nil ) }
   end
