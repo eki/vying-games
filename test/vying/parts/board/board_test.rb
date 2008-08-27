@@ -155,13 +155,20 @@ class TestBoard < Test::Unit::TestCase
 
   def test_occupied
     b = Board.new( 4, 4 )
-    assert_equal( nil, b.occupied[:black] )
+    assert_equal( [], b.occupied[:black] )
     b[1,1] = :black
     assert_equal( [Coord[1,1]], b.occupied[:black] )
-    assert_equal( nil, b.occupied[:white] )
+    assert_equal( [], b.occupied[:white] )
     b[1,1] = :white
     assert_equal( [], b.occupied[:black] )
     assert_equal( [Coord[1,1]], b.occupied[:white] )
+
+    b.clear
+    b[:a1] = :black
+    assert_equal( [Coord[:a1]], b.occupied[:black] )   
+    assert_equal( 15, b.occupied[nil].length )   
+    assert( ! b.occupied[nil].include?( Coord[:a1] ) )   
+    assert_nothing_raised { Marshal.dump( b ) }
   end
 
   def test_each

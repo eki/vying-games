@@ -57,7 +57,7 @@ Rules.create( "AmericanCheckers" ) do
       return [turn] if jumping
 
       rules.pieces[turn].each do |p|
-        (board.occupied[p] || []).each do |c|
+        board.occupied[p].each do |c|
           return [turn] if can_step?( c ) || can_jump?( c )
         end
       end
@@ -163,13 +163,13 @@ Rules.create( "AmericanCheckers" ) do
 
     def all_step_moves( player )
       rules.pieces[player].map do |p|
-        (board.occupied[p] || []).map { |c| step_moves( c ) }
+        board.occupied[p].map { |c| step_moves( c ) }
       end.flatten
     end
 
     def all_jump_moves( player )
       rules.pieces[player].map do |p|
-        (board.occupied[p] || []).map { |c| jump_moves( c ) }
+        board.occupied[p].map { |c| jump_moves( c ) }
       end.flatten
     end
 

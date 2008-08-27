@@ -173,8 +173,13 @@ class Board
 
       before_set( x, y, old )
 
-      @occupied[old].delete( Coord.new( x, y ) ) if @occupied[old]
-      (@occupied[p] ||= []) << Coord.new( x, y )
+      @occupied[old].delete( Coord.new( x, y ) )
+      
+      if @occupied[p].nil? || @occupied[p].empty?
+        @occupied[p] = [Coord.new( x, y )]
+      else
+        @occupied[p] << Coord.new( x, y )
+      end
 
       @cells[ci( x, y )] = p
 

@@ -242,24 +242,23 @@ class TestOthelloBoard < Test::Unit::TestCase
 
   def test_occupied
     b = OthelloBoard.new
-    o = { :black => [Coord[3,4], Coord[4,3]],
-          :white => [Coord[3,3], Coord[4,4]] }
-
-    assert_equal( o, b.occupied )
-
-    b.place( Coord[3,2], :black )
-
-    o[:black] += [Coord[3,3],Coord[3,2]]
-    o[:white] -= [Coord[3,3]]
+    o = { :black => [:d5, :e4],
+          :white => [:d4, :e5] }
 
     o.each do |k,v|
-      assert_equal( o[k].sort, b.occupied[k].sort )
+      assert_equal( v.map { |c| c.to_s }.sort, 
+                    b.occupied[k].map { |c| c.to_s }.sort )
     end
 
-    # Commented out because only #place actually updates occupied
-#   b.clear
-#   b[0,0] = :black
-#   assert_equal( [Coord[0,0]], b.occupied )   
+    b.place( Coord[:d3], :black )
+
+    o[:black] += [:d4, :d3]
+    o[:white] -= [:d4]
+
+    o.each do |k,v|
+      assert_equal( v.map { |c| c.to_s }.sort, 
+                    b.occupied[k].map { |c| c.to_s }.sort )
+    end
   end
 
   def test_frontier

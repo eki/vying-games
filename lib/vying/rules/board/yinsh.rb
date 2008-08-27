@@ -36,7 +36,7 @@ Rules.create( "Yinsh" ) do
 
       a = []
 
-      rings = board.occupied[rules.ring[turn]] || []
+      rings = board.occupied[rules.ring[turn]]
 
       if rings.length < 5 && removed[rules.ring[turn]] == 0
         a = board.unoccupied.map { |c| c.to_s }
@@ -166,7 +166,7 @@ Rules.create( "Yinsh" ) do
         rotate_turn  unless rows.any? { |row| board[row.first] == turn }
 
       elsif coords.length == 1
-        rings = board.occupied[rules.ring[turn]] || []
+        rings = board.occupied[rules.ring[turn]]
   
         # add a ring to the board
         if rings.length < 5 && removed[rules.ring[turn]] == 0

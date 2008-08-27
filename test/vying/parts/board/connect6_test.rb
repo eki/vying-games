@@ -7,8 +7,8 @@ class TestConnect6Board < Test::Unit::TestCase
     b = Connect6Board.new
     assert_equal( 19, b.width )
     assert_equal( 19, b.height )
-    assert_equal( nil, b.occupied[:black] )
-    assert_equal( nil, b.occupied[:white] )
+    assert_equal( [], b.occupied[:black] )
+    assert_equal( [], b.occupied[:white] )
     assert_equal( [], b.threats )
   end
 

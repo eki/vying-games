@@ -7,18 +7,22 @@ class OthelloBoard < Board
 
   attr_reader :occupied, :frontier
 
-  INITIAL_FRONTIER = [Coord[2,2], Coord[3,2], Coord[4,2], Coord[5,2],
-                      Coord[5,3], Coord[5,4], Coord[5,5], Coord[4,5],
-                      Coord[3,5], Coord[2,5], Coord[2,4], Coord[2,3]]
+  INITIAL_FRONTIER = [:c3, :d3, :e3, :f3, :f4, :f5, :f6, :e6, 
+                      :d6, :c6, :c5, :c4].map { |c| Coord[c] }
 
   def initialize
     super( 8, 8 )
 
-    @cells[27] = @cells[36] = :white
-    @cells[35] = @cells[28] = :black
+    # Avoiding frontier update by not using #[]=
 
-    @occupied = { :black => [Coord[3,4], Coord[4,3]],
-                  :white => [Coord[3,3], Coord[4,4]] }
+    @cells[35] = @cells[28] = :black   # self[:d5, :e4] = :black
+    @cells[27] = @cells[36] = :white   # self[:d4, :e5] = :white
+
+    # While avoiding the frontier update, we also avoided updating occupied...
+
+    @occupied[:black] = [Coord[:d5], Coord[:e4]]
+    @occupied[:white] = [Coord[:d4], Coord[:e5]]
+
     @frontier = INITIAL_FRONTIER.dup
   end
 

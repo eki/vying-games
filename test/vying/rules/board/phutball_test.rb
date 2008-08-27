@@ -28,7 +28,7 @@ class TestPhutball < Test::Unit::TestCase
 
     assert_equal( :ohs, g.turn )
     assert_equal( [Coord[:h11]], g.board.occupied[:white] )
-    assert_equal( nil, g.board.occupied[:black] )
+    assert_equal( [], g.board.occupied[:black] )
   end
 
   def test_has_score

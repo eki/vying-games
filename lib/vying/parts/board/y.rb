@@ -17,7 +17,8 @@ class YBoard < Board
     end
 
     @coords = Coords.new( @width, @height, omit )
-    @occupied = { nil => @coords.to_a.dup }
+    @occupied = Hash.new( [] )
+    @occupied[nil] = @coords.to_a.dup
   end
 
 end

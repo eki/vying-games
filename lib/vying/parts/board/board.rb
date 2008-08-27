@@ -13,14 +13,15 @@ class Board
   def initialize( w=8, h=8 )
     @width, @height, @cells = w, h, Array.new( w*h, nil )
     @coords = Coords.new( width, height )
-    @occupied = { nil => @coords.to_a.dup }
+    @occupied = Hash.new( [] )
+    @occupied[nil] = @coords.to_a.dup
   end
 
   # Perform a deep copy on this board.
 
   def initialize_copy( original )
     @cells = original.cells.dup
-    @occupied = {}
+    @occupied = Hash.new( [] )
     original.occupied.each { |k,v| @occupied[k] = v.dup }
   end
 
@@ -42,7 +43,7 @@ class Board
   # cells are never counted (see #empty_count).
 
   def count( p=nil )
-    return (occupied[p] || []).length if p
+    return occupied[p].length if p
     occupied.inject(0) { |m,v| m + (v[0] ? v[1].length : 0) }
   end
 
@@ -71,7 +72,7 @@ class Board
   # the coord is nil).
 
   def unoccupied
-    occupied[nil] || []
+    occupied[nil]
   end
 
   # Iterate over each piece on the board.
@@ -98,7 +99,8 @@ class Board
 
   def clear
     @cells.each_index { |i| @cells[i] = nil }
-    @occupied = Hash.new { |h,k| h[k] = [] }
+    @occupied = Hash.new( [] )
+    @occupied[nil] = @coords.to_a.dup
     self
   end
 

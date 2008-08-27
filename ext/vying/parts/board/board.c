@@ -177,7 +177,7 @@ VALUE board_occupy( VALUE self, VALUE x, VALUE y, VALUE p ) {
   VALUE occupied = rb_iv_get( self, "@occupied" );
   VALUE c = rb_funcall( Coord, id_new, 2, x, y );
   VALUE ary = rb_hash_aref( occupied, p );
-  if( ary == Qnil ) {
+  if( ary == Qnil || RARRAY(ary)->len == 0 ) {
     ary = rb_ary_new();
     rb_ary_push( ary, c );
     rb_hash_aset( occupied, p, ary );
