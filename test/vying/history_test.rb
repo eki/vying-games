@@ -14,7 +14,7 @@ class TestHistory < Test::Unit::TestCase
 
   def test_append
     h = History.new( TicTacToe, nil, TicTacToe.options )
-    h.append( "a1", TicTacToe.new.turn )
+    h.append( Move.new( "a1", TicTacToe.new.turn ) )
     assert_equal( ["a1"], h.sequence )
     assert_equal( [TicTacToe.new.turn], h.move_by )
     assert_equal( 2, h.length )
@@ -24,9 +24,9 @@ class TestHistory < Test::Unit::TestCase
 
   def test_removal_01
     h = History.new( TicTacToe, nil, TicTacToe.options )
-    h.append( "a1", TicTacToe.players.first )
-    h.append( "a2", TicTacToe.players.last )
-    h.append( "a3", TicTacToe.players.first )
+    h.append( Move.new( "a1", TicTacToe.players.first ) )
+    h.append( Move.new( "a2", TicTacToe.players.last ) )
+    h.append( Move.new( "a3", TicTacToe.players.first ) )
     p = h[2]
     h.instance_variable_get( "@positions" )[2] = nil
 
@@ -37,9 +37,9 @@ class TestHistory < Test::Unit::TestCase
 
   def test_removal_02
     h = History.new( TicTacToe, nil, TicTacToe.options )
-    h.append( "a1", TicTacToe.players.first )
-    h.append( "a2", TicTacToe.players.last )
-    h.append( "a3", TicTacToe.players.first )
+    h.append( Move.new( "a1", TicTacToe.players.first ) )
+    h.append( Move.new( "a2", TicTacToe.players.last ) )
+    h.append( Move.new( "a3", TicTacToe.players.first ) )
     p2, p3  = h[2], h[3]
     positions = h.instance_variable_get( "@positions" )
     positions[2], positions[3] = nil, nil
@@ -56,22 +56,22 @@ class TestHistory < Test::Unit::TestCase
 
   def test_serialize_01
     h = History.new( TicTacToe, nil, TicTacToe.options )
-    h.append( "a1", TicTacToe.players.first )
-    h.append( "a2", TicTacToe.players.last )
-    h.append( "a3", TicTacToe.players.first )
+    h.append( Move.new( "a1", TicTacToe.players.first ) )
+    h.append( Move.new( "a2", TicTacToe.players.last ) )
+    h.append( Move.new( "a3", TicTacToe.players.first ) )
     assert_equal( h, Marshal::load( Marshal::dump( h ) ) )
   end
 
   def test_serialize_02
     h = History.new( TicTacToe, nil, TicTacToe.options )
-    h.append( "a1", TicTacToe.players.first )
-    h.append( "a2", TicTacToe.players.last )
-    h.append( "a3", TicTacToe.players.first )
-    h.append( "b1", TicTacToe.players.first )
-    h.append( "b2", TicTacToe.players.last )
-    h.append( "b3", TicTacToe.players.first )
-    h.append( "c2", TicTacToe.players.last )
-    h.append( "c1", TicTacToe.players.first )
+    h.append( Move.new( "a1", TicTacToe.players.first ) )
+    h.append( Move.new( "a2", TicTacToe.players.last ) )
+    h.append( Move.new( "a3", TicTacToe.players.first ) )
+    h.append( Move.new( "b1", TicTacToe.players.first ) )
+    h.append( Move.new( "b2", TicTacToe.players.last ) )
+    h.append( Move.new( "b3", TicTacToe.players.first ) )
+    h.append( Move.new( "c2", TicTacToe.players.last ) )
+    h.append( Move.new( "c1", TicTacToe.players.first ) )
     h2 = Marshal::load( Marshal::dump( h ) )
     assert_equal( h, h2 )
     assert_equal( nil, h2.instance_variable_get( "@positions" )[1] )

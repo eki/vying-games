@@ -103,16 +103,14 @@ class History
   # History#moves list, but the position is not created until it's accessed
   # through History#[] (or History#last).
 
-  def append( move, player )
-    if no_timestamps
-      m = Move.new( move, player, nil )
-    else
-      m = Move.new( move, player )
+  def append( move )
+    unless no_timestamps
+      move = move.stamp
     end
 
-    moves << m    # this is tricky, the move is applied lazily
+    moves << move    # this is tricky, the move is applied lazily
 
-    @last_move_at = m.at
+    @last_move_at = move.at
 
     self
   end

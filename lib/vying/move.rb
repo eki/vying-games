@@ -19,10 +19,20 @@ class Move
   # Initialize a Move with the String representation, the player who made the
   # move, and the time the move was made.
 
-  def initialize( m, by=nil, at=Time.now )
-    @move, @by, @at = m, by, at
+  def initialize( m, by=nil )
+    @move, @by = m, by
+    @move.freeze
 
     @by ||= special_by
+    @by.freeze if @by
+  end
+
+  # Returns a timestamped copy of this Move.  (Sets #at to the given time or
+  # Time.now)
+
+  def stamp( t=Time.now )
+    (m = dup).instance_variable_set( "@at", t )
+    m
   end
 
   # Moves are considered to be equal if they share the same #to_s and #by.
@@ -150,6 +160,13 @@ class Move
     m
   end
 
+  # Return true if the move is not played by the #by player.  (eg, the system
+  # plays the move)
+
+  def system?
+    special? && [TimeExceeded, NegotiatedDraw].include?( special_module )
+  end
+
   # If this move results in a method call on Game, get the method and args
 
   def before_call
@@ -231,5 +248,9 @@ class Move
     method_missing( :y )
   end
 
+  class << self
+    extend Memoizable
+    memoize :new
+  end
 end
 
