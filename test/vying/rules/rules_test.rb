@@ -49,11 +49,13 @@ module RulesTests
     30.times do                          # Take two steps forward,
       p = g.history.last.dup             # one step back, check for corruption
       break if g.final?
-      g << g.moves[rand(g.moves.size)] 
+      pn = g.has_moves.first
+      g[pn] << g[pn].moves[rand(g[pn].moves.size)] 
       assert_not_equal( p, g.undo.last )      
       assert_equal( p, g.history.last )
       break if g.final?
-      g << g.moves[rand(g.moves.size)]
+      pn = g.has_moves.first
+      g[pn] << g[pn].moves[rand(g[pn].moves.size)] 
     end
   end
 
@@ -80,7 +82,7 @@ module RulesTests
       g.moves( p ).each { |move| assert( g.move?( move, p ) ) }
     end
 
-    g << g.moves.first
+    g[g.has_moves.first] << g.moves( g.has_moves.first ).first
 
     g.moves.each do |move|
       assert( g.move?( move ) )
@@ -95,7 +97,7 @@ module RulesTests
         assert( g.has_moves?( p ) )
         assert( g.history.last.has_moves?( p ) ) # There are two #has_moves?
       end
-      g << g.moves.first
+      g[g.has_moves.first] << g[g.has_moves.first].moves.first
       break if g.final?
     end
   end
@@ -128,8 +130,9 @@ module RulesTests
     10.times do
       break if g1.final?
 
-      g1 << g1.moves.first
-      g2 << g2.moves.first
+      pn = g1.has_moves.first
+      g1[pn] << g1[pn].moves.first
+      g2[pn] << g2[pn].moves.first
 
       assert( g1.history.last == g2.history.last )
       assert( g1.history.last.hash == g2.history.last.hash )
