@@ -21,6 +21,7 @@ end
 
 require 'yaml'
 
+require 'vying/dup'
 require 'vying/memoize'
 
 require 'vying/parts/board'
@@ -29,7 +30,6 @@ require 'vying/parts/cards/card'
 
 require 'vying/user'
 require 'vying/random'
-require 'vying/dup'
 require 'vying/option'
 require 'vying/position'
 require 'vying/notation'

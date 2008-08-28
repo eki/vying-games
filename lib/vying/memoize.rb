@@ -17,7 +17,7 @@ module Memoizable
       alias_method original, name
       private      original
       define_method(name) do |*args| 
-        cache[[self,args]] ||= send(original, *args).freeze
+        cache[[self,args]] ||= send(original, *args).deep_dup.freeze
       end
     end
   end
@@ -39,7 +39,7 @@ module Memoizable
 
           return v unless v.nil?
 
-          v = send( original ).freeze
+          v = send( original ).deep_dup.freeze
           instance_variable_set( iv, v )
 
           v
@@ -58,7 +58,7 @@ module Memoizable
 
           return v unless v.nil?
 
-          h[args] = v = send( original, *args ).freeze
+          h[args] = v = send( original, *args ).deep_dup.freeze
           instance_variable_set( iv, h )
 
           v
@@ -80,7 +80,7 @@ class Class
 
         define_method( :new ) do |*args|
           @prototype_cache ||= {}
-          (@prototype_cache[args] ||= old_new( *args ).freeze).dup
+          (@prototype_cache[args] ||= old_new( *args ).freeze).deep_dup
         end
       end
     end

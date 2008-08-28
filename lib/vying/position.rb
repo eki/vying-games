@@ -61,16 +61,12 @@ class Position
   # variables and copying them.
 
   def initialize_copy( original )
-    nd = [Symbol, NilClass, Fixnum, TrueClass, FalseClass]
     instance_variables.each do |iv|
       if iv.to_s =~ /^@__.*_cache$/
         instance_variable_set( iv, nil )
       else
         v = instance_variable_get( iv )
-        if !nd.include?( v.class )
-          instance_variable_set( iv,
-            v.respond_to?( :deep_dup ) ? v.deep_dup : v.dup )
-        end
+        instance_variable_set( iv, v.deep_dup )
       end
     end
   end

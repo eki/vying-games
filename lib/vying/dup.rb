@@ -1,19 +1,46 @@
 
+class Object
+  def deep_dup
+    dup
+  end
+end
+
+class Symbol
+  def deep_dup
+    self
+  end
+end
+
+class NilClass
+  def deep_dup
+    self
+  end
+end
+
+class Fixnum
+  def deep_dup
+    self
+  end
+end
+
+class TrueClass
+  def deep_dup
+    self
+  end
+end
+
+class FalseClass
+  def deep_dup
+    self
+  end
+end
+
 class Array
 
   # Get a deep copy of this Array (and deep copies of all its elements).
 
   def deep_dup
-    nd = [Symbol, NilClass, Fixnum, TrueClass, FalseClass]
-    d = self.dup
-
-    each_index do |i|
-      if !nd.include?( self[i].class )
-        d[i] = self[i].respond_to?( :deep_dup ) ? self[i].deep_dup : self[i].dup
-      end
-    end
-
-    d
+    self.dup.map! { |o| o.deep_dup }
   end
 end
 
@@ -22,16 +49,8 @@ class Hash
   # Get a deep copy of this Hash (and deep copies of all its elements).
 
   def deep_dup
-    nd = [Symbol, NilClass, Fixnum, TrueClass, FalseClass]
-    d = self.dup
-
-    each do |k,v|
-      if !nd.include?( v.class )
-        d[k] = v.respond_to?( :deep_dup ) ? v.deep_dup : v.dup
-      end
-    end
-
-    d
+    d = dup
+    d.each { |k, v| d[k] = v.deep_dup }
   end
 
   # Define an actual hash function
