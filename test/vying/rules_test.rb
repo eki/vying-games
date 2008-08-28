@@ -22,5 +22,10 @@ class TestRules < Test::Unit::TestCase
     assert_equal( "Kalah", r.class_name )
     assert_equal( "2.0.0", r.version )
   end
+
+  def test_sealed_moves
+    assert(   Footsteps.sealed_moves? )
+    assert( ! TicTacToe.sealed_moves? )
+  end
 end
 

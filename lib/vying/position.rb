@@ -354,63 +354,64 @@ class Position
 
   private
 
-  def __move_q_arity_2( move, player=nil )
-    return false unless player.nil? || has_moves.include?( player )
+  def __move?( move, player=nil )
+    hm = has_moves
 
-    ps = player ? [player] : has_moves
-
-    ps.any? { |p| __original_move_q_arity_2( p ) }
-  end
-
-  def __move_q_arity_1( move, player=nil )
-    return false unless player.nil? || has_moves.include?( player )
-
-    __original_move_q_arity_1( move )
-  end
-
-  def __moves_arity_1( player=nil )
-    return [] unless player.nil? || has_moves.include?( player )
-
-    ps = player ? [player] : has_moves
-
-    ps.map do |p|
-      __original_moves_arity_1( p ).map do |m| 
-        Move.new( m, p, nil )
+    if player.nil?
+      if move.respond_to?( :by ) && hm.include?( move.by )
+        player = move.by
       end
-    end.flatten
+    end
+
+    return false unless player.nil? || hm.include?( player )
+
+    if method( :__original_move? ).arity == 2
+      ps = player ? [player] : hm
+
+      ps.any? { |p| __original_move?( move, p ) }
+    else
+      __original_move?( move )
+    end
   end
 
-  def __moves_arity_0( player=nil )
-    p = has_moves.first
+  def __moves( player=nil )
+    hm = has_moves
 
-    return [] unless player.nil? || p == player
+    return [] unless player.nil? || hm.include?( player )
 
-    __original_moves_arity_0.map { |m| Move.new( m, p, nil ) }
+    if method( :__original_moves ).arity == 1
+
+      ps = player ? [player] : hm
+
+      ps.map do |p|
+        __original_moves( p )
+      end.flatten
+
+    else
+      __original_moves
+    end
   end
 
-  def __apply_x_arity_2( move, player=nil )
+  def __apply!( move, player=nil )
     if player.nil?
       if move.respond_to?( :by ) && has_moves.include?( move.by )
         player = move.by
       end
     end
 
-    if player.nil?
-      raise "player for #{move} is required"
+    if method( :__original_apply! ).arity == 2
+      if player.nil?
+        raise "player for #{move} is required"
+      end
+
+      clear_cache
+
+      __original_apply!( move, player )
+    else
+      clear_cache
+      __original_apply!( move )
     end
 
-    clear_cache
-    __original_apply_x_arity_2( move, player )
-    self
-  end
-
-  def __apply_x_arity_1( move, player=nil )
-    unless player.nil? || has_moves.include?( player )
-      raise "invalide move (#{move}) for player #{player}"
-    end
-
-    clear_cache
-    __original_apply_x_arity_1( move )
     self
   end
 

@@ -260,13 +260,23 @@ class Rules
 
   # Do these rules use sealed moves (aka simultaneous moves)?  More than one
   # player can move at a time, the moves are sealed until all (or some subset
-  # of more than one player) have moved.
+  # of more than one player) have moved.  This result is based on the arity
+  # of the Position subclass' #moves and #apply! methods (if they take a 
+  # player parameter it's assumed the rules allow for sealed moves).
 
   def sealed_moves?
-    @sealed_moves ||= 
-      ['__original_moves_arity_1', '__original_apply_x_arity_2'].all? do |m|
-        position_class.private_instance_methods.include?( m )
-      end
+    return @sealed_moves if @sealed_moves
+
+    if position_class.private_instance_methods.include?( '__original_moves' )
+      original_moves = position_class.instance_method( :__original_moves )
+    end
+
+    if position_class.private_instance_methods.include?( '__original_apply!' )
+      original_apply = position_class.instance_method( :__original_apply! )
+    end
+
+    @sealed_moves = (! original_moves || original_moves.arity == 1) &&
+                    (! original_apply || original_apply.arity == 2)
   end
 
   # The prefered notation for this game.
@@ -455,49 +465,28 @@ class Rules
       klass.class_eval( &block )
       klass.instance_variable_set( "@rules", @rules )
 
-      # arity checks
+      # Wrap (replace) #move?, #moves, and #apply!
 
       klass.class_eval do
-        if instance_method( :move? ).arity == 2
-          alias_method :__original_move_q_arity_2, :move?
-          alias_method :move?, :__move_q_arity_2
+        if instance_method( :move? ).arity != -2
+          alias_method :__original_move?, :move?
+          alias_method :move?, :__move?
           public :move?
-          private :__original_move_q_arity_2
-
-        elsif instance_method( :move? ).arity == 1
-          alias_method :__original_move_q_arity_1, :move?
-          alias_method :move?, :__move_q_arity_1
-          public :move?
-          private :__original_move_q_arity_1
-
+          private :__original_move?
         end
 
-        if instance_method( :moves ).arity == 1
-          alias_method :__original_moves_arity_1, :moves
-          alias_method :moves, :__moves_arity_1
+        if instance_method( :moves ).arity != -1
+          alias_method :__original_moves, :moves
+          alias_method :moves, :__moves
           public :moves
-          private :__original_moves_arity_1
-
-        elsif instance_method( :moves ).arity == 0
-          alias_method :__original_moves_arity_0, :moves
-          alias_method :moves, :__moves_arity_0
-          public :moves
-          private :__original_moves_arity_0
-
+          private :__original_moves
         end
 
-        if instance_method( :apply! ).arity == 2
-          alias_method :__original_apply_x_arity_2, :apply!
-          alias_method :apply!, :__apply_x_arity_2
+        if instance_method( :apply! ).arity != -2
+          alias_method :__original_apply!, :apply!
+          alias_method :apply!, :__apply!
           public :apply!
-          private :__original_apply_x_arity_2
-
-        elsif instance_method( :apply! ).arity == 1
-          alias_method :__original_apply_x_arity_1, :apply!
-          alias_method :apply!, :__apply_x_arity_1
-          public :apply!
-          private :__original_apply_x_arity_1
-
+          private :__original_apply!
         end
       end
 
