@@ -43,13 +43,13 @@ class TestPosition < Test::Unit::TestCase
     p = Footsteps.new
     assert_equal( [:left, :right], p.has_moves )
 
-    p.apply!( p.moves( :left ).first )
+    p.apply!( p.moves( :left ).first, :left )
     assert_equal( [:right], p.has_moves )
 
-    p.apply!( p.moves( :right ).first )
+    p.apply!( p.moves( :right ).first, :right )
     assert_equal( [:left, :right], p.has_moves )
 
-    p.apply!( p.moves( :right ).first )
+    p.apply!( p.moves( :right ).first, :right )
     assert_equal( [:left], p.has_moves )
   end
 
