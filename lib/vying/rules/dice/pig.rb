@@ -13,38 +13,38 @@ Rules.create( "Pig" ) do
   random
 
   position do
-    attr_reader :total, :current_score, :rolling
+    attr_reader :total, :current_score, :roll_history
 
     def init
-      @total, @current_score, @rolling = Hash.new( 0 ), 0, false
+      @total, @current_score = Hash.new( 0 ), 0
+      @roll_history = { :a => [], :b => [] }
     end
 
     def moves
-      return []              if final?
-      return %w(1 2 3 4 5 6) if  rolling
-      return %w(pass roll)   if !rolling
-      []
-    end
-
-    def has_moves
-      final? ? [] : [rolling ? :random : turn]
+      final? ? [] : %w(pass roll)
     end
 
     def apply!( move )
-      case move 
-        when 'pass'
-          total[turn] += current_score
+      move = move.to_s
+
+      if move == 'pass'
+        total[turn] += current_score
+        @current_score = 0
+        rotate_turn
+
+      elsif move == 'roll'
+        @roll_history[turn] << [] if @current_score == 0
+
+        r = [1, 2, 3, 4, 5, 6][rand( 6 )]
+
+        @roll_history[turn].last << r
+
+        if r == 1
           @current_score = 0
           rotate_turn
-        when 'roll'
-          @rolling = true
-        when '1'
-          @current_score = 0
-          rotate_turn
-          @rolling = false
         else
-          @current_score += move.to_i
-          @rolling = false
+          @current_score += r
+        end
       end
 
       self
@@ -59,7 +59,7 @@ Rules.create( "Pig" ) do
     end
 
     def hash
-      [total, current_score, rolling].hash
+      [total, current_score, roll_history].hash
     end
   end
 
