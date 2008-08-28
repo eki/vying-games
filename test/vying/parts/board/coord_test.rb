@@ -19,10 +19,22 @@ class TestCoord < Test::Unit::TestCase
     assert_equal( 1, c.y )
     assert_equal( c, Coord.new( 0, 1 ) )
 
-    cs = Coord[:a2,[0,0],'c3']
+    cs = Coord[:a2, [0,0], 'c3']
     assert_equal( Coord.new( 0, 1 ), cs[0] )
     assert_equal( Coord.new( 0, 0 ), cs[1] )
     assert_equal( Coord.new( 2, 2 ), cs[2] )
+
+    assert_equal( nil, Coord[:h11o4] )
+    assert_equal( nil, Coord["blah blah"] )
+    assert_equal( nil, Coord[[1,2,3]] )
+    assert_equal( nil, Coord[[:a, 2]] )
+
+    cs = Coord[:a2, :h11o4, "blah", [0,0], 'c3']
+    assert_equal( Coord.new( 0, 1 ), cs[0] )
+    assert_equal( nil, cs[1] )
+    assert_equal( nil, cs[2] )
+    assert_equal( Coord.new( 0, 0 ), cs[3] )
+    assert_equal( Coord.new( 2, 2 ), cs[4] )
   end
 
   def test_equal

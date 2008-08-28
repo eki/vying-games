@@ -12,7 +12,7 @@ class Array
   #
 
   def x
-    self[0]
+    self[0] if length == 2 && self[0].class == Fixnum
   end
 
   # Returns the second element in this Array.  This only really make sense with
@@ -22,7 +22,7 @@ class Array
   #
 
   def y
-    self[1]
+    self[1] if length == 2 && self[1].class == Fixnum
   end
 end
 
@@ -36,7 +36,7 @@ class String
   # Note that "a1" is equivalent to (0,0).
 
   def x
-    self.ord - 97
+    self.ord - 97 if y
   end
 
   # Returns the y coordinate of a string that's formated as "[a-z][1-9]+", 
@@ -47,8 +47,7 @@ class String
   # Note that "a1" is equivalent to (0,0).
 
   def y
-    self =~ /\w(\d+)$/
-    $1.to_i-1
+    $1.to_i-1 if self =~ /^\w(\d+)$/
   end
 
   # Compatibility with Ruby 1.9

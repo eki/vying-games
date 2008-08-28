@@ -47,9 +47,15 @@ VALUE coord_class_subscript( int argc, VALUE *argv, VALUE self ) {
     VALUE coord = rb_hash_aref( cache, argv[0] );
 
     if( coord == Qnil ) {
-      coord = rb_funcall( Coord, id_new, 2,  
-                          rb_funcall( argv[0], id_x, 0 ),
-                          rb_funcall( argv[0], id_y, 0 ) );
+      VALUE x = rb_funcall( argv[0], id_x, 0 );
+      VALUE y = rb_funcall( argv[0], id_y, 0 );
+
+      if( x == Qnil || y == Qnil ) {
+        return Qnil;
+      }
+
+      coord = rb_funcall( Coord, id_new, 2, x, y );
+
       rb_hash_aset( cache, argv[0], coord );
     }
 
@@ -67,9 +73,16 @@ VALUE coord_class_subscript( int argc, VALUE *argv, VALUE self ) {
         VALUE coord = rb_hash_aref( cache, argv[i] );
 
         if( coord == Qnil ) {
-          coord = rb_funcall( Coord, id_new, 2,  
-                              rb_funcall( argv[i], id_x, 0 ),
-                              rb_funcall( argv[i], id_y, 0 ) );
+          VALUE x = rb_funcall( argv[i], id_x, 0 );
+          VALUE y = rb_funcall( argv[i], id_y, 0 );
+
+          if( x == Qnil || y == Qnil ) {
+            coord = Qnil;
+          }
+          else {
+            coord = rb_funcall( Coord, id_new, 2, x, y );
+          }
+
           rb_hash_aset( cache, argv[i], coord );
         }
 

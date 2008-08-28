@@ -25,7 +25,11 @@ class Coord
       c = @@coords_cache[args.first]
 
       unless c
-        c = new( args.first.x, args.first.y )
+        x, y = args.first.x, args.first.y
+
+        return nil if x.nil? || y.nil?
+
+        c = new( x, y )
         @@coords_cache[args.first] = c
       end
  
@@ -39,7 +43,9 @@ class Coord
           c = @@coords_cache[arg]
 
           unless c
-            c = new( arg.x, arg.y )
+            x, y = arg.x, arg.y
+
+            c = !x || !y  ? nil : new( x, y )
             @@coords_cache[arg] = c
           end
 
