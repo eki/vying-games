@@ -37,6 +37,7 @@ require 'vying/rules/card/trick/trick'
 require 'vying/rules'
 require 'vying/player'
 require 'vying/move'
+require 'vying/special_move'
 require 'vying/history'
 require 'vying/game'
 require 'vying/ai/search'
@@ -51,8 +52,9 @@ rescue LoadError
   nil
 end
 
-# Load all Rules, Notations, and Bots
+# Load all SpecialMoves, Rules, Notations, and Bots
 
+SpecialMove.require_all
 Rules.require_all
 Notation.require_all
 Bot.require_all

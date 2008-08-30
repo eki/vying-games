@@ -21,10 +21,7 @@ class Move
 
   def initialize( m, by=nil )
     @move, @by = m, by
-    @move.freeze
-
-    @by ||= special_by
-    @by.freeze if @by
+    @move.deep_dup.freeze
   end
 
   # Returns a timestamped copy of this Move.  (Sets #at to the given time or
@@ -62,18 +59,6 @@ class Move
     [@move, @by].hash
   end
 
-  # Equivalent to Move#to_s === o
-
-  def ===( o )
-    @move === o
-  end
-
-  # Equivalent to Move#to_s =~ o
-
-  def =~( o )
-    @move =~ o
-  end
-
   # Returns the string representation of the move.  This can be passed to
   # Game / Position methods that expect a move.  Note, this isn't strictly
   # necessary as those methods typically call #to_s on whatever object they
@@ -86,116 +71,13 @@ class Move
   # More detailed inspect string.
 
   def inspect
-    "#<Move #{@move} by: #{by} at: #{at}>"
+    by ? "#{@move}:#{by}" : "#{@move}"
   end
-
-  # These special moves are stored in History (they mix a module into 
-  # the preceding position, changing its behavior.
-
-  HISTORY_SPECIAL_MOVES = { 
-    /^draw_offered_by_(\w+)/     => DrawOffered,
-    /^draw_accepted_by_(\w+)/    => DrawAccepted,
-    /^undo_requested_by_(\w+)/   => UndoRequested,
-    /^undo_accepted_by_(\w+)/    => UndoAccepted,
-    /(\w+)_resigns$/             => Resign,
-    /^time_exceeded_by_(\w+)/    => TimeExceeded,
-    /^draw$/                     => NegotiatedDraw,
-    /^swap$/                     => Swapped
-  }
-
-  # These special moves are not stored in History.  They are translated
-  # to method calls on Game that occur immediately before the move is added
-  # to history (if it even is).
-
-  CALL_BEFORE = {
-    /^reject_draw$/              => :reject_draw,
-    /^reject_undo$/              => :reject_undo,
-    /^undo$/                     => :undo,
-    /^swap$/                     => :swap,
-    /(\w+)_withdraws$/           => :withdraw,
-    /^kick_(\w+)$/               => :kick 
-  }
-
-  # These special moves are not stored in History.  They are translated
-  # to method calls on Game that occur immediately after the move is
-  # added to history (if it even is).
-
-  CALL_AFTER = {
-    /^draw_accepted_by_\w+/      => :accept_draw,
-    /^undo_accepted_by_\w+/      => :accept_undo
-  }
 
   # Is this a special move?
 
   def special?
-    HISTORY_SPECIAL_MOVES.any? { |p,m| @move =~ p } ||
-    CALL_BEFORE.any? { |p,m| @move =~ p } ||
-    CALL_AFTER.any? { |p,m| @move =~ p }
-  end
-
-  # If this is a special_move does it add a position to the history?
-
-  def add_to_history?
-    HISTORY_SPECIAL_MOVES.any? { |p,m| @move =~ p }
-  end
-
-  # If this is a special move, should we call a method on Game prior to
-  # (maybe) adding it to history?
-
-  def call_before?
-    CALL_BEFORE.any? { |p,m| @move =~ p }
-  end
-
-  # If this is a special move, should we call a method on Game after
-  # (maybe) adding it to history?
-
-  def call_after?
-    CALL_AFTER.any? { |p,m| @move =~ p }
-  end
-
-  # If this move is stored in History, get the module to mixin.
-
-  def special_module
-    p, m = HISTORY_SPECIAL_MOVES.find { |p,m| @move =~ p }
-    m
-  end
-
-  # Return true if the move is not played by the #by player.  (eg, the system
-  # plays the move)
-
-  def system?
-    special? && [TimeExceeded, NegotiatedDraw].include?( special_module )
-  end
-
-  # If this move results in a method call on Game, get the method and args
-
-  def before_call
-    CALL_BEFORE.each do |p,s| 
-      if @move =~ p 
-        return [s, $~.captures]
-      end
-    end
-    nil
-  end
-
-  # If this move results in a method call on Game, get the method and args
-
-  def after_call
-    CALL_AFTER.each do |p,s| 
-      if @move =~ p 
-        return [s, $~.captures]
-      end
-    end
-    nil
-  end
-
-  # Who is this special move by?  This is used to extract a player name
-  # for Position#apply_special.
-
-  def special_by
-    player = nil
-    HISTORY_SPECIAL_MOVES.each { |p,m| player = $1.intern if @move =~ p && $1 }
-    player
+    false
   end
 
   # Apply this move to the given position.  If necessary a module will be
@@ -204,16 +86,23 @@ class Move
   # is mixed in (a normal move) then Position#apply is called.  The resulting
   # position is returned.
 
-  def apply_to( position )
-    if mod = special_module
-      p = position.dup
-      p.extend mod
-      p.apply_special( @move, by )
-      p
+  def apply_to_position( p )
+    p.apply( @move, by )
+  end
 
-    else
-      position.apply( @move, by )
+  def apply_to_game( g )
+    g.history.append( self )
+  end
+
+  def apply_to( o )
+    case o
+      when Position  then apply_to_position( o )
+      when Game      then apply_to_game( o )
     end
+  end
+
+  def valid_for?( game, player=nil )
+    (player.nil? || player == by) && game.move?( @move, by )
   end
 
   # Move's respond to any methods the underlying move object responds to.

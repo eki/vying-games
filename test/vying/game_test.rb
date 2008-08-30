@@ -73,11 +73,11 @@ class TestGame < Test::Unit::TestCase
 
     g = Game.new Footsteps
     assert_equal( [:left, :right], g.has_moves )
-    g << g.moves( :left ).first
+    g[:left] << g[:left].moves.first
     assert_equal( [:right], g.has_moves )
-    g << g.moves( :right ).first
+    g[:right] << g[:right].moves.first
     assert_equal( [:left, :right], g.has_moves )
-    g << g.moves( :right ).first
+    g[:right] << g[:right].moves.first
     assert_equal( [:left], g.has_moves )
   end
 
@@ -455,7 +455,7 @@ class TestGame < Test::Unit::TestCase
                    "time_exceeded_by_red",
                    "time_exceeded_by_blue",
                    "reject_undo"].sort,
-                  g.special_moves.sort )
+                  g.special_moves.map { |m| m.to_s }.sort )
 
     g[:white].user << "accept_undo"
     g.step

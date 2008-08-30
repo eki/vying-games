@@ -241,66 +241,21 @@ class Game
   # be used if the player argument cannot be inferred.  (Or, use Player#<<)
 
   def append( move, player=nil )
-    if move.kind_of?( Move )
-      player = move.by
-    else
-      move = move.to_s
-    end
+    m = wrap_move( move, player )
 
-    # If player is nil, try to initialize it
+    if m && m.valid_for?( self, player )
+      m.apply_to( self )
 
-    if player.nil? 
-      if has_moves == [:random]
-        player = :random
-      elsif has_moves.length == 1 && move?( move, has_moves.first )
-        player = has_moves.first
-      else
-        ps = player_names.select do |p| 
-          move?( move, p ) || special_move?( move, p )
-        end
-
-        if ps.length == 1
-          player = ps.first
-        elsif ps.length > 1
-          raise "'#{move}' is ambiguous (available to #{ps.inspect})"
-        end
-      end
-    end
-
-    if player.nil? && ! special_move?( move )
-      raise "Unable to determine player for move '#{move}'"
-    end
-
-    if move?( move, player )
-      history.append( move, player )
-
-      if check_cycles?
+      if check_cycles? && ! m.special?
         (0...(history.length-1)).each do |i|
           history.last.cycle_found if history[i] == history.last
         end
       end
 
       return self
-
-    elsif special_move?( move, player )
-
-      m = Move.new( move, player )
-
-      sym, args = m.before_call
-      send( sym, *args ) if sym
-
-      if m.add_to_history?
-        history.append( move, player )
-      else
-        history.instance_variable_set( "@last_move_at", Time.now )
-      end
-
-      sym, args = m.after_call
-      send( sym, *args ) if sym
-
-      return self
     end
-    raise "'#{move}' not a valid move"
+
+    raise "'#{move}' not a valid move for '#{player}'"
   end
 
   # Append a list of moves to this game.  Calls Game#append for each move
@@ -335,6 +290,25 @@ class Game
     else
       return append( moves )
     end
+  end
+
+  # Turn the given move into a Move (or SpecialMove).  Does not attempt
+  # to validate the given move, though it may have to in order to determine
+  # the player if it's nil.
+
+  def wrap_move( move, player=nil )
+    return SpecialMove[move]        if SpecialMove[move]
+    return Move.new( move, player ) if player
+    
+    hm = has_moves
+   
+    return Move.new( move, hm.first ) if hm.length == 1 
+
+    ps = hm.select { |p| move?( move, p ) }
+
+    raise "'#{move}' is ambiguous (available to #{ps.inspect})" if ps.length > 1
+
+    Move.new( move, ps.first ) if ps.length == 1
   end
 
   # Undo a single move.  This returns [position, move, move_by] that have been
@@ -429,7 +403,7 @@ class Game
             move = "reject_draw"
           end
 
-          self << move
+          append( move, p.name )
           return [move, p.name]
         end
       end
@@ -447,7 +421,7 @@ class Game
             move = "reject_undo"
           end
 
-          self << move
+          append( move, p.name )
           return [move, p.name]
         end
       end
@@ -457,7 +431,7 @@ class Game
 
 
     player_names.each do |p|
-      if self[p].user.ready?
+      if self[p].user && self[p].user.ready?
         position, move = history.last.censor( p ), nil
 
         # Handle draw offers
@@ -477,7 +451,7 @@ class Game
         end
 
         unless move.nil?
-          history.append( move, p )
+          append( move, p )
           return [move, p]
         end
       end
@@ -485,23 +459,18 @@ class Game
 
     has_moves.each do |p|
       if player_names.include?( p )
-        if self[p].user.ready?
+        if self[p].user && self[p].user.ready?
           position = history.last.censor( p )
 
           # Ask for an move
           move = self[p].user.select( sequence, position, p )
           if move?( move, p )
-            self << move 
+            append( move, p )
             return [move, p]
           else
             raise "#{self[p].username} attempted invalid move: #{move}"
           end
         end
-      elsif p == :random
-        moves = history.last.moves
-        move = moves[history.last.rng.rand(moves.size)]
-        self << move
-        return [move, :random]
       end
     end
 
@@ -575,114 +544,20 @@ class Game
     has_moves.select { |p| move?( move, p ) }
   end
 
-  # Returns a list of special moves (resign, offer draw, and the like).
+  # Returns a list of valid special moves (resign, offer draw, and the like).
 
   def special_moves( player=nil )
-    return [] if final?
-
-    moves = []
-
-    if pie_rule? && sequence.length >= 1 && 
-       (player.nil? || player != player_names.first) &&
-       ! has_moves?( player_names.first ) &&
-       history.move_by.all? { |p| p == player_names.first }
-      moves << "swap"
-    end
-
-    if draw_offered?
-      return [] if draw_offered_by?( player )
-      return [] if draw_accepted_by?( player )
-
-      unless player.nil? || draw_accepted_by?( player )
-        return ["draw_accepted_by_#{player}", "reject_draw"]
-      end
-
-      player_names.each do |p|
-        unless draw_offered_by?( p ) || draw_accepted_by?( p )
-          moves << "draw_accepted_by_#{p}"
-        end
-      end
-
-      moves << "reject_draw"
-
-    elsif undo_requested?
-      return [] if undo_requested_by?( player )
-      return [] if undo_accepted_by?( player )
-
-      unless player.nil? || undo_accepted_by?( player )
-        return ["undo_accepted_by_#{player}", "reject_undo"]
-      end
-
-      player_names.each do |p|
-        unless undo_requested_by?( p ) || undo_accepted_by?( p )
-          moves << "undo_accepted_by_#{p}"
-        end
-      end
-
-      moves << "reject_undo"
-
-    else
-      normal_undo = false
-
-      player_names.each do |p|
-        if history.length > 1
-          last = history.last
-          next_to_last = history[history.length - 2]
-          if last.has_moves?( p ) && next_to_last.has_moves?( p )
-            normal_undo = true
-            moves << "undo"  if player.nil? || p == player
-          end
-        end
-      end
-
-      player_names.each do |p|
-        if player.nil? || p == player
-          moves << "undo_requested_by_#{p}" unless normal_undo ||
-                                                   sequence.length == 0
-          if player_names.length == 2
-            moves << "#{p}_resigns"
-            moves << "draw_offered_by_#{p}" if allow_draws_by_agreement?
-          end
-        end
-      end
-
-    end
-
-    if player.nil?
-      moves << "draw" if allow_draws_by_agreement?
-      player_names.each do |p|
-        moves << "time_exceeded_by_#{p}"
-      end
-    end
-
-    if unrated?
-      if player.nil?
-        players.each do |p|
-          moves << "#{p.name}_withdraws" if p.user
-        end
-        players.each do |p|
-          moves << "kick_#{p.name}" if p.user
-        end
-      else
-        moves << "#{player}_withdraws" if self[player].user
-      end
-    end
-
-    if unrated?
-      players.each do |p|
-        if p.user && (player.nil? || (p.name != player && self[player].user))
-          moves << "kick_#{p.name}"
-        end
-      end
-    end
-
-    moves
+    SpecialMove.generate_for( self, player )
   end
 
   # Is the given move a valid special move?
 
   def special_move?( move, player=nil )
-    special_moves( player ).include?( move )
+    if move.kind_of?( Move ) && move.special?
+      move.valid_for?( self, player )
+    elsif move = SpecialMove[move]
+      move.valid_for?( self, player )
+    end
   end
 
   # Who can make special moves?
@@ -725,7 +600,7 @@ class Game
   def accept_draw
     if draw_accepted?
       undo while draw_offered?
-      history.append( "draw", nil )
+      history.append( SpecialMove["draw"] )
     end
   end
 
