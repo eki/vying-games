@@ -168,6 +168,17 @@ class Rules
     @broken
   end
 
+  # Is the given player one of the players for these rules?
+  #
+  # This is the equivalent of:
+  #
+  #   players.include?( p )
+  #
+
+  def player?( p )
+    players.include?( p )
+  end
+
   # Does the game defined by these rules have random elements?
   #
   # This property can be set like this:
