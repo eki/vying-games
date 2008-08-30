@@ -64,7 +64,7 @@ class SpecialMove < Move
       end
     end
 
-    @@special_moves_list = []
+    @@special_moves_list, @@instance_cache = [], {}
 
     # When a subclass extends SpecialMove it's added to @@special_move_list.
 
@@ -77,9 +77,10 @@ class SpecialMove < Move
     end
 
     def []( s )
-      return s if s.kind_of?( SpecialMove )
+      return s                    if s.kind_of?( SpecialMove )
+      return @@instance_cache[s]  if @@instance_cache[s]
 
-      list.each { |sm| m = sm[s]; return m if m }; nil
+      list.each { |sm| m = sm[s]; return @@instance_cache[s] = m if m }; nil
     end
 
     def generate_for( game, player=nil ) 
