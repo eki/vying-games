@@ -30,7 +30,11 @@ class SpecialMove < Move
   def apply_to_game( g )
     before_apply( g )
 
-    g.history.append( self )  if effects_history?
+    if effects_history?
+      g.history.append( self )
+    else
+      g.history.instance_variable_set( "@last_move_at", Time.now )
+    end
 
     after_apply( g )
   end
