@@ -21,6 +21,7 @@ end
 
 require 'yaml'
 
+require 'vying/const'
 require 'vying/dup'
 require 'vying/memoize'
 
