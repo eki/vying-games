@@ -137,6 +137,14 @@ class Move
     method_missing( :y )
   end
 
+  def _dump( depth=-1 )
+    Marshal.dump( [@move, by] )
+  end
+
+  def self._load( str )
+    Move.new( * Marshal.load( str ) )
+  end
+
   class << self
     extend Memoizable
     memoize :new

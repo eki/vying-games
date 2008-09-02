@@ -93,5 +93,14 @@ class SpecialMove < Move
 
     private :new
   end
+
+  def _dump( depth=-1 )
+    to_s
+  end
+
+  def self._load( str )
+    SpecialMove[str]
+  end
+
 end
 
