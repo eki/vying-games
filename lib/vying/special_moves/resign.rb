@@ -28,7 +28,7 @@ class Move::Resign < SpecialMove
   end
 
   module PositionMixin
-    def apply_special( move, player )
+    def apply_special_move( move, player )
       @resigned_by = player
     end
 

@@ -32,7 +32,7 @@ class Move::OfferDraw < SpecialMove
   end
 
   module PositionMixin
-    def apply_special( move, player )
+    def apply_special_move( move, player )
       @offered_by = player
     end
 

@@ -31,7 +31,7 @@ class Move::Swap < SpecialMove
   end
 
   module PositionMixin
-    def apply_special( move, player )
+    def apply_special_move( move, player )
     end
   end
 end

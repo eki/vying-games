@@ -32,7 +32,7 @@ class Move::RequestUndo < SpecialMove
 
 
   module PositionMixin
-    def apply_special( move, player )
+    def apply_special_move( move, player )
         @requested_by = player
     end
 

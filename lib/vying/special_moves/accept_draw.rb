@@ -34,7 +34,7 @@ class Move::AcceptDraw < SpecialMove
 
 
   module PositionMixin
-    def apply_special( move, player )
+    def apply_special_move( move, player )
       @accepted_by ||= []
       @accepted_by << player
       @waiting_for = players - [@offered_by] - @accepted_by

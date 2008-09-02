@@ -21,9 +21,8 @@ class SpecialMove < Move
   end
 
   def apply_to_position( p )
-    p = p.dup
-    p.extend self.class.const_get( :PositionMixin )
-    p.apply_special( @move, by )
+    p = p.extend_special_mixin( self.class.const_get( :PositionMixin ) )
+    p.apply_special_move( @move, by )
     p
   end
 

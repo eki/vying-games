@@ -33,7 +33,7 @@ class Move::AcceptUndo < SpecialMove
   end
 
   module PositionMixin
-    def apply_special( move, player )
+    def apply_special_move( move, player )
       @accepted_by ||= []
       @accepted_by << player
       @waiting_for = players - [@requested_by] - @accepted_by

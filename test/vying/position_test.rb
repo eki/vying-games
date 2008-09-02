@@ -66,5 +66,40 @@ class TestPosition < Test::Unit::TestCase
     assert_equal( [:red, :blue], p.opponent( :white ) )
   end
 
+  def test_dup_with_special_move_mixin
+    p = Connect6.new
+
+    p2 = SpecialMove["draw"].apply_to_position( p )
+
+    assert_not_equal( p, p2 )
+    assert_equal( p2, p2.dup )
+    assert_equal( p2.draw?, p2.dup.draw? )
+
+    p3 = p2.remove_special_mixin
+
+    assert_not_equal( p2, p3 )
+    assert_equal( p, p3 )
+    assert_not_equal( p2.draw?, p3.draw? )
+  end
+
+  def test_marshal_with_special_move_mixin
+    p = Connect6.new
+
+    p2 = SpecialMove["draw"].apply_to_position( p )
+
+    assert_not_equal( p, p2 )
+    assert_equal( p2, Marshal.load( Marshal.dump( p2 ) ) )
+    assert_equal( p2.draw?, Marshal.load( Marshal.dump( p2 ) ).draw? )
+  end
+
+  def test_yaml_with_special_move_mixin
+    p = Connect6.new
+
+    p2 = SpecialMove["draw"].apply_to_position( p )
+
+    assert_not_equal( p, p2 )
+    assert_equal( p2, YAML.load( p2.to_yaml ) )
+    assert_equal( p2.draw?, YAML.load( p2.to_yaml ).draw? )
+  end
 end
 

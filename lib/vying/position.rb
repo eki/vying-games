@@ -71,12 +71,27 @@ class Position
     end
   end
 
+  # __dup will make a deep copy, but will *not* extend the copy with any mixins
+
+  alias_method :__dup, :dup
+
+  # Replaces the original #dup with one that will extend the copy with any
+  # special mixins.  (See #extend_special_mixin)
+
+  def dup
+    p = __dup
+    v = p.instance_variable_get( "@includes" )
+    p.extend Kernel.nested_const_get( v ) unless v.nil?
+    p
+  end
+
   # Attempts to provide an equality check by comparing unignored instance
   # variables.  If an instance variable has no weight in the equality of
   # two positions, use Rules#ignore to omit it from this check.
 
   def eql?( o )
-    instance_variables.each do |iv|
+    ivs = instance_variables | o.instance_variables
+    ivs.each do |iv|
       if instance_variable_get(iv) != o.instance_variable_get(iv) &&
          ! self.class.ignored?( iv )
         return false
@@ -110,6 +125,9 @@ class Position
   def self.ignored?( iv )
     !! ((@ignore && @ignore.include?( iv.to_s )) || iv.to_s =~ /^@__/)
   end
+
+  # Clear any caching done by Rules.cache.  This will set any cache
+  # instance variables (of the form /^@__.*_cache$/ to nil.
 
   def clear_cache
     instance_variables.each do |iv|
@@ -274,6 +292,30 @@ class Position
     moves( player ).map { |move| apply( move, player ) }
   end
 
+  # Extend this Position with a special move mixin.  The mixin changes the
+  # behavior of this Position.  For example, mixing in
+  # Move::Draw::PositionMixin will change the normal behavior of #draw?.
+  # This method is used by SpecialMove#apply_to_position and should probably
+  # not be used directly.
+  #
+  # Note: This returns the extended position, this position remains unchanged.
+
+  def extend_special_mixin( mixin )
+    p = __dup
+    p.instance_variable_set( "@includes", mixin.to_s )
+    p.extend mixin
+    p
+  end
+
+  # Remove the special move mixin.  This returns a copy of this position
+  # without the special mixin.  This position is unchanged.
+
+  def remove_special_mixin
+    p = __dup
+    p.instance_variable_set( "@includes", nil )
+    p
+  end
+
   # Marshal this position.  Don't dump any cache instance variables.
 
   def _dump( depth=-1 )
@@ -286,19 +328,39 @@ class Position
     Marshal.dump( ivs )
   end
 
-  # Load a marshalled position.  See Position#_dump.
+  # Load a marshalled position.  See Position#_dump.  Also, reconstitutes
+  # any methods that have been mixed in via #extend_special_mixin.
 
   def self._load( s )
     p, ivs = self.allocate, Marshal.load( s )
-    ivs.each { |iv, v| p.instance_variable_set( iv, v ) }
+    ivs.each do |iv, v| 
+      p.instance_variable_set( iv, v )
+      p.extend Kernel.nested_const_get( v ) if iv == "@includes"
+    end
     p
   end
 
-  # Custom list of properties to be dumped to yaml.  Don't serialize any
-  # caches.
+  # Custom YAML type.
 
-  def to_yaml_properties
-    instance_variables.select { |iv| iv !~ /^@__.*_cache$/ }
+  def to_yaml_type
+    "!vying.org,2008/position"
+  end
+
+  # Dump this position to YAML.  Dumps the rules and instance variables
+  # (without the @ prefix) minus any cache instance variables.  The custom
+  # loading code will extend the Position with any special mixins.
+
+  def to_yaml( opts = {} )
+    YAML::quick_emit( self.object_id, opts ) do |out|
+      out.map( taguri, to_yaml_style ) do |map|
+        map.add( 'rules', rules )
+        instance_variables.each do |iv|
+          if iv !~ /^@__.*_cache$/
+            map.add( iv[1,iv.length], instance_variable_get( iv ) )
+          end
+        end
+      end
+    end
   end
 
   # Returns a very basic string representation of this position.
@@ -415,5 +477,18 @@ class Position
     self
   end
 
+end
+
+# Reconstitute a YAML-ized Position.  Will extend the position with a special
+# mixin if one is present.
+
+YAML.add_domain_type( "vying.org,2008", "position" ) do |type, val|
+  r = val.delete( 'rules' )
+  p = r.position_class.allocate
+  val.each do |iv, v|
+    p.instance_variable_set( "@#{iv}", v )
+    p.extend Kernel.nested_const_get( v ) if iv == "includes"
+  end
+  p
 end
 
