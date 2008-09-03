@@ -50,14 +50,6 @@ class String
     $1.to_i-1 if self =~ /^\w(\d+)$/
   end
 
-  # Compatibility with Ruby 1.9
-
-  unless method_defined?( :ord )
-    def ord
-      self[0]
-    end
-  end
-
   # If this string represents multipe coordinates in the form "([a-z][1-9]+)*",
   # they are parsed out and returned as an array of Coord's.
 

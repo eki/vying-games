@@ -8,7 +8,7 @@ class TestSpecialMoves < Test::Unit::TestCase
       assert( sm.respond_to?( :[] ) )
       assert( sm.respond_to?( :generate_for ) )
 
-      assert( sm.instance_methods.include?( 'valid_for?' ) )
+      assert( sm.instance_method_defined?( 'valid_for?' ) )
 
       assert( sm.method( :[] ).arity == 1 )
       assert( sm.method( :generate_for ).arity == -2 )

@@ -335,7 +335,7 @@ class Position
     p, ivs = self.allocate, Marshal.load( s )
     ivs.each do |iv, v| 
       p.instance_variable_set( iv, v )
-      p.extend Kernel.nested_const_get( v ) if iv == "@includes"
+      p.extend Kernel.nested_const_get( v ) if iv.to_s == "@includes"
     end
     p
   end

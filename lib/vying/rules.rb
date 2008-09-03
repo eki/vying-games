@@ -240,7 +240,7 @@ class Rules
   # Do these rules define a score?
 
   def has_score?
-    position_class.instance_methods.include?( 'score' ) 
+    position_class.instance_method_defined?( 'score' ) 
   end
 
   # Does the game defined by these rules allow use of the pie rule?  The
@@ -278,11 +278,11 @@ class Rules
   def sealed_moves?
     return @sealed_moves if @sealed_moves
 
-    if position_class.private_instance_methods.include?( '__original_moves' )
+    if position_class.private_instance_method_defined?( '__original_moves' )
       original_moves = position_class.instance_method( :__original_moves )
     end
 
-    if position_class.private_instance_methods.include?( '__original_apply!' )
+    if position_class.private_instance_method_defined?( '__original_apply!' )
       original_apply = position_class.instance_method( :__original_apply! )
     end
 
@@ -312,7 +312,7 @@ class Rules
   # TODO: Clean this up a little more.
 
   def respond_to?( m )
-    super || !! (instance_variables.include?( "@#{m}" ))
+    super || !! (instance_variable_defined?( "@#{m}" ))
   end
 
   # Returns the name attribute of these Rules.  If name hasn't been set, the
