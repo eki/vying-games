@@ -26,8 +26,8 @@ class MancalaNotation < Notation
   FROM = [ ['F', 'E', 'D', 'C', 'B', 'A'],
            ['a', 'b', 'c', 'd', 'e', 'f'] ]
 
-  def translate( move )
-    move.special? ? move : FROM[move.y][move.x]
+  def translate( move, player )
+    Coord[move] ? FROM[move.y][move.x] : move
   end
 
 end
