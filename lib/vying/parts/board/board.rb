@@ -7,12 +7,20 @@ class Board
   attr_reader :coords, :cells, :width, :height, :occupied
   protected :cells
 
-  # Initialize a board of the given width and height.  The default is 8x8
-  # and completely empty.
+  # Initialize a board.
 
-  def initialize( w=8, h=8 )
-    @width, @height, @cells = w, h, Array.new( w*h, nil )
-    @coords = Coords.new( width, height )
+  def initialize( h )
+
+    if h[:width] && h[:height]
+      @width, @height, @cells = h[:width], h[:height], Array.new( w*h, nil )
+
+      if h[:omit]
+        @coords = Coords.new( width, height, h[:omit].map { |c| Coord[c] } )
+      else
+        @coords = Coords.new( width, height )
+      end
+    end
+
     @occupied = Hash.new( [] )
     @occupied[nil] = @coords.to_a.dup
   end
