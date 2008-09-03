@@ -58,6 +58,16 @@ if Vying::RandomSupport
       assert_equal( 2, g.score( :blue ) )
     end
 
+    def test_valid_block_patterns
+      rules.blocks.each do |pattern|
+        chars = pattern.split( // )
+        assert_equal( chars.length, chars.uniq.length )
+        chars.each do |c|
+          assert( rules.block_coords.key?( c ) )
+        end
+      end
+    end
+
   end
 
 end
