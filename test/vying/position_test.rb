@@ -66,6 +66,43 @@ class TestPosition < Test::Unit::TestCase
     assert_equal( [:red, :blue], p.opponent( :white ) )
   end
 
+  def test_move_with_move
+    p = Footsteps.new  # Footsteps doesn't implement move?
+
+    assert_equal( p.move?( 2, :left ), p.move?( Move.new( 2, :left ) ) )
+
+    p2 = p.apply( 2, :left )
+
+    assert_equal( p2.move?( 4, :right ), p2.move?( Move.new( 4, :right ) ) )
+    assert( ! p2.move?( 4, :left ) )
+    assert( ! p2.move?( Move.new( 4, :left ) ) )
+  end
+
+  def test_move_with_move_02
+    p = Othello.new    # Othello implements move?
+
+    assert_equal( p.move?( :d3, :black ), p.move?( Move.new( :d3, :black ) ) )
+
+    p2 = p.apply( :d3, :black )
+
+    assert_equal( p2.move?( :c3, :white ), p2.move?( Move.new( :c3, :white ) ) )
+    assert( ! p2.move?( :c3, :black) )
+    assert( ! p2.move?( Move.new( :c3, :black ) ) )
+  end
+
+  def test_apply_with_move
+    p = Footsteps.new
+
+    assert_equal( p.apply( 2, :left ), p.apply( Move.new( 2, :left ) ) )
+    assert_equal( p.apply( 4, :right ), p.apply( Move.new( 4, :right ) ) )
+  end
+
+  def test_ambiguous_move
+    p = Footsteps.new
+
+    assert_raise( RuntimeError ) { p.apply( 2 ) }
+  end
+
   def test_dup_with_special_move_mixin
     p = Connect6.new
 

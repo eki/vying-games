@@ -207,6 +207,8 @@ class Position
   # all possible moves.
 
   def move?( move, player=nil )
+    player = move.by  if player.nil? && move.respond_to?( :by )
+
     moves( player ).any? { |m| m.to_s == move.to_s }
   end
 
@@ -419,11 +421,7 @@ class Position
   def __move?( move, player=nil )
     hm = has_moves
 
-    if player.nil?
-      if move.respond_to?( :by ) && hm.include?( move.by )
-        player = move.by
-      end
-    end
+    player = move.by  if player.nil? && move.respond_to?( :by )
 
     return false unless player.nil? || hm.include?( player )
 
