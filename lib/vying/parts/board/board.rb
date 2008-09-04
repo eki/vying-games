@@ -98,9 +98,15 @@ class Board
   # Clear all the pieces from the board.
 
   def clear
+    fill( nil )
+  end
+
+  # Fill the entire board with the given piece.
+
+  def fill( p )
     @cells.each_index { |i| @cells[i] = nil }
     @occupied = Hash.new( [] )
-    @occupied[nil] = @coords.to_a.dup
+    @occupied[p] = @coords.to_a.dup
     self
   end
 
