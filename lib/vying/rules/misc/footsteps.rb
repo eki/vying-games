@@ -97,10 +97,6 @@ Rules.create( "Footsteps" ) do
 
       position
     end
-
-    def turn
-      has_moves.first
-    end
   end
 
 end
