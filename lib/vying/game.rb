@@ -297,6 +297,7 @@ class Game
   # the player if it's nil.
 
   def wrap_move( move, player=nil )
+    return move                     if move.kind_of?( Move )
     return SpecialMove[move]        if SpecialMove[move]
     return Move.new( move, player ) if player
     
