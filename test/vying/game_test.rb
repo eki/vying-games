@@ -91,6 +91,17 @@ class TestGame < Test::Unit::TestCase
     assert_equal( [move], g.sequence )
   end
 
+  def test_users
+    g = Game.new TicTacToe
+    g[:x].user = Human.new "john_doe"
+    g[:o].user = RandomBot.new "randombot"
+
+    assert_equal( 2, g.users.length )
+    assert( g.users.all? { |u| u.kind_of?( User ) } )
+    assert( g.users.include?( Human.new( "john_doe" ) ) )
+    assert( g.users.include?( RandomBot.new( "randombot" ) ) )
+  end
+
   def test_resign
     g = Game.new TicTacToe
 

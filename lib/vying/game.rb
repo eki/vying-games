@@ -355,7 +355,7 @@ class Game
   # Returns the users playing this game (in player order).
 
   def users
-    player_names.map { |p| self[p] }
+    player_names.map { |p| self[p].user }
   end
 
   # returns the names of the players for this game.  This is the equivalent
