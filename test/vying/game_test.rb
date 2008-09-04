@@ -536,32 +536,6 @@ class TestGame < Test::Unit::TestCase
     assert( ! g.special_move?( "undo_requested_by_black", :black ) )
   end
 
-  def test_human
-    u = Human.new
-    
-    assert( ! u.accept_draw?( nil, nil, nil ) )
-
-    u << "accept_draw"
-
-    assert( u.accept_draw?( nil, nil, nil ) )
-    assert( ! u.accept_draw?( nil, nil, nil ) )
-
-    u << "blah"
-
-    assert( ! u.accept_draw?( nil, nil, nil ) )
-    assert_equal( "blah", u.select( nil, nil, nil ) )
-
-    u << "offer_draw"
-
-    assert( u.offer_draw?( nil, nil, nil ) )
-    assert( ! u.offer_draw?( nil, nil, nil ) )
-
-    u << "resign"
-
-    assert( u.resign?( nil, nil, nil ) )
-    assert( ! u.resign?( nil, nil, nil ) )
-  end
-
   def test_who
     g = Game.new TicTacToe
 
