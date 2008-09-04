@@ -58,7 +58,8 @@ class TestThreeMusketeers < Test::Unit::TestCase
     g.board[:a2,:b2,:b1] = :red
     g.rotate_turn
 
-    assert_equal( :blue, g.turn )
+    assert_equal( :blue, g.history.last.turn )
+    assert_equal( nil, g.turn )
     assert_equal( [], g.moves )
     assert( g.final? )
     assert( g.winner?( :red ) )

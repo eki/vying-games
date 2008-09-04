@@ -533,10 +533,12 @@ class Game
   end
 
   # You shouldn't rely on turn.  Use #has_moves instead.  Game#turn provides
-  # has_moves.first anyway, not the underlying Position#turn.
+  # has_moves.first anyway, not the underlying Position#turn.  And, unlike
+  # Position#turn, Game#turn will return nil if Game#final? is true (due to
+  # it being based on #has_moves which returns [] in that case).
 
   def turn
-    has_moves.first || history.last.turn
+    has_moves.first
   end
 
   # Who can play the given move?

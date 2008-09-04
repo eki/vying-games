@@ -97,7 +97,7 @@ class TestLinesOfAction < Test::Unit::TestCase
     assert( g.all_connected?( g.board.occupied[:black] ) )
     assert( g.all_connected?( g.board.occupied[:white] ) )
 
-    assert_equal( :white, g.turn )
+    assert_equal( :white, g.history.last.turn )
 
     assert( g.final? )
 
