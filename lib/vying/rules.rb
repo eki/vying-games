@@ -86,7 +86,7 @@ class Rules
       Kernel.const_set( class_name, rules )
     end
 
-    if ! rules.random? || Vying::RandomSupport
+    if ! rules.random? || Vying.random_support?
       list << rules
 
       in_list = false

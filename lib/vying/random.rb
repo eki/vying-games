@@ -5,7 +5,7 @@ begin
   require 'random'
 
   module Vying
-    RandomSupport = true
+    RANDOM_SUPPORT = true
   end
 
   # RandomNumberGenerator is a thin wrapper around Random::MersenneTwister.  It
@@ -87,7 +87,7 @@ begin
 rescue LoadError
 
   module Vying
-    RandomSupport = false
+    RANDOM_SUPPORT = false
   end
 
   # RandomNumberGenerator is a thin wrapper around Random::MersenneTwister.  It

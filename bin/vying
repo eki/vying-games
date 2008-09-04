@@ -15,7 +15,7 @@ elsif ARGV.first == "--version" || ARGV.first == "-v"
 
   puts Vying.version
 
-  if Vying::RandomSupport
+  if Vying.random_support?
     puts "  random support available"
   else
     puts "  'random' gem missing -- some games disabled"

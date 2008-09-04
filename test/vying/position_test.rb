@@ -5,7 +5,7 @@ require 'vying'
 class TestPosition < Test::Unit::TestCase
 
   def test_censor
-    return unless Vying::RandomSupport
+    return unless Vying.random_support?
 
     p = Ataxx.new 1234
     assert_equal( :hidden, p.censor( :red ).rng )

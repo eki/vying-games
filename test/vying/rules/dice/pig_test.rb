@@ -3,7 +3,7 @@ require 'test/unit'
 require 'vying'
 require 'vying/rules/rules_test'
 
-if Vying::RandomSupport
+if Vying.random_support?
 
   class TestPig < Test::Unit::TestCase
     include RulesTests

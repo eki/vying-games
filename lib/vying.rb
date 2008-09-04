@@ -11,6 +11,10 @@ module Vying
     v = const_defined?( :VERSION ) ? VERSION : "git master"
     "#{v}"
   end
+
+  def self.random_support?
+    RANDOM_SUPPORT
+  end
 end
 
 begin

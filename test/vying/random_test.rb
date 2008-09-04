@@ -2,7 +2,7 @@
 require 'test/unit'
 require 'vying'
 
-if Vying::RandomSupport
+if Vying.random_support?
 
   class TestRandomNumberGenerator < Test::Unit::TestCase
     def test_initialize
