@@ -24,11 +24,11 @@ class Bot < User
   end
 
   def self.plays?( rules )
-    self.const_defined?( rules.class_name.intern )
+    self.const_defined?( rules.class_name.intern, false )
   end
 
   def plays?( rules )
-    self.class.const_defined?( rules.class_name.intern )
+    self.class.const_defined?( rules.class_name.intern, false )
   end
 
   def delegate_for( position )
@@ -36,8 +36,8 @@ class Bot < User
 
     return @delegates[k] if @delegates.key?( k )
 
-    if self.class.const_defined?( k )
-      @delegates[k] = self.class.const_get( k ).new
+    if self.class.const_defined?( k, false )
+      @delegates[k] = self.class.const_get( k, false ).new
       @delegates[k].cache = cache
       @delegates[k]
     end
@@ -215,8 +215,8 @@ class Bot < User
   end
 
   def self.difficulty_for( rules )
-    if self.const_defined?( "#{rules.class_name}".intern )
-      d = self.const_get( "#{rules.class_name}".intern ).difficulty
+    if self.const_defined?( "#{rules.class_name}".intern, false )
+      d = self.const_get( "#{rules.class_name}".intern, false ).difficulty
       return DIFFICULTY_LEVELS.invert[d] if d && DIFFICULTY_LEVELS.invert[d]
     end
     return :unknown

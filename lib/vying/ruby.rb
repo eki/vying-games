@@ -27,6 +27,32 @@ class Module
     s.split( /::/ ).inject( Kernel ) { |m,s| m.const_get( s ) }
   end
 
+  # If this is ruby 1.8, replace const_get with one that takes an extra
+  # (optional) parameter.  The flag effects the behaviour of const_get
+  # in ruby 1.9.  TODO: The replacement doesn't behave in the same way
+  # const_get does under ruby 1.9.  This is much more of a hack than the
+  # other compatibility methods.
+
+  unless method( :const_get ).arity == -1
+    alias_method :__const_get, :const_get
+    def const_get( k, flag=true )
+      __const_get( k )
+    end
+  end
+
+  # If this is ruby 1.8, replace const_defined? with one that takes an extra
+  # (optional) parameter.  The flag effects the behaviour of const_defined?
+  # in ruby 1.9.  TODO: The replacement doesn't behave in the same way
+  # const_defined? does under ruby 1.9.  This is much more of a hack than the
+  # other compatibility methods.
+
+  unless method( :const_defined? ).arity == -1
+    alias_method :__const_defined?, :const_defined?
+    def const_defined?( k, flag=true )
+      __const_defined?( k )
+    end
+  end
+
   # Add instance_variable_defined? for ruby 1.8.  This is used in place of
   # instance_variables.include? because instance_variables has different
   # return values under ruby 1.8 and 1.9 (String vs Symbol).
