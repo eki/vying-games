@@ -3,8 +3,6 @@
 
 require 'vying'
 
-# TODO: Change scoring to include edges of the frame per marcosd
-
 Rules.create( "Frames" ) do
   name    "Frames"
   version "0.4.0"
@@ -97,10 +95,6 @@ Rules.create( "Frames" ) do
       end
 
       position
-    end
-
-    def turn
-      has_moves.first
     end
   end
 
