@@ -11,11 +11,12 @@ class TestUser < Test::Unit::TestCase
       User.new.select( TicTacToe.new, [], :x )
     end
 
-    assert( ! User.new.resign?( TicTacToe.new, [], :x ) )
-    assert( ! User.new.offer_draw?( TicTacToe.new, [], :x ) )
-    assert( ! User.new.accept_draw?( TicTacToe.new, [], :x ) )
-    assert( ! User.new.request_undo?( TicTacToe.new, [], :x ) )
-    assert( ! User.new.accept_undo?( TicTacToe.new, [], :x ) )
+    sequence, position, player = [], TicTacToe.new, :x
+    assert( ! User.new.resign?( sequence, position, player ) )
+    assert( ! User.new.offer_draw?( sequence, position, player ) )
+    assert( ! User.new.accept_draw?( sequence, position, player ) )
+    assert( ! User.new.request_undo?( sequence, position, player ) )
+    assert( ! User.new.accept_undo?( sequence, position, player ) )
   end
 
   def test_hash
