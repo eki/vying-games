@@ -67,6 +67,13 @@ module RulesTests
     assert( g.final? )
     assert( g.moves.empty? )
     assert( !g.move?( s[-1] ) )
+    assert( g.has_moves.empty? )
+
+    rules.players.each do |p|
+      assert( g.moves( p ).empty? )
+      assert( ! g.has_moves?( p ) )
+    end
+
     g
   end
 
