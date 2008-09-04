@@ -37,7 +37,7 @@ Rules.create( "Kalah" ) do
 
     def apply!( move )
       # Reset annotation
-      annotation[*annotation.coords.to_a] = "0"
+      annotation.fill( "0" )
 
       h = move.x
       r = move.y
