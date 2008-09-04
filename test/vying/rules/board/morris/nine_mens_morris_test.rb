@@ -235,11 +235,15 @@ class TestNineMensMorris < Test::Unit::TestCase
     assert( ! g.removing )
 
     assert( g.final? )
+    assert_equal( [], g.moves )
+    assert_equal( [], g.has_moves )
     assert( g.winner?( :white ) )
     assert( g.loser?( :black ) )
     assert( ! g.winner?( :black ) )
     assert( ! g.loser?( :white ) )
     assert( ! g.draw? )
+    assert_equal( 7, g.score( :white ) )
+    assert_equal( 4, g.score( :black ) )
   end
 end
 
