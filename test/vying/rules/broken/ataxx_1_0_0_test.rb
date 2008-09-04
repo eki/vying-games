@@ -5,11 +5,17 @@ require 'vying/rules/rules_test'
 
 if Vying::RandomSupport
 
-  class TestAtaxx < Test::Unit::TestCase
+  class TestAtaxx_1_0_0 < Test::Unit::TestCase
     include RulesTests
 
     def rules
       Rules.find( "Ataxx", "1.0.0" )
+    end
+
+    def test_info
+      assert_equal( "Ataxx", rules.name )
+      assert_equal( "1.0.0", rules.version )
+      assert( rules.random )
     end
 
     def test_initialize

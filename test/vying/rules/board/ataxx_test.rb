@@ -12,6 +12,12 @@ if Vying::RandomSupport
       Ataxx
     end
 
+    def test_info
+      assert_equal( "Ataxx", rules.name )
+      assert( rules.version > "1.0.0" )
+      assert( rules.random )
+    end
+
     def test_initialize
       g = Game.new( rules )
 
