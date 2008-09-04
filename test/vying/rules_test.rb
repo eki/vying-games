@@ -27,5 +27,15 @@ class TestRules < Test::Unit::TestCase
     assert(   Footsteps.sealed_moves? )
     assert( ! TicTacToe.sealed_moves? )
   end
+
+  def test_yaml
+    assert_equal( TicTacToe, YAML.load( TicTacToe.to_yaml ) )
+
+    r = Rules.find( Kalah, "1.0.0" )
+    assert_equal( r, YAML.load( r.to_yaml ) )
+
+    r = Rules.find( Kalah, "2.0.0" )
+    assert_equal( r, YAML.load( r.to_yaml ) )
+  end
 end
 
