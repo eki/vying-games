@@ -755,17 +755,17 @@ class TestGame < Test::Unit::TestCase
   end
 
   def test_consecutive_special_moves
-    g = Game.new( PahTum )
+    g = Game.new( Kalah )
 
-    g << g.moves.first
+    g << "c1"
 
     g << "swap"
 
-    g << "time_exceeded_by_black"
+    g << "time_exceeded_by_one"
 
     assert( g.time_exceeded? )
-    assert( g.time_exceeded_by?( :black ) )
-    assert_equal( :black, g.time_exceeded_by )
+    assert( g.time_exceeded_by?( :one ) )
+    assert_equal( :one, g.time_exceeded_by )
   end
 
   def test_history_since

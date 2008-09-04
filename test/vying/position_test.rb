@@ -59,11 +59,13 @@ class TestPosition < Test::Unit::TestCase
     assert_equal( :o, p.opponent( :x ) )
     assert_equal( :x, p.opponent( :o ) )
 
-    p = Hexxagon.new :number_of_players => 3
+    if Vying.random_support?
+      p = Hexxagon.new :number_of_players => 3
 
-    assert_equal( [:blue, :white], p.opponent( :red ) )
-    assert_equal( [:red, :white], p.opponent( :blue ) )
-    assert_equal( [:red, :blue], p.opponent( :white ) )
+      assert_equal( [:blue, :white], p.opponent( :red ) )
+      assert_equal( [:red, :white], p.opponent( :blue ) )
+      assert_equal( [:red, :blue], p.opponent( :white ) )
+    end
   end
 
   def test_move_with_move
