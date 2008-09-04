@@ -59,10 +59,10 @@ if Vying::RandomSupport
 
       moves = g.moves
 
-  #   assert_equal( ["a1b1", "a1a2", "a1b2", 
-  #                  "g7f6", "g7g6", "g7f7", 
-  #                  "a1c1", "a1c2", "a1a3", "a1b3", "a1c3", 
-  #                  "g7e5", "g7f5", "g7g5", "g7e6", "g7e7"].sort, moves.sort )
+      assert_equal( ["a1a2", "a1b1", "a1b2", "i5i6", "i5h5", "i5h4", "e9e8",
+                     "e9f9", "e9d8", "a1c1", "a1c2", "a1a3", "a1b3", "a1c3", 
+                     "i5g3", "i5g4", "i5g5", "i5h6", "i5i7", "e9c7", "e9d7", 
+                     "e9e7", "e9f8", "e9g9"].sort, moves.sort )
   
       g << g.moves.first until g.final?
 
@@ -80,11 +80,11 @@ if Vying::RandomSupport
       g.clear_blocks
       g.set_blocks( "" )
 
-  #   g << "a1a2"
+      g << "a1a2"
 
-  #   assert( g.has_score? )
-  #   assert_equal( 3, g.score( :red ) )
-  #   assert_equal( 2, g.score( :blue ) )
+      assert( g.has_score? )
+      assert_equal( 4, g.score( :red ) )
+      assert_equal( 3, g.score( :blue ) )
     end
 
   end
