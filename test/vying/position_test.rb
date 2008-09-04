@@ -137,8 +137,12 @@ class TestPosition < Test::Unit::TestCase
     p2 = SpecialMove["draw"].apply_to_position( p )
 
     assert_not_equal( p, p2 )
-    assert_equal( p2, YAML.load( p2.to_yaml ) )
-    assert_equal( p2.draw?, YAML.load( p2.to_yaml ).draw? )
+
+    p3 = YAML.load( p2.to_yaml )
+
+    assert_equal( p2, p3 )
+    assert_equal( p2.draw?, p3.draw? )
+    assert_equal( p2.rules, p3.rules )
   end
 end
 
