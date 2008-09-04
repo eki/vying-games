@@ -12,6 +12,7 @@ class TestKalah < Test::Unit::TestCase
 
   def test_info
     assert_equal( "Kalah", rules.name )
+    assert( rules.version > "1.0.0" )
   end
 
   def test_players
