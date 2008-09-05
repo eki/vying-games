@@ -473,3 +473,8 @@ class Position
 
 end
 
+# Namespace for all the Position subclasses.
+
+module Positions
+end
+

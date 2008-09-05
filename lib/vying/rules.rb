@@ -125,7 +125,7 @@ class Rules
 
   def position_class
     pkn = "#{class_name}_#{version.gsub( /\./, '_' )}"
-    Rules::Positions.const_get( pkn )
+    Positions.const_get( pkn )
   end
 
   # Validate options that can be passed to Rules#new.  Checks that all
@@ -351,27 +351,20 @@ class Rules
     Rules.find( class_name, version )
   end
 
-  # Returns the YAML type for a Rules object.
+  yaml_as "tag:ruby.yaml.org,2002:object:Rules"
 
-  def to_yaml_type
-    "!vying.org,2008/rules"
+  # Take over YAML deserialization.  Perform a lookup via Rules.find instead
+  # of allocating a new Rules object.
+
+  def Rules.yaml_new( klass, tag, val )
+    Rules.find( val['class_name'], val['version'] )
   end
 
-  # Dumps this Rules object to YAML.  Only the name (#to_sc actually) and
+  # Dumps this Rules object to YAML.  Only the class_name and 
   # version are dumped.
 
-  def to_yaml( opts = {} )
-    YAML::quick_emit( self.object_id, opts ) do |out|
-      out.map( taguri, to_yaml_style ) do |map|
-        map.add( 'name', to_sc )
-        map.add( 'version', version )
-      end
-    end
-  end
-
-  # Namespace for all the Position subclasses.
-
-  module Positions
+  def to_yaml_properties
+    ["@class_name", "@version"]
   end
 
   @list, @latest_versions = [], []
@@ -471,7 +464,7 @@ class Rules
 
     def position( &block )
       class_name = "#{@rules.class_name}_#{@rules.version.gsub( /\./, '_' )}"
-      klass = Rules::Positions.const_set( class_name, Class.new( Position ) )
+      klass = Positions.const_set( class_name, Class.new( Position ) )
 
       klass.class_eval( &block )
       klass.instance_variable_set( "@rules", @rules )
@@ -555,12 +548,5 @@ class Rules
 
   end
 
-end
-
-# Add the domain type processing for Rules to YAML.  This does a Rules.find
-# on the name and version encoded in YAML.
-
-YAML.add_domain_type( "vying.org,2008", "rules" ) do |type, val|
-  Rules.find( val['name'], val['version'] )
 end
 
