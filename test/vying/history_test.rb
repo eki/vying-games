@@ -78,6 +78,17 @@ class TestHistory < Test::Unit::TestCase
     assert_equal( h[1], h2[1] )
   end
 
+  def test_yaml
+    h = History.new( TicTacToe, nil, TicTacToe.options )
+    h.append( Move.new( "a1", TicTacToe.players.first ) )
+    h.append( Move.new( "a2", TicTacToe.players.last ) )
+    h.append( Move.new( "a3", TicTacToe.players.first ) )
+
+    h2 = YAML.load( h.to_yaml )
+    assert_equal( [], h2.instance_variable_get( "@positions" ) )
+    assert_equal( h, h2 )
+  end
+
 
 end
 
