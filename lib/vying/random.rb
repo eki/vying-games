@@ -162,9 +162,9 @@ class RandomNumberGenerator
 
     i = 1
     while i < N
-      @state[i] = (1812433253 * 
-                    (@state[i-1] ^ (@state[i-1] >> 30)) % (2**32) + i) &
-                    0xffffffff
+      @state[i] = 
+        (1812433253 * 
+          (@state[i-1] ^ (@state[i-1] >> 30)) % (2**32) + i) & 0xffffffff
       i += 1
     end
 

@@ -77,6 +77,11 @@ class TestRandomNumberGenerator < Test::Unit::TestCase
     assert_equal( rng2.rand( 1000 ), rng.rand( 1000 ) )
   end
 
+  def test_inspect
+    assert_equal( "#<RNG seed: 1234, count: 0>",
+                  RandomNumberGenerator.new( 1234 ).inspect )
+  end
+
   def test_rand_limit_seed_0
     a = [5, 0, 3, 3, 7, 9, 3, 5, 2, 4, 7, 6, 8, 8, 1, 6, 7, 7, 8, 1, 5, 9, 8,
 9, 4, 3, 0, 3, 5, 0, 2, 3, 8, 1, 3, 3, 3, 7, 0, 1, 9, 9, 0, 4, 7, 3, 2, 7, 2,
