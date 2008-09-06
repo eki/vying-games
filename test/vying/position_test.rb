@@ -5,8 +5,6 @@ require 'vying'
 class TestPosition < Test::Unit::TestCase
 
   def test_censor
-    return unless Vying.random_support?
-
     p = Ataxx.new 1234
     assert_equal( :hidden, p.censor( :red ).rng )
     assert_equal( :hidden, p.censor( :blue ).rng )
@@ -59,13 +57,11 @@ class TestPosition < Test::Unit::TestCase
     assert_equal( :o, p.opponent( :x ) )
     assert_equal( :x, p.opponent( :o ) )
 
-    if Vying.random_support?
-      p = Hexxagon.new :number_of_players => 3
+    p = Hexxagon.new :number_of_players => 3
 
-      assert_equal( [:blue, :white], p.opponent( :red ) )
-      assert_equal( [:red, :white], p.opponent( :blue ) )
-      assert_equal( [:red, :blue], p.opponent( :white ) )
-    end
+    assert_equal( [:blue, :white], p.opponent( :red ) )
+    assert_equal( [:red, :white], p.opponent( :blue ) )
+    assert_equal( [:red, :blue], p.opponent( :white ) )
   end
 
   def test_move_with_move

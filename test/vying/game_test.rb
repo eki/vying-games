@@ -13,8 +13,6 @@ class TestGame < Test::Unit::TestCase
     assert_equal( nil, g.seed )
     assert( ! g.rng )
 
-    return unless Vying.random_support?
-
     g = Game.new Ataxx, 1234
     assert_equal( Ataxx, g.rules )
     assert_equal( [], g.sequence )
@@ -39,8 +37,6 @@ class TestGame < Test::Unit::TestCase
   end
 
   def test_censor
-    return unless Vying.random_support?
-
     g = Game.new Ataxx, 1234
     assert_equal( :hidden, g.censor( :red ).rng )
     assert_equal( :hidden, g.censor( :blue ).rng )
@@ -418,9 +414,6 @@ class TestGame < Test::Unit::TestCase
   end
 
   def test_undo_by_request_three_players
-    return unless Vying.random_support?  # TODO: replace Hexxagon with a 
-                                         #       non-random 3-player game
-
     g = Game.new Hexxagon, :number_of_players => 3
     g[:red].user = Human.new "john_doe"
     g[:white].user = Human.new "jane_doe"
@@ -782,6 +775,7 @@ class TestGame < Test::Unit::TestCase
 
     assert_equal( [g.history[1], g.history[2]], g.history.since( t ) )
 
+    sleep( 0.5 )   # JRuby fails about 50% of the time without this sleep (!)
     t = Time.now
 
     assert_equal( [], g.history.since( t ) )

@@ -38,16 +38,17 @@ Vying is available as a gem:
 
   gem install vying --source http://vying.org
 
-This gem is dependent on the 'random' gem.  Both the 'vying' and 'random' gems
-have C extensions.  If your platform lacks the appropriate build environment
-(Windows, perhaps), you can use the 'vying-pure' gem.
+This gem has a native C extension to provide better performance (in some
+areas).  There are Ruby equivalents for all the C code, meaning the extension
+is not necessary.  It's loaded dynamically if present.  However, installation
+of the 'vying' gem will fail on platforms that can't build the C (despite the
+fact that the gem would still be 100% functional).  So, the 'vying-pure' gem is
+provided.  This is essentially the same gem, with all the C removed.
 
   gem install vying-pure --source http://vying.org
 
-The 'vying-pure' gem has no dependencies and consists solely of pure Ruby, so
-it should be portable to any platform that Ruby supports.  Because the 'random'
-gem is not required for the 'vying-pure' gem, some games will be disabled
-automatically if the 'random' gem is missing.
+Because the 'vying-pure' gem has no dependencies and consists solely of pure 
+Ruby, it should be portable to any platform that Ruby supports.
 
 Or, if you prefer, the code is available at Github:
 

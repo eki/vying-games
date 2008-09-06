@@ -86,21 +86,19 @@ class Rules
       Kernel.const_set( class_name, rules )
     end
 
-    if ! rules.random? || Vying.random_support?
-      list << rules
+    list << rules
 
-      in_list = false
-      latest_versions.length.times do |i|
-        if latest_versions[i].class_name == rules.class_name
-          if rules.version > latest_versions[i].version
-            latest_versions[i] = rules
-          end
-          in_list = true
+    in_list = false
+    latest_versions.length.times do |i|
+      if latest_versions[i].class_name == rules.class_name
+        if rules.version > latest_versions[i].version
+          latest_versions[i] = rules
         end
+        in_list = true
       end
-
-      latest_versions << rules unless in_list
     end
+
+    latest_versions << rules unless in_list
   end
 
   # Returns a starting position for these rules.  The given options are
