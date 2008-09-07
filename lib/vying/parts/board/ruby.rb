@@ -114,11 +114,13 @@ class Coords
       return nil
     end
 
-    if irregular
-      return coords.include?( c )
-    end
+    return true if omitted.empty?
 
-    true
+    if omitted.length < coords.length
+       ! omitted.include?( c )
+    else
+      coords.include?( c )
+    end
   end
 
   def next( c, d )

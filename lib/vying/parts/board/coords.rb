@@ -12,7 +12,7 @@ class Coords
     memoize :new
   end
 
-  attr_reader :width, :height, :coords, :irregular, :omitted
+  attr_reader :width, :height, :coords, :omitted
   protected :coords
 
   DIRECTIONS = { :n  => Coord.new( 0, -1 ),  :s  => Coord.new( 0, 1 ),
@@ -25,7 +25,6 @@ class Coords
     @height = h
     @coords = (Array.new( w*h ) { |i| Coord.new( i%w, i/w ) } - omit).freeze
     @omitted = omit.dup.freeze
-    @irregular = ! omit.empty?
   end
 
   def each

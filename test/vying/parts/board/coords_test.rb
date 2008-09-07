@@ -33,6 +33,22 @@ class TestCoords < Test::Unit::TestCase
     assert( ! coords.include?( Coord[0,3] ) )
     assert( ! coords.include?( Coord[2,3] ) )
     assert( ! coords.include?( Coord[100,100] ) )
+
+    coords = Coords.new( 2, 3, [Coord[0,0], Coord[1,0], Coord[0,2]] )
+
+    assert( ! coords.include?( Coord[0,0] ) )
+    assert( ! coords.include?( Coord[1,0] ) )
+    assert( ! coords.include?( Coord[0,2] ) )
+    assert( coords.include?( Coord[1,2] ) )
+    assert( coords.include?( Coord[1,1] ) )
+
+    coords = Coords.new( 2, 3, [Coord[0,0], Coord[1,0]] )
+
+    assert( ! coords.include?( Coord[0,0] ) )
+    assert( ! coords.include?( Coord[1,0] ) )
+    assert( coords.include?( Coord[0,2] ) )
+    assert( coords.include?( Coord[1,2] ) )
+    assert( coords.include?( Coord[1,1] ) )
   end
 
   def test_row
