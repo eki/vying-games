@@ -21,6 +21,10 @@ class TestRules < Test::Unit::TestCase
     r = Rules.find( Kalah, "2.0.0" )
     assert_equal( "Kalah", r.class_name )
     assert_equal( "2.0.0", r.version )
+
+    r = Rules.find( Kalah, "blah blah blah" )  # Ask for a version that doesn't
+    assert_equal( "Kalah", r.class_name )      # exist and you get the latest
+    assert_equal( Rules.find( Kalah ).version, r.version )
   end
 
   def test_sealed_moves
@@ -39,6 +43,46 @@ class TestRules < Test::Unit::TestCase
       assert_equal( r.version, r2.version )
       assert_equal( r.object_id, r2.object_id )
     end
+  end
+
+  def test_invalid_options
+    assert_raise( RuntimeError ) do
+      TicTacToe.new( :board_size => 10 )
+    end
+
+    assert_raise( RuntimeError ) do
+      TicTacToe.new( :width => 10, :height => 10 )
+    end
+
+    assert_raise( RuntimeError ) do
+      Ataxx.new( :width => 10, :height => 10 )
+    end
+
+    assert_raise( RuntimeError ) do
+      Ataxx.new( 1234, :width => 10, :height => 10 )
+    end
+
+    assert_raise( RuntimeError ) do
+      Kalah.new( :seeds_per_cup => 3, :width => 10, :height => 10 )
+    end
+
+    assert_nothing_raised do
+      Kalah.new( :seeds_per_cup => 3 )
+    end
+
+    assert_raise( RuntimeError ) do
+      Kalah.new( :seeds_per_cup => 1 )
+    end
+  end
+
+  def test_cached
+    assert( Othello.cached?( :moves ) )     # Oh so fragile... *sigh*
+    assert( ! Othello.cached?( :final? ) )
+  end
+
+  def test_inspect
+    assert_equal( "#<Rules name: 'Kalah', version: 2.0.0>",
+                  Rules.find( Kalah, "2.0.0" ).inspect )
   end
 end
 

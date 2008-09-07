@@ -332,9 +332,7 @@ class Rules
 
   # Shorter alias for Rules#to_snake_case
 
-  def to_sc
-    to_snake_case
-  end
+  alias_method :to_sc, :to_snake_case
 
   # Only need to dump the name, version.
 
