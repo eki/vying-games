@@ -13,8 +13,6 @@ class TestGame < Test::Unit::TestCase
     assert_equal( nil, g.seed )
     assert( ! g.rng )
 
-    return unless Vying::RandomSupport
-
     g = Game.new Ataxx, 1234
     assert_equal( Ataxx, g.rules )
     assert_equal( [], g.sequence )
@@ -39,8 +37,6 @@ class TestGame < Test::Unit::TestCase
   end
 
   def test_censor
-    return unless Vying::RandomSupport
-
     g = Game.new Ataxx, 1234
     assert_equal( :hidden, g.censor( :red ).rng )
     assert_equal( :hidden, g.censor( :blue ).rng )
@@ -89,6 +85,17 @@ class TestGame < Test::Unit::TestCase
     g << move
 
     assert_equal( [move], g.sequence )
+  end
+
+  def test_users
+    g = Game.new TicTacToe
+    g[:x].user = Human.new "john_doe"
+    g[:o].user = RandomBot.new "randombot"
+
+    assert_equal( 2, g.users.length )
+    assert( g.users.all? { |u| u.kind_of?( User ) } )
+    assert( g.users.include?( Human.new( "john_doe" ) ) )
+    assert( g.users.include?( RandomBot.new( "randombot" ) ) )
   end
 
   def test_resign
@@ -407,9 +414,6 @@ class TestGame < Test::Unit::TestCase
   end
 
   def test_undo_by_request_three_players
-    return unless Vying::RandomSupport  # TODO: replace Hexxagon with a 
-                                        #       non-random 3-player game
-
     g = Game.new Hexxagon, :number_of_players => 3
     g[:red].user = Human.new "john_doe"
     g[:white].user = Human.new "jane_doe"
@@ -523,32 +527,6 @@ class TestGame < Test::Unit::TestCase
     assert( ! g.special_move?( "undo_requested_by_black" ) )
     assert( ! g.special_move?( "undo_requested_by_white", :white ) )
     assert( ! g.special_move?( "undo_requested_by_black", :black ) )
-  end
-
-  def test_human
-    u = Human.new
-    
-    assert( ! u.accept_draw?( nil, nil, nil ) )
-
-    u << "accept_draw"
-
-    assert( u.accept_draw?( nil, nil, nil ) )
-    assert( ! u.accept_draw?( nil, nil, nil ) )
-
-    u << "blah"
-
-    assert( ! u.accept_draw?( nil, nil, nil ) )
-    assert_equal( "blah", u.select( nil, nil, nil ) )
-
-    u << "offer_draw"
-
-    assert( u.offer_draw?( nil, nil, nil ) )
-    assert( ! u.offer_draw?( nil, nil, nil ) )
-
-    u << "resign"
-
-    assert( u.resign?( nil, nil, nil ) )
-    assert( ! u.resign?( nil, nil, nil ) )
   end
 
   def test_who
@@ -770,17 +748,17 @@ class TestGame < Test::Unit::TestCase
   end
 
   def test_consecutive_special_moves
-    g = Game.new( PahTum )
+    g = Game.new( Kalah )
 
-    g << g.moves.first
+    g << "c1"
 
     g << "swap"
 
-    g << "time_exceeded_by_black"
+    g << "time_exceeded_by_one"
 
     assert( g.time_exceeded? )
-    assert( g.time_exceeded_by?( :black ) )
-    assert_equal( :black, g.time_exceeded_by )
+    assert( g.time_exceeded_by?( :one ) )
+    assert_equal( :one, g.time_exceeded_by )
   end
 
   def test_history_since
@@ -797,6 +775,7 @@ class TestGame < Test::Unit::TestCase
 
     assert_equal( [g.history[1], g.history[2]], g.history.since( t ) )
 
+    sleep( 0.5 )   # JRuby fails about 50% of the time without this sleep (!)
     t = Time.now
 
     assert_equal( [], g.history.since( t ) )

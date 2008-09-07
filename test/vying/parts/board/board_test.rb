@@ -243,6 +243,18 @@ class TestBoard < Test::Unit::TestCase
     assert_equal( 16, b.clear.empty_count )
   end
 
+  def test_fill
+    b = Board.new( 4, 4 )
+    assert_equal( 16, b.empty_count )
+    b.fill( :black )
+    assert_equal( 0, b.empty_count )
+    assert_equal( 16, b.count( :black ) )
+    b.fill( :white )
+    assert_equal( 0, b.empty_count )
+    assert_equal( 0, b.count( :black ) )
+    assert_equal( 16, b.count( :white ) )
+  end
+
   def test_to_s
     b = Board.new( 2, 2 )
     b[0,0] = '0'

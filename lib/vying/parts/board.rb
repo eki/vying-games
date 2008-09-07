@@ -2,7 +2,7 @@
 begin
   require 'vying/parts/board/boardext'
   Vying::UsingBoardExt = true
-rescue LoadError
+rescue LoadError, SyntaxError
   require 'vying/parts/board/ruby'
   Vying::UsingBoardExt = false
 end

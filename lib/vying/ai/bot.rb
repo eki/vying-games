@@ -24,11 +24,11 @@ class Bot < User
   end
 
   def self.plays?( rules )
-    self.const_defined?( rules.class_name.intern )
+    self.w_const_defined?( rules.class_name.intern )
   end
 
   def plays?( rules )
-    self.class.const_defined?( rules.class_name.intern )
+    self.class.w_const_defined?( rules.class_name.intern )
   end
 
   def delegate_for( position )
@@ -36,8 +36,8 @@ class Bot < User
 
     return @delegates[k] if @delegates.key?( k )
 
-    if self.class.const_defined?( k )
-      @delegates[k] = self.class.const_get( k ).new
+    if self.class.w_const_defined?( k )
+      @delegates[k] = self.class.w_const_get( k ).new
       @delegates[k].cache = cache
       @delegates[k]
     end
@@ -138,10 +138,6 @@ class Bot < User
   def name
     to_s
   end
-  
-  def Bot.name
-    self.to_s
-  end
 
   def inspect
     "#<Bot #{name}>"
@@ -164,11 +160,13 @@ class Bot < User
   @@bots_play = {}
 
   def self.inherited( child )
-    if child.to_s =~ /(\w+)\:\:(\w+)/ 
-      if @@bots_list.any? { |b| b.to_s == $1 }
-        b = Bot.find( $1 )
-        r = Rules.find( $2 )
-        (@@bots_play[r] ||= []) << b
+    a = child.to_s.split( /::/ )
+    if a.length > 1
+      bc = a[0,a.length-1].join( "::" )
+      if @@bots_list.any? { |b| b.to_s == bc }
+        b = Bot.find( bc )
+        r = Rules.find( a.last )
+        (@@bots_play[r] ||= []) << b if b && r
       else
         @@bots_list << child
       end
@@ -192,8 +190,14 @@ class Bot < User
                   name.to_s.downcase == b.name.downcase
 
       a = name.to_s.split( "::" )
-      return Bot.find( a.first ) if a.length > 1
+      if a.length > 1
+        bc = a[0,a.length-1].join( "::" )
+        b = Bot.find( bc )
+        r = Rules.find( a.last )
+        return b if b && r && b.plays?( r )
+      end
     end
+
     nil
   end
 
@@ -211,8 +215,8 @@ class Bot < User
   end
 
   def self.difficulty_for( rules )
-    if self.const_defined?( "#{rules.class_name}".intern )
-      d = self.const_get( "#{rules.class_name}".intern ).difficulty
+    if self.w_const_defined?( "#{rules.class_name}".intern )
+      d = self.w_const_get( "#{rules.class_name}".intern ).difficulty
       return DIFFICULTY_LEVELS.invert[d] if d && DIFFICULTY_LEVELS.invert[d]
     end
     return :unknown

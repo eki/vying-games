@@ -91,15 +91,3 @@ module AlphaBeta
   end
 end
 
-module Enumerable
-  def map_until
-    ml = []
-    each do |o|
-      mo = yield o
-      return ml unless mo
-      ml << mo
-    end
-    ml
-  end
-end
-

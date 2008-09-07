@@ -36,8 +36,6 @@ class History
   # necessary.
 
   def []( i )
-    @positions ||= []  # may have been erased during YAML serialization
-
     return nil           if i >= length
     return @positions[i] if @positions[i]
 
@@ -225,6 +223,11 @@ class History
 
   def to_yaml_properties
     ["@rules","@seed", "@options", "@moves", "@created_at", "@last_move_at"]
+  end
+
+  def yaml_initialize( t, v )
+    v.each { |iv,v| instance_variable_set( "@#{iv}", v ) }
+    @positions ||= []
   end
 
 end

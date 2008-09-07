@@ -63,5 +63,41 @@ class TestFrames < Test::Unit::TestCase
     assert( ! g.move?( "white_i2" ) )
   end
 
+  def test_censor
+    g = Game.new( rules )
+    p = g.censor( :black )
+    assert_equal( nil, p.sealed[:black] )
+    assert_equal( nil, p.sealed[:white] )
+
+    g.append( :a1, :white )
+
+    p = g.censor( :black )
+    assert_equal( nil, p.sealed[:black] )
+    assert_equal( :hidden, p.sealed[:white] )
+
+    g.append( :a1, :black )
+
+    p = g.censor( :white )
+    assert_equal( nil, p.sealed[:black] )
+    assert_equal( nil, p.sealed[:white] )
+
+    g.append( :c3, :black )
+
+    p = g.censor( :white )
+    assert_equal( :hidden, p.sealed[:black] )
+    assert_equal( nil, p.sealed[:white] )
+
+    g.append( :c3, :white )
+
+    p = g.censor( :white )
+    assert_equal( nil, p.sealed[:black] )
+    assert_equal( nil, p.sealed[:white] )
+
+    g.append( :d5, :white )
+
+    p = g.censor( :white )
+    assert_equal( nil, p.sealed[:black] )
+    assert_equal( Coord[:d5], p.sealed[:white] )
+  end
 end
 

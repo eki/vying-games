@@ -207,6 +207,8 @@ class Position
   # all possible moves.
 
   def move?( move, player=nil )
+    player = move.by  if player.nil? && move.respond_to?( :by )
+
     moves( player ).any? { |m| m.to_s == move.to_s }
   end
 
@@ -340,26 +342,22 @@ class Position
     p
   end
 
-  # Custom YAML type.
+  # When serializing to YAML, don't serialize instance variables used for
+  # caching (/^@__.*_cache$/).
 
-  def to_yaml_type
-    "!vying.org,2008/position"
+  def to_yaml_properties
+    props = instance_variables
+    props.reject! { |iv| iv =~ /^@__.*_cache$/ }
+    props
   end
 
-  # Dump this position to YAML.  Dumps the rules and instance variables
-  # (without the @ prefix) minus any cache instance variables.  The custom
-  # loading code will extend the Position with any special mixins.
+  # When loading a YAML-ized Position, be sure to re-extend any special
+  # move mixins.
 
-  def to_yaml( opts = {} )
-    YAML::quick_emit( self.object_id, opts ) do |out|
-      out.map( taguri, to_yaml_style ) do |map|
-        map.add( 'rules', rules )
-        instance_variables.each do |iv|
-          if iv !~ /^@__.*_cache$/
-            map.add( iv[1,iv.length], instance_variable_get( iv ) )
-          end
-        end
-      end
+  def yaml_initialize( t, v )
+    v.each do |iv,v| 
+      instance_variable_set( "@#{iv}", v )
+      extend Kernel.nested_const_get( v ) if iv == "includes"
     end
   end
 
@@ -419,11 +417,7 @@ class Position
   def __move?( move, player=nil )
     hm = has_moves
 
-    if player.nil?
-      if move.respond_to?( :by ) && hm.include?( move.by )
-        player = move.by
-      end
-    end
+    player = move.by  if player.nil? && move.respond_to?( :by )
 
     return false unless player.nil? || hm.include?( player )
 
@@ -479,16 +473,8 @@ class Position
 
 end
 
-# Reconstitute a YAML-ized Position.  Will extend the position with a special
-# mixin if one is present.
+# Namespace for all the Position subclasses.
 
-YAML.add_domain_type( "vying.org,2008", "position" ) do |type, val|
-  r = val.delete( 'rules' )
-  p = r.position_class.allocate
-  val.each do |iv, v|
-    p.instance_variable_set( "@#{iv}", v )
-    p.extend Kernel.nested_const_get( v ) if iv == "includes"
-  end
-  p
+module Positions
 end
 

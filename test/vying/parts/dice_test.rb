@@ -18,8 +18,6 @@ class TestDie < Test::Unit::TestCase
   end
 
   def test_roll
-    return unless Vying::RandomSupport
-
     rng = RandomNumberGenerator.new 1234
     die = Die.new 3
 

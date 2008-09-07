@@ -10,7 +10,7 @@ include FileUtils
 ###
 
 CLEAN.include( 'ext/**/*.o', 'ext/**/*.so' )
-CLOBBER.include( 'pkg', 'doc/api', 'doc/coverage', 'lib/version.rb' )
+CLOBBER.include( 'pkg', 'doc/api', 'doc/coverage', 'lib/vying/version.rb' )
 
 ###
 ### test task
@@ -57,16 +57,16 @@ task :default => [:clean, :compile, :test]
 # Try to load the version number -- it's okay if it's not available
 
 begin
-  require 'lib/version.rb'
+  require 'lib/vying/version.rb'
 rescue Exception
   module Vying; end
 end
 
-desc "Appends the value in VERSION to lib/version.rb"
+desc "Appends the value in VERSION to lib/vying/version.rb"
 task :version do
   v = ENV['VERSION']
   raise "provide a VERSION via the environment variable" unless v
-  sh %{echo 'module Vying; VERSION = "#{v}"; end' >> lib/version.rb}
+  sh %{echo 'module Vying; VERSION = "#{v}"; end' >> lib/vying/version.rb}
 end
 
 begin
@@ -101,7 +101,6 @@ if defined?( Gem ) && Vying.const_defined?( 'VERSION' )
     s.files = PKG_FILES.to_a
     s.extensions = "ext/vying/parts/board/extconf.rb"
     s.executables = ['vying']
-    s.add_dependency "random", ">= 0.2.1"
     s.require_paths << "ext"
     s.author = 'Eric K Idema'
     s.email = 'eki@vying.org'

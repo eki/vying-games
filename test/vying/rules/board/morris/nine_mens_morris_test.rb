@@ -230,41 +230,20 @@ class TestNineMensMorris < Test::Unit::TestCase
 
     g << "a4"
     
-    assert_equal( :black, g.turn )
+    assert_equal( :black, g.history.last.turn )
     assert_equal( nil, g.board[:a4] )
     assert( ! g.removing )
 
     assert( g.final? )
+    assert_equal( [], g.moves )
+    assert_equal( [], g.has_moves )
     assert( g.winner?( :white ) )
     assert( g.loser?( :black ) )
     assert( ! g.winner?( :black ) )
     assert( ! g.loser?( :white ) )
     assert( ! g.draw? )
+    assert_equal( 7, g.score( :white ) )
+    assert_equal( 4, g.score( :black ) )
   end
-
-#  def test_game01
-#    # This game is going to be a win for Black
-#    g = play_sequence( ["b2b3", "c7c6", "b3b4", "c6c5", "b4b5", "c5c4",
-#                        "b5b6", "c4c3", "b6a7", "c3d2", "a7b8"] )
-#
-#    assert( !g.draw? )
-#    assert( g.winner?( :black ) )
-#    assert( !g.loser?( :black ) )
-#    assert( !g.winner?( :white ) )
-#    assert( g.loser?( :white ) )
-#  end
-#
-#  def test_game02
-#    # This game is going to be a win for White
-#    g = play_sequence( ["b2b3", "c7c6", "b3b4", "c6c5", "b4b5", "c5c4",
-#                        "b5b6", "c4c3", "b6a7", "c3d2", "a2a3", "d2e1"] )
-#
-#    assert( !g.draw? )
-#    assert( !g.winner?( :black ) )
-#    assert( g.loser?( :black ) )
-#    assert( g.winner?( :white ) )
-#    assert( !g.loser?( :white ) )
-#  end
-
 end
 

@@ -297,6 +297,7 @@ class Game
   # the player if it's nil.
 
   def wrap_move( move, player=nil )
+    return move                     if move.kind_of?( Move )
     return SpecialMove[move]        if SpecialMove[move]
     return Move.new( move, player ) if player
     
@@ -354,7 +355,7 @@ class Game
   # Returns the users playing this game (in player order).
 
   def users
-    player_names.map { |p| self[p] }
+    player_names.map { |p| self[p].user }
   end
 
   # returns the names of the players for this game.  This is the equivalent
@@ -532,10 +533,12 @@ class Game
   end
 
   # You shouldn't rely on turn.  Use #has_moves instead.  Game#turn provides
-  # has_moves.first anyway, not the underlying Position#turn.
+  # has_moves.first anyway, not the underlying Position#turn.  And, unlike
+  # Position#turn, Game#turn will return nil if Game#final? is true (due to
+  # it being based on #has_moves which returns [] in that case).
 
   def turn
-    has_moves.first || history.last.turn
+    has_moves.first
   end
 
   # Who can play the given move?

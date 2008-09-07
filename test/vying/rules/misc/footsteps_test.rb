@@ -12,6 +12,7 @@ class TestFootsteps < Test::Unit::TestCase
 
   def test_info
     assert_equal( "Footsteps", rules.name )
+    assert( rules.version > "1.0.0" )
     assert( rules.sealed_moves? )
   end
 

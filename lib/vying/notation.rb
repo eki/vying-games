@@ -11,28 +11,26 @@ class Notation
     s
   end
 
-  def translate( move )
+  def translate( move, player )
     move
   end
 
   def sequence
     s = []
-    game.history.each do |move, position|
-      s << translate( move )
+    game.history.moves.each do |move|
+      s << translate( move, move.by ).to_s
     end
 
     s
   end
 
   def moves( player=nil )
-    game.moves( player ).map do |move|
-      if player
-        translate( move, player )
-      else
-        players = game.who_can_play?( move )
-        players.map { |p| translate( move, p ) }
-      end
-    end.flatten!
+    ps = player ? [player] : game.has_moves
+    ms = []
+
+    ps.each { |p| game.moves( p ).each { |m| ms << translate( m, p ) } }
+
+    ms
   end
 
   # Scans the RUBYLIB (unless overridden via path), for notation subclasses and

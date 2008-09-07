@@ -27,6 +27,30 @@ class Module
     s.split( /::/ ).inject( Kernel ) { |m,s| m.const_get( s ) }
   end
 
+  # Add a wrapper around const_get that deals with compatibility between 
+  # ruby 1.8 and ruby 1.9.  The original const_get is left untouched so
+  # as not to effect any outside code that depends on its 1.8 or 1.9 behavior.
+
+  if method( :const_get ).arity == -1
+    def w_const_get( k )
+      const_get( k, false )
+    end
+  else
+    alias_method :w_const_get, :const_get
+  end
+
+  # Add a wrapper around const_defined? that deals with compatibility between 
+  # ruby 1.8 and ruby 1.9.  The original const_defined? is left untouched so
+  # as not to effect any outside code that depends on its 1.8 or 1.9 behavior.
+
+  if method( :const_defined? ).arity == -1
+    def w_const_defined?( k )
+      const_defined?( k, false )
+    end
+  else
+    alias_method :w_const_defined?, :const_defined?
+  end
+
   # Add instance_variable_defined? for ruby 1.8.  This is used in place of
   # instance_variables.include? because instance_variables has different
   # return values under ruby 1.8 and 1.9 (String vs Symbol).

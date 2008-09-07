@@ -3,16 +3,16 @@ require 'test/unit'
 require 'vying'
 require 'vying/rules/rules_test'
 
-class TestAtaxx < Test::Unit::TestCase
+class TestAtaxx_1_0_0 < Test::Unit::TestCase
   include RulesTests
 
   def rules
-    Ataxx
+    Rules.find( "Ataxx", "1.0.0" )
   end
 
   def test_info
     assert_equal( "Ataxx", rules.name )
-    assert( rules.version > "1.0.0" )
+    assert_equal( "1.0.0", rules.version )
     assert( rules.random )
   end
 
@@ -60,16 +60,6 @@ class TestAtaxx < Test::Unit::TestCase
     assert( g.has_score? )
     assert_equal( 3, g.score( :red ) )
     assert_equal( 2, g.score( :blue ) )
-  end
-
-  def test_valid_block_patterns
-    rules.blocks.each do |pattern|
-      chars = pattern.split( // )
-      assert_equal( chars.length, chars.uniq.length )
-      chars.each do |c|
-        assert( rules.block_coords.key?( c ) )
-      end
-    end
   end
 end
 

@@ -3,7 +3,7 @@ require 'test/unit'
 require 'vying'
 require 'vying/rules/rules_test'
 
-class TestFootsteps < Test::Unit::TestCase
+class TestFootsteps_1_0_0 < Test::Unit::TestCase
   include RulesTests
 
   def rules
