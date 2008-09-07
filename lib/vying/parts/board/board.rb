@@ -4,21 +4,82 @@
 
 class Board
 
-  attr_reader :coords, :cells, :width, :height, :occupied
+  attr_reader :shape, :coords, :cells, :width, :height, :length, :occupied
   protected :cells
 
   # Initialize a board.
 
   def initialize( h )
+    @width  = h[:width]
+    @height = h[:height]
+    @length = h[:length]
 
-    if h[:width] && h[:height]
-      @width, @height, @cells = h[:width], h[:height], Array.new( w*h, nil )
+    @cell_shape = h[:cell_shape]
 
-      if h[:omit]
-        @coords = Coords.new( width, height, h[:omit].map { |c| Coord[c] } )
-      else
-        @coords = Coords.new( width, height )
-      end
+    omit = (h[:omit] || []).map { |c| Coord[c] }
+
+    @shape = h[:shape]
+
+    if @shape.nil?
+      raise "board requires the :shape param"
+    end
+
+    case h[:shape]
+      when :square
+        @length ||= @width
+        @width  ||= @length
+        @height ||= @length
+
+        if @length.nil?
+          raise "square board requires the :length or :width params"
+        end
+
+      when :rect
+        
+        if @width.nil? || @height.nil?
+          raise "rect board requires both the :width and :height params"
+        end
+
+      when :triangle
+
+        if @length.nil?
+          raise "triangle board requires the :length param"
+        end
+
+        @width  = @length
+        @height = @length
+
+        @width.times do |x|
+          @height.times do |y|
+            omit << Coord[x,y] if x + y >= length
+          end
+        end
+
+      when :rhombus
+
+        if @width.nil? || @height.nil?
+          raise "rhombus board requires both the :width and :height params"
+        end
+
+      when :hexagon
+
+        if @length.nil?
+          raise "hexagon board requires the :length param"
+        end
+
+        @width  = @length * 2 - 1
+        @height = @length * 2 - 1
+
+        @width.times do |x|
+          @height.times do |y|
+            omit << Coord[x,y] if (x - y).abs >= @length
+          end
+        end
+    end
+
+    if @width && @height 
+      @cells = Array.new( @width * @height, nil )
+      @coords = Coords.new( width, height, omit )
     end
 
     @occupied = Hash.new( [] )
@@ -112,9 +173,15 @@ class Board
   # Fill the entire board with the given piece.
 
   def fill( p )
-    @cells.each_index { |i| @cells[i] = nil }
-    @occupied = Hash.new( [] )
-    @occupied[p] = @coords.to_a.dup
+    if coords.omitted.empty?
+      cells.each_index { |i| cells[i] = p }
+
+      @occupied = Hash.new( [] )
+      @occupied[p] = @coords.to_a.dup
+    else
+      coords.each { |c| self[c] = p }
+    end
+
     self
   end
 
