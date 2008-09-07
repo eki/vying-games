@@ -15,5 +15,4 @@ require 'vying/parts/board/connect6'
 require 'vying/parts/board/hexhex'
 require 'vying/parts/board/mancala'
 require 'vying/parts/board/othello'
-require 'vying/parts/board/y'
 

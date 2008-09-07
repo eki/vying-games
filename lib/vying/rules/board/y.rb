@@ -62,7 +62,9 @@ Rules.create( "Y" ) do
     attr_reader :board, :groups
 
     def init
-      @board = YBoard.new( @options[:board_size] )
+      @board = Board.new( :shape => :triangle, 
+                          :length => @options[:board_size] )
+
       @groups = { :blue => [], :red => [] }
     end
 
@@ -76,7 +78,7 @@ Rules.create( "Y" ) do
       board[coord] = turn
 
       new_groups = []
-      YBoard::DIRECTIONS.each do |d|
+      [:n, :s, :e, :w, :ne, :sw].each do |d|
         n = board.coords.next( coord, d )
 
         groups[turn].delete_if do |g|
