@@ -22,7 +22,7 @@ class TestKalah < Test::Unit::TestCase
   def test_initialize
     g = new_game
 
-    b = MancalaBoard.new( 6, 2, 6 )
+    b = Board.new( :shape => :rect, :width => 6, :height => 2, :fill => 6 )
 
     assert_equal( b, g.board )
     assert_equal( :one, g.turn )

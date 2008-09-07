@@ -84,6 +84,8 @@ class Board
 
     @occupied = Hash.new( [] )
     @occupied[nil] = @coords.to_a.dup
+
+    fill( h[:fill] ) if h[:fill]
   end
 
   # Perform a deep copy on this board.

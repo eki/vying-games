@@ -19,8 +19,15 @@ Rules.create( "Kalah" ) do
     ignore :moves_cache
 
     def init
-      @board = MancalaBoard.new( 6, 2, 4 )
-      @annotation = MancalaBoard.new( 6, 2, "0" )
+      @board = Board.new( :shape  => :rect, 
+                          :width  => 6,
+                          :height => 2,
+                          :fill   => 4 )
+
+      @annotation = Board.new( :shape => :rect,
+                               :width  => 6,
+                               :height => 2,
+                               :fill => "0" )
 
       @scoring_pits = { :one => 0, :two => 0 }
       @moves_cache = { :one => ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'],

@@ -13,6 +13,5 @@ require 'vying/parts/board/board'
 require 'vying/parts/board/amazons'
 require 'vying/parts/board/connect6'
 require 'vying/parts/board/hexhex'
-require 'vying/parts/board/mancala'
 require 'vying/parts/board/othello'
 
