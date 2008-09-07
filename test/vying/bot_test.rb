@@ -122,5 +122,18 @@ class TestBot < Test::Unit::TestCase
     assert( ! RandomBot.new.request_undo?( sequence, position, player ) )
     assert( ! RandomBot.new.accept_undo?( sequence, position, player ) )
   end
+
+  def test_random_bot_select
+    srand 1234
+
+    bot = RandomBot.new
+    p = TicTacToe.new
+
+    move = bot.select( [], p, :x )
+
+    srand 1234
+
+    assert_equal( p.moves[rand( p.moves.length )], move )
+  end
 end
 
