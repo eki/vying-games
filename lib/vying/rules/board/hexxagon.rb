@@ -23,7 +23,7 @@ Rules.create( "Hexxagon" ) do
     attr_reader :board, :block_pattern
 
     def init
-      @board = HexHexBoard.new( 5 )
+      @board = Board.new( :shape => :hexagon, :length => 5 )
 
       if options[:number_of_players] == 2
         @board[:a1, :i5, :e9] = :red
@@ -46,7 +46,7 @@ Rules.create( "Hexxagon" ) do
       # Adjacent moves
 
       board.occupied[p].each do |c|
-        board.ring( c, 1 ).each do |c1|
+        board.coords.ring( c, 1 ).each do |c1|
           found << "#{c}#{c1}" if board[c1].nil?
         end
       end
@@ -54,7 +54,7 @@ Rules.create( "Hexxagon" ) do
       # Jump moves
 
       board.occupied[p].each do |c|
-        board.ring( c, 2 ).each do |c2|
+        board.coords.ring( c, 2 ).each do |c2|
           found << "#{c}#{c2}" if board[c2].nil?
         end
       end
@@ -65,13 +65,13 @@ Rules.create( "Hexxagon" ) do
     def apply!( move )
       coords, p = move.to_coords, turn
 
-      if board.ring( coords.first, 1 ).include?( coords.last )
+      if board.coords.ring( coords.first, 1 ).include?( coords.last )
         board[coords.last] = turn
       else
         board.move( coords.first, coords.last )
       end
 
-      board.coords.neighbors( coords.last, HexHexBoard::DIRECTIONS ).each do |c|
+      board.coords.neighbors( coords.last ).each do |c|
         unless board[c].nil? || board[c] == turn || board[c] == :x
           board[c] = turn
         end

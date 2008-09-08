@@ -93,12 +93,38 @@ class Coords
     a
   end
 
-  def ring( coord, d )
-    coords.select do |c| 
-      dx = (c.x - coord.x).abs
-      dy = (c.y - coord.y).abs
+  def ring( coord, d, shape, directions=nil )
+    return coord                           if d == 0
+    return neighbors( coord, directions )  if d == 1
 
-      (dx == d && dy <= d) || (dx <= d && dy == d)
+    case shape
+      when :square
+
+        coords.select do |c| 
+          dx = (c.x - coord.x).abs
+          dy = (c.y - coord.y).abs
+
+          (dx == d && dy <= d) || (dx <= d && dy == d)
+        end
+
+      when :hexagon
+
+        dc = Coord[d - coord.x, d - coord.y]
+
+        d2 = d * 2
+        d1 = d + 1
+
+        coords.select do |c|
+          c2 = c + dc
+
+          ! (c2.x < 0   || c2.y < 0  || 
+             c2.x > d2  || c2.y > d2 ||
+             (c2.x - c2.y).abs >= d1) &&
+          (c2.x == 0        || c2.y == 0  ||
+           c2.x == d2       || c2.y == d2 ||
+           c2.x - c2.y == d || c2.y - c2.x == d)
+        end
+
     end
   end
 

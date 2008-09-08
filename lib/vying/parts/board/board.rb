@@ -4,7 +4,8 @@
 
 class Board
 
-  attr_reader :shape, :coords, :cells, :width, :height, :length, :occupied
+  attr_reader :shape, :cell_shape, :directions, :coords, :cells, 
+              :width, :height, :length, :occupied
   protected :cells
 
   # Initialize a board.
@@ -14,15 +15,15 @@ class Board
     @height = h[:height]
     @length = h[:length]
 
-    @cell_shape = h[:cell_shape]
-
-    omit = (h[:omit] || []).map { |c| Coord[c] }
-
     @shape = h[:shape]
+    @cell_shape = h[:cell_shape]
+    @directions = h[:directions]
 
     if @shape.nil?
       raise "board requires the :shape param"
     end
+
+    omit = (h[:omit] || []).map { |c| Coord[c] }
 
     case h[:shape]
       when :square
@@ -34,11 +35,17 @@ class Board
           raise "square board requires the :length or :width params"
         end
 
+        @cell_shape ||= :square
+        @directions ||= [:n, :s, :e, :w, :ne, :sw, :nw, :se]
+
       when :rect
         
         if @width.nil? || @height.nil?
           raise "rect board requires both the :width and :height params"
         end
+
+        @cell_shape ||= :square
+        @directions ||= [:n, :s, :e, :w, :ne, :sw, :nw, :se]
 
       when :triangle
 
@@ -55,11 +62,17 @@ class Board
           end
         end
 
+        @cell_shape ||= :hexagon
+        @directions ||= [:n, :s, :e, :w, :ne, :sw]
+
       when :rhombus
 
         if @width.nil? || @height.nil?
           raise "rhombus board requires both the :width and :height params"
         end
+
+        @cell_shape ||= :hexagon
+        @directions ||= [:n, :s, :e, :w, :ne, :sw]
 
       when :hexagon
 
@@ -75,11 +88,14 @@ class Board
             omit << Coord[x,y] if (x - y).abs >= @length
           end
         end
+
+        @cell_shape ||= :hexagon
+        @directions ||= [:n, :s, :e, :w, :nw, :se]
     end
 
     if @width && @height 
       @cells = Array.new( @width * @height, nil )
-      @coords = Coords.new( width, height, omit )
+      @coords = CoordsProxy.new( self, Coords.new( width, height, omit ) )
     end
 
     @occupied = Hash.new( [] )
@@ -222,6 +238,41 @@ class Board
     end
     s + letters
   end
+
+  class CoordsProxy
+    def initialize( board, coords )
+      @board, @coords = board, coords
+    end
+
+    def ring( coord, d )
+      @coords.ring( coord, d, @board.cell_shape, @board.directions )
+    end
+
+    def neighbors( coord )
+      @coords.neighbors( coord, @board.directions )
+    end
+
+    def neighbors_nil( coord )
+      @coords.neighbors_nil( coord, @board.directions )
+    end
+
+    def to_a
+      @coords.to_a
+    end
+
+    def respond_to?( m )
+      m != :_dump && (super || @coords.respond_to?( m ))
+    end
+
+    def method_missing( m, *args, &block )
+      if m != :_dump && @coords.respond_to?( m ) 
+        @coords.send( m, *args, &block )
+      else
+        super
+      end
+    end
+  end
+
 
 end
 
