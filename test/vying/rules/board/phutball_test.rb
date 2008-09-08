@@ -21,7 +21,7 @@ class TestPhutball < Test::Unit::TestCase
   def test_init
     g = Game.new( rules )
 
-    b = Board.new( 15, 21 )
+    b = Board.new( :shape => :rect, :width => 15, :height => 21 )
     b[:h11] = :white
 
     assert_equal( b, g.board )
