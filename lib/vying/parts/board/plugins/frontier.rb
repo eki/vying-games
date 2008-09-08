@@ -37,7 +37,24 @@ module Board::Plugins::Frontier
 
   def after_set( x, y, p )
     super
-    update_frontier( x, y )
+
+    c = Coord[x,y]
+
+    return unless coords.include?( c ) 
+
+    if p.nil?
+      coords.neighbors( c ).each do |nc|
+        if self[nc] 
+          update_frontier( nc.x, nc.y )
+        else
+          unless coords.neighbors( nc ).any? { |nnc| self[nnc] }
+            frontier.delete( nc )
+          end
+        end
+      end
+    else
+      update_frontier( x, y )
+    end
   end
 
   private :update_frontier

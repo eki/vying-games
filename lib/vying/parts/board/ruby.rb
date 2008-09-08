@@ -191,7 +191,7 @@ class Board
 
       @cells[ci( x, y )] = p
 
-      after_set( x, y, old )
+      after_set( x, y, p )
     end
 
     p
@@ -279,7 +279,7 @@ module Board::Plugins
     def update_frontier( x, y )
       c, w, h = Coord[x,y], width, height
 
-      [:n, :s, :e, :w, :ne, :nw, :se, :sw].each do |d|
+      directions.each do |d|
         nc = coords.next( c, d )
   
         if ! nc.nil? && self[nc].nil?

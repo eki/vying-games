@@ -17,6 +17,56 @@ class TestFrontier < Test::Unit::TestCase
     assert_equal( ["a2", "b1", "b2"], b.frontier.map { |c| c.to_s }.sort )
   end
 
+  def test_unset
+    b = Board.new( :shape => :square, :length => 4, :plugins => [:frontier] )
+    b[:a1,:b1] = :x
+    
+    assert_equal( ["a2", "b2", "c1", "c2"], 
+                  b.frontier.map { |c| c.to_s }.sort )
+
+    b[:b1] = nil
+
+    assert_equal( ["a2", "b1", "b2"], 
+                  b.frontier.map { |c| c.to_s }.sort )
+  end
+
+  def test_hexagon_directions
+    b = Board.new( :shape => :hexagon, :length => 4, :plugins => [:frontier] )
+    b[:a1] = :x
+
+    assert_equal( ["a2", "b1", "b2"], b.frontier.map { |c| c.to_s }.sort )
+
+    b[:b2] = :x
+
+    assert_equal( ["a2", "b1", "b3", "c2", "c3"],
+                  b.frontier.map { |c| c.to_s }.sort )
+
+    b[:a4] = :x
+
+    assert_equal( ["a2", "a3", "b1", "b3", "b4", "b5", "c2", "c3"],
+                  b.frontier.map { |c| c.to_s }.sort )
+
+    b[:a5] = :o  # omitted from coords due to board shape
+
+    assert_equal( ["a2", "a3", "b1", "b3", "b4", "b5", "c2", "c3"],
+                  b.frontier.map { |c| c.to_s }.sort )
+  end
+
+  def test_square_no_diagonals
+    b = Board.new( :shape      => :square, 
+                   :length     => 4, 
+                   :directions => [:n, :e, :w, :s],
+                   :plugins    => [:frontier] )
+    b[:a1] = :x
+
+    assert_equal( ["a2", "b1"], b.frontier.map { |c| c.to_s }.sort )
+
+    b[:b2] = :x
+
+    assert_equal( ["a2", "b1", "b3", "c2"],
+                  b.frontier.map { |c| c.to_s }.sort )
+  end
+
   def test_dup
     b = Board.new( :shape => :square, :length => 4, :plugins => [:frontier] )
     b[:a1] = :x
