@@ -20,7 +20,8 @@ class TestConnect4 < Test::Unit::TestCase
 
   def test_init
     g = Game.new( rules )
-    assert_equal( Board.new( 7, 6 ), g.board )
+    assert_equal( Board.new( :shape => :rect, :width => 7, :height => 6 ), 
+                  g.board )
     assert_equal( :red, g.turn )
   end
 

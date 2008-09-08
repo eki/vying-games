@@ -18,7 +18,7 @@ Rules.create( "Connect4" ) do
     ignore :lastc, :lastp, :unused_moves
 
     def init
-      @board = Board.new( 7, 6 )
+      @board = Board.new( :shape => :rect, :width => 7, :height => 6 )
       @lastc, @lastp = nil, :noone
       @unused_moves = rules.init_moves.map { |a| a.dup }
     end
