@@ -15,7 +15,7 @@ Rules.create( "Footsteps" ) do
     attr_reader :board, :points, :bids, :bid_history
 
     def init
-      @board = Board.new( 7, 1 )
+      @board = Board.new( :shape => :rect, :width => 7, :height => 1 )
       @board[:d1] = :white
 
       @points = { :left => 50, :right => 50 }
