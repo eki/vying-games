@@ -274,3 +274,24 @@ class OthelloBoard < Board
   end
 end
 
+module Board::Plugins
+  module Frontier
+    def update_frontier( x, y )
+      c, w, h = Coord[x,y], width, height
+
+      [:n, :s, :e, :w, :ne, :nw, :se, :sw].each do |d|
+        nc = coords.next( c, d )
+  
+        if ! nc.nil? && self[nc].nil?
+          frontier << nc
+        end
+      end
+
+      frontier.delete( c )
+      frontier.uniq!
+      frontier
+    end
+  end
+end
+
+

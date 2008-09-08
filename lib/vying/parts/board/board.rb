@@ -5,10 +5,42 @@
 class Board
 
   attr_reader :shape, :cell_shape, :directions, :coords, :cells, 
-              :width, :height, :length, :occupied
+              :width, :height, :length, :occupied, :plugins
   protected :cells
 
-  # Initialize a board.
+  # Initialize a board.  Accepts a hash with the following parameters:
+  #
+  #   :shape - The overall shape of the board.  Valid shapes are:
+  #              :square, :rect, :triangle, :rhombus, :hexagon
+  #
+  #   :width, :height, :length - Define the bounds of the board, the params
+  #                              accepted depend on the :shape of the board
+  #
+  #   :omit - A list of coords to be excluded from the bounds of the board.
+  #           Given param should be array.  All the elements will be mapped
+  #           to Coord with Coord.[] so symbols and strings are acceptable.
+  #
+  #   :cell_shape - The shape of the individual cells.  Valid shapes are:
+  #                   :square, :hexagon
+  #                 The cell_shape will be defaulted depending on the overall
+  #                 board shape.  For example, it will be set to :square for
+  #                 :square and :rect boards, and :hexagon for :triangle,
+  #                 :rhombus, and :hexagon boards.  Not all combinations of
+  #                 :shape and :cell_shape are supported, yet.
+  #
+  #   :directions - In which directions are the cells connected to one another?
+  #                 This should be an array containing some subset of:
+  #                   [:n, :e, :w, :s, :ne, :nw, :se, :sw]
+  #                 If :directions are not given, :cell_shape will be used
+  #                 to determine a default.  The directions will effect methods
+  #                 like CoordsProxy#neighbors.
+  #
+  #   :plugins - An array of plugins that the created board should extend.  
+  #              Plugins are typically modules under the Board::Plugins 
+  #              namespace.  Shorthand can be used to refer to the plugins
+  #              in that namespace.  For example, Board::Plugins::Frontier
+  #              can be referred to as :frontier.
+  #
 
   def initialize( h )
     @width  = h[:width]
@@ -101,6 +133,17 @@ class Board
     @occupied = Hash.new( [] )
     @occupied[nil] = @coords.to_a.dup
 
+    @plugins = []
+
+    (h[:plugins] || []).each do |p|
+      if plugin = self.class.find_plugin( p )
+        @plugins << plugin.to_s
+        extend plugin
+      end
+    end
+
+    init_plugin if respond_to?( :init_plugin )
+
     fill( h[:fill] ) if h[:fill]
   end
 
@@ -110,6 +153,27 @@ class Board
     @cells = original.cells.dup
     @occupied = Hash.new( [] )
     original.occupied.each { |k,v| @occupied[k] = v.dup }
+  end
+
+  alias_method :__dup, :dup
+
+  # Make a dup of this board.  If it has been extended by any plugins, dup
+  # will re-extend the board prior to calling #intialize_copy.  Thus, plugins
+  # can implement #initialize_copy as long as they call super.
+
+  def dup
+    return __dup if plugins.empty?
+
+    b = Board.allocate
+
+    instance_variables.each do |iv|
+      b.instance_variable_set( iv, instance_variable_get( iv ) )
+    end
+
+    plugins.each { |p| b.extend( Board.find_plugin( p ) ) }
+
+    b.send( :initialize_copy, self )
+    b
   end
 
   # Compare boards for equality.
@@ -273,6 +337,41 @@ class Board
     end
   end
 
+  # Find Board plugins (Modules).  Given a string like 
+  # "Board::Plugins::Frontier" it will return that module.  Given a string
+  # like "frontier" or the symbol :frontier, it will look in the Board::Plugins
+  # namespace for a module named Frontier.  If the string where to contain
+  # underscores it would be translated from snake case to camel case.
+
+  def self.find_plugin( s )
+    return s  if s.nil? || s.kind_of?( Module )
+
+    # Assume strings that look like constants are defined rooted under Object.
+
+    if s.to_s =~ /^[A-Z]/
+
+      if Object.nested_const_defined?( s.to_s )
+        Object.nested_const_get( s.to_s )
+      end
+
+    else  # Otherwise, assume we're looking under Board::Plugins
+
+      m = s.to_s.gsub( /_(.)/ ) { $1.upcase }.capitalize.to_sym
+
+      if Board::Plugins.nested_const_defined?( m )
+        Board::Plugins.nested_const_get( m )
+      end
+    end
+  end
+
+  # When loading a YAML-ized Board, be sure to re-extend plugins.
+
+  def yaml_initialize( t, v )
+    v.each do |iv,v|
+      instance_variable_set( "@#{iv}", v )
+      v.each { |p| extend Board.find_plugin( p ) } if iv == "plugins"
+    end
+  end
 
 end
 

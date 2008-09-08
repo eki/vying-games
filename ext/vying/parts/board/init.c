@@ -55,6 +55,13 @@ void Init_boardext() {
   rb_define_method( OthelloBoard, "set", othello_board_set, 3 );
                                                             /* in othello.c */
 
+  /* Map Board::Frontier */
+
+  Plugins  = rb_define_module_under( Board, "Plugins" );
+  Frontier = rb_define_module_under( Plugins, "Frontier" );
+
+  rb_define_method( Frontier, "update_frontier", frontier_update, 2 );
+
   /* Look up all our ids */
 
   id_dup = rb_intern("dup");

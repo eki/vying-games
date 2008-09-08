@@ -10,6 +10,9 @@ end
 require 'vying/parts/board/coord'
 require 'vying/parts/board/coords'
 require 'vying/parts/board/board'
+
+require 'vying/parts/board/plugins/frontier'
+
 require 'vying/parts/board/amazons'
 require 'vying/parts/board/connect6'
 require 'vying/parts/board/othello'

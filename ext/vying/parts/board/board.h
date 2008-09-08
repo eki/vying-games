@@ -10,6 +10,8 @@ VALUE Board;
 VALUE Coord;
 VALUE Coords;
 VALUE OthelloBoard;
+VALUE Plugins;
+VALUE Frontier;
 
 /* Board prototypes */
 
@@ -54,6 +56,10 @@ VALUE othello_board_valid( int argc, VALUE *argv, VALUE self );
 VALUE othello_board_place( VALUE self, VALUE c, VALUE p );
 VALUE othello_board_update_frontier( VALUE self, VALUE x, VALUE y );
 VALUE othello_board_set( VALUE self, VALUE x, VALUE y, VALUE p );
+
+/* Frontier prototypes */
+
+VALUE frontier_update( VALUE self, VALUE x, VALUE y );
 
 /* IDs */
 

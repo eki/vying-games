@@ -379,5 +379,21 @@ EOF
     assert_equal( s, b.to_s )
   end
 
+  def test_find_plugin
+    plugin = Board::Plugins::Frontier
+
+    assert_equal( plugin, Board.find_plugin( plugin ) )
+    assert_equal( plugin, Board.find_plugin( plugin.to_s.to_sym ) )
+    assert_equal( plugin, Board.find_plugin( plugin.to_s ) )
+    assert_equal( plugin, Board.find_plugin( "frontier" ) )
+    assert_equal( plugin, Board.find_plugin( :frontier ) )
+
+    assert_equal( nil, Board.find_plugin( nil ) )
+    assert_equal( nil, Board.find_plugin( "nonexistant_plugin" ) )
+    assert_equal( nil, Board.find_plugin( :nonexistant_plugin ) )
+    assert_equal( nil, Board.find_plugin( "NonexistantPlugin" ) )
+    assert_equal( nil, Board.find_plugin( :NonexistantPlugin ) )
+  end
+
 end
 
