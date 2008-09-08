@@ -24,7 +24,17 @@ class Module
   # via nested_const_get.
 
   def nested_const_get( s )
-    s.split( /::/ ).inject( Kernel ) { |m,s| m.const_get( s ) }
+    s.to_s.split( /::/ ).inject( self ) { |n,m| n.const_get( m ) }
+  end
+
+  # Like Module#const_get with the exception that this handles nested
+  # constants.  For example, Move::Draw::PositionMixin can be found
+  # via nested_const_get.
+
+  def nested_const_defined?( s )
+    !! s.to_s.split( /::/ ).inject( self ) do |n,m| 
+      n && n.const_defined?( m ) ? n.const_get( m ) : false
+    end
   end
 
   # Add a wrapper around const_get that deals with compatibility between 
