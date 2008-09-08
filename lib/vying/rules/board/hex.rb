@@ -61,7 +61,8 @@ Rules.create( "Hex" ) do
 
     def init
       length = @options[:board_size]
-      @board = Board.new( length, length )
+      @board = Board.new( :shape => :rhombus, 
+                          :width => length, :height => length )
       @groups = { :blue => [], :red => [] }
     end
 
@@ -75,7 +76,7 @@ Rules.create( "Hex" ) do
       board[coord] = turn
 
       new_groups = []
-      [:n, :s, :e, :w, :ne, :sw].each do |d|
+      board.directions.each do |d|
         n = board.coords.next( coord, d )
 
         groups[turn].delete_if do |g|
