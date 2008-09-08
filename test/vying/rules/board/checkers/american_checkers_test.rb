@@ -21,7 +21,7 @@ class TestAmericanCheckers < Test::Unit::TestCase
   def test_init
     g = Game.new( rules )
 
-    b = Board.new( 8, 8 )
+    b = Board.new( :shape => :square, :length => 8 )
 
     b[:b1,:d1,:f1,:h1,:a2,:c2,:e2,:g2,:b3,:d3,:f3,:h3] = :red
     b[:a8,:c8,:e8,:g8,:b7,:d7,:f7,:h7,:a6,:c6,:e6,:g6] = :white
