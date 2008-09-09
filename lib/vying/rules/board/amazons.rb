@@ -19,7 +19,14 @@ Rules.create( "Amazons" ) do
     attr_reader :board, :lastc
 
     def init
-      @board, @lastc = AmazonsBoard.new, nil
+      @board = Board.new( :shape   => :square,
+                          :length  => 10,
+                          :plugins => [:amazons] )
+
+      @board[:a4, :d1, :g1,:j4] = :white
+      @board[:a7,:g10,:d10,:j7] = :black
+
+      @lastc = nil
     end
 
     def move?( move )

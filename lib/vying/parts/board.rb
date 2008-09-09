@@ -15,5 +15,5 @@ require 'vying/parts/board/plugins/custodial_flip'
 require 'vying/parts/board/plugins/in_a_row'
 require 'vying/parts/board/plugins/frontier'
 
-require 'vying/parts/board/amazons'
+require 'vying/parts/board/plugins/amazons'
 
