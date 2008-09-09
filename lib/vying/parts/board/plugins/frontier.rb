@@ -15,6 +15,7 @@ module Board::Plugins::Frontier
   # Initialize the Frontier plugin.
 
   def init_plugin
+    super
     @frontier = []
   end
 
