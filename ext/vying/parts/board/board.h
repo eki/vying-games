@@ -4,12 +4,15 @@
 
 #include "ruby.h"
 
-/* Classes */
+/* Classes and Modules */
 
 VALUE Board;
 VALUE Coord;
 VALUE Coords;
-VALUE OthelloBoard;
+VALUE Plugins;
+VALUE Frontier;
+VALUE CustodialFlip;
+
 
 /* Board prototypes */
 
@@ -48,12 +51,16 @@ VALUE coords_include( VALUE self, VALUE c );
 VALUE coords_next( VALUE self, VALUE c, VALUE d );
 
 
-/* OthelloBoard prototypes */
+/* Frontier prototypes */
 
-VALUE othello_board_valid( int argc, VALUE *argv, VALUE self );
-VALUE othello_board_place( VALUE self, VALUE c, VALUE p );
-VALUE othello_board_update_frontier( VALUE self, VALUE x, VALUE y );
-VALUE othello_board_set( VALUE self, VALUE x, VALUE y, VALUE p );
+VALUE frontier_update( VALUE self, VALUE x, VALUE y );
+
+
+/* CustodialFlip prototypes */
+
+VALUE custodial_flip_valid( VALUE self, VALUE c, VALUE p );
+VALUE custodial_flip( VALUE self, VALUE c, VALUE p );
+
 
 /* IDs */
 
@@ -61,6 +68,7 @@ ID id_dup, id_x, id_y, id_subscript, id_subscript_assign, id_new,
    id_hash, id_include, id_n, id_s, id_w, id_e, id_se, id_nw, id_sw, id_ne,
    id_DIRECTIONS, id_white, id_black, id_delete, id_uniq_ex, id_to_s,
    id_before_set, id_after_set;
+
 
 /* SYMs */
 

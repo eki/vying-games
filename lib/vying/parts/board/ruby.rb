@@ -114,11 +114,13 @@ class Coords
       return nil
     end
 
-    if irregular
-      return coords.include?( c )
-    end
+    return true if omitted.empty?
 
-    true
+    if omitted.length < coords.length
+       ! omitted.include?( c )
+    else
+      coords.include?( c )
+    end
   end
 
   def next( c, d )
@@ -189,7 +191,7 @@ class Board
 
       @cells[ci( x, y )] = p
 
-      after_set( x, y, old )
+      after_set( x, y, p )
     end
 
     p
@@ -200,75 +202,67 @@ class Board
   end
 end
 
-class OthelloBoard < Board
-  def valid?( c, bp, directions = [:n,:s,:w,:e,:ne,:nw,:se,:sw] )
-    return false if !self[c].nil?
+module Board::Plugins
+  module Frontier
+    def update_frontier( x, y )
+      c, w, h = Coord[x,y], width, height
 
-
-    op = bp == :black ? :white : :black
-
-    a = directions.zip( coords.neighbors_nil( c, directions ) )
-    a.each do |d,nc|
-      p = self[nc]
-      next if p.nil? || p == bp
-
-      i = nc
-      while (i = coords.next( i, d ))
-        p = self[i]
-        return true if p == bp 
-        break       if p.nil?
-      end
-    end
-
-    false
-  end
-
-  def place( c, bp )
-    op = bp == :black ? :white : :black
-
-    directions = [:n,:s,:w,:e,:ne,:nw,:se,:sw]
-
-    a = directions.zip( coords.neighbors_nil( c, directions ) )
-    a.each do |d,nc|
-      p = self[nc]
-      next if p.nil? || p == bp
-
-      bt = [nc]
-      while (bt << coords.next( bt.last, d ))
-        p = self[bt.last]
-        break if p.nil?
-
-        if p == bp
-          bt.each { |bc| self[bc] = bp }
-          break
+      directions.each do |d|
+        nc = coords.next( c, d )
+  
+        if ! nc.nil? && self[nc].nil?
+          frontier << nc
         end
       end
+
+      frontier.delete( c )
+      frontier.uniq!
+      frontier
     end
-
-    self[c] = bp
   end
 
-  def set( x, y, p )
-    update_frontier( x, y, p )
+  module CustodialFlip
+    def will_flip?( c, bp )
+      return false if !self[c].nil?
 
-    super( x, y, p )
-  end
+      a = directions.zip( coords.neighbors_nil( c ) )
+      a.each do |d,nc|
+        p = self[nc]
+        next if p.nil? || p == bp
 
-  private
-  def update_frontier( x, y, p )
-    c, w, h = Coord[x,y], width, height
-
-    [:n, :s, :e, :w, :ne, :nw, :se, :sw].each do |d|
-      nc = coords.next( c, d )
-
-      if ! nc.nil? && self[nc].nil?
-        frontier << nc
+        i = nc
+        while (i = coords.next( i, d ))
+          p = self[i]
+          return true if p == bp 
+          break       if p.nil?
+        end
       end
+
+      false
     end
 
-    frontier.delete( c )
-    frontier.uniq!
-    frontier
+    def custodial_flip( c, bp )
+      a = directions.zip( coords.neighbors_nil( c ) )
+      a.each do |d,nc|
+        p = self[nc]
+        next if p.nil? || p == bp
+
+        bt = [nc]
+        while (bt << coords.next( bt.last, d ))
+          p = self[bt.last]
+          break if p.nil?
+
+          if p == bp
+            bt.each { |bc| self[bc] = bp }
+            break
+          end
+        end
+      end
+
+      self[c] = bp
+    end
+
   end
 end
+
 

@@ -20,8 +20,12 @@ class TestTicTacToe < Test::Unit::TestCase
 
   def test_init
     g = Game.new( rules )
-    assert_equal( Board.new( 3, 3 ), g.board )
     assert_equal( :x, g.turn )
+    assert_equal( :square, g.board.shape )
+    assert_equal( 3, g.board.length )
+    assert_equal( 3*3, g.board.unoccupied.length )
+    assert_equal( 3, g.board.window_size )
+    assert_equal( [], g.board.threats )
   end
 
   def test_moves

@@ -10,50 +10,40 @@ Rules.create( "TicTacToe" ) do
   players :x, :o
 
   position do
-    attr_reader :board, :lastc, :lastp
-    ignore :lastc, :lastp
+    attr_reader :board
   
     def init
-      @board = Board.new( 3, 3 )
-      @lastc, @lastp = nil, :noone
+      @board = Board.new( :shape   => :square,
+                          :length  => 3,
+                          :plugins => [:in_a_row] )
+
+      @board.window_size = 3
     end
 
     def moves
-      return [] if final?
-      board.unoccupied
+      final? ? [] : board.unoccupied
     end
 
     def apply!( move )
-      c, p = Coord[move], turn
-      board[c], @lastc, @lastp = p, c, p
+      board[move] = turn
       rotate_turn
       self
     end
 
     def final?
-      return false if lastc.nil?
-      return true  if board.unoccupied.empty?
-
-      board.each_from( lastc, [:e,:w] ) { |p| p == lastp } == 2 ||
-      board.each_from( lastc, [:n,:s] ) { |p| p == lastp } == 2 ||
-      board.each_from( lastc, [:ne,:sw] ) { |p| p == lastp } == 2 ||
-      board.each_from( lastc, [:nw,:se] ) { |p| p == lastp } == 2
+      board.unoccupied.empty? || board.threats.any? { |t| t.degree == 0 }
     end
 
     def winner?( player )
-      final? && !draw? && lastp == player
+      board.threats.any? { |t| t.degree == 0 && t.player == player }
     end
 
     def loser?( player )
-      final? && !draw? && lastp != player
+      winner?( opponent( player ) )
     end
 
     def draw?
-      board.unoccupied.empty? &&
-      board.each_from( lastc, [:e,:w] ) { |p| p == lastp } != 2 &&
-      board.each_from( lastc, [:n,:s] ) { |p| p == lastp } != 2 &&
-      board.each_from( lastc, [:ne,:sw] ) { |p| p == lastp } != 2 &&
-      board.each_from( lastc, [:nw,:se] ) { |p| p == lastp } != 2
+      board.unoccupied.empty? && ! board.threats.any? { |t| t.degree == 0 }
     end
 
     def hash

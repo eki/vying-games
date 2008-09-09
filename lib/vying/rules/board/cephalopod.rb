@@ -41,7 +41,10 @@ Rules.create( "Cephalopod" ) do
     attr_reader :board, :dice, :removed, :removed
 
     def init
-      @board = Board.new( 5, 5 )
+      @board = Board.new( :shape      => :square, 
+                          :length     => 5, 
+                          :directions => [:n, :e, :w, :s]  )
+
       @dice = { :black => 0, :white => 0 }
 
       @removed = {}
@@ -55,8 +58,7 @@ Rules.create( "Cephalopod" ) do
       qs = board.occupied["?"]
       unless qs.empty?
         cc = qs.first
-        ns = board.coords.neighbors( cc, [:n, :e, :w, :s] ).
-               reject { |c| board[c].nil? }
+        ns = board.coords.neighbors( cc ).reject { |c| board[c].nil? }
       
         removed_faces = @removed.values.map { |d| d.up }.sort
 
@@ -96,7 +98,7 @@ Rules.create( "Cephalopod" ) do
     def apply!( move )
       c = Coord[move]
       if board[c].nil?
-        np = board[*board.coords.neighbors( c, [:n, :e, :w, :s] )]
+        np = board[*board.coords.neighbors( c )]
         dice = Dice.new( np.compact )
 
         capturing = false

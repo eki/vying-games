@@ -34,8 +34,13 @@ class TestYinsh < Test::Unit::TestCase
     g = Game.new( rules )
     moves = g.moves
 
-    YinshBoard::OMIT_COORDS.each do |c|
-      assert( ! moves.include?( c.to_s ) )
+    omitted = [:a1, :a6, :a7, :a8, :a9, :a10, :a11, :b8, :b9, :b10, :b11, :c9,
+               :c10, :c11, :d10, :d11, :e11, :f1, :f11, :g1, :h1, :h2, :i1, 
+               :i2, :i3, :j1, :j2, :j3, :j4, :k1, :k2, :k3, :k4, :k5, :k6, 
+               :k11]
+
+    omitted.each do |c|
+      assert( ! moves.include?( c ) )
     end
   end
 

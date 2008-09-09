@@ -23,12 +23,20 @@ VALUE coords_include( VALUE self, VALUE c ) {
     return Qnil;
   }
 
-  if( RTEST(rb_iv_get( self, "@irregular" )) ) {
-    VALUE coords = rb_iv_get( self, "@coords" ); 
-    return rb_funcall( coords, id_include, 1, c );
+  VALUE omitted = rb_iv_get( self, "@omitted" );
+
+  if( RARRAY(omitted)->len == 0 ) {
+    return Qtrue;
   }
 
-  return Qtrue;
+  VALUE coords = rb_iv_get( self, "@coords" );
+
+  if( RARRAY(omitted)->len < RARRAY(coords)->len ) {
+    return rb_funcall( omitted, id_include, 1, c ) == Qfalse ? Qtrue : Qfalse;
+  }
+  else {
+    return rb_funcall( coords, id_include, 1, c );
+  }
 }
 
 /*

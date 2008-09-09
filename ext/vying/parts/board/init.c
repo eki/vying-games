@@ -30,6 +30,7 @@ void Init_boardext() {
   rb_define_method( Coords, "include?", coords_include, 1 ); /* in coords.c */
   rb_define_method( Coords, "next", coords_next, 2 );        /* in coords.c */
 
+
   /* Map Board */
 
   Board = rb_define_class( "Board", rb_cObject );
@@ -44,16 +45,27 @@ void Init_boardext() {
 
   rb_define_method( Board, "ci", board_ci, 2 );               /* in board.c */
 
-  /* Map OthelloBoard */
 
-  OthelloBoard = rb_define_class( "OthelloBoard", Board );
+  /* Plugins namespace. */
 
-  rb_define_method( OthelloBoard, "valid?", othello_board_valid, -1 );
-                                                            /* in othello.c */
-  rb_define_method( OthelloBoard, "place", othello_board_place, 2 );
-                                                            /* in othello.c */
-  rb_define_method( OthelloBoard, "set", othello_board_set, 3 );
-                                                            /* in othello.c */
+  Plugins  = rb_define_module_under( Board, "Plugins" );
+
+
+  /* Map Board::Plugins::Frontier */
+
+  Frontier = rb_define_module_under( Plugins, "Frontier" );
+
+  rb_define_method( Frontier, "update_frontier", frontier_update, 2 );
+                                                           /* in frontier.c */
+
+  /* Map Board::Plugins::CustodialFlip */
+
+  CustodialFlip = rb_define_module_under( Plugins, "CustodialFlip" );
+
+  rb_define_method( CustodialFlip, "will_flip?", custodial_flip_valid, 2 );
+                                                     /* in custodial_flip.c */
+  rb_define_method( CustodialFlip, "custodial_flip", custodial_flip, 2 );
+                                                     /* in custodial_flip.c */
 
   /* Look up all our ids */
 

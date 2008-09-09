@@ -4,17 +4,142 @@
 
 class Board
 
-  attr_reader :coords, :cells, :width, :height, :occupied
+  attr_reader :shape, :cell_shape, :directions, :coords, :cells, 
+              :width, :height, :length, :occupied, :plugins
   protected :cells
 
-  # Initialize a board of the given width and height.  The default is 8x8
-  # and completely empty.
+  # Initialize a board.  Accepts a hash with the following parameters:
+  #
+  #   :shape - The overall shape of the board.  Valid shapes are:
+  #              :square, :rect, :triangle, :rhombus, :hexagon
+  #
+  #   :width, :height, :length - Define the bounds of the board, the params
+  #                              accepted depend on the :shape of the board
+  #
+  #   :omit - A list of coords to be excluded from the bounds of the board.
+  #           Given param should be array.  All the elements will be mapped
+  #           to Coord with Coord.[] so symbols and strings are acceptable.
+  #
+  #   :cell_shape - The shape of the individual cells.  Valid shapes are:
+  #                   :square, :hexagon
+  #                 The cell_shape will be defaulted depending on the overall
+  #                 board shape.  For example, it will be set to :square for
+  #                 :square and :rect boards, and :hexagon for :triangle,
+  #                 :rhombus, and :hexagon boards.  Not all combinations of
+  #                 :shape and :cell_shape are supported, yet.
+  #
+  #   :directions - In which directions are the cells connected to one another?
+  #                 This should be an array containing some subset of:
+  #                   [:n, :e, :w, :s, :ne, :nw, :se, :sw]
+  #                 If :directions are not given, :cell_shape will be used
+  #                 to determine a default.  The directions will effect methods
+  #                 like CoordsProxy#neighbors.
+  #
+  #   :plugins - An array of plugins that the created board should extend.  
+  #              Plugins are typically modules under the Board::Plugins 
+  #              namespace.  Shorthand can be used to refer to the plugins
+  #              in that namespace.  For example, Board::Plugins::Frontier
+  #              can be referred to as :frontier.
+  #
 
-  def initialize( w=8, h=8 )
-    @width, @height, @cells = w, h, Array.new( w*h, nil )
-    @coords = Coords.new( width, height )
+  def initialize( h )
+    @width  = h[:width]
+    @height = h[:height]
+    @length = h[:length]
+
+    @shape = h[:shape]
+    @cell_shape = h[:cell_shape]
+    @directions = h[:directions]
+
+    if @shape.nil?
+      raise "board requires the :shape param"
+    end
+
+    omit = (h[:omit] || []).map { |c| Coord[c] }
+
+    case h[:shape]
+      when :square
+        @length ||= @width
+        @width  ||= @length
+        @height ||= @length
+
+        if @length.nil?
+          raise "square board requires the :length or :width params"
+        end
+
+        @cell_shape ||= :square
+        @directions ||= [:n, :s, :e, :w, :ne, :sw, :nw, :se]
+
+      when :rect
+        
+        if @width.nil? || @height.nil?
+          raise "rect board requires both the :width and :height params"
+        end
+
+        @cell_shape ||= :square
+        @directions ||= [:n, :s, :e, :w, :ne, :sw, :nw, :se]
+
+      when :triangle
+
+        if @length.nil?
+          raise "triangle board requires the :length param"
+        end
+
+        @width  = @length
+        @height = @length
+
+        @width.times do |x|
+          @height.times do |y|
+            omit << Coord[x,y] if x + y >= length
+          end
+        end
+
+        @cell_shape ||= :hexagon
+        @directions ||= [:n, :s, :e, :w, :ne, :sw]
+
+      when :rhombus
+
+        if @width.nil? || @height.nil?
+          raise "rhombus board requires both the :width and :height params"
+        end
+
+        @cell_shape ||= :hexagon
+        @directions ||= [:n, :s, :e, :w, :ne, :sw]
+
+      when :hexagon
+
+        if @length.nil?
+          raise "hexagon board requires the :length param"
+        end
+
+        @width  = @length * 2 - 1
+        @height = @length * 2 - 1
+
+        @width.times do |x|
+          @height.times do |y|
+            omit << Coord[x,y] if (x - y).abs >= @length
+          end
+        end
+
+        @cell_shape ||= :hexagon
+        @directions ||= [:n, :s, :e, :w, :nw, :se]
+    end
+
+    if @width && @height 
+      @cells = Array.new( @width * @height, nil )
+      @coords = CoordsProxy.new( self, Coords.new( width, height, omit ) )
+    end
+
     @occupied = Hash.new( [] )
     @occupied[nil] = @coords.to_a.dup
+
+    @plugins = []
+
+    (h[:plugins] || []).each { |p| plugin( p ) }
+
+    init_plugin
+
+    fill( h[:fill] ) if h[:fill]
   end
 
   # Perform a deep copy on this board.
@@ -23,6 +148,36 @@ class Board
     @cells = original.cells.dup
     @occupied = Hash.new( [] )
     original.occupied.each { |k,v| @occupied[k] = v.dup }
+  end
+
+  # Initialize plugins.  The init_plugin method should be implemented by
+  # any plugins that need to initialize instance variables.  All plugin
+  # implementations should be sure to call super (or, else not all plugins
+  # will be initialized).
+
+  def init_plugin
+
+  end
+
+  alias_method :__dup, :dup
+
+  # Make a dup of this board.  If it has been extended by any plugins, dup
+  # will re-extend the board prior to calling #intialize_copy.  Thus, plugins
+  # can implement #initialize_copy as long as they call super.
+
+  def dup
+    return __dup if plugins.empty?
+
+    b = Board.allocate
+
+    instance_variables.each do |iv|
+      b.instance_variable_set( iv, instance_variable_get( iv ) )
+    end
+
+    plugins.each { |p| b.extend( Board.find_plugin( p ) ) }
+
+    b.send( :initialize_copy, self )
+    b
   end
 
   # Compare boards for equality.
@@ -104,9 +259,15 @@ class Board
   # Fill the entire board with the given piece.
 
   def fill( p )
-    @cells.each_index { |i| @cells[i] = nil }
-    @occupied = Hash.new( [] )
-    @occupied[p] = @coords.to_a.dup
+    if coords.omitted.empty?
+      cells.each_index { |i| cells[i] = p }
+
+      @occupied = Hash.new( [] )
+      @occupied[p] = @coords.to_a.dup
+    else
+      coords.each { |c| self[c] = p }
+    end
+
     self
   end
 
@@ -144,6 +305,107 @@ class Board
       s += sprintf( "%*d\n", -off, y+1 )
     end
     s + letters
+  end
+
+  class CoordsProxy
+    def initialize( board, coords )
+      @board, @coords = board, coords
+    end
+
+    def ring( coord, d )
+      @coords.ring( coord, d, @board.cell_shape, @board.directions )
+    end
+
+    def neighbors( coord )
+      @coords.neighbors( coord, @board.directions )
+    end
+
+    def neighbors_nil( coord )
+      @coords.neighbors_nil( coord, @board.directions )
+    end
+
+    def to_a
+      @coords.to_a
+    end
+
+    def respond_to?( m )
+      m != :_dump && (super || @coords.respond_to?( m ))
+    end
+
+    def method_missing( m, *args, &block )
+      if m != :_dump && @coords.respond_to?( m ) 
+        @coords.send( m, *args, &block )
+      else
+        super
+      end
+    end
+
+    # No need to save the board itself.  Board#yaml_initialize will reset
+    # itself.
+
+    def to_yaml_properties
+      ["@coords"]
+    end
+  end
+
+  # Find Board plugins (Modules).  Given a string like 
+  # "Board::Plugins::Frontier" it will return that module.  Given a string
+  # like "frontier" or the symbol :frontier, it will look in the Board::Plugins
+  # namespace for a module named Frontier.  If the string where to contain
+  # underscores it would be translated from snake case to camel case.
+
+  def self.find_plugin( s )
+    return s  if s.nil? || s.kind_of?( Module )
+
+    # Assume strings that look like constants are defined rooted under Object.
+
+    if s.to_s =~ /^[A-Z]/
+
+      if Object.nested_const_defined?( s.to_s )
+        Object.nested_const_get( s.to_s )
+      end
+
+    else  # Otherwise, assume we're looking under Board::Plugins
+
+      m = s.to_s.gsub( /_(.)/ ) { $1.upcase }.gsub( /^(.)/ ) { $1.upcase }
+
+      if Board::Plugins.nested_const_defined?( m )
+        Board::Plugins.nested_const_get( m )
+      end
+    end
+  end
+
+  # When loading a YAML-ized Board, be sure to re-extend plugins.
+
+  def yaml_initialize( t, vals )
+    vals.each do |iv,v|
+      instance_variable_set( "@#{iv}", v )
+      v.each { |p| extend Board.find_plugin( p ) } if iv == "plugins"
+      v.instance_variable_set( "@board", self ) if iv == "coords"
+    end
+  end
+
+  private
+
+  # Extend self with the given plugin and any dependencies (that haven't
+  # already been loaded).
+
+  def plugin( p )
+    if p = self.class.find_plugin( p )
+      ps = p.to_s
+
+      return if @plugins.include?( ps )
+
+      @plugins << ps
+      extend p
+
+      if p.respond_to?( :dependencies )
+        p.dependencies.each do |dp|
+          plugin( dp )
+        end
+      end
+
+    end
   end
 
 end

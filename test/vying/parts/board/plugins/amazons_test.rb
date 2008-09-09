@@ -2,10 +2,68 @@
 require 'test/unit'
 require 'vying'
 
-class TestAmazonsBoard < Test::Unit::TestCase
+class TestAmazons < Test::Unit::TestCase
 
-  def test_initialize
-    b = AmazonsBoard.new
+  def test_initialize_01
+    b = Board.new( :shape => :square, :length => 4, :plugins => [:amazons] )
+
+    assert( (class << b; ancestors; end).include?( Board::Plugins::Amazons ) )
+    assert_equal( 1, b.territories.length )
+    assert_equal( [], b.territories.first.black )
+    assert_equal( [], b.territories.first.white )
+    assert_equal( b.coords.to_a, b.territories.first.coords )
+  end
+
+  def test_dup
+    b = Board.new( :shape => :square, :length => 4, :plugins => [:amazons] )
+
+    assert( (class << b; ancestors; end).include?( Board::Plugins::Amazons ) )
+
+    b2 = b.dup
+
+    assert( (class << b2; ancestors; end).include?( Board::Plugins::Amazons ) )
+
+    assert_equal( b, b2 )
+    assert_equal( b.territories, b2.territories )
+    assert_not_equal( b.territories.object_id, b2.territories.object_id )
+  end
+
+  def test_marshal
+    b = Board.new( :shape => :square, :length => 4, :plugins => [:amazons] )
+
+    assert( (class << b; ancestors; end).include?( Board::Plugins::Amazons ) )
+
+    b2 = Marshal.load( Marshal.dump( b ) )
+
+    assert( (class << b2; ancestors; end).include?( Board::Plugins::Amazons ) )
+
+    assert_equal( b, b2 )
+    assert_equal( b.territories, b2.territories )
+    assert_not_equal( b.territories.object_id, b2.territories.object_id )
+  end
+
+  def test_yaml
+    b = Board.new( :shape => :square, :length => 4, :plugins => [:amazons] )
+
+    assert( (class << b; ancestors; end).include?( Board::Plugins::Amazons ) )
+
+    b2 = YAML.load( b.to_yaml )
+
+    assert( (class << b2; ancestors; end).include?( Board::Plugins::Amazons ) )
+
+    assert_equal( b, b2 )
+    assert_equal( b.territories, b2.territories )
+    assert_not_equal( b.territories.object_id, b2.territories.object_id )
+  end
+
+  def test_initialize_02
+    b = Board.new( :shape   => :square,
+                   :length  => 10,
+                   :plugins => [:amazons] )
+
+    b[:a4, :d1, :g1,:j4] = :white
+    b[:a7,:g10,:d10,:j7] = :black
+
     assert_equal( 10, b.width )
     assert_equal( 10, b.height )
 
@@ -24,7 +82,12 @@ class TestAmazonsBoard < Test::Unit::TestCase
   end
 
   def test_territory_splits
-    b = AmazonsBoard.new
+    b = Board.new( :shape   => :square,
+                   :length  => 10,
+                   :plugins => [:amazons] )
+
+    b[:a4, :d1, :g1,:j4] = :white
+    b[:a7,:g10,:d10,:j7] = :black
 
     a4 = Coord[:a4]
     d1 = Coord[:d1]
@@ -78,7 +141,13 @@ class TestAmazonsBoard < Test::Unit::TestCase
   end
 
   def test_territory_blocking
-    b = AmazonsBoard.new
+    b = Board.new( :shape   => :square,
+                   :length  => 10,
+                   :plugins => [:amazons] )
+
+    b[:a4, :d1, :g1,:j4] = :white
+    b[:a7,:g10,:d10,:j7] = :black
+
     b.arrow( :b7,:c7,:d7,:e7,:f7,:g7,:h7,:i7 )
     
     a4 = Coord[:a4]
@@ -118,7 +187,12 @@ class TestAmazonsBoard < Test::Unit::TestCase
   end
 
   def test_mobility_init
-    b = AmazonsBoard.new
+    b = Board.new( :shape   => :square,
+                   :length  => 10,
+                   :plugins => [:amazons] )
+
+    b[:a4, :d1, :g1,:j4] = :white
+    b[:a7,:g10,:d10,:j7] = :black
 
     m_d1 = [Coord[:e1], Coord[:f1], Coord[:d2], Coord[:d3], Coord[:d4], 
             Coord[:d5], Coord[:d6], Coord[:d7], Coord[:d8], Coord[:d9], 
@@ -129,7 +203,12 @@ class TestAmazonsBoard < Test::Unit::TestCase
   end
 
   def test_mobility_move
-    b = AmazonsBoard.new
+    b = Board.new( :shape   => :square,
+                   :length  => 10,
+                   :plugins => [:amazons] )
+
+    b[:a4, :d1, :g1,:j4] = :white
+    b[:a7,:g10,:d10,:j7] = :black
 
     m_d1_b = [Coord[:e1], Coord[:f1], Coord[:d2], Coord[:d3], Coord[:d4], 
               Coord[:d5], Coord[:d6], Coord[:d7], Coord[:d8], Coord[:d9], 
@@ -156,7 +235,12 @@ class TestAmazonsBoard < Test::Unit::TestCase
   end
 
   def test_mobility_move
-    b = AmazonsBoard.new
+    b = Board.new( :shape   => :square,
+                   :length  => 10,
+                   :plugins => [:amazons] )
+
+    b[:a4, :d1, :g1,:j4] = :white
+    b[:a7,:g10,:d10,:j7] = :black
 
     m_d1_b = [Coord[:e1], Coord[:f1], Coord[:d2], Coord[:d3], Coord[:d4], 
               Coord[:d5], Coord[:d6], Coord[:d7], Coord[:d8], Coord[:d9], 

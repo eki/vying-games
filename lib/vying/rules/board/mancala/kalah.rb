@@ -23,8 +23,15 @@ Rules.create( "Kalah" ) do
     ignore :sides, :annotation
 
     def init
-      @board = MancalaBoard.new( 6, 2, @options[:seeds_per_cup] )
-      @annotation = MancalaBoard.new( 6, 2, "0" )
+      @board = Board.new( :shape  => :rect, 
+                          :width  => 6,
+                          :height => 2,
+                          :fill   => @options[:seeds_per_cup] )
+
+      @annotation = Board.new( :shape => :rect,
+                               :width  => 6,
+                               :height => 2,
+                               :fill => "0" )
 
       @scoring_pits = { :one => 0, :two => 0 }
       @sides = { :one => ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'],

@@ -19,7 +19,7 @@ Rules.create( "NineMensMorris" ) do
     attr_reader :board, :remaining, :removing
 
     def init
-      @board = Board.new( 7, 7 )
+      @board = Board.new( :shape => :square, :length => 7 )
 
       @board[     :b1, :c1,   :e1, :f1,
              :a2,      :c2,   :e2,      :g2,

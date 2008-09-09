@@ -24,7 +24,7 @@ Rules.create( "Ataxx" ) do
     ignore :moves_cache
 
     def init
-      @board = Board.new( 7, 7 )
+      @board = Board.new( :shape => :square, :length => 7 )
       @board[:a1,:g7] = :red
       @board[:a7,:g1] = :blue
 

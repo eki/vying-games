@@ -20,9 +20,12 @@ class TestKeryoPente < Test::Unit::TestCase
 
   def test_init
     g = Game.new( rules )
-    assert_equal( Board.new( 19, 19 ), g.board )
     assert_equal( :white, g.turn )
+    assert_equal( :square, g.board.shape )
+    assert_equal( 19, g.board.length )
     assert_equal( 19*19, g.board.unoccupied.length )
+    assert_equal( 5, g.board.window_size )
+    assert_equal( [], g.board.threats )
   end
 
   def test_has_score

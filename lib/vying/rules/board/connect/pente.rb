@@ -15,7 +15,11 @@ Rules.create( "Pente" ) do
     attr_reader :board, :captured
 
     def init
-      @board = Connect6Board.new( 5 )
+      @board = Board.new( :shape   => :square,
+                          :length  => 19,
+                          :plugins => [:in_a_row] )
+
+      @board.window_size = 5
       @captured = { :black => 0, :white => 0 }
     end
 
@@ -29,8 +33,7 @@ Rules.create( "Pente" ) do
 
       # Custodian capture
       cap = []
-      directions = [:n,:s,:e,:w,:ne,:nw,:se,:sw]
-      a = directions.zip( board.coords.neighbors_nil( c, directions ) )
+      a = board.directions.zip( board.coords.neighbors_nil( c ) )
       a.each do |d,nc|
         next if board[nc].nil? || board[nc] == board[c]
 

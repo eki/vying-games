@@ -21,7 +21,7 @@ class TestOware < Test::Unit::TestCase
   def test_initialize
     g = Game.new( rules )
 
-    b = MancalaBoard.new( 6, 2, 4 )
+    b = Board.new( :shape => :rect, :width => 6, :height => 2, :fill => 4 )
 
     assert_equal( b, g.board )
     assert_equal( :one, g.turn )

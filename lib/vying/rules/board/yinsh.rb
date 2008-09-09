@@ -24,7 +24,10 @@ Rules.create( "Yinsh" ) do
     attr_reader :board, :removed, :rows, :removed_markers, :completed_row
 
     def init
-      @board = YinshBoard.new
+      @board = Board.new( :shape  => :hexagon, 
+                          :length => 6,
+                          :omit   => [:a1, :a6, :f1, :f11, :k6, :k11] )
+
       @removed = { :WHITE_RING => 0, :BLACK_RING => 0 }
       @rows = []
       @removed_markers = []
@@ -55,7 +58,7 @@ Rules.create( "Yinsh" ) do
 
       else
         rings.each do |r|
-          YinshBoard::DIRECTIONS.each do |d|
+          [:n, :s, :e, :w, :nw, :se].each do |d|
             c, over_marker = r, false
             while c = board.coords.next( c, d )
               p = board[c]

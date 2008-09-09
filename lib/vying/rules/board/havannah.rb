@@ -4,10 +4,11 @@
 require 'vying'
 
 class HavannahGroup
-  attr_reader :coords, :side_map, :corner_map, :size
+  attr_reader :coords, :side_map, :corner_map, :size, :board
 
-  def initialize( size, c=nil )
-    @coords, @size = [], size
+  def initialize( board, c=nil )
+    @board = board
+    @coords, @size = [], board.length
     @side_map, @corner_map, @ring = 0, 0, false
     self << c if c
   end
@@ -41,7 +42,7 @@ class HavannahGroup
   end
 
   def |( group )
-    g = HavannahGroup.new( size )
+    g = HavannahGroup.new( board )
     g.instance_variable_set( "@coords",      coords      | group.coords )
     g.instance_variable_set( "@side_map",    side_map    | group.side_map )
     g.instance_variable_set( "@corner_map",  corner_map  | group.corner_map )
@@ -72,7 +73,7 @@ class HavannahGroup
 
     return self if coords.length < 6  # minimum ring needs 6 cells
 
-    ns = neighbors( c )
+    ns = board.coords.neighbors( c )
     ms = ns.select { |nc| coords.include?( nc ) }
     return self unless ms.length >= 2  # can't form a ring without connecting
                                        # at least two cells
@@ -80,7 +81,7 @@ class HavannahGroup
     # check for a "blob" -- a 7-cell hexagon pattern
 
     (ms + [c]).each do |bc|
-      bns = neighbors( bc )
+      bns = board.coords.neighbors( bc )
       if bns.length == 6 && bns.all? { |bnc| coords.include?( bnc ) }
         @ring = true
         return self
@@ -112,7 +113,7 @@ class HavannahGroup
         marked << nc
 
         if nc == sc || ! coords.include?( nc )
-          neighbors( nc ).each do |nnc|
+          board.coords.neighbors( nc ).each do |nnc|
             if i > 0 && marked.include?( nnc )
               found_marked = true
               break
@@ -145,11 +146,6 @@ class HavannahGroup
     o && coords == o.coords
   end
 
-  private
-
-  def neighbors( c )
-    HexHexBoard.coords( size ).neighbors( c, HexHexBoard::DIRECTIONS )
-  end
 end
 
 # Havannah
@@ -170,7 +166,7 @@ Rules.create( "Havannah" ) do
     attr_reader :board, :groups
 
     def init
-      @board = HexHexBoard.new
+      @board = Board.new( :shape => :hexagon, :length => 10 )
       @groups = { :blue => [], :red => [] }
     end
 
@@ -186,7 +182,7 @@ Rules.create( "Havannah" ) do
       board[coord] = turn
 
       new_groups = []
-      HexHexBoard::DIRECTIONS.each do |d|
+      board.directions.each do |d|
         n = board.coords.next( coord, d )
 
         groups[turn].delete_if do |g|
@@ -198,9 +194,9 @@ Rules.create( "Havannah" ) do
       end
 
       if new_groups.empty?
-        groups[turn] << HavannahGroup.new( board.length, coord )
+        groups[turn] << HavannahGroup.new( board, coord )
       else
-        g = HavannahGroup.new( board.length )
+        g = HavannahGroup.new( board )
         groups[turn] << new_groups.inject( g ) { |m,a| m | a }
       end
 

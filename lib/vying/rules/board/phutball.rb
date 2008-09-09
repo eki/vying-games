@@ -15,7 +15,7 @@ Rules.create( "Phutball" ) do
     attr_reader :board, :jumping
 
     def init
-      @board = Board.new( 15, 21 )
+      @board = Board.new( :shape => :rect, :width => 15, :height => 21 )
       @board[:h11] = :white
       @jumping = false
     end
@@ -78,7 +78,7 @@ Rules.create( "Phutball" ) do
       sc = board.occupied[:white].first
       jmoves = []
 
-      [:n,:s,:w,:e,:ne,:nw,:se,:sw].each do |d|
+      board.directions.each do |d|
         c = board.coords.next( sc, d )
 
         next if board[c].nil?

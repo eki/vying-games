@@ -23,12 +23,10 @@ Rules.create( "ThreeMusketeers" ) do
     attr_reader :board
 
     def init
-      @board = Board.new( 5, 5 )
-      @board[:a1,:b1,:c1,:d1,    
-             :a2,:b2,:c2,:d2,:e2,
-             :a3,:b3,    :d3,:e3,
-             :a4,:b4,:c4,:d4,:e4,
-                 :b5,:c5,:d5,:e5] = :blue
+      @board = Board.new( :shape      => :square, 
+                          :length     => 5,
+                          :directions => [:n, :e, :w, :s],
+                          :fill       => :blue )
 
       @board[:a5,:c3,:e1] = :red
     end
@@ -78,13 +76,13 @@ Rules.create( "ThreeMusketeers" ) do
 
     def can_move?( c )
       p = rules.can_move_to[board[c]]     
-      ns = board.coords.neighbors( c, [:n, :e, :w, :s] )
+      ns = board.coords.neighbors( c )
       ns.any? { |n| board[n] == p }
     end
 
     def moves_for( c )
       p = rules.can_move_to[board[c]]     
-      ns = board.coords.neighbors( c, [:n, :e, :w, :s] )
+      ns = board.coords.neighbors( c )
       ns.select { |n| board[n] == p }.map { |n| "#{c}#{n}" }
     end
   end

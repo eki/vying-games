@@ -5,22 +5,117 @@ require 'vying'
 class TestBoard < Test::Unit::TestCase
 
   def test_initialize
-    b = Board.new( 7, 6 )
+    b = Board.new( :shape => :rect, :width => 7, :height => 6 )
+    assert_equal( :rect, b.shape )
     assert_equal( 7, b.width )
     assert_equal( 6, b.height )
+    assert_equal( nil, b.length )
+    assert_equal( [], b.coords.omitted )
 
-    b = Board.new( 7 )
-    assert_equal( 7, b.width )
-    assert_equal( 8, b.height )
-
-    b = Board.new
+    b = Board.new( :shape => :square, :length => 8 )
+    assert_equal( :square, b.shape )
     assert_equal( 8, b.width )
     assert_equal( 8, b.height )
+    assert_equal( 8, b.length )
+    assert_equal( [], b.coords.omitted )
 
+    b = Board.new( :shape => :square, :length => 8, :omit => [:d3, :d4] )
+    assert_equal( :square, b.shape )
+    assert_equal( 8, b.width )
+    assert_equal( 8, b.height )
+    assert_equal( 8, b.length )
+    assert_equal( ['d3', 'd4'], b.coords.omitted.map { |c| c.to_s }.sort )
+    assert_equal( 62, b.coords.length )
+    assert( ! b.coords.include?( Coord[:d3] ) )
+    assert( ! b.coords.include?( Coord[:d4] ) )
+
+    b = Board.new( :shape => :triangle, :length => 4 )
+    assert_equal( :triangle, b.shape )
+    assert_equal( 4, b.width )
+    assert_equal( 4, b.height )
+    assert_equal( 4, b.length )
+    assert_equal( 10, b.coords.length )
+    assert_equal( 6, b.coords.omitted.length )
+    assert_equal( ["a1", "a2", "a3", "a4", "b1", "b2", "b3", "c1", "c2", "d1"],
+                  b.coords.map { |c| c.to_s }.sort )
+    assert_equal( ["b4", "c3", "c4", "d2", "d3", "d4"],
+                  b.coords.omitted.map { |c| c.to_s }.sort )
+
+    b = Board.new( :shape => :triangle, :length => 4, :omit => ["a1", "d1"] )
+    assert_equal( :triangle, b.shape )
+    assert_equal( 4, b.width )
+    assert_equal( 4, b.height )
+    assert_equal( 4, b.length )
+    assert_equal( 8, b.coords.length )
+    assert_equal( 8, b.coords.omitted.length )
+    assert_equal( ["a2", "a3", "a4", "b1", "b2", "b3", "c1", "c2"],
+                  b.coords.map { |c| c.to_s }.sort )
+    assert_equal( ["a1", "b4", "c3", "c4", "d1", "d2", "d3", "d4"],
+                  b.coords.omitted.map { |c| c.to_s }.sort )
+
+    b = Board.new( :shape => :rhombus, :width => 4, :height => 5 )
+    assert_equal( :rhombus, b.shape )
+    assert_equal( 4, b.width )
+    assert_equal( 5, b.height )
+    assert_equal( nil, b.length )
+    assert_equal( [], b.coords.omitted )
+
+    b = Board.new( :shape => :hexagon, :length => 4 )
+    assert_equal( :hexagon, b.shape )
+    assert_equal( 7, b.width )
+    assert_equal( 7, b.height )
+    assert_equal( 4, b.length )
+    assert_equal( 37, b.coords.length )
+    assert_equal( 12, b.coords.omitted.length )
+    assert_equal( ["a1", "a2", "a3", "a4", "b1", "b2", "b3", "b4", "b5", "c1",
+                   "c2", "c3", "c4", "c5", "c6", "d1", "d2", "d3", "d4", "d5",
+                   "d6", "d7", "e2", "e3", "e4", "e5", "e6", "e7", "f3", "f4",
+                   "f5", "f6", "f7", "g4", "g5", "g6", "g7"],
+                  b.coords.map { |c| c.to_s }.sort )
+
+    assert_equal( ["a5", "a6", "a7", "b6", "b7", "c7", "e1", "f1", "f2", "g1",
+                   "g2", "g3"],
+                  b.coords.omitted.map { |c| c.to_s }.sort )
+
+    assert_raise( ArgumentError ) do
+      Board.new
+    end
+
+    assert_raise( RuntimeError ) do
+      Board.new( {} )
+    end
+
+    assert_raise( RuntimeError ) do
+      Board.new( :length => 4 )
+    end
+
+    assert_raise( RuntimeError ) do
+      Board.new( :width => 4, :height => 5 )
+    end
+
+    assert_raise( RuntimeError ) do
+      Board.new( :shape => :square )
+    end
+
+    assert_raise( RuntimeError ) do
+      Board.new( :shape => :square, :height => 4 )
+    end
+
+    assert_raise( RuntimeError ) do
+      Board.new( :shape => :triangle, :width => 4, :height => 4 )
+    end
+
+    assert_raise( RuntimeError ) do
+      Board.new( :shape => :rhombus, :length => 4 )
+    end
+
+    assert_raise( RuntimeError ) do
+      Board.new( :shape => :hexagon, :width => 4, :height => 4 )
+    end
   end
 
   def test_bad_subscripts
-    b = Board.new( 7, 6 )
+    b = Board.new( :shape => :rect, :width => 7, :height => 6 )
     assert_equal( nil, b[-1,0] )
     assert_equal( nil, b[0,-1] )
     assert_equal( nil, b[-1,-1] )
@@ -33,7 +128,7 @@ class TestBoard < Test::Unit::TestCase
   end
 
   def test_ci
-    b = Board.new( 7, 6 )
+    b = Board.new( :shape => :rect, :width => 7, :height => 6 )
     assert_equal( 0, b.ci( 0, 0 ) )
     assert_equal( 2, b.ci( 2, 0 ) )
     assert_equal( 14, b.ci( 0, 2 ) )
@@ -41,7 +136,7 @@ class TestBoard < Test::Unit::TestCase
   end
 
   def test_dup
-    b = Board.new( 7, 6 )
+    b = Board.new( :shape => :rect, :width => 7, :height => 6 )
 
     assert_equal( :black, b[3,4] = :black )
     b2 = b.dup
@@ -70,7 +165,7 @@ class TestBoard < Test::Unit::TestCase
   end
 
   def test_assignment
-    b = Board.new( 7, 6 )
+    b = Board.new( :shape => :rect, :width => 7, :height => 6 )
     assert_equal( nil, b[3,4] )
     assert_equal( :black, b[3,4] = :black )
     assert_equal( :black, b[3,4] )
@@ -87,7 +182,7 @@ class TestBoard < Test::Unit::TestCase
   end
 
   def test_in_bounds
-    b = Board.new( 7, 6 )
+    b = Board.new( :shape => :rect, :width => 7, :height => 6 )
     assert( b.in_bounds?( 0, 0 ) )
     assert( b.in_bounds?( 6, 0 ) )
     assert( b.in_bounds?( 0, 5 ) )
@@ -100,10 +195,10 @@ class TestBoard < Test::Unit::TestCase
   end
 
   def test_equals
-    b1 = Board.new( 7, 6 )
-    b2 = Board.new( 7, 6 )
-    b3 = Board.new( 6, 7 )
-    b4 = Board.new( 1, 2 )
+    b1 = Board.new( :shape => :rect, :width => 7, :height => 6 )
+    b2 = Board.new( :shape => :rect, :width => 7, :height => 6 )
+    b3 = Board.new( :shape => :rect, :width => 6, :height => 7 )
+    b4 = Board.new( :shape => :rect, :width => 1, :height => 2 )
 
     assert_equal( b1, b2 )
 
@@ -125,7 +220,7 @@ class TestBoard < Test::Unit::TestCase
   end
 
   def test_hash
-    b1 = Board.new( 7, 6 )
+    b1 = Board.new( :shape => :rect, :width => 7, :height => 6 )
     
     assert_equal( :black, b1[:a1,:a2,:b4,:e3] = :black )
 
@@ -136,7 +231,7 @@ class TestBoard < Test::Unit::TestCase
   end
 
   def test_count
-    b = Board.new( 3, 4 )
+    b = Board.new( :shape => :rect, :width => 3, :height => 4 )
 
     assert_equal( 0, b.count( :black ) )
     assert_equal( :black, b[:a1,:a2,:a3,:a4] = :black )
@@ -154,7 +249,7 @@ class TestBoard < Test::Unit::TestCase
   end
 
   def test_occupied
-    b = Board.new( 4, 4 )
+    b = Board.new( :shape => :square, :length => 4 )
     assert_equal( [], b.occupied[:black] )
     b[1,1] = :black
     assert_equal( [Coord[1,1]], b.occupied[:black] )
@@ -172,7 +267,7 @@ class TestBoard < Test::Unit::TestCase
   end
 
   def test_each
-    b = Board.new( 2, 2 )
+    b = Board.new( :shape => :square, :length => 2 )
     b[0,0] = :b00
     b[1,0] = :b10
     b[0,1] = :b01
@@ -185,7 +280,7 @@ class TestBoard < Test::Unit::TestCase
   end
 
   def test_each_from
-    b = Board.new( 8, 8 )
+    b = Board.new( :shape => :square, :length => 8 )
     b[3,3] = :x
     b[3,4] = :x
     b[3,6] = :x
@@ -207,7 +302,7 @@ class TestBoard < Test::Unit::TestCase
   end
 
   def test_row
-    b = Board.new( 3, 2 )
+    b = Board.new( :shape => :rect, :width => 3, :height => 2 )
 
     assert_equal( [nil,nil,nil], b.row(0) )
     assert_equal( :black, b[:a1,:b1] = :black )
@@ -215,7 +310,7 @@ class TestBoard < Test::Unit::TestCase
   end
 
   def test_move
-    b = Board.new( 3, 3 )
+    b = Board.new( :shape => :square, :length => 3 )
 
     assert_equal( :x, b[0,0] = :x )
     assert_equal( :o, b[2,2] = :o )
@@ -235,7 +330,7 @@ class TestBoard < Test::Unit::TestCase
   end
 
   def test_clear
-    b = Board.new( 4, 4 )
+    b = Board.new( :shape => :square, :length => 4 )
     assert_equal( 16, b.empty_count )
     assert_equal( :black, b[:a1,:a2,:a3] = :black )
     assert_equal( :white, b[:b1,:b2,:b3,:b4] = :white )
@@ -244,7 +339,7 @@ class TestBoard < Test::Unit::TestCase
   end
 
   def test_fill
-    b = Board.new( 4, 4 )
+    b = Board.new( :shape => :square, :length => 4 )
     assert_equal( 16, b.empty_count )
     b.fill( :black )
     assert_equal( 0, b.empty_count )
@@ -256,7 +351,7 @@ class TestBoard < Test::Unit::TestCase
   end
 
   def test_to_s
-    b = Board.new( 2, 2 )
+    b = Board.new( :shape => :square, :length => 2 )
     b[0,0] = '0'
     b[1,0] = '1'
     b[0,1] = '2'
@@ -264,7 +359,7 @@ class TestBoard < Test::Unit::TestCase
   
     assert_equal( " ab \n1011\n2232\n ab \n", b.to_s )
 
-    b = Board.new( 2, 10 )
+    b = Board.new( :shape => :rect, :width => 2, :height => 10 )
     b[0,0], b[1,0], b[0,9], b[1,9] = 'a', 'b', 'c', 'd'
     s = <<EOF
   ab  
@@ -282,6 +377,43 @@ class TestBoard < Test::Unit::TestCase
 EOF
 
     assert_equal( s, b.to_s )
+  end
+
+  def test_find_plugin
+    plugin = Board::Plugins::Frontier
+
+    assert_equal( plugin, Board.find_plugin( plugin ) )
+    assert_equal( plugin, Board.find_plugin( plugin.to_s.to_sym ) )
+    assert_equal( plugin, Board.find_plugin( plugin.to_s ) )
+    assert_equal( plugin, Board.find_plugin( "frontier" ) )
+    assert_equal( plugin, Board.find_plugin( :frontier ) )
+
+    plugin = Board::Plugins::CustodialFlip
+
+    assert_equal( plugin, Board.find_plugin( plugin ) )
+    assert_equal( plugin, Board.find_plugin( plugin.to_s.to_sym ) )
+    assert_equal( plugin, Board.find_plugin( plugin.to_s ) )
+    assert_equal( plugin, Board.find_plugin( "custodial_flip" ) )
+    assert_equal( plugin, Board.find_plugin( :custodial_flip ) )
+
+    assert_equal( nil, Board.find_plugin( nil ) )
+    assert_equal( nil, Board.find_plugin( "nonexistant_plugin" ) )
+    assert_equal( nil, Board.find_plugin( :nonexistant_plugin ) )
+    assert_equal( nil, Board.find_plugin( "NonexistantPlugin" ) )
+    assert_equal( nil, Board.find_plugin( :NonexistantPlugin ) )
+  end
+
+  def test_init_plugin
+    b = Board.new( :shape   => :square, 
+                   :length  => 4, 
+                   :plugins => [:frontier, :in_a_row] )
+
+    assert( (class << b; ancestors; end).include?( Board::Plugins::Frontier ) )
+    assert_equal( [], b.frontier )
+
+    assert( (class << b; ancestors; end).include?( Board::Plugins::InARow ) )
+    assert_equal( [], b.threats )
+    assert_equal( nil, b.window_size )
   end
 
 end
