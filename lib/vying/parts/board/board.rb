@@ -137,7 +137,7 @@ class Board
 
     (h[:plugins] || []).each { |p| plugin( p ) }
 
-    init_plugin if respond_to?( :init_plugin )
+    init_plugin
 
     fill( h[:fill] ) if h[:fill]
   end
@@ -148,6 +148,15 @@ class Board
     @cells = original.cells.dup
     @occupied = Hash.new( [] )
     original.occupied.each { |k,v| @occupied[k] = v.dup }
+  end
+
+  # Initialize plugins.  The init_plugin method should be implemented by
+  # any plugins that need to initialize instance variables.  All plugin
+  # implementations should be sure to call super (or, else not all plugins
+  # will be initialized).
+
+  def init_plugin
+
   end
 
   alias_method :__dup, :dup

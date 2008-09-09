@@ -403,5 +403,18 @@ EOF
     assert_equal( nil, Board.find_plugin( :NonexistantPlugin ) )
   end
 
+  def test_init_plugin
+    b = Board.new( :shape   => :square, 
+                   :length  => 4, 
+                   :plugins => [:frontier, :in_a_row] )
+
+    assert( (class << b; ancestors; end).include?( Board::Plugins::Frontier ) )
+    assert_equal( [], b.frontier )
+
+    assert( (class << b; ancestors; end).include?( Board::Plugins::InARow ) )
+    assert_equal( [], b.threats )
+    assert_equal( nil, b.window_size )
+  end
+
 end
 

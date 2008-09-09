@@ -24,7 +24,7 @@ module Board::Plugins::InARow
 
   attr_reader :threats, :window_size
 
-  def init_plugin( window_size=6 )
+  def init_plugin
     super
     @threats = []
     @window_size = nil
