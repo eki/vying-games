@@ -16,5 +16,4 @@ require 'vying/parts/board/plugins/frontier'
 
 require 'vying/parts/board/amazons'
 require 'vying/parts/board/connect6'
-require 'vying/parts/board/othello'
 

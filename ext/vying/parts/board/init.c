@@ -30,6 +30,7 @@ void Init_boardext() {
   rb_define_method( Coords, "include?", coords_include, 1 ); /* in coords.c */
   rb_define_method( Coords, "next", coords_next, 2 );        /* in coords.c */
 
+
   /* Map Board */
 
   Board = rb_define_class( "Board", rb_cObject );
@@ -44,20 +45,11 @@ void Init_boardext() {
 
   rb_define_method( Board, "ci", board_ci, 2 );               /* in board.c */
 
-  /* Map OthelloBoard */
-
-  OthelloBoard = rb_define_class( "OthelloBoard", Board );
-
-  rb_define_method( OthelloBoard, "valid?", othello_board_valid, -1 );
-                                                            /* in othello.c */
-  rb_define_method( OthelloBoard, "place", othello_board_place, 2 );
-                                                            /* in othello.c */
-  rb_define_method( OthelloBoard, "set", othello_board_set, 3 );
-                                                            /* in othello.c */
 
   /* Plugins namespace. */
 
   Plugins  = rb_define_module_under( Board, "Plugins" );
+
 
   /* Map Board::Plugins::Frontier */
 
