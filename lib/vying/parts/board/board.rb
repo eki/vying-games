@@ -339,6 +339,13 @@ class Board
         super
       end
     end
+
+    # No need to save the board itself.  Board#yaml_initialize will reset
+    # itself.
+
+    def to_yaml_properties
+      ["@coords"]
+    end
   end
 
   # Find Board plugins (Modules).  Given a string like 
@@ -370,10 +377,11 @@ class Board
 
   # When loading a YAML-ized Board, be sure to re-extend plugins.
 
-  def yaml_initialize( t, v )
-    v.each do |iv,v|
+  def yaml_initialize( t, vals )
+    vals.each do |iv,v|
       instance_variable_set( "@#{iv}", v )
       v.each { |p| extend Board.find_plugin( p ) } if iv == "plugins"
+      v.instance_variable_set( "@board", self ) if iv == "coords"
     end
   end
 
