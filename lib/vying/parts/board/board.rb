@@ -135,12 +135,7 @@ class Board
 
     @plugins = []
 
-    (h[:plugins] || []).each do |p|
-      if plugin = self.class.find_plugin( p )
-        @plugins << plugin.to_s
-        extend plugin
-      end
-    end
+    (h[:plugins] || []).each { |p| plugin( p ) }
 
     init_plugin if respond_to?( :init_plugin )
 
@@ -356,7 +351,7 @@ class Board
 
     else  # Otherwise, assume we're looking under Board::Plugins
 
-      m = s.to_s.gsub( /_(.)/ ) { $1.upcase }.capitalize.to_sym
+      m = s.to_s.gsub( /_(.)/ ) { $1.upcase }.gsub( /^(.)/ ) { $1.upcase }
 
       if Board::Plugins.nested_const_defined?( m )
         Board::Plugins.nested_const_get( m )
@@ -370,6 +365,29 @@ class Board
     v.each do |iv,v|
       instance_variable_set( "@#{iv}", v )
       v.each { |p| extend Board.find_plugin( p ) } if iv == "plugins"
+    end
+  end
+
+  private
+
+  # Extend self with the given plugin and any dependencies (that haven't
+  # already been loaded).
+
+  def plugin( p )
+    if p = self.class.find_plugin( p )
+      ps = p.to_s
+
+      return if @plugins.include?( ps )
+
+      @plugins << ps
+      extend p
+
+      if p.respond_to?( :dependencies )
+        p.dependencies.each do |dp|
+          plugin( dp )
+        end
+      end
+
     end
   end
 

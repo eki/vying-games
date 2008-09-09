@@ -388,6 +388,14 @@ EOF
     assert_equal( plugin, Board.find_plugin( "frontier" ) )
     assert_equal( plugin, Board.find_plugin( :frontier ) )
 
+    plugin = Board::Plugins::CustodialFlip
+
+    assert_equal( plugin, Board.find_plugin( plugin ) )
+    assert_equal( plugin, Board.find_plugin( plugin.to_s.to_sym ) )
+    assert_equal( plugin, Board.find_plugin( plugin.to_s ) )
+    assert_equal( plugin, Board.find_plugin( "custodial_flip" ) )
+    assert_equal( plugin, Board.find_plugin( :custodial_flip ) )
+
     assert_equal( nil, Board.find_plugin( nil ) )
     assert_equal( nil, Board.find_plugin( "nonexistant_plugin" ) )
     assert_equal( nil, Board.find_plugin( :nonexistant_plugin ) )
