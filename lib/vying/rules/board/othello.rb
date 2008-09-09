@@ -18,25 +18,30 @@ Rules.create( "Othello" ) do
     attr_reader :board
 
     def init
-      @board = OthelloBoard.new
+      @board = Board.new( :shape   => :square,
+                          :length  => 8,
+                          :plugins => [:custodial_flip] )
+
+      @board[:d4,:e5] = :white
+      @board[:e4,:d5] = :black
     end
 
     def has_moves
-      board.frontier.any? { |c| board.valid?( c, turn ) } ? [turn] : []
+      board.frontier.any? { |c| board.will_flip?( c, turn ) } ? [turn] : []
     end
 
     def move?( move )
       cs = move.to_coords
 
-      board.valid?( cs.first, turn ) unless cs.length != 1
+      board.will_flip?( cs.first, turn ) unless cs.length != 1
     end
 
     def moves
-      board.frontier.select { |c| board.valid?( c, turn ) }
+      board.frontier.select { |c| board.will_flip?( c, turn ) }
     end
 
     def apply!( move )
-      board.place( move.to_coords.first, turn )
+      board.custodial_flip( move.to_coords.first, turn )
 
       rotate_turn
 
