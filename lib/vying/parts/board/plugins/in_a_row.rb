@@ -3,31 +3,39 @@
 
 require 'vying'
 
-class Threat
-  attr_reader :degree, :player, :empty_coords, :occupied
+module Board::Plugins::InARow
 
-  def initialize( degree, player, empty_coords, occupied )
-    @degree, @player = degree, player
-    @empty_coords, @occupied = empty_coords, occupied
+  class Threat
+    attr_reader :degree, :player, :empty_coords, :occupied
+
+    def initialize( degree, player, empty_coords, occupied )
+      @degree, @player = degree, player
+      @empty_coords, @occupied = empty_coords, occupied
+    end
+
+    def to_s
+      "[#{degree}, #{player}, #{empty_coords.inspect}]"
+    end
+
+    def inspect
+      to_s
+    end
   end
-
-  def to_s
-    "[#{degree}, #{player}, #{empty_coords.inspect}]"
-  end
-
-  def inspect
-    to_s
-  end
-end
-
-class Connect6Board < Board
 
   attr_reader :threats, :window_size
 
-  def initialize( window_size=6 )
-    super( 19, 19 )
+  def init_plugin( window_size=6 )
     @threats = []
-    @window_size = window_size
+    @window_size = nil
+  end
+
+  def window_size=( n )
+    old, @window_size = @window_size, n
+
+    if n != old
+      threats.clear
+      occupied.each { |p,cs| cs.each { |c| update_threats( c.x, c.y ) } if p }
+    end
   end
 
   def initialize_copy( original )
@@ -35,14 +43,15 @@ class Connect6Board < Board
     @threats = original.threats.dup
   end
 
-  def clear
-    @threats.clear
+  def fill( p )
     super
+    threats.clear
   end
 
   # The #update_threats method is called automatically after each set call.
 
   def after_set( x, y, p )
+    super
     update_threats( x, y )
   end
 
@@ -56,10 +65,7 @@ class Connect6Board < Board
       t.empty_coords.include?( c ) || t.occupied.include?( c )
     end
 
-    windows = create_windows( c, [:n,:s] )
-    windows += create_windows( c, [:e,:w] )
-    windows += create_windows( c, [:ne,:sw] )
-    windows += create_windows( c, [:nw,:se] )
+    windows = create_windows( c )
 
     windows.each do |w|
       bc = w.select { |c| self[c] == :black }
@@ -78,31 +84,45 @@ class Connect6Board < Board
     threats
   end
 
+  private 
+
   # Create threat windows.  There is no need to call this manually.
 
-  def create_windows( c, directions )
+  def create_windows( c )
     n = window_size - 1
 
-    first = (0..n).map do |i| 
-      tmp = c
-      i.times { tmp += Coords::DIRECTIONS[directions.first] }
-      tmp
+    dirs = [[:n,:s], [:e,:w], [:ne,:sw], [:nw,:se]]
+    dirs.reject! { |ds| ! ds.all? { |d| directions.include?( d ) } }
+
+    ws = []
+
+    dirs.map do |ds|
+      first = (0..n).map do |i| 
+        tmp = c
+        i.times { tmp += Coords::DIRECTIONS[ds.first] }
+        tmp
+      end
+
+      list = [first]
+
+      n.times do 
+        list << list.last.map { |tmp| tmp + Coords::DIRECTIONS[ds.last] }
+      end
+
+      ws += list.select { |w| window_in_bounds?( w ) }
     end
 
-    list = [first]
-
-    n.times do 
-      list << list.last.map { |c| c + Coords::DIRECTIONS[directions.last] }
-    end
-
-    list.select { |w| window_in_bounds?( w ) }
+    ws
   end
 
   # Is the given window in bounds.  There is no need to call this manually.
 
   def window_in_bounds?( w )
-    0 <= w.first.x && w.first.x < 19 && 0 <= w.first.y && w.first.y < 19 &&
-    0 <= w.last.x  && w.last.x  < 19 && 0 <= w.last.y  && w.last.y  < 19
+    if coords.omitted.empty?
+      coords.include?( w.first ) && coords.include?( w.last )
+    else
+      w.all? { |c| coords.include?( c ) }
+    end
   end
 
   # Does the given coord have a neighbor (piece)?  There is no need to call

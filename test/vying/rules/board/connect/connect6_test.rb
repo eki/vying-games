@@ -20,9 +20,10 @@ class TestConnect6 < Test::Unit::TestCase
 
   def test_init
     g = Game.new( rules )
-    assert_equal( Board.new( 19, 19 ), g.board )
     assert_equal( :black, g.turn )
     assert_equal( 19*19, g.board.unoccupied.length )
+    assert_equal( 6, g.board.window_size )
+    assert_equal( [], g.board.threats )
   end
 
   def test_has_score
