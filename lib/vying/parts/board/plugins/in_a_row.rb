@@ -59,7 +59,7 @@ module Board::Plugins::InARow
   # need to call this manually.
 
   def update_threats( x, y )
-    c = Coord[x,y]
+    c, p = Coord[x,y], self[x,y]
 
     threats.reject! do |t|
       t.empty_coords.include?( c ) || t.occupied.include?( c )
@@ -68,16 +68,20 @@ module Board::Plugins::InARow
     windows = create_windows( c )
 
     windows.each do |w|
-      bc = w.select { |c| self[c] == :black }
-      wc = w.select { |c| self[c] == :white }
-      ec = w.select { |c| self[c].nil? }
+      pc, oc, ec = [], [], []
 
-      if bc.length + ec.length == window_size && ec.length < (window_size-1)
-        threats << Threat.new( ec.length, :black, ec, bc )
+      w.each do |wc|
+        if self[wc].nil?
+          ec << wc
+        elsif self[wc] == p
+          pc << wc
+        else
+          oc << wc
+        end
       end
 
-      if wc.length + ec.length == window_size && ec.length < (window_size-1)
-        threats << Threat.new( ec.length, :white, ec, wc )
+      if pc.length + ec.length == window_size && ec.length < (window_size-1)
+        threats << Threat.new( ec.length, p, ec, pc )
       end
     end
 
