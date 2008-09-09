@@ -12,6 +12,7 @@ VALUE Coords;
 VALUE OthelloBoard;
 VALUE Plugins;
 VALUE Frontier;
+VALUE CustodialFlip;
 
 /* Board prototypes */
 
@@ -60,6 +61,11 @@ VALUE othello_board_set( VALUE self, VALUE x, VALUE y, VALUE p );
 /* Frontier prototypes */
 
 VALUE frontier_update( VALUE self, VALUE x, VALUE y );
+
+/* CustodialFlip prototypes */
+
+VALUE custodial_flip_valid( VALUE self, VALUE c, VALUE p );
+VALUE custodial_flip( VALUE self, VALUE c, VALUE p );
 
 /* IDs */
 

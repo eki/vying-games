@@ -55,12 +55,25 @@ void Init_boardext() {
   rb_define_method( OthelloBoard, "set", othello_board_set, 3 );
                                                             /* in othello.c */
 
-  /* Map Board::Frontier */
+  /* Plugins namespace. */
 
   Plugins  = rb_define_module_under( Board, "Plugins" );
+
+  /* Map Board::Plugins::Frontier */
+
   Frontier = rb_define_module_under( Plugins, "Frontier" );
 
   rb_define_method( Frontier, "update_frontier", frontier_update, 2 );
+                                                           /* in frontier.c */
+
+  /* Map Board::Plugins::CustodialFlip */
+
+  CustodialFlip = rb_define_module_under( Plugins, "CustodialFlip" );
+
+  rb_define_method( CustodialFlip, "will_flip?", custodial_flip_valid, 2 );
+                                                     /* in custodial_flip.c */
+  rb_define_method( CustodialFlip, "custodial_flip", custodial_flip, 2 );
+                                                     /* in custodial_flip.c */
 
   /* Look up all our ids */
 
