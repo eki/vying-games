@@ -142,6 +142,34 @@ class Board
     fill( h[:fill] ) if h[:fill]
   end
 
+  # Like Board.new with :shape set to :shape to :square.
+
+  def Board.square( h={} )
+    h[:shape] = :square
+    Board.new( h )
+  end
+
+  # Like Board.new with :shape set to :shape to :rect.
+
+  def Board.rect( h={} )
+    h[:shape] = :rect
+    Board.new( h )
+  end
+
+  # Like Board.new with :shape set to :shape to :triangle.
+
+  def Board.triangle( h={} )
+    h[:shape] = :triangle
+    Board.new( h )
+  end
+
+  # Like Board.new with :shape set to :shape to :hexagon.
+
+  def Board.hexagon( h={} )
+    h[:shape] = :hexagon
+    Board.new( h )
+  end
+
   # Perform a deep copy on this board.
 
   def initialize_copy( original )
