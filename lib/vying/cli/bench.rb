@@ -127,6 +127,7 @@ module CLI
       Benchmark.bm( 30 ) do |x|
 
         # Coord benchmarks
+
         c1, c2 = Coord[1,2], Coord[4,5]
         a, str, sym = [1,2], "b3", :b3
         marshalled = Marshal.dump( c1 )
@@ -199,6 +200,58 @@ module CLI
         x.report( "Coord._load" ) do
           n.times { Marshal.load( marshalled ) }
         end
+
+        # Coords benchmarks
+        b = Board.new( :shape => :hexagon, :length => 5 )
+        coords = b.coords.instance_variable_get( "@coords" )
+        cell_shape = b.cell_shape
+        directions = b.directions
+
+        x.report( "Coords.new( 19, 19 )" ) do
+          n.times { Coords.new( 19, 19 ) }
+        end
+
+        x.report( "Coords#dup" ) do
+          n.times { coords.dup }
+        end
+
+        x.report( "Coords#column" ) do
+          n.times { coords.column( c1 ) }
+        end
+
+        x.report( "Coords#row" ) do
+          n.times { coords.row( c1 ) }
+        end
+
+        x.report( "Coords#include?" ) do
+          n.times { coords.include?( c1 ) }
+        end
+
+        x.report( "Coords#neighbors" ) do
+          n.times { coords.neighbors( c1, directions ) }
+        end
+
+        x.report( "Coords#neighbors_nil" ) do
+          n.times { coords.neighbors_nil( c1, directions ) }
+        end
+
+        x.report( "Coords#next" ) do
+          n.times { coords.next( c1, :ne ) }
+        end
+
+        x.report( "Coords#ring( d=0 )" ) do
+          n.times { coords.ring( c1, 0, cell_shape, directions ) }
+        end
+
+        x.report( "Coords#ring( d=1 )" ) do
+          n.times { coords.ring( c1, 1, cell_shape, directions ) }
+        end
+
+        x.report( "Coords#ring( d=2 )" ) do
+          n.times { coords.ring( c1, 2, cell_shape, directions ) }
+        end
+
+
 
       end
     end
