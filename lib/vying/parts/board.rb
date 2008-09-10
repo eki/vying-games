@@ -1,7 +1,7 @@
 require 'vying/parts/board/ruby'
 
 begin
-  require 'vying/parts/board/boardext'
+  require 'vying/c/parts/board/boardext'
   Vying::UsingBoardExt = true
 rescue LoadError, SyntaxError
   Vying::UsingBoardExt = false
