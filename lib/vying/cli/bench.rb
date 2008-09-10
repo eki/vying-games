@@ -122,7 +122,85 @@ module CLI
     end
 
     def self.board( h )
+      n = h[:n]
 
+      Benchmark.bm( 30 ) do |x|
+
+        # Coord benchmarks
+        c1, c2 = Coord[1,2], Coord[4,5]
+        a, str, sym = [1,2], "b3", :b3
+        marshalled = Marshal.dump( c1 )
+        cs = [c1, c2]
+
+        x.report( "Coord[x,y]" ) do
+          n.times { |i| Coord[i%26,i] }
+        end
+
+        x.report( "Coord.expand" ) do
+          n.times { Coord.expand( cs ) }
+        end
+
+        x.report( "Coord#dup" ) do
+          n.times { c1.dup }
+        end
+
+        x.report( "Array#x,y" ) do
+          n.times { a.x; a.y }
+        end
+
+        x.report( "String#x,y" ) do
+          n.times { str.x; str.y }
+        end
+
+        x.report( "Symbol#x,y" ) do
+          n.times { sym.x; sym.y }
+        end
+
+        x.report( "Coord#+" ) do
+          n.times { c1 + c2 }
+        end
+
+        x.report( "Coord#<=>" ) do
+          n.times { c1 <=> c2 }
+        end
+
+        x.report( "Coord#==" ) do
+          n.times { c1 == c2 }
+        end
+
+        x.report( "Coord#direction_to" ) do
+          n.times { c1.direction_to( c2 ) }
+        end
+
+        x.report( "Coord#next" ) do
+          n.times { c1.next( :ne ) }
+        end
+
+        x.report( "Coord#hash" ) do
+          n.times { c1.hash }
+        end
+
+        x.report( "Coord#to_coords" ) do
+          n.times { c1.to_coords }
+        end
+
+        x.report( "Coord#to_s" ) do
+          n.times { c1.to_s }
+        end
+
+        x.report( "Coord#to_sym" ) do
+          n.times { c1.to_sym }
+        end
+
+        x.report( "Coord#_dump" ) do
+          n.times { Marshal.dump( c1 ) }
+        end
+
+        x.report( "Coord._load" ) do
+          n.times { Marshal.load( marshalled ) }
+        end
+
+      end
     end
 
   end
