@@ -10,15 +10,9 @@ void Init_boardext() {
   /* Map Coord */
 
   Coord = rb_define_class( "Coord", rb_cObject );
-  rb_define_class_variable( Coord, "@@coords_cache", rb_hash_new() );
-
-  rb_define_method( Coord, "initialize", coord_initialize, 2 );
-                                                              /* in coord.c */
+  
   rb_define_singleton_method( Coord, "[]", coord_class_subscript, -1 );
                                                               /* in coord.c */
-  rb_define_method( Coord, "hash", coord_hash, 0 );           /* in coord.c */
-  rb_define_method( Coord, "==", coord_equals, 1 );           /* in coord.c */
-  rb_define_method( Coord, "eql?", coord_equals, 1 );         /* in coord.c */
   rb_define_method( Coord, "+", coord_addition, 1 );          /* in coord.c */
   rb_define_method( Coord, "direction_to", coord_direction_to, 1 ); 
                                                               /* in coord.c */

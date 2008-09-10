@@ -7,12 +7,6 @@ require 'vying'
 #
 
 class Coord
-  @@coords_cache = {}
-
-  def initialize( x, y )
-    @x, @y = x, y
-  end
-
   def self.[]( *args )
     if args.length == 2 && args.first.class == Fixnum &&
                            args.last.class  == Fixnum
@@ -55,19 +49,6 @@ class Coord
     end
 
     return nil
-  end
-
-  def hash
-    [x, y].hash
-  end
-
-  def ==( o )
-    o.respond_to?( :x ) && o.respond_to?( :y ) &&
-    x == o.x && y == o.y
-  end
-
-  def eql?( o )
-    self == o
   end
 
   def +( o )

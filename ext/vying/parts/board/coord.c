@@ -6,20 +6,6 @@
 #include "board.h"
 
 /*
- *  Create a new Coord from the given x, y Fixnums.
- *
- *  call-seq:
- *    Coord.new( x, y )
- *
- */
-
-VALUE coord_initialize( VALUE self, VALUE x, VALUE y ) {
-  rb_iv_set( self, "@x", x );
-  rb_iv_set( self, "@y", y );
-  rb_iv_set( self, "@s", rb_funcall( self, id_to_s, 0 ) );
-}
-
-/*
  *  Create a new Coord from the given argument.  
  *
  *  call-seq:
@@ -93,38 +79,6 @@ VALUE coord_class_subscript( int argc, VALUE *argv, VALUE self ) {
   }
 
   return Qnil;
-}
-
-/*
- *  Returns a hash code for this Coord.
- *
- *  call-seq:
- *    hash -> Fixnum hash code
- *
- */
-
-VALUE coord_hash( VALUE self ) {
-  VALUE ary = rb_ary_new3( 2, rb_iv_get(self, "@x"), rb_iv_get(self, "@y") );
-  return rb_funcall( ary, id_hash, 0 );
-}
-
-/*
- *  Two Coord's are considered to be equal if both +x+ and +y+ values are
- *  equal.
- *
- *  call-seq:
- *    coord1 == coord2 -> boolean
- *
- */
-
-VALUE coord_equals( VALUE self, VALUE obj ) {
-  if( rb_respond_to( obj, id_x ) && 
-      rb_respond_to( obj, id_y ) &&
-      rb_iv_get( self, "@x" ) == rb_funcall( obj, id_x, 0 ) &&
-      rb_iv_get( self, "@y" ) == rb_funcall( obj, id_y, 0 ) ) {
-    return Qtrue;
-  }
-  return Qfalse;
 }
 
 /*

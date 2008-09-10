@@ -98,7 +98,16 @@ class Coord
     memoize :new
   end
 
+  @@coords_cache = {}
+
   attr_reader :x, :y
+
+  # Create a new Coord with the given (x,y) coordinates.
+
+  def initialize( x, y )
+    @x, @y = x, y
+    @s = to_s
+  end
 
   def dup
     self
@@ -142,6 +151,27 @@ class Coord
     return Coord[x-1,y-1] if d == :nw
     return Coord[x-1,y+1] if d == :sw
     nil
+  end
+
+  # Hash on the Coord's #x and #y values.
+
+  def hash
+    [x, y].hash
+  end
+
+  # Two coords are considered equal if both x and y are equal.  This comparison
+  # uses duck typing such that a Coord can be compared to any object that
+  # responds to #x and #y methods.  (Such as String, Symbol, and Array).
+
+  def ==( o )
+    o.respond_to?( :x ) && o.respond_to?( :y ) &&
+    x == o.x && y == o.y
+  end
+
+  # See Coord#==.
+
+  def eql?( o )
+    self == o
   end
 
   def self.expand( coords )
