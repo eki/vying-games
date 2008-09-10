@@ -66,7 +66,8 @@ module RulesTests
     g << s[-1]
     assert( g.final? )
     assert( g.moves.empty? )
-    assert( !g.move?( s[-1] ) )
+    assert( ! g.move?( s[-1] ) )
+    assert( ! g.move?( nil ) )
     assert( g.has_moves.empty? )
 
     rules.players.each do |p|
@@ -80,12 +81,15 @@ module RulesTests
   def test_move?
     g = new_game
 
+    assert( ! g.move?( nil ) )
+
     g.moves.each do |move|
       assert( g.move?( move ) )
       (g.player_names - g.has_moves).each { |p| assert( !g.move?( move, p ) ) }
     end
 
     g.has_moves.each do |p| 
+      assert( ! g.move?( nil, p ) )
       g.moves( p ).each { |move| assert( g.move?( move, p ) ) }
     end
 

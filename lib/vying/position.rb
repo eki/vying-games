@@ -415,6 +415,8 @@ class Position
   private
 
   def __move?( move, player=nil )
+    return false if move.nil?
+
     hm = has_moves
 
     player = move.by  if player.nil? && move.respond_to?( :by )
