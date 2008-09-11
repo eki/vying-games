@@ -3,7 +3,15 @@
 
 require 'optparse'
 require 'vying'
-require 'curses'
+Bot.require_all
+
+begin
+  require 'curses'
+  Vying::CursesAvailable = true
+rescue LoadError
+  # No curses!  That's okay, we'll disable the option later...
+  Vying::CursesAvailable = false
+end
 
 CLI::SUBCOMMANDS << "play"
 
@@ -49,6 +57,7 @@ module CLI
         i -= 1
         $scr.addstr( "#{p}'s moves: #{position.moves( p ).inspect}" )
       end
+      $scr.refresh
     end
 
     def Play.get_human_move( game, player )
@@ -86,15 +95,15 @@ module CLI
 
       $scr.setpos( h-1, 0 )
       $scr.addstr( "Select: " );
+      $scr.refresh
       move = $scr.getstr
       exit if move == ""
-      $scr.refresh
       until position.move?( move )
         $scr.setpos( h-1, 0 )
         $scr.addstr( "Select: " );
+        $scr.refresh
         move = $scr.getstr
         exit if move == ""
-        $scr.refresh
       end
       game[player] << move
     end
@@ -122,18 +131,23 @@ module CLI
     opts.parse( ARGV )
 
     if curses
-      $scr = Curses::init_screen
-      Curses::cbreak
+      if Vying::CursesAvailable
+        $scr = Curses::init_screen
+        Curses::cbreak
+      else
+        puts "WARNING: curses unavailable... pretending you didn't ask for it."
+        curses = false
+      end
     end
 
     games = []
     number.times do |n|
 
       g = Game.new( rules )
-      p2b.each { |p,b| g[p] = b }
+      p2b.each { |p,b| g[p].user = b }
 
       until g.final?
-        if g[g.turn].class == Human
+        if g[g.turn].user.class == Human
           if curses
             CLI::Play.show_position_curses( g )
             CLI::Play.get_human_move_curses( g, g.turn )
