@@ -13,10 +13,7 @@ Rules.create( "TicTacToe" ) do
     attr_reader :board
   
     def init
-      @board = Board.new( :shape   => :square,
-                          :length  => 3,
-                          :plugins => [:in_a_row] )
-
+      @board = Board.square( :length => 3, :plugins => [:in_a_row] )
       @board.window_size = 3
     end
 

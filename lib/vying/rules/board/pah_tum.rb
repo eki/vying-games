@@ -29,7 +29,7 @@ Rules.create( "PahTum" ) do
 
     def init
       w, h = 7, 7
-      @board = Board.new( :shape => :rect, :width => w, :height => h )
+      @board = Board.rect( :width => w, :height => h )
 
       num_blocks = [5,7,9,11,13][rand( 5 )]
       num_blocks.times do

@@ -17,9 +17,7 @@ Rules.create( "Connect6" ) do
     attr_reader :board
 
     def init
-      @board = Board.new( :shape   => :square,
-                          :length  => 19,
-                          :plugins => [:in_a_row] )
+      @board = Board.square( :length => 19, :plugins => [:in_a_row] )
 
       @board.window_size = 6
       @turn = [:black, :white, :white, :black]

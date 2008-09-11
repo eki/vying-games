@@ -4,6 +4,8 @@
 
 class Board
 
+  SHAPES = [:square, :rect, :rhombus, :triangle, :hexagon].freeze
+
   attr_reader :shape, :cell_shape, :directions, :coords, :cells, 
               :width, :height, :length, :occupied, :plugins
   protected :cells
@@ -144,32 +146,28 @@ class Board
     fill( h[:fill] ) if h[:fill]
   end
 
-  # Like Board.new with :shape set to :shape to :square.
+  # Respond to the values in SHAPES.  See Board.method_missing.
 
-  def Board.square( h={} )
-    h[:shape] = :square
-    Board.new( h )
+  def Board.respond_to?( m )
+    super || SHAPES.include?( m )
   end
 
-  # Like Board.new with :shape set to :shape to :rect.
+  # Turn the values in SHAPES into convenience calls for Board.new.  That is:
+  #
+  #   Board.new( :shape => :square, :length => 10 )
+  #
+  # Can be turned into:
+  #
+  #   Board.square( :length => 10 )
+  #
 
-  def Board.rect( h={} )
-    h[:shape] = :rect
-    Board.new( h )
-  end
-
-  # Like Board.new with :shape set to :shape to :triangle.
-
-  def Board.triangle( h={} )
-    h[:shape] = :triangle
-    Board.new( h )
-  end
-
-  # Like Board.new with :shape set to :shape to :hexagon.
-
-  def Board.hexagon( h={} )
-    h[:shape] = :hexagon
-    Board.new( h )
+  def Board.method_missing( m, *args )
+    if SHAPES.include?( m ) && args.length == 1 && args.first.class == Hash
+      args.first[:shape] = m
+      new( *args )
+    else
+      super
+    end
   end
 
   # Perform a deep copy on this board.

@@ -61,8 +61,7 @@ Rules.create( "Hex" ) do
 
     def init
       length = @options[:board_size]
-      @board = Board.new( :shape => :rhombus, 
-                          :width => length, :height => length )
+      @board = Board.rhombus( :width => length, :height => length )
       @groups = { :blue => [], :red => [] }
     end
 

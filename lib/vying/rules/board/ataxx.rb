@@ -24,7 +24,7 @@ Rules.create( "Ataxx" ) do
     attr_reader :board, :block_pattern
 
     def init
-      @board = Board.new( :shape => :square, :length => 7 )
+      @board = Board.square( :length => 7 )
       @board[:a1,:g7] = :red
       @board[:a7,:g1] = :blue
 
