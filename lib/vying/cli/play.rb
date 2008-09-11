@@ -13,8 +13,6 @@ rescue LoadError
   Vying::CursesAvailable = false
 end
 
-CLI::SUBCOMMANDS << "play"
-
 module CLI
 
   module Play

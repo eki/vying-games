@@ -3,13 +3,15 @@
 
 module CLI
 
-  SUBCOMMANDS = []
+  SUBCOMMANDS = %w{ bench bot_rank branch play }.freeze
+
+  def self.subcommand?( s )
+    SUBCOMMANDS.include?( s )
+  end
+
+  def self.require_subcommand( s )
+    require "vying/cli/#{s}"
+  end
 
 end
-
-require 'vying/cli/bench'
-require 'vying/cli/bot_rank'
-require 'vying/cli/branch'
-require 'vying/cli/info'
-require 'vying/cli/play'
 

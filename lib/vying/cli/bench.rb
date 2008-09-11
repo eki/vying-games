@@ -5,8 +5,6 @@ require 'optparse'
 require 'benchmark'
 require 'vying'
 
-CLI::SUBCOMMANDS << "bench"
-
 module CLI
   
   def CLI.bench

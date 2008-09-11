@@ -4,8 +4,6 @@
 require 'optparse'
 require 'vying'
 
-CLI::SUBCOMMANDS << "branch"
-
 module CLI
 
   def CLI.branch

@@ -6,9 +6,10 @@
 require 'vying'
 require 'vying/cli/cli'
 
-if CLI::SUBCOMMANDS.include?( ARGV.first )
+if CLI::subcommand?( ARGV.first )
 
   command = ARGV.shift
+  CLI.require_subcommand( command )
   CLI.send( command )
 
 elsif ARGV.first == "--version" || ARGV.first == "-v"

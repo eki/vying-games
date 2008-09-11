@@ -4,8 +4,6 @@
 require 'optparse'
 require 'vying'
 
-CLI::SUBCOMMANDS << "bot_rank"
-
 module CLI
 
   module BotRank
