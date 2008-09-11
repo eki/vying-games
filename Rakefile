@@ -168,8 +168,6 @@ rescue Exception
 end
 
 if defined?( Rcov )
-  task :rcov => [:compile]
-
   Rcov::RcovTask.new do |t|
     t.libs << "test" << "ext"
     t.test_files = FileList['test/**/*_test.rb']
