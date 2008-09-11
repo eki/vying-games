@@ -8,6 +8,8 @@ class Board
               :width, :height, :length, :occupied, :plugins
   protected :cells
 
+  prototype
+
   # Initialize a board.  Accepts a hash with the following parameters:
   #
   #   :shape - The overall shape of the board.  Valid shapes are:
