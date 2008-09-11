@@ -210,6 +210,68 @@ class Board
     b
   end
 
+  def []( *args )
+    if args.length == 2 && args.first.class == Fixnum &&
+                           args.last.class  == Fixnum
+      return get( args.first, args.last )
+    elsif args.length == 1
+      return args.first.nil? ? nil : get( args.first.x, args.first.y )
+    else
+      return args.map do |arg|
+        get( arg.x, arg.y )
+      end
+    end
+
+    nil
+  end
+
+  def []=( *args )
+    if args.length == 3 && args[0].class == Fixnum &&
+                           args[1].class == Fixnum
+      return set( args[0], args[1], args[2] )
+    elsif args.length == 2
+      return args[0].nil? ? nil : set( args[0].x, args[0].y, args[1] )
+    else
+      args.each { |arg| set( arg.x, arg.y, args.last ) unless arg == args.last }
+      return args.last
+    end
+
+    nil
+  end
+
+  def get( x, y )
+    if in_bounds?( x, y )
+      return @cells[ci( x, y )]
+    end
+
+    nil
+  end
+
+  def set( x, y, p )
+     if in_bounds?( x, y )
+      old = @cells[ci( x, y )]
+
+      before_set( x, y, old )
+
+      @occupied[old].delete( Coord.new( x, y ) )
+      
+      if @occupied[p].nil? || @occupied[p].empty?
+        @occupied[p] = [Coord.new( x, y )]
+      else
+        @occupied[p] << Coord.new( x, y )
+      end
+
+      @cells[ci( x, y )] = p
+
+      after_set( x, y, p )
+    end
+
+    p
+  end
+
+  def ci( x, y )
+    x + y * width
+  end
   # Compare boards for equality.
 
   def ==( o )
@@ -301,6 +363,14 @@ class Board
     self
   end
 
+  def in_bounds?( x, y )
+    if x < 0 || x >= width || y < 0 || y >= height
+      return nil
+    end
+
+    true
+  end
+
   # This can be overridden perform some action before a cell on the board is
   # overwritten (as with #[]=).  The given piece (p) is the value at the given
   # (x,y) coordinate before it's changed.
@@ -376,6 +446,11 @@ class Board
     def to_yaml_properties
       ["@coords"]
     end
+  end
+
+  # Namespace for plugins.
+
+  module Plugins
   end
 
   # Find Board plugins (Modules).  Given a string like 

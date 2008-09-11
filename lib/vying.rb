@@ -11,6 +11,65 @@ module Vying
     v = const_defined?( :VERSION ) ? VERSION : "git master"
     "#{v}"
   end
+
+  # Returns a list of methods defined in extensions.
+  #
+  # NOTE: JRuby doesn't seem to like it when method_added is redefined
+  #       for Module (or Class).  As a result, this method will always
+  #       return an empty array in JRuby.  : ((   At least until fixed.
+
+  def self.defined_in_extension
+    (@defined_in_ext ||= [])
+  end
+
+  # Returns a list of the types of extensions that have been loaded.
+  # Currently, only the values :c and :java are returned.
+
+  def self.extension_types
+    (@exts || {}).keys
+  end
+
+  # Returns a list of the extensions that were loaded for a given type.  
+  # Get the extension type from Vying.ext_types.
+
+  def self.extensions( type )
+    (@exts || {})[type]
+  end
+
+  # Load the given extension.
+
+  def self.load_extension( type, path )
+    @exts ||= {}
+
+    # Track what methods are added by the extension.
+
+    Module.class_eval do
+      def singleton_method_added( name )
+        Vying.defined_in_extension << "#{self}.#{name}"
+      end
+ 
+      def method_added( name )
+        unless name == :method_added
+          Vying.defined_in_extension << "#{self}##{name}"
+        end
+      end
+    end
+
+    begin
+      require path
+      (@exts[type] ||= []) << path
+    rescue LoadError, SyntaxError
+      # Well, we tried.  What more can you ask?
+    end
+
+    # Stop tracking.
+
+    Module.class_eval do
+      def method_added( n ); end
+      def singleton_method_added( n ); end
+    end
+  end
+
 end
 
 require 'yaml'

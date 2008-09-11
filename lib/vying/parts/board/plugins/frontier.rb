@@ -58,7 +58,20 @@ module Board::Plugins::Frontier
     end
   end
 
-  private :update_frontier
+  def update_frontier( x, y )
+    c, w, h = Coord[x,y], width, height
 
+    directions.each do |d|
+      nc = coords.next( c, d )
+  
+      if ! nc.nil? && self[nc].nil?
+        frontier << nc
+      end
+    end
+
+    frontier.delete( c )
+    frontier.uniq!
+    frontier
+  end
 end
 

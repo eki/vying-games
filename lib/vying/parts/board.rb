@@ -1,11 +1,3 @@
-require 'vying/parts/board/ruby'
-
-begin
-  require 'vying/c/parts/board/boardext'
-  Vying::UsingBoardExt = true
-rescue LoadError, SyntaxError
-  Vying::UsingBoardExt = false
-end
 
 require 'vying/parts/board/coord'
 require 'vying/parts/board/coords'
@@ -16,4 +8,11 @@ require 'vying/parts/board/plugins/in_a_row'
 require 'vying/parts/board/plugins/frontier'
 
 require 'vying/parts/board/plugins/amazons'
+
+# Extensions are loaded after Ruby code so they can override whatever they
+# like by reopening the classes.  Vying keeps track of which methods are
+# overridden.  See Vying.defined_in_extension.
+
+Vying.load_extension :java, 'vying_board_ext'
+Vying.load_extension :c,    'vying/c/parts/board/boardext'
 

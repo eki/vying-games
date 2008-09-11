@@ -27,12 +27,31 @@ class Coords
     @omitted = omit.dup.freeze
   end
 
-  def each
-    coords.each { |c| yield c }
-  end
-
   def dup
     self
+  end
+
+  def include?( c )
+    if c.x < 0 || c.x >= width || c.y < 0 || c.y >= height
+      return nil
+    end
+
+    return true if omitted.empty?
+
+    if omitted.length < coords.length
+       ! omitted.include?( c )
+    else
+      coords.include?( c )
+    end
+  end
+
+  def next( c, d )
+    nc = c + DIRECTIONS[d]
+    include?( nc ) ? nc : nil
+  end
+
+  def each
+    coords.each { |c| yield c }
   end
 
   def to_a

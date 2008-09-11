@@ -98,8 +98,6 @@ class Coord
     memoize :new
   end
 
-  @@coords_cache = {}
-
   attr_reader :x, :y
 
   # Create a new Coord with the given (x,y) coordinates.
@@ -107,6 +105,52 @@ class Coord
   def initialize( x, y )
     @x, @y = x, y
     @s = to_s
+  end
+
+  @@coords_cache = {}
+
+  def self.[]( *args )
+    if args.length == 2 && args.first.class == Fixnum &&
+                           args.last.class  == Fixnum
+
+      return Coord.new( args.first, args.last )
+
+    elsif args.length == 1
+      return args.first if args.first.class == Coord
+
+      c = @@coords_cache[args.first]
+
+      unless c
+        x, y = args.first.x, args.first.y
+
+        return nil if x.nil? || y.nil?
+
+        c = new( x, y )
+        @@coords_cache[args.first] = c
+      end
+ 
+      return c
+
+    else
+      return args.map do |arg|
+        if arg.class == Coord
+          arg
+        else
+          c = @@coords_cache[arg]
+
+          unless c
+            x, y = arg.x, arg.y
+
+            c = !x || !y  ? nil : new( x, y )
+            @@coords_cache[arg] = c
+          end
+
+          c
+        end
+      end     
+    end
+
+    return nil
   end
 
   def dup
@@ -119,6 +163,10 @@ class Coord
 
   def self._load( str )
     Coord[str]
+  end
+
+  def +( o )
+    Coord.new( x + o.x, y + o.y )
   end
 
   def <=>( c )
@@ -153,6 +201,38 @@ class Coord
     nil
   end
 
+  def direction_to( o )
+    dx, dy = x - o.x, y - o.y
+
+    if dx == 0
+      if dy > 0
+        return :n
+      elsif dy < 0
+        return :s
+      end
+    elsif dy == 0
+      if dx > 0
+        return :w
+      elsif dx < 0
+        return :e
+      end
+    elsif dx == dy
+      if dx < 0 && dy < 0
+        return :se
+      elsif dx > 0 && dy > 0
+        return :nw
+      end
+    elsif -dx == dy
+      if dx > 0 && dy < 0
+        return :sw
+      elsif dx < 0 && dy > 0
+        return :ne
+      end
+    end
+
+    nil
+  end
+   
   # Hash on the Coord's #x and #y values.
 
   def hash
