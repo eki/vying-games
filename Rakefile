@@ -9,7 +9,7 @@ include FileUtils
 ### cleanup tasks
 ###
 
-CLEAN.include( 'ext/**/*.o', 'ext/**/*.so' )
+CLEAN.include( 'ext/**/*.o', 'ext/**/*.so', 'ext/**/*.class', 'ext/**/*.jar' )
 CLOBBER.include( 'pkg', 'doc/api', 'doc/coverage', 'lib/vying/version.rb' )
 
 ###
@@ -36,12 +36,28 @@ Rake::RDocTask.new do |rd|
 end
 
 ###
-### task to compile the extension
+### task to compile the C extension
 ###
 
 desc "compile the C extension part of the vying library"
 task :compile do 
   sh %{cd ext/vying/c/parts/board && ruby ./extconf.rb && make}
+end
+
+###
+### task to compile the Java extension
+###
+
+desc "compile the Java extension part of the vying library"
+task :compile_java do
+  cp = ENV['JRUBY_HOME'] && FileList["#{ENV['JRUBY_HOME']}/lib/*.jar"]
+  cp = cp.join( File::PATH_SEPARATOR )
+
+  dir = "ext/vying/java/parts/board"
+
+  sh %{cd #{dir} && javac -cp #{cp} *.java}
+  sh %{cd #{dir} && jar cf vying_board_ext.jar *.class}
+  sh %{mv #{dir}/vying_board_ext.jar ext/}
 end
 
 ###
