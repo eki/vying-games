@@ -91,9 +91,6 @@ Rules.create( 'Attangle' ) do
       players.any? { |p| score( p ) >= triples || moves( p ).empty? }
     end
 
-    def results
-    end
-
     def score( player )
       count = 0
       board.occupied.each_pair do |c, p|
