@@ -101,6 +101,13 @@ module RulesTests
     end
   end
 
+  def test_new_game
+    g = new_game
+    assert( ! g.final? )
+    assert( ! g.has_moves.empty? )
+    assert( ! g.moves.empty? )
+  end
+
   def test_has_moves
     g = new_game
     10.times do
