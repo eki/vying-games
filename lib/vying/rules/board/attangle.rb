@@ -9,13 +9,15 @@ require 'vying'
 # or the official Attangle site: http://attangle.com
 
 Rules.create( 'Attangle' ) do
-  name    'Attangle'
-  version '0.1.0'
+  name     'Attangle'
+  version  '0.1.0'
 
   players :white, :black
   option :board_size, :default => 4, :values => [3, 4, 5]
 
   score_determines_outcome
+
+  cache :moves
 
   position do
     attr_reader :board, :stocks, :triples
@@ -26,7 +28,7 @@ Rules.create( 'Attangle' ) do
       @triples = ( [1, 3, 5][@options[:board_size] - 3] ).freeze
     end
 
-    def moves( player = nil )
+    def moves( player=nil )
       return [] if player.nil?
 
       all = []
