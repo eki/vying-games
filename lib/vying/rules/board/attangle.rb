@@ -8,42 +8,44 @@ require 'vying'
 # For detailed rules see:  http://vying.org/games/attangle
 # or the official Attangle site: http://attangle.com
 
-Rules.create('Attangle') do
+Rules.create( 'Attangle' ) do
   name    'Attangle'
   version '0.1.0'
 
   players :white, :black
-  score_determines_outcome
   option :board_size, :default => 4, :values => [3, 4, 5]
+
+  score_determines_outcome
 
   position do
     attr_reader :board, :stocks, :triples
 
     def init
-      @board = Board.hexagon(:length => @options[:board_size])
-      @stocks = {:white => [9, 18, 30][@options[:board_size] - 3], :black => [9, 18, 30][@options[:board_size] - 3]}
-      @triples = [1, 3, 5][@options[:board_size] - 3]
+      @board = Board.hexagon( :length => @options[:board_size] )
+      @stocks = { :white => [9, 18, 30][@options[:board_size] - 3], :black => [9, 18, 30][@options[:board_size] - 3] }
+      @triples = ( [1, 3, 5][@options[:board_size] - 3] ).freeze
     end
 
-    def moves(player = nil)
+    def moves( player = nil )
       return [] if player.nil?
 
       all = []
+
       # Every empty cell (except the center) is a valid move
-      all += board.unoccupied - [Coord.new(board.length - 1, board.length - 1)] if stocks[player] > 0
+      all += board.unoccupied - [ Coord.new( board.length - 1, board.length - 1 ) ] if stocks[player] > 0
 
       # All possible capture moves
       board.occupied.each do |allc|
-        if !allc.first.nil? && allc.first.first == opponent(player)
+        if !allc.first.nil? && allc.first.first == opponent( player )
 
           allc.last.each do |c|
             # Collect all possible attacking pieces
             attackers = []
             board.directions.each do |d|
               scanc = c
-              while scanc = board.coords.next(scanc, d)
+              while scanc = board.coords.next( scanc, d )
                 if !board[scanc].nil? && board[scanc].first == player
-                  attackers << [scanc, board[scanc].length]
+                  attackers << [ scanc, board[scanc].length ]
                   break
                 end
               end
@@ -64,7 +66,7 @@ Rules.create('Attangle') do
       all
     end
 
-    def apply!(move)
+    def apply!( move )
       coords = move.to_coords
       if coords.length == 1
         board[coords.first] = [turn]
@@ -84,13 +86,13 @@ Rules.create('Attangle') do
     end
 
     def final?
-      players.any? { |p| score(p) >= triples || moves(p).empty? }
+      players.any? { |p| score( p ) >= triples || moves( p ).empty? }
     end
 
     def results
     end
 
-    def score(player)
+    def score( player )
       count = 0
       board.occupied.each_pair do |c, p|
         next if c.nil?
