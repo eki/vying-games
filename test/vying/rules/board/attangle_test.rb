@@ -18,22 +18,22 @@ class TestAttangle < Test::Unit::TestCase
     assert_equal( [:white, :black], rules.new.players )
   end
 
-  def test_initialize       # Need to be more thorough here
+  def test_initialize
     g = Game.new( rules )
     assert_equal( :white, g.turn )
   end
 
   def test_options
-    assert_equal( 4, Attangle.options[:board_size].default )
-    assert_equal( [3, 4, 5], Attangle.options[:board_size].values )
+    assert_equal( 4, rules.options[:board_size].default )
+    assert_equal( [3, 4, 5], rules.options[:board_size].values )
 
-    assert_equal( 4, Attangle.new.board.length )
-    assert_equal( 3, Attangle.new( :board_size => 3 ).board.length )
-    assert_equal( 4, Attangle.new( :board_size => 4 ).board.length )
-    assert_equal( 5, Attangle.new( :board_size => 5 ).board.length )
+    assert_equal( 4, rules.new.board.length )
+    assert_equal( 3, rules.new( :board_size => 3 ).board.length )
+    assert_equal( 4, rules.new( :board_size => 4 ).board.length )
+    assert_equal( 5, rules.new( :board_size => 5 ).board.length )
 
-    assert_raise( RuntimeError ) { Attangle.new( :board_size => 2 ) }
-    assert_raise( RuntimeError ) { Attangle.new( :board_size => 7 ) }
+    assert_raise( RuntimeError ) { rules.new( :board_size => 2 ) }
+    assert_raise( RuntimeError ) { rules.new( :board_size => 7 ) }
   end
 
   def test_has_moves
