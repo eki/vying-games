@@ -23,7 +23,7 @@ Rules.create( 'Attangle' ) do
     attr_reader :board, :stocks, :triples
 
     def init
-      @board = Board.hexagon( :length => @options[:board_size] )
+      @board = Board.hexagon( :length => @options[:board_size], :plugins => [:stacking] )
       @stocks = { :white => [9, 18, 30][@options[:board_size] - 3], :black => [9, 18, 30][@options[:board_size] - 3] }
       @triples = ( [1, 3, 5][@options[:board_size] - 3] ).freeze
     end
@@ -109,3 +109,26 @@ Rules.create( 'Attangle' ) do
 
   end
 end
+
+module Board::Plugins::Stacking
+
+  def to_s
+    off = height >= 10 ? 2 : 1                                
+    w = width
+
+    letters = ' '*off + 'abcdefghijklmnopqrstuvwxyz'[0..(w-1)] + ' '*off + "\n"
+
+    s = ' '*off + "  a    b    c    d    e    f    g\n" # letters
+    height.times do |y|
+      s += sprintf( "%*d", off, y+1 )
+      s += row(y).inject( '' ) do |rs,p|
+        stack = p.collect { |x| x.to_s[0..0] }.join if p
+        rs + (p.nil? ? ' ___ ' : " #{stack}#{'_' * (3 - stack.length)} ")
+      end
+      s += sprintf( "%*d\n", -off, y+1 )
+    end
+    s + ' '*off + "  a    b    c    d    e    f    g\n" # letters
+  end
+
+end
+
