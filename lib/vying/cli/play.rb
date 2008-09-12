@@ -158,8 +158,6 @@ module CLI
         g.step
       end
 
-      results = g.results
-    
       games << g
     
       puts "completed game #{n}"
