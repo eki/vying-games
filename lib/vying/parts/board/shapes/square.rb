@@ -7,7 +7,7 @@ class Board::Square < Board
 
   # Initializes a square board.
   #
-  # NOTE:  You don't have to call Board::Shape.new directly, you can use
+  # NOTE:  You don't have to call Board::Square.new directly, you can use
   #        the convenience method Board.square.
   #
   # Requires a length for each side of the board.  In addition to the 
