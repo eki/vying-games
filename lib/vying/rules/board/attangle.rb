@@ -20,11 +20,11 @@ Rules.create( 'Attangle' ) do
   cache :moves
 
   position do
-    attr_reader :board, :stocks, :triples
+    attr_reader :board, :pool, :triples
 
     def init
       @board = Board.hexagon( :length => @options[:board_size], :plugins => [:stacking] )
-      @stocks = { :white => [9, 18, 30][@options[:board_size] - 3], :black => [9, 18, 30][@options[:board_size] - 3] }
+      @pool = { :white => [9, 18, 30][@options[:board_size] - 3], :black => [9, 18, 30][@options[:board_size] - 3] }
       @triples = ( [1, 3, 5][@options[:board_size] - 3] ).freeze
     end
 
@@ -34,7 +34,7 @@ Rules.create( 'Attangle' ) do
       all = []
 
       # Every empty cell (except the center) is a valid move
-      all += board.unoccupied - [ Coord.new( board.length - 1, board.length - 1 ) ] if stocks[player] > 0
+      all += board.unoccupied - [ Coord.new( board.length - 1, board.length - 1 ) ] if pool[player] > 0
 
       # All possible capture moves
       board.occupied.each do |allc|
@@ -72,7 +72,7 @@ Rules.create( 'Attangle' ) do
       coords = move.to_coords
       if coords.length == 1
         board[coords.first] = [turn]
-        stocks[turn] -= 1
+        pool[turn] -= 1
       else
         if board[coords.first].length == 1
           board[coords.last] = board[coords[1]] + board[coords.last]
@@ -81,7 +81,7 @@ Rules.create( 'Attangle' ) do
         end
         board[coords.last].flatten!
         board[coords.first] = board[coords[1]] = nil
-        stocks[turn] += 1
+        pool[turn] += 1
       end
       rotate_turn
       self

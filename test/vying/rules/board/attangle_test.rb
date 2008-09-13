@@ -48,13 +48,13 @@ class TestAttangle < Test::Unit::TestCase
 
     g << "a1"
     assert_equal( [:white], g.board[:a1] )
-    assert_equal( 17, g.stocks[:white] )
-    assert_equal( 18, g.stocks[:black] )
+    assert_equal( 17, g.pool[:white] )
+    assert_equal( 18, g.pool[:black] )
 
     g << "c3"
     assert_equal( [:black], g.board[:c3] )
-    assert_equal( 17, g.stocks[:white] )
-    assert_equal( 17, g.stocks[:black] )
+    assert_equal( 17, g.pool[:white] )
+    assert_equal( 17, g.pool[:black] )
 
     g << "e3" << "g7"
 
@@ -62,8 +62,8 @@ class TestAttangle < Test::Unit::TestCase
     assert_equal( nil, g.board[:a1] )
     assert_equal( nil, g.board[:e3] )
     assert_equal( [:white, :black], g.board[:c3] )
-    assert_equal( 17, g.stocks[:white] )
-    assert_equal( 16, g.stocks[:black] )
+    assert_equal( 17, g.pool[:white] )
+    assert_equal( 16, g.pool[:black] )
   end
 
 end
