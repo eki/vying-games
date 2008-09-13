@@ -3,8 +3,6 @@
 
 class Board::Square < Board
 
-  public_class_method :new
-
   prototype
 
   # Initializes a square board.
