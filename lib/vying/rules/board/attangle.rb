@@ -13,7 +13,7 @@ Rules.create( 'Attangle' ) do
   version  '0.1.0'
 
   players :white, :black
-  option :board_size, :default => 5, :values => [3, 4, 5]
+  option :board_size, :default => 4, :values => [3, 4, 5]
 
   score_determines_outcome
 
