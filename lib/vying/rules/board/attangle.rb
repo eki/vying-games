@@ -113,7 +113,8 @@ module Board::Plugins::Stacking
   def to_s
     off = height >= 10 ? 2 : 1
     w = width
-    sp = @cells.compact.max { |a,b| a.length <=> b.length }.length
+    sp = @cells.compact.max { |a,b| a.length <=> b.length }
+    sp = sp ? sp.length : 1
     letters = "#{' ' * off}#{('a'...(?a+w).chr).collect { |l| ' ' + l + ' ' * sp }}#{' ' * off}\n"
 
     s = letters
