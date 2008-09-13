@@ -4,40 +4,16 @@
 
 class Board
 
-  SHAPES = [:square, :rect, :rhombus, :triangle, :hexagon].freeze
-
   attr_reader :shape, :cell_shape, :coords, :cells, 
               :width, :height, :length, :occupied, :plugins
+
   protected :cells
 
-  prototype
-
   # Initialize a board.  Accepts a hash with the following parameters:
-  #
-  #   :shape - The overall shape of the board.  Valid shapes are:
-  #              :square, :rect, :triangle, :rhombus, :hexagon
-  #
-  #   :width, :height, :length - Define the bounds of the board, the params
-  #                              accepted depend on the :shape of the board
   #
   #   :omit - A list of coords to be excluded from the bounds of the board.
   #           Given param should be array.  All the elements will be mapped
   #           to Coord with Coord.[] so symbols and strings are acceptable.
-  #
-  #   :cell_shape - The shape of the individual cells.  Valid shapes are:
-  #                   :square, :hexagon
-  #                 The cell_shape will be defaulted depending on the overall
-  #                 board shape.  For example, it will be set to :square for
-  #                 :square and :rect boards, and :hexagon for :triangle,
-  #                 :rhombus, and :hexagon boards.  Not all combinations of
-  #                 :shape and :cell_shape are supported, yet.
-  #
-  #   :directions - In which directions are the cells connected to one another?
-  #                 This should be an array containing some subset of:
-  #                   [:n, :e, :w, :s, :ne, :nw, :se, :sw]
-  #                 If :directions are not given, :cell_shape will be used
-  #                 to determine a default.  The directions will effect methods
-  #                 like CoordsProxy#neighbors.
   #
   #   :plugins - An array of plugins that the created board should extend.  
   #              Plugins are typically modules under the Board::Plugins 
@@ -47,117 +23,10 @@ class Board
   #
 
   def initialize( h )
-    @width  = h[:width]
-    @height = h[:height]
-    @length = h[:length]
-
-    @shape = h[:shape]
-    @cell_shape = h[:cell_shape]
-
-    if @cell_shape == :triangle
-      if h[:directions]
-        raise "Board.new: :directions is invalid when :cell_shape is :triangle"
-      end
-
-      @up_directions   = [:w,:e,:s]
-      @down_directions = [:n,:e,:w]
-    else
-      @directions = h[:directions]
-    end
-
-    if @shape.nil?
-      raise "board requires the :shape param"
-    end
-
     omit = (h[:omit] || []).map { |c| Coord[c] }
 
-    case h[:shape]
-      when :square
-        @length ||= @width
-        @width  ||= @length
-        @height ||= @length
-
-        if @length.nil?
-          raise "square board requires the :length or :width params"
-        end
-
-        @cell_shape ||= :square
-
-        unless @cell_shape == :triangle
-          @directions ||= [:n, :s, :e, :w, :ne, :sw, :nw, :se]
-        end
-
-      when :rect
-        
-        if @width.nil? || @height.nil?
-          raise "rect board requires both the :width and :height params"
-        end
-
-        @cell_shape ||= :square
-
-        unless @cell_shape == :triangle
-          @directions ||= [:n, :s, :e, :w, :ne, :sw, :nw, :se]
-        end
-
-      when :triangle
-
-        if @length.nil?
-          raise "triangle board requires the :length param"
-        end
-
-        @width  = @length
-        @height = @length
-
-        @width.times do |x|
-          @height.times do |y|
-            omit << Coord[x,y] if x + y >= length
-          end
-        end
-
-        @cell_shape ||= :hexagon
-
-        unless @cell_shape == :triangle
-          @directions ||= [:n, :s, :e, :w, :ne, :sw]
-        end
-
-      when :rhombus
-
-        if @width.nil? || @height.nil?
-          raise "rhombus board requires both the :width and :height params"
-        end
-
-        @cell_shape ||= :hexagon
-
-        unless @cell_shape == :triangle
-          @directions ||= [:n, :s, :e, :w, :ne, :sw]
-        end
-
-      when :hexagon
-
-        if @length.nil?
-          raise "hexagon board requires the :length param"
-        end
-
-        @width  = @length * 2 - 1
-        @height = @length * 2 - 1
-
-        @width.times do |x|
-          @height.times do |y|
-            omit << Coord[x,y] if (x - y).abs >= @length
-          end
-        end
-
-        @cell_shape ||= :hexagon
-
-        unless @cell_shape == :triangle
-          @directions ||= [:n, :s, :e, :w, :nw, :se]
-        end
-    end
-
-    if @width && @height 
-      @cells = Array.new( @width * @height, nil )
-      @coords = CoordsProxy.new( self, Coords.new( width, height, omit ) )
-    end
+    @cells = Array.new( @width * @height, nil )
+    @coords = CoordsProxy.new( self, Coords.new( width, height, omit ) )
 
     @occupied = Hash.new( [] )
     @occupied[nil] = @coords.to_a.dup
@@ -171,28 +40,34 @@ class Board
     fill( h[:fill] ) if h[:fill]
   end
 
-  # Respond to the values in SHAPES.  See Board.method_missing.
+  # Create a square Board.  
 
-  def Board.respond_to?( m )
-    super || SHAPES.include?( m )
+  def Board.square( length, h={} )
+    Board::Square.new( length, h )
   end
 
-  # Turn the values in SHAPES into convenience calls for Board.new.  That is:
-  #
-  #   Board.new( :shape => :square, :length => 10 )
-  #
-  # Can be turned into:
-  #
-  #   Board.square( :length => 10 )
-  #
+  # Create a rect Board.  
 
-  def Board.method_missing( m, *args )
-    if SHAPES.include?( m ) && args.length == 1 && args.first.class == Hash
-      args.first[:shape] = m
-      new( *args )
-    else
-      super
-    end
+  def Board.rect( width, height, h={} )
+    Board::Rect.new( width, height, h )
+  end
+
+  # Create a rhombus Board.  
+
+  def Board.rhombus( width, height, h={} )
+    Board::Rhombus.new( width, height, h )
+  end
+
+  # Create a triangle Board.  
+
+  def Board.triangle( length, h={} )
+    Board::Triangle.new( length, h )
+  end
+
+  # Create a hexagon Board.  
+
+  def Board.hexagon( length, h={} )
+    Board::Hexagon.new( length, h )
   end
 
   # Perform a deep copy on this board.
@@ -531,6 +406,19 @@ class Board
       v.each { |p| extend Board.find_plugin( p ) } if iv == "plugins"
       v.instance_variable_set( "@board", self ) if iv == "coords"
     end
+  end
+
+  # Board.new pretends to be private.  In an earlier revision it was
+  # private, but that was causing odd errors with Class#prototype's use of
+  # alias (stemming from the fact that Board has subclasses who's new methods
+  # are not private) when run under ruby 1.9.
+
+  def Board.new( *args )
+    if self == Board
+      raise NoMethodError, "undefined method `new' for Board:Class"
+    end
+
+    super
   end
 
   private

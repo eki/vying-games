@@ -15,7 +15,7 @@ Rules.create( "Phutball" ) do
     attr_reader :board, :jumping
 
     def init
-      @board = Board.rect( :width => 15, :height => 21 )
+      @board = Board.rect( 15, 21 )
       @board[:h11] = :white
       @jumping = false
     end

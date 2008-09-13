@@ -5,7 +5,7 @@ require 'vying'
 class TestAmazons < Test::Unit::TestCase
 
   def test_initialize_01
-    b = Board.new( :shape => :square, :length => 4, :plugins => [:amazons] )
+    b = Board.square( 4, :plugins => [:amazons] )
 
     assert( (class << b; ancestors; end).include?( Board::Plugins::Amazons ) )
     assert_equal( 1, b.territories.length )
@@ -15,7 +15,7 @@ class TestAmazons < Test::Unit::TestCase
   end
 
   def test_dup
-    b = Board.new( :shape => :square, :length => 4, :plugins => [:amazons] )
+    b = Board.square( 4, :plugins => [:amazons] )
 
     assert( (class << b; ancestors; end).include?( Board::Plugins::Amazons ) )
 
@@ -29,7 +29,7 @@ class TestAmazons < Test::Unit::TestCase
   end
 
   def test_marshal
-    b = Board.new( :shape => :square, :length => 4, :plugins => [:amazons] )
+    b = Board.square( 4, :plugins => [:amazons] )
 
     assert( (class << b; ancestors; end).include?( Board::Plugins::Amazons ) )
 
@@ -43,7 +43,7 @@ class TestAmazons < Test::Unit::TestCase
   end
 
   def test_yaml
-    b = Board.new( :shape => :square, :length => 4, :plugins => [:amazons] )
+    b = Board.square( 4, :plugins => [:amazons] )
 
     assert( (class << b; ancestors; end).include?( Board::Plugins::Amazons ) )
 
@@ -57,9 +57,7 @@ class TestAmazons < Test::Unit::TestCase
   end
 
   def test_initialize_02
-    b = Board.new( :shape   => :square,
-                   :length  => 10,
-                   :plugins => [:amazons] )
+    b = Board.square( 10, :plugins => [:amazons] )
 
     b[:a4, :d1, :g1,:j4] = :white
     b[:a7,:g10,:d10,:j7] = :black
@@ -82,9 +80,7 @@ class TestAmazons < Test::Unit::TestCase
   end
 
   def test_territory_splits
-    b = Board.new( :shape   => :square,
-                   :length  => 10,
-                   :plugins => [:amazons] )
+    b = Board.square( 10, :plugins => [:amazons] )
 
     b[:a4, :d1, :g1,:j4] = :white
     b[:a7,:g10,:d10,:j7] = :black
@@ -141,9 +137,7 @@ class TestAmazons < Test::Unit::TestCase
   end
 
   def test_territory_blocking
-    b = Board.new( :shape   => :square,
-                   :length  => 10,
-                   :plugins => [:amazons] )
+    b = Board.square( 10, :plugins => [:amazons] )
 
     b[:a4, :d1, :g1,:j4] = :white
     b[:a7,:g10,:d10,:j7] = :black
@@ -187,9 +181,7 @@ class TestAmazons < Test::Unit::TestCase
   end
 
   def test_mobility_init
-    b = Board.new( :shape   => :square,
-                   :length  => 10,
-                   :plugins => [:amazons] )
+    b = Board.square( 10, :plugins => [:amazons] )
 
     b[:a4, :d1, :g1,:j4] = :white
     b[:a7,:g10,:d10,:j7] = :black
@@ -203,9 +195,7 @@ class TestAmazons < Test::Unit::TestCase
   end
 
   def test_mobility_move
-    b = Board.new( :shape   => :square,
-                   :length  => 10,
-                   :plugins => [:amazons] )
+    b = Board.square( 10, :plugins => [:amazons] )
 
     b[:a4, :d1, :g1,:j4] = :white
     b[:a7,:g10,:d10,:j7] = :black
@@ -235,9 +225,7 @@ class TestAmazons < Test::Unit::TestCase
   end
 
   def test_mobility_move
-    b = Board.new( :shape   => :square,
-                   :length  => 10,
-                   :plugins => [:amazons] )
+    b = Board.square( 10, :plugins => [:amazons] )
 
     b[:a4, :d1, :g1,:j4] = :white
     b[:a7,:g10,:d10,:j7] = :black

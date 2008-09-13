@@ -166,7 +166,7 @@ Rules.create( "Havannah" ) do
     attr_reader :board, :groups
 
     def init
-      @board = Board.hexagon( :length => 10 )
+      @board = Board.hexagon( 10 )
       @groups = { :blue => [], :red => [] }
     end
 

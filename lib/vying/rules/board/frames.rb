@@ -17,7 +17,7 @@ Rules.create( "Frames" ) do
     attr_reader :board, :sealed, :points, :frame
 
     def init
-      @board = Board.square( :length => 19 )
+      @board = Board.square( 19 )
       @sealed = {}
       @points = { :black => 0, :white => 0 }
       @frame = []

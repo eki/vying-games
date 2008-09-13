@@ -62,7 +62,7 @@ Rules.create( "Y" ) do
     attr_reader :board, :groups
 
     def init
-      @board = Board.triangle( :length => @options[:board_size] )
+      @board = Board.triangle( @options[:board_size] )
 
       @groups = { :blue => [], :red => [] }
     end

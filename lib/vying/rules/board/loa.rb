@@ -19,7 +19,7 @@ Rules.create( "LinesOfAction" ) do
     attr_reader :board, :counts
 
     def init
-      @board = Board.square( :length => 8 )
+      @board = Board.square( 8 )
       @board[:a2,:a3,:a4,:a5,:a6,:a7] = :black
       @board[:h2,:h3,:h4,:h5,:h6,:h7] = :black
       @board[:b1,:c1,:d1,:e1,:f1,:g1] = :white

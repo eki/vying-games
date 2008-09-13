@@ -15,7 +15,7 @@ Rules.create( "KeryoPente" ) do
     attr_reader :board, :captured
 
     def init
-      @board = Board.square( :length => 19, :plugins => [:in_a_row] )
+      @board = Board.square( 19, :plugins => [:in_a_row] )
 
       @board.window_size = 5
       @captured = { :black => 0, :white => 0 }

@@ -21,13 +21,9 @@ Rules.create( "Oware" ) do
     ignore :sides, :annotation
 
     def init
-      @board = Board.rect( :width  => 6,
-                           :height => 2,
-                           :fill   => 4 )
+      @board = Board.rect( 6, 2, :fill => 4 )
 
-      @annotation = Board.rect( :width  => 6,
-                                :height => 2,
-                                :fill => "0" )
+      @annotation = Board.rect( 6, 2, :fill => "0" )
 
       @scoring_pits = { :one => 0, :two => 0 }
       @sides= { :one => ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'],

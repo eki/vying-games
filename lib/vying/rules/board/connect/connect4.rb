@@ -18,7 +18,7 @@ Rules.create( "Connect4" ) do
     ignore :unused_moves
 
     def init
-      @board = Board.rect( :width => 7, :height => 6, :plugins => [:in_a_row] )
+      @board = Board.rect( 7, 6, :plugins => [:in_a_row] )
 
       @board.window_size = 4
       @unused_moves = rules.init_moves.map { |a| a.dup }

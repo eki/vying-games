@@ -22,7 +22,7 @@ class TestFootsteps_1_0_0 < Test::Unit::TestCase
   def test_init
     g = Game.new( rules )
 
-    b = Board.new( :shape => :rect, :width => 7, :height => 1 )
+    b = Board.rect( 7, 1 )
     b[:d1] = :white
 
     assert_equal( b, g.board )

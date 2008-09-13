@@ -41,7 +41,7 @@ Rules.create( "Cephalopod" ) do
     attr_reader :board, :dice, :removed, :removed
 
     def init
-      @board = Board.square( :length => 5, :directions => [:n, :e, :w, :s]  )
+      @board = Board.square( 5, :directions => [:n, :e, :w, :s]  )
 
       @dice = { :black => 0, :white => 0 }
 

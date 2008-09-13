@@ -18,7 +18,7 @@ Rules.create( "Othello" ) do
     attr_reader :board
 
     def init
-      @board = Board.square( :length => 8, :plugins => [:custodial_flip] )
+      @board = Board.square( 8, :plugins => [:custodial_flip] )
 
       @board[:d4,:e5] = :white
       @board[:e4,:d5] = :black

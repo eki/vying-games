@@ -5,20 +5,20 @@ require 'vying'
 class TestFrontier < Test::Unit::TestCase
 
   def test_initialize
-    b = Board.new( :shape => :square, :length => 4, :plugins => [:frontier] )
+    b = Board.square( 4, :plugins => [:frontier] )
 
     assert( (class << b; ancestors; end).include?( Board::Plugins::Frontier ) )
     assert_equal( [], b.frontier )
   end
 
   def test_set
-    b = Board.new( :shape => :square, :length => 4, :plugins => [:frontier] )
+    b = Board.square( 4, :plugins => [:frontier] )
     b[:a1] = :x
     assert_equal( ["a2", "b1", "b2"], b.frontier.map { |c| c.to_s }.sort )
   end
 
   def test_unset
-    b = Board.new( :shape => :square, :length => 4, :plugins => [:frontier] )
+    b = Board.square( 4, :plugins => [:frontier] )
     b[:a1,:b1] = :x
     
     assert_equal( ["a2", "b2", "c1", "c2"], 
@@ -31,7 +31,7 @@ class TestFrontier < Test::Unit::TestCase
   end
 
   def test_hexagon_directions
-    b = Board.new( :shape => :hexagon, :length => 4, :plugins => [:frontier] )
+    b = Board.hexagon( 4, :plugins => [:frontier] )
     b[:a1] = :x
 
     assert_equal( ["a2", "b1", "b2"], b.frontier.map { |c| c.to_s }.sort )
@@ -53,10 +53,8 @@ class TestFrontier < Test::Unit::TestCase
   end
 
   def test_square_no_diagonals
-    b = Board.new( :shape      => :square, 
-                   :length     => 4, 
-                   :directions => [:n, :e, :w, :s],
-                   :plugins    => [:frontier] )
+    b = Board.square( 4, :directions => [:n, :e, :w, :s],
+                         :plugins    => [:frontier] )
     b[:a1] = :x
 
     assert_equal( ["a2", "b1"], b.frontier.map { |c| c.to_s }.sort )
@@ -68,9 +66,7 @@ class TestFrontier < Test::Unit::TestCase
   end
 
   def test_triangle_directions
-    b = Board.square( :length     => 4, 
-                      :cell_shape => :triangle,
-                      :plugins    => [:frontier] )
+    b = Board.square( 4, :cell_shape => :triangle, :plugins => [:frontier] )
     b[:a1] = :x
 
     assert_equal( ["a2", "b1"], b.frontier.map { |c| c.to_s }.sort )
@@ -87,7 +83,7 @@ class TestFrontier < Test::Unit::TestCase
   end
 
   def test_dup
-    b = Board.new( :shape => :square, :length => 4, :plugins => [:frontier] )
+    b = Board.square( 4, :plugins => [:frontier] )
     b[:a1] = :x
 
     assert( (class << b; ancestors; end).include?( Board::Plugins::Frontier ) )
@@ -102,7 +98,7 @@ class TestFrontier < Test::Unit::TestCase
   end
 
   def test_marshal
-    b = Board.new( :shape => :square, :length => 4, :plugins => [:frontier] )
+    b = Board.square( 4, :plugins => [:frontier] )
     b[:a1] = :x
 
     assert( (class << b; ancestors; end).include?( Board::Plugins::Frontier ) )
@@ -117,7 +113,7 @@ class TestFrontier < Test::Unit::TestCase
   end
 
   def test_yaml
-    b = Board.new( :shape => :square, :length => 4, :plugins => [:frontier] )
+    b = Board.square( 4, :plugins => [:frontier] )
     b[:a1] = :x
 
     assert( (class << b; ancestors; end).include?( Board::Plugins::Frontier ) )

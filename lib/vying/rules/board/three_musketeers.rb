@@ -23,9 +23,8 @@ Rules.create( "ThreeMusketeers" ) do
     attr_reader :board
 
     def init
-      @board = Board.square( :length     => 5,
-                             :directions => [:n, :e, :w, :s],
-                             :fill       => :blue )
+      @board = Board.square( 5, :directions => [:n, :e, :w, :s], 
+                                :fill       => :blue )
 
       @board[:a5,:c3,:e1] = :red
     end

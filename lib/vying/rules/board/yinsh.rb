@@ -24,8 +24,7 @@ Rules.create( "Yinsh" ) do
     attr_reader :board, :removed, :rows, :removed_markers, :completed_row
 
     def init
-      @board = Board.hexagon( :length => 6,
-                              :omit   => [:a1, :a6, :f1, :f11, :k6, :k11] )
+      @board = Board.hexagon( 6, :omit => [:a1, :a6, :f1, :f11, :k6, :k11] )
 
       @removed = { :WHITE_RING => 0, :BLACK_RING => 0 }
       @rows = []

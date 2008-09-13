@@ -9,9 +9,7 @@ class TestCustodialFlip < Test::Unit::TestCase
   end
 
   def test_initialize
-    b = Board.new( :shape   => :square, 
-                   :length  => 4, 
-                   :plugins => [:custodial_flip] )
+    b = Board.square( 4, :plugins => [:custodial_flip] )
 
     assert( full_ancestors( b ).include?( Board::Plugins::Frontier ) )
     assert( full_ancestors( b ).include?( Board::Plugins::CustodialFlip ) )
@@ -19,9 +17,7 @@ class TestCustodialFlip < Test::Unit::TestCase
   end
 
   def test_dup
-    b = Board.new( :shape   => :square, 
-                   :length  => 4, 
-                   :plugins => [:custodial_flip] )
+    b = Board.square( 4, :plugins => [:custodial_flip] )
 
     b[:a1] = :x
 
@@ -39,9 +35,7 @@ class TestCustodialFlip < Test::Unit::TestCase
   end
 
   def test_marshal
-    b = Board.new( :shape   => :square, 
-                   :length  => 4, 
-                   :plugins => [:custodial_flip] )
+    b = Board.square( 4, :plugins => [:custodial_flip] )
 
     b[:a1] = :x
 
@@ -59,9 +53,7 @@ class TestCustodialFlip < Test::Unit::TestCase
   end
 
   def test_yaml
-    b = Board.new( :shape   => :square, 
-                   :length  => 4, 
-                   :plugins => [:custodial_flip] )
+    b = Board.square( 4, :plugins => [:custodial_flip] )
 
     b[:a1] = :x
 
@@ -79,9 +71,7 @@ class TestCustodialFlip < Test::Unit::TestCase
   end
 
   def test_will_flip_ns
-    b = Board.new( :shape   => :square, 
-                   :length  => 8,
-                   :plugins => [:custodial_flip] )
+    b = Board.square( 8, :plugins => [:custodial_flip] )
 
     b[3,3] = :black
     b[3,4] = :white
@@ -94,9 +84,7 @@ class TestCustodialFlip < Test::Unit::TestCase
   end
 
   def test_will_flip_ew
-    b = Board.new( :shape   => :square, 
-                   :length  => 8,
-                   :plugins => [:custodial_flip] )
+    b = Board.square( 8, :plugins => [:custodial_flip] )
 
     b[3,3] = :black
     b[4,3] = :white
@@ -116,9 +104,7 @@ class TestCustodialFlip < Test::Unit::TestCase
   end
 
   def test_will_flip_nw_se
-    b = Board.new( :shape   => :square, 
-                   :length  => 8,
-                   :plugins => [:custodial_flip] )
+    b = Board.square( 8, :plugins => [:custodial_flip] )
 
     b[0,0] = :white
     b[1,1] = :black
@@ -130,9 +116,7 @@ class TestCustodialFlip < Test::Unit::TestCase
   end
 
   def test_will_flip_ne_sw
-    b = Board.new( :shape   => :square, 
-                   :length  => 8,
-                   :plugins => [:custodial_flip] )
+    b = Board.square( 8, :plugins => [:custodial_flip] )
 
     b[7,0] = :black
     b[6,1] = :white
@@ -145,9 +129,7 @@ class TestCustodialFlip < Test::Unit::TestCase
   end
 
   def test_will_flip_empty
-    b = Board.new( :shape   => :square, 
-                   :length  => 8,
-                   :plugins => [:custodial_flip] )
+    b = Board.square( 8, :plugins => [:custodial_flip] )
 
     b[3,3] = :black
     b[5,5] = :white
@@ -159,9 +141,7 @@ class TestCustodialFlip < Test::Unit::TestCase
   end
 
   def test_will_flip_edges
-    b = Board.new( :shape   => :square, 
-                   :length  => 8,
-                   :plugins => [:custodial_flip] )
+    b = Board.square( 8, :plugins => [:custodial_flip] )
 
     b[0,0] = b[3,0] = b[3,1] = b[7,0] = b[7,3] = :black
     b[7,7] = b[3,7] = b[3,6] = b[0,7] = b[0,3] = :white
@@ -173,9 +153,7 @@ class TestCustodialFlip < Test::Unit::TestCase
   end
 
   def test_flip_n
-    b = Board.new( :shape   => :square, 
-                   :length  => 8,
-                   :plugins => [:custodial_flip] )
+    b = Board.square( 8, :plugins => [:custodial_flip] )
 
     b[3,3] = :black
     b[3,4] = :white
@@ -190,9 +168,7 @@ class TestCustodialFlip < Test::Unit::TestCase
   end
 
   def test_flip_s
-    b = Board.new( :shape   => :square, 
-                   :length  => 8,
-                   :plugins => [:custodial_flip] )
+    b = Board.square( 8, :plugins => [:custodial_flip] )
 
     b[3,3] = :black
     b[3,4] = :white
@@ -207,9 +183,7 @@ class TestCustodialFlip < Test::Unit::TestCase
   end
 
   def test_flip_e
-    b = Board.new( :shape   => :square, 
-                   :length  => 8,
-                   :plugins => [:custodial_flip] )
+    b = Board.square( 8, :plugins => [:custodial_flip] )
 
     b[1,3] = :black
     b[2,3] = :black
@@ -230,9 +204,7 @@ class TestCustodialFlip < Test::Unit::TestCase
   end
 
   def test_flip_w
-    b = Board.new( :shape   => :square, 
-                   :length  => 8,
-                   :plugins => [:custodial_flip] )
+    b = Board.square( 8, :plugins => [:custodial_flip] )
 
     b[3,3] = :black
     b[4,3] = :white
@@ -249,9 +221,7 @@ class TestCustodialFlip < Test::Unit::TestCase
   end
 
   def test_flip_nw_se
-    b = Board.new( :shape   => :square, 
-                   :length  => 8,
-                   :plugins => [:custodial_flip] )
+    b = Board.square( 8, :plugins => [:custodial_flip] )
 
     b[0,0] = :black
     b[1,1] = :white
@@ -272,9 +242,7 @@ class TestCustodialFlip < Test::Unit::TestCase
   end
 
   def test_flip_ne_sw
-    b = Board.new( :shape   => :square, 
-                   :length  => 8,
-                   :plugins => [:custodial_flip] )
+    b = Board.square( 8, :plugins => [:custodial_flip] )
 
     b[7,0] = :black
     b[6,1] = :white

@@ -1,7 +1,13 @@
 
 require 'vying/parts/board/coord'
 require 'vying/parts/board/coords'
+
 require 'vying/parts/board/board'
+require 'vying/parts/board/shapes/hexagon'
+require 'vying/parts/board/shapes/rect'
+require 'vying/parts/board/shapes/rhombus'
+require 'vying/parts/board/shapes/square'
+require 'vying/parts/board/shapes/triangle'
 
 require 'vying/parts/board/plugins/custodial_flip'
 require 'vying/parts/board/plugins/in_a_row'

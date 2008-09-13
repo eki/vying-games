@@ -21,9 +21,7 @@ class TestOthello < Test::Unit::TestCase
   def test_initialize
     g = Game.new( rules )
 
-    b = Board.new( :shape   => :square,
-                   :length  => 8,
-                   :plugins => [:custodial_flip] )
+    b = Board.square( 8, :plugins => [:custodial_flip] )
 
     b[3,3] = b[4,4] = :white
     b[3,4] = b[4,3] = :black

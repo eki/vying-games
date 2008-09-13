@@ -5,7 +5,7 @@ require 'vying'
 class TestInARow < Test::Unit::TestCase
 
   def test_initialize
-    b = Board.new( :shape => :square, :length => 4, :plugins => [:in_a_row] )
+    b = Board.square( 4, :plugins => [:in_a_row] )
 
     assert( (class << b; ancestors; end).include?( Board::Plugins::InARow ) )
     assert_equal( [], b.threats )
@@ -13,13 +13,13 @@ class TestInARow < Test::Unit::TestCase
   end
 
   def test_set_window_size
-    b = Board.new( :shape => :square, :length => 4, :plugins => [:in_a_row] )
+    b = Board.square( 4, :plugins => [:in_a_row] )
     b.window_size = 4
     assert_equal( 4, b.window_size )
   end
 
   def test_dup
-    b = Board.new( :shape => :square, :length => 4, :plugins => [:in_a_row] )
+    b = Board.square( 4, :plugins => [:in_a_row] )
     b.window_size = 4
 
     assert( (class << b; ancestors; end).include?( Board::Plugins::InARow ) )
@@ -35,7 +35,7 @@ class TestInARow < Test::Unit::TestCase
   end
 
   def test_marshal
-    b = Board.new( :shape => :square, :length => 4, :plugins => [:in_a_row] )
+    b = Board.square( 4, :plugins => [:in_a_row] )
     b.window_size = 4
 
     assert( (class << b; ancestors; end).include?( Board::Plugins::InARow ) )
@@ -51,7 +51,7 @@ class TestInARow < Test::Unit::TestCase
   end
 
   def test_yaml
-    b = Board.new( :shape => :square, :length => 4, :plugins => [:in_a_row] )
+    b = Board.square( 4, :plugins => [:in_a_row] )
     b.window_size = 4
 
     assert( (class << b; ancestors; end).include?( Board::Plugins::InARow ) )
@@ -67,7 +67,7 @@ class TestInARow < Test::Unit::TestCase
   end
 
   def test_clear
-    b = Board.new( :shape => :square, :length => 4, :plugins => [:in_a_row] )
+    b = Board.square( 4, :plugins => [:in_a_row] )
     b.window_size = 4
 
     b[:a1,:a2,:a3] = :black
@@ -80,7 +80,7 @@ class TestInARow < Test::Unit::TestCase
   end
 
   def test_threats_to_s
-    b = Board.new( :shape => :square, :length => 19, :plugins => [:in_a_row] )
+    b = Board.square( 19, :plugins => [:in_a_row] )
     b.window_size = 6
 
     b[10,10] = b[9,9] = b[8,8] = :black
@@ -95,7 +95,7 @@ class TestInARow < Test::Unit::TestCase
   end
 
   def test_create_windows
-    b = Board.new( :shape => :square, :length => 19, :plugins => [:in_a_row] )
+    b = Board.square( 19, :plugins => [:in_a_row] )
     b.window_size = 6
 
     ws = b.send( :create_windows, Coord[9,9] )
@@ -106,7 +106,7 @@ class TestInARow < Test::Unit::TestCase
   end
 
   def test_window_in_bounds
-    b = Board.new( :shape => :square, :length => 19, :plugins => [:in_a_row] )
+    b = Board.square( 19, :plugins => [:in_a_row] )
     b.window_size = 6
 
     w = [Coord[1,1],Coord[2,2],Coord[3,3]]
@@ -114,7 +114,7 @@ class TestInARow < Test::Unit::TestCase
   end
 
   def test_has_neighbor?
-    b = Board.new( :shape => :square, :length => 19, :plugins => [:in_a_row] )
+    b = Board.square( 19, :plugins => [:in_a_row] )
     b.window_size = 6
 
     b[:c3] = :black

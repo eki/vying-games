@@ -21,7 +21,7 @@ class TestNineMensMorris < Test::Unit::TestCase
   def test_init
     g = Game.new( rules )
 
-    b = Board.new( :shape => :square, :length => 7 )
+    b = Board.square( 7 )
 
     b[:a2,:a3,:a5,:a6,
       :b1,:c1,:e1,:f1,

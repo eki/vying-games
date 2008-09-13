@@ -23,7 +23,7 @@ Rules.create( "Hexxagon" ) do
     attr_reader :board, :block_pattern
 
     def init
-      @board = Board.hexagon( :length => 5 )
+      @board = Board.hexagon( 5 )
 
       if options[:number_of_players] == 2
         @board[:a1, :i5, :e9] = :red

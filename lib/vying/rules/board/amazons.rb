@@ -19,7 +19,7 @@ Rules.create( "Amazons" ) do
     attr_reader :board, :lastc
 
     def init
-      @board = Board.square( :length => 10, :plugins => [:amazons] )
+      @board = Board.square( 10, :plugins => [:amazons] )
 
       @board[:a4, :d1, :g1,:j4] = :white
       @board[:a7,:g10,:d10,:j7] = :black
