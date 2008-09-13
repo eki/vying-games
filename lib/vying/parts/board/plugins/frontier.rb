@@ -46,7 +46,7 @@ module Board::Plugins::Frontier
     if p.nil?
       coords.neighbors( c ).each do |nc|
         if self[nc] 
-          update_frontier( nc.x, nc.y )
+          update_frontier( nc )
         else
           unless coords.neighbors( nc ).any? { |nnc| self[nnc] }
             frontier.delete( nc )
@@ -54,14 +54,12 @@ module Board::Plugins::Frontier
         end
       end
     else
-      update_frontier( x, y )
+      update_frontier( c )
     end
   end
 
-  def update_frontier( x, y )
-    c, w, h = Coord[x,y], width, height
-
-    directions.each do |d|
+  def update_frontier( c )
+    directions( c ).each do |d|
       nc = coords.next( c, d )
   
       if ! nc.nil? && self[nc].nil?

@@ -49,7 +49,7 @@ void Init_boardext() {
 
   Frontier = rb_define_module_under( Plugins, "Frontier" );
 
-  rb_define_method( Frontier, "update_frontier", frontier_update, 2 );
+  rb_define_method( Frontier, "update_frontier", frontier_update, 1 );
                                                            /* in frontier.c */
 
   /* Map Board::Plugins::CustodialFlip */
@@ -80,6 +80,7 @@ void Init_boardext() {
   id_sw = rb_intern("sw");
   id_ne = rb_intern("ne");
   id_DIRECTIONS = rb_intern("DIRECTIONS");
+  id_directions = rb_intern("directions");
   id_white = rb_intern("white");
   id_black = rb_intern("black");
   id_delete = rb_intern("delete");

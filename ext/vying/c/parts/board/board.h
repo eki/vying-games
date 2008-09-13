@@ -49,7 +49,7 @@ VALUE coords_next( VALUE self, VALUE c, VALUE d );
 
 /* Frontier prototypes */
 
-VALUE frontier_update( VALUE self, VALUE x, VALUE y );
+VALUE frontier_update( VALUE self, VALUE c );
 
 
 /* CustodialFlip prototypes */
@@ -62,8 +62,8 @@ VALUE custodial_flip( VALUE self, VALUE c, VALUE p );
 
 ID id_dup, id_x, id_y, id_subscript, id_subscript_assign, id_new,
    id_hash, id_include, id_n, id_s, id_w, id_e, id_se, id_nw, id_sw, id_ne,
-   id_DIRECTIONS, id_white, id_black, id_delete, id_uniq_ex, id_to_s,
-   id_before_set, id_after_set;
+   id_DIRECTIONS, id_directions, id_white, id_black, id_delete, id_uniq_ex,
+   id_to_s, id_before_set, id_after_set;
 
 
 /* SYMs */

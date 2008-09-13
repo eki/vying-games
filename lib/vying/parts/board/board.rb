@@ -6,7 +6,7 @@ class Board
 
   SHAPES = [:square, :rect, :rhombus, :triangle, :hexagon].freeze
 
-  attr_reader :shape, :cell_shape, :directions, :coords, :cells, 
+  attr_reader :shape, :cell_shape, :coords, :cells, 
               :width, :height, :length, :occupied, :plugins
   protected :cells
 
@@ -53,7 +53,17 @@ class Board
 
     @shape = h[:shape]
     @cell_shape = h[:cell_shape]
-    @directions = h[:directions]
+
+    if @cell_shape == :triangle
+      if h[:directions]
+        raise "Board.new: :directions is invalid when :cell_shape is :triangle"
+      end
+
+      @up_directions   = [:w,:e,:s]
+      @down_directions = [:n,:e,:w]
+    else
+      @directions = h[:directions]
+    end
 
     if @shape.nil?
       raise "board requires the :shape param"
@@ -72,7 +82,10 @@ class Board
         end
 
         @cell_shape ||= :square
-        @directions ||= [:n, :s, :e, :w, :ne, :sw, :nw, :se]
+
+        unless @cell_shape == :triangle
+          @directions ||= [:n, :s, :e, :w, :ne, :sw, :nw, :se]
+        end
 
       when :rect
         
@@ -81,7 +94,10 @@ class Board
         end
 
         @cell_shape ||= :square
-        @directions ||= [:n, :s, :e, :w, :ne, :sw, :nw, :se]
+
+        unless @cell_shape == :triangle
+          @directions ||= [:n, :s, :e, :w, :ne, :sw, :nw, :se]
+        end
 
       when :triangle
 
@@ -99,7 +115,10 @@ class Board
         end
 
         @cell_shape ||= :hexagon
-        @directions ||= [:n, :s, :e, :w, :ne, :sw]
+
+        unless @cell_shape == :triangle
+          @directions ||= [:n, :s, :e, :w, :ne, :sw]
+        end
 
       when :rhombus
 
@@ -108,7 +127,10 @@ class Board
         end
 
         @cell_shape ||= :hexagon
-        @directions ||= [:n, :s, :e, :w, :ne, :sw]
+
+        unless @cell_shape == :triangle
+          @directions ||= [:n, :s, :e, :w, :ne, :sw]
+        end
 
       when :hexagon
 
@@ -126,7 +148,10 @@ class Board
         end
 
         @cell_shape ||= :hexagon
-        @directions ||= [:n, :s, :e, :w, :nw, :se]
+
+        unless @cell_shape == :triangle
+          @directions ||= [:n, :s, :e, :w, :nw, :se]
+        end
     end
 
     if @width && @height 
@@ -270,6 +295,7 @@ class Board
   def ci( x, y )
     x + y * width
   end
+
   # Compare boards for equality.
 
   def ==( o )
@@ -324,6 +350,25 @@ class Board
 
   def each
     coords.each { |c| yield self[c] }
+  end
+
+  # Get the connectivity directions for the given Coord.  Note:  For most
+  # boards this is a constant list so you don't have to provide a Coord.  
+  # However, if the cells are :triangle shaped, you *must* provide a Coord
+  # or an exception will be raised.
+
+  def directions( coord=nil )
+    return @directions unless cell_shape == :triangle
+
+    if coord.nil?
+      raise "Board#directions requires a Coord when cell_shape is :triangle"
+    end
+
+    if coord.y % 2 == 0
+      (coord.x % 2 == 0) ? @up_directions : @down_directions
+    else
+      (coord.x % 2 == 0) ? @down_directions : @up_directions
+    end
   end
 
   # Iterate over pieces from the start coord in the given directions.  The
@@ -411,15 +456,15 @@ class Board
     end
 
     def ring( coord, d )
-      @coords.ring( coord, d, @board.cell_shape, @board.directions )
+      @coords.ring( coord, d, @board.cell_shape, @board.directions( coord ) )
     end
 
     def neighbors( coord )
-      @coords.neighbors( coord, @board.directions )
+      @coords.neighbors( coord, @board.directions( coord ) )
     end
 
     def neighbors_nil( coord )
-      @coords.neighbors_nil( coord, @board.directions )
+      @coords.neighbors_nil( coord, @board.directions( coord ) )
     end
 
     def to_a

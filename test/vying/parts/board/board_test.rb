@@ -5,21 +5,21 @@ require 'vying'
 class TestBoard < Test::Unit::TestCase
 
   def test_initialize
-    b = Board.new( :shape => :rect, :width => 7, :height => 6 )
+    b = Board.rect( :width => 7, :height => 6 )
     assert_equal( :rect, b.shape )
     assert_equal( 7, b.width )
     assert_equal( 6, b.height )
     assert_equal( nil, b.length )
     assert_equal( [], b.coords.omitted )
 
-    b = Board.new( :shape => :square, :length => 8 )
+    b = Board.square( :length => 8 )
     assert_equal( :square, b.shape )
     assert_equal( 8, b.width )
     assert_equal( 8, b.height )
     assert_equal( 8, b.length )
     assert_equal( [], b.coords.omitted )
 
-    b = Board.new( :shape => :square, :length => 8, :omit => [:d3, :d4] )
+    b = Board.square( :length => 8, :omit => [:d3, :d4] )
     assert_equal( :square, b.shape )
     assert_equal( 8, b.width )
     assert_equal( 8, b.height )
@@ -29,7 +29,7 @@ class TestBoard < Test::Unit::TestCase
     assert( ! b.coords.include?( Coord[:d3] ) )
     assert( ! b.coords.include?( Coord[:d4] ) )
 
-    b = Board.new( :shape => :triangle, :length => 4 )
+    b = Board.triangle( :length => 4 )
     assert_equal( :triangle, b.shape )
     assert_equal( 4, b.width )
     assert_equal( 4, b.height )
@@ -41,7 +41,7 @@ class TestBoard < Test::Unit::TestCase
     assert_equal( ["b4", "c3", "c4", "d2", "d3", "d4"],
                   b.coords.omitted.map { |c| c.to_s }.sort )
 
-    b = Board.new( :shape => :triangle, :length => 4, :omit => ["a1", "d1"] )
+    b = Board.triangle( :length => 4, :omit => ["a1", "d1"] )
     assert_equal( :triangle, b.shape )
     assert_equal( 4, b.width )
     assert_equal( 4, b.height )
@@ -53,14 +53,14 @@ class TestBoard < Test::Unit::TestCase
     assert_equal( ["a1", "b4", "c3", "c4", "d1", "d2", "d3", "d4"],
                   b.coords.omitted.map { |c| c.to_s }.sort )
 
-    b = Board.new( :shape => :rhombus, :width => 4, :height => 5 )
+    b = Board.rhombus( :width => 4, :height => 5 )
     assert_equal( :rhombus, b.shape )
     assert_equal( 4, b.width )
     assert_equal( 5, b.height )
     assert_equal( nil, b.length )
     assert_equal( [], b.coords.omitted )
 
-    b = Board.new( :shape => :hexagon, :length => 4 )
+    b = Board.hexagon( :length => 4 )
     assert_equal( :hexagon, b.shape )
     assert_equal( 7, b.width )
     assert_equal( 7, b.height )
@@ -76,6 +76,10 @@ class TestBoard < Test::Unit::TestCase
     assert_equal( ["a5", "a6", "a7", "b6", "b7", "c7", "e1", "f1", "f2", "g1",
                    "g2", "g3"],
                   b.coords.omitted.map { |c| c.to_s }.sort )
+
+    b = Board.square( :length => 5, :cell_shape => :triangle )
+    assert_equal( :square, b.shape )
+    assert_equal( :triangle, b.cell_shape )
 
     assert_raise( ArgumentError ) do
       Board.new
@@ -414,6 +418,47 @@ EOF
     assert( (class << b; ancestors; end).include?( Board::Plugins::InARow ) )
     assert_equal( [], b.threats )
     assert_equal( nil, b.window_size )
+  end
+
+  def test_triangle_cells
+    b = Board.square( :length => 5, :cell_shape => :triangle )
+    assert_equal( :triangle, b.cell_shape )
+
+    assert_raise( RuntimeError ) { b.directions }
+    assert_nothing_raised { b.directions( :a1 ) }
+
+    assert_raise( RuntimeError ) do
+      Board.square( :length     => 5, 
+                    :cell_shape => :triangle, 
+                    :directions => [:n,:e,:w,:s] )
+    end
+
+    assert_equal( [:w,:e,:s], b.directions( :a1 ) )
+    assert_equal( [:n,:e,:w], b.directions( :b1 ) )
+    assert_equal( [:w,:e,:s], b.directions( :c1 ) )
+    assert_equal( [:n,:e,:w], b.directions( :d1 ) )
+    assert_equal( [:w,:e,:s], b.directions( :e1 ) )
+
+    assert_equal( [:n,:e,:w], b.directions( :a2 ) )
+    assert_equal( [:w,:e,:s], b.directions( :b2 ) )
+    assert_equal( [:n,:e,:w], b.directions( :c2 ) )
+    assert_equal( [:w,:e,:s], b.directions( :d2 ) )
+    assert_equal( [:n,:e,:w], b.directions( :e2 ) )
+
+    assert_equal( [:w,:e,:s], b.directions( :a3 ) )
+    assert_equal( [:n,:e,:w], b.directions( :b3 ) )
+    assert_equal( [:w,:e,:s], b.directions( :c3 ) )
+    assert_equal( [:n,:e,:w], b.directions( :d3 ) )
+    assert_equal( [:w,:e,:s], b.directions( :e3 ) )
+
+    assert_equal( ['a2','b1'], 
+                  b.coords.neighbors( Coord[:a1] ).map { |c| c.to_s }.sort )
+    assert_equal( ['a1','c1'], 
+                  b.coords.neighbors( Coord[:b1] ).map { |c| c.to_s }.sort )
+    assert_equal( ['b2','c1','d2'],
+                  b.coords.neighbors( Coord[:c2] ).map { |c| c.to_s }.sort )
+    assert_equal( ['a2','b3','c2'],
+                  b.coords.neighbors( Coord[:b2] ).map { |c| c.to_s }.sort )
   end
 
 end

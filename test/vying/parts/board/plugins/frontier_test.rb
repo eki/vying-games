@@ -67,6 +67,25 @@ class TestFrontier < Test::Unit::TestCase
                   b.frontier.map { |c| c.to_s }.sort )
   end
 
+  def test_triangle_directions
+    b = Board.square( :length     => 4, 
+                      :cell_shape => :triangle,
+                      :plugins    => [:frontier] )
+    b[:a1] = :x
+
+    assert_equal( ["a2", "b1"], b.frontier.map { |c| c.to_s }.sort )
+
+    b[:b1] = :x
+
+    assert_equal( ["a2", "c1"],
+                  b.frontier.map { |c| c.to_s }.sort )
+
+    b[:b2] = :x
+
+    assert_equal( ["a2", "b3", "c1", "c2"],
+                  b.frontier.map { |c| c.to_s }.sort )
+  end
+
   def test_dup
     b = Board.new( :shape => :square, :length => 4, :plugins => [:frontier] )
     b[:a1] = :x

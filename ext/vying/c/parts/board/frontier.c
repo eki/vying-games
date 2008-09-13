@@ -9,11 +9,13 @@
  *  Updates #frontier for the Frontier plugin.
  */
 
-VALUE frontier_update( VALUE self, VALUE x, VALUE y ) {
+VALUE frontier_update( VALUE self, VALUE c ) {
   VALUE frontier = rb_iv_get( self, "@frontier" );
   VALUE cells = rb_iv_get( self, "@cells" );
   VALUE coords = rb_iv_get( self, "@coords" );
-  VALUE dir = rb_iv_get( self, "@directions" );
+  VALUE dir = rb_funcall( self, id_directions, 1, c );
+  int x = NUM2INT(rb_funcall( c, id_x, 0 ));
+  int y = NUM2INT(rb_funcall( c, id_y, 0 ));
   int w = NUM2INT(rb_iv_get( self, "@width" ));
   int h = NUM2INT(rb_iv_get( self, "@height" ));
 
@@ -56,24 +58,23 @@ VALUE frontier_update( VALUE self, VALUE x, VALUE y ) {
       dy = 1;
     }
 
-    nx = NUM2INT(x)+dx;
-    ny = NUM2INT(y)+dy;
+    nx = x + dx;
+    ny = y + dy;
 
     if( 0 <= nx && nx < w && 0 <= ny && ny < h &&
         rb_ary_entry( cells, nx+ny*w ) == Qnil ) {
 
-      VALUE c = rb_funcall( Coord, id_new, 2, INT2NUM(nx), INT2NUM(ny) );
+      VALUE fc = rb_funcall( Coord, id_new, 2, INT2NUM(nx), INT2NUM(ny) );
 
-      if( rb_funcall( coords, id_include, 1, c ) == Qtrue ) {
-        rb_ary_push( frontier, c );
+      if( rb_funcall( coords, id_include, 1, fc ) == Qtrue ) {
+        rb_ary_push( frontier, fc );
       }
     }
   }
 
-
-  rb_funcall( frontier, id_delete, 1,
-    rb_funcall( Coord, id_new, 2, x, y ) );
+  rb_funcall( frontier, id_delete, 1, c );
   rb_funcall( frontier, id_uniq_ex, 0 );
   return frontier;
+
 }
 
