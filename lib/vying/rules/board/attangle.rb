@@ -13,7 +13,7 @@ Rules.create( 'Attangle' ) do
   version  '0.1.0'
 
   players :white, :black
-  option :board_size, :default => 4, :values => [3, 4, 5]
+  option :board_size, :default => 5, :values => [3, 4, 5]
 
   score_determines_outcome
 
@@ -109,22 +109,23 @@ end
 
 module Board::Plugins::Stacking
 
+  # Automatically growing board for different stack heights
   def to_s
-    off = height >= 10 ? 2 : 1                                
+    off = height >= 10 ? 2 : 1
     w = width
+    sp = @cells.compact.max { |a,b| a.length <=> b.length }.length
+    letters = "#{' ' * off}#{('a'...(?a+w).chr).collect { |l| ' ' + l + ' ' * sp }}#{' ' * off}\n"
 
-    letters = ' '*off + 'abcdefghijklmnopqrstuvwxyz'[0..(w-1)] + ' '*off + "\n"
-
-    s = ' '*off + "  a    b    c    d    e    f    g\n" # letters
+    s = letters
     height.times do |y|
       s += sprintf( "%*d", off, y+1 )
       s += row(y).inject( '' ) do |rs,p|
         stack = p.collect { |x| x.to_s[0..0] }.join if p
-        rs + (p.nil? ? ' ___ ' : " #{stack}#{'_' * (3 - stack.length)} ")
+        rs + (p ? " #{stack}#{'_' * (sp - stack.length)} " : " #{'_' * sp} ")
       end
       s += sprintf( "%*d\n", -off, y+1 )
     end
-    s + ' '*off + "  a    b    c    d    e    f    g\n" # letters
+    s + letters
   end
 
 end
