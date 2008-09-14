@@ -272,20 +272,11 @@ class Game
     self
   end
 
-  # Splits a string on the given regex and then feeds it to Game#append_list.
-
-  def append_string( moves, regex=/,/ )
-    append_list( moves.split( regex ) )
-  end
-
   # The most versatile way of applying moves to this Game.  It will accept
-  # moves as a comma separated String, an Enumerable list of moves, or a 
-  # single move.
+  # an Enumerable list of moves, or a single move.
 
   def <<( moves )
-    if moves.kind_of? String
-      return append_string( moves )
-    elsif moves.kind_of? Enumerable
+    if moves.kind_of? Enumerable
       return append_list( moves )
     else
       return append( moves )
