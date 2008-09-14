@@ -30,47 +30,19 @@ Rules.create( 'Attangle' ) do
     end
 
     def has_moves
-      pool[turn] > 0 || moves( turn ).any? ? [turn] : []
+      pool[turn] > 0 || capture_moves.any? ? [turn] : []
     end
 
-    def moves( player=nil )
-      return [] if player.nil?
-
+    def moves
+      return [] if turn.nil?
+      
       all = []
 
       # Every empty cell (except the center) is a valid move
-      all += board.unoccupied - [ Coord.new( board.length - 1, board.length - 1 ) ] if pool[player] > 0
+      all += board.unoccupied - [ Coord.new( board.length - 1, board.length - 1 ) ] if pool[turn] > 0
 
       # All possible capture moves
-      board.occupied.each do |allc|
-        if !allc.first.nil? && allc.first.first == opponent( player )
-
-          allc.last.each do |c|
-            # Collect all possible attacking pieces
-            attackers = []
-            board.directions.each do |d|
-              scanc = c
-              while scanc = board.coords.next( scanc, d )
-                if !board[scanc].nil? && board[scanc].first == player
-                  attackers << [ scanc, board[scanc].length ]
-                  break
-                end
-              end
-            end
-
-            # Construct all possible moves
-            attackers.each do |a1|
-              attackers.each do |a2|
-                if a1 != a2 && a1.last + a2.last + board[c].length <= 4
-                  all << "#{a1.first}#{a2.first}#{c}"
-                end
-              end
-            end
-
-          end
-        end
-      end
-      all
+      all += capture_moves
     end
 
     def apply!( move )
@@ -93,7 +65,7 @@ Rules.create( 'Attangle' ) do
     end
 
     def final?
-      players.any? { |p| score( p ) >= triples || moves( p ).empty? }
+      players.any? { |p| score( p ) >= triples } || has_moves.empty?
     end
 
     def score( player )
@@ -106,7 +78,42 @@ Rules.create( 'Attangle' ) do
     end
 
     def hash
-      [board, turn].hash
+      [board, pool, triples, turn].hash
+    end
+
+    private
+
+    def capture_moves
+      all = []
+      board.occupied.each do |allc|
+        if !allc.first.nil? && allc.first.first == opponent( turn )
+
+          allc.last.each do |c|
+            # Collect all possible attacking pieces
+            attackers = []
+            board.directions.each do |d|
+              scanc = c
+              while scanc = board.coords.next( scanc, d )
+                if !board[scanc].nil? && board[scanc].first == turn
+                  attackers << [ scanc, board[scanc].length ]
+                  break
+                end
+              end
+            end
+
+            # Construct all possible moves
+            attackers.each do |a1|
+              attackers.each do |a2|
+                if a1 != a2 && a1.last + a2.last + board[c].length <= 4
+                  all << "#{a1.first}#{a2.first}#{c}"
+                end
+              end
+            end
+
+          end
+        end
+      end
+      all
     end
 
   end
