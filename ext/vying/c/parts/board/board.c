@@ -50,7 +50,7 @@ VALUE board_subscript( int argc, VALUE *argv, VALUE self ) {
 
 VALUE board_subscript_assign( int argc, VALUE *argv, VALUE self ) {
   if( argc == 3 && FIXNUM_P(argv[0]) && FIXNUM_P(argv[1]) ) {
-    return board_set( self, argv[0], argv[1], argv[2] );
+    return rb_funcall( self, id_set, 3, argv[0], argv[1], argv[2] );
   }
   else if( argc == 2 ) {
     return board_set_coord( self, argv[0], argv[1] );
@@ -129,10 +129,9 @@ VALUE board_set_coord( VALUE self, VALUE c, VALUE p ) {
   if( c == Qnil ) {
     return Qnil;
   }
-  
-  return board_set( self, rb_funcall( c, id_x, 0 ),
-                          rb_funcall( c, id_y, 0 ), 
-                          p );
+
+  return rb_funcall( self, id_set, 3, rb_funcall( c, id_x, 0 ),
+                                      rb_funcall( c, id_y, 0 ), p );
 }
 
 /*

@@ -86,6 +86,7 @@ void Init_boardext() {
   id_delete = rb_intern("delete");
   id_uniq_ex = rb_intern("uniq!");
   id_to_s = rb_intern( "to_s" );
+  id_set = rb_intern( "set" );
   id_before_set = rb_intern( "before_set" );
   id_after_set = rb_intern( "after_set" );
 
