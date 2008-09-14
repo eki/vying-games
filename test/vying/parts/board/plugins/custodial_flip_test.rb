@@ -11,9 +11,7 @@ class TestCustodialFlip < Test::Unit::TestCase
   def test_initialize
     b = Board.square( 4, :plugins => [:custodial_flip] )
 
-    assert( full_ancestors( b ).include?( Board::Plugins::Frontier ) )
     assert( full_ancestors( b ).include?( Board::Plugins::CustodialFlip ) )
-    assert_equal( [], b.frontier )
   end
 
   def test_dup
@@ -21,17 +19,13 @@ class TestCustodialFlip < Test::Unit::TestCase
 
     b[:a1] = :x
 
-    assert( full_ancestors( b ).include?( Board::Plugins::Frontier ) )
     assert( full_ancestors( b ).include?( Board::Plugins::CustodialFlip ) )
 
     b2 = b.dup
 
-    assert( full_ancestors( b2 ).include?( Board::Plugins::Frontier ) )
     assert( full_ancestors( b2 ).include?( Board::Plugins::CustodialFlip ) )
 
     assert_equal( b, b2 )
-    assert_equal( b.frontier, b2.frontier )
-    assert_not_equal( b.frontier.object_id, b2.frontier.object_id )
   end
 
   def test_marshal
@@ -39,17 +33,13 @@ class TestCustodialFlip < Test::Unit::TestCase
 
     b[:a1] = :x
 
-    assert( full_ancestors( b ).include?( Board::Plugins::Frontier ) )
     assert( full_ancestors( b ).include?( Board::Plugins::CustodialFlip ) )
 
     b2 = Marshal.load( Marshal.dump( b ) )
 
-    assert( full_ancestors( b2 ).include?( Board::Plugins::Frontier ) )
     assert( full_ancestors( b2 ).include?( Board::Plugins::CustodialFlip ) )
 
     assert_equal( b, b2 )
-    assert_equal( b.frontier, b2.frontier )
-    assert_not_equal( b.frontier.object_id, b2.frontier.object_id )
   end
 
   def test_yaml
@@ -57,17 +47,13 @@ class TestCustodialFlip < Test::Unit::TestCase
 
     b[:a1] = :x
 
-    assert( full_ancestors( b ).include?( Board::Plugins::Frontier ) )
     assert( full_ancestors( b ).include?( Board::Plugins::CustodialFlip ) )
 
     b2 = YAML.load( b.to_yaml )
 
-    assert( full_ancestors( b2 ).include?( Board::Plugins::Frontier ) )
     assert( full_ancestors( b2 ).include?( Board::Plugins::CustodialFlip ) )
 
     assert_equal( b, b2 )
-    assert_equal( b.frontier, b2.frontier )
-    assert_not_equal( b.frontier.object_id, b2.frontier.object_id )
   end
 
   def test_will_flip_ns

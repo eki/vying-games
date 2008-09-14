@@ -5,14 +5,8 @@ require 'vying'
 
 # Adds the #will_flip? and #flip methods to Board.  These methods can be used
 # for implementing Othello and like games.
-#
-# This plugin depends on the Frontier plugin.
 
 module Board::Plugins::CustodialCapture
-
-  def self.dependencies
-    [:frontier]
-  end
 
   # Place the given piece p at Coord c and make any valid custodial captures
   # as a side effect.  To limit the captures to a certain number of pieces,
