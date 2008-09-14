@@ -4,6 +4,7 @@ require 'vying/parts/board/coords'
 
 require 'vying/parts/board/board'
 require 'vying/parts/board/shapes/hexagon'
+require 'vying/parts/board/shapes/infinite'
 require 'vying/parts/board/shapes/rect'
 require 'vying/parts/board/shapes/rhombus'
 require 'vying/parts/board/shapes/square'

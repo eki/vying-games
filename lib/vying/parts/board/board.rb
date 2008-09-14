@@ -26,7 +26,7 @@ class Board
     omit = (h[:omit] || []).map { |c| Coord[c] }
 
     @cells = Array.new( @width * @height, nil )
-    @coords = CoordsProxy.new( self, Coords.new( width, height, omit ) )
+    @coords = CoordsProxy.new( self, Coords.new( bounds, omit ) )
 
     @occupied = Hash.new( [] )
     @occupied[nil] = @coords.to_a.dup
@@ -68,6 +68,12 @@ class Board
 
   def Board.hexagon( length, h={} )
     Board::Hexagon.new( length, h )
+  end
+
+  # Create an infinite Board.  
+
+  def Board.infinite( min_width=nil, min_height=nil, h={} )
+    Board::Infinite.new( min_width, min_height, h )
   end
 
   # Perform a deep copy on this board.
@@ -289,6 +295,10 @@ class Board
     true
   end
 
+  def bounds
+    [Coord[0,0], Coord[width-1,height-1]]
+  end
+
   # This can be overridden perform some action before a cell on the board is
   # overwritten (as with #[]=).  The given piece (p) is the value at the given
   # (x,y) coordinate before it's changed.
@@ -344,6 +354,14 @@ class Board
 
     def to_a
       @coords.to_a
+    end
+
+    def to_s
+      @coords.to_s
+    end
+
+    def inspect
+      @coords.inspect
     end
 
     def respond_to?( m )
