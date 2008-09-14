@@ -36,7 +36,7 @@ Rules.create( "NineMensMorris" ) do
     end
 
     def has_moves
-      if remaining[turn] > 0 || removing || board.occupied( turn ).length == 3
+      if remaining[turn] > 0 || removing || board.count( turn ) == 3
         return [turn]
       end
 
@@ -72,7 +72,7 @@ Rules.create( "NineMensMorris" ) do
 
       # Moving stones
 
-      if board.occupied( turn ).length > 3
+      if board.count( turn ) > 3
         return board.occupied( turn ).map { |c| moves_for( c ) }.flatten
       end
 
