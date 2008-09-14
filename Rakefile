@@ -13,7 +13,7 @@ CLEAN.include( 'ext/**/*.o', 'ext/**/*.so', 'ext/**/*.class', 'ext/**/*.jar' )
 CLOBBER.include( 'pkg', 'doc/api', 'doc/coverage', 'lib/vying/version.rb' )
 
 ###
-### test task
+### test tasks
 ###
 
 Rake::TestTask.new do |t|
@@ -22,6 +22,14 @@ Rake::TestTask.new do |t|
 end
 
 task :"test_sans_ext" => [:clobber, :test, :compile]
+
+Rake::TestTask.new do |t|
+  t.name = "test_core"
+  t.libs << "test" << "ext"
+  t.test_files = FileList.new( 'test/**/*_test.rb' ) do |list|
+    list.exclude( 'test/vying/rules/**/*' )
+  end
+end
 
 ###
 ### rdoc task

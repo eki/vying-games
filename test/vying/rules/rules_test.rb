@@ -11,7 +11,7 @@ module RulesTests
     Game.new( rules, seed, options )
   end
 
-  def test_interface
+  def test__interface
     r = rules.new
     assert( r.respond_to?( :move? ) )
     assert( r.respond_to?( :moves ) )
@@ -26,7 +26,7 @@ module RulesTests
     assert( r.respond_to?( :draw? ) )
   end
 
-  def test_arity
+  def test__arity
     r = rules.new
 
     assert_equal( -2, r.method( :move? ).arity )
@@ -42,7 +42,7 @@ module RulesTests
     assert_equal(  0, r.method( :draw? ).arity )
   end
 
-  def test_dup
+  def test__dup
     srand 123456789  # We do random things, but should still be repeatable
 
     g = new_game
@@ -78,7 +78,7 @@ module RulesTests
     g
   end
 
-  def test_move?
+  def test__move?
     g = new_game
 
     assert( ! g.move?( nil ) )
@@ -101,26 +101,27 @@ module RulesTests
     end
   end
 
-  def test_new_game
-    g = new_game
-    assert( ! g.final? )
-    assert( ! g.has_moves.empty? )
-    assert( ! g.moves.empty? )
-  end
-
-  def test_has_moves
+  def test__has_moves
     g = new_game
     10.times do
+
       g.has_moves.each do |p|
         assert( g.has_moves?( p ) )
         assert( g.history.last.has_moves?( p ) ) # There are two #has_moves?
       end
+
+      (g.player_names - g.has_moves).each do |p|
+        assert( ! g.has_moves?( p ) )
+        assert( ! g.history.last.has_moves?( p ) )
+        assert_equal( [], g.moves( p ) )
+      end
+
       g[g.has_moves.first] << g[g.has_moves.first].moves.first
       break if g.final?
     end
   end
 
-  def test_marshal
+  def test__marshal
     g = new_game
     g2 = nil
     assert_nothing_raised { g2 = Marshal::load( Marshal::dump( g ) ) }
@@ -128,7 +129,7 @@ module RulesTests
     assert_equal( g.history.last, g2.history.last )
   end
 
-  def test_yaml
+  def test__yaml
     g = new_game
     g2 = nil
     assert_nothing_raised { g2 = YAML::load( YAML::dump( g ) ) }
@@ -136,7 +137,7 @@ module RulesTests
     assert_equal( g.history.last, g2.history.last )
   end
 
-  def test_hash
+  def test__hash
     if rules.random?
       g1 = new_game( 1234 )
       g2 = new_game( 1234 )
