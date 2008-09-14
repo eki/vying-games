@@ -23,8 +23,8 @@ class TestAtaxx < Test::Unit::TestCase
     assert_equal( 7, g.board.height )
     assert_equal( [:red, :red], g.board[:a1,:g7] )
     assert_equal( [:blue, :blue], g.board[:a7,:g1] )
-    assert_equal( 2, g.board.occupied( :red ).length )
-    assert_equal( 2, g.board.occupied( :blue ).length )
+    assert_equal( 2, g.board.count( :red ) )
+    assert_equal( 2, g.board.count( :blue ) )
     assert_equal( :red, g.turn )
   end
 

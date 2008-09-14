@@ -73,7 +73,7 @@ class TestYinsh < Test::Unit::TestCase
     assert( g.removed_markers.empty? )
 
     assert_equal( :black, g.turn )
-    assert_equal( 4, g.board.occupied( :WHITE_RING ).length )
+    assert_equal( 4, g.board.count( :WHITE_RING ) )
     assert( g.board[:f5].nil? )
     assert_equal( 1, g.score( :white ) )
   end
@@ -119,7 +119,7 @@ class TestYinsh < Test::Unit::TestCase
     assert( g.removed_markers.empty? )
 
     assert_equal( :black, g.turn )
-    assert_equal( 4, g.board.occupied( :WHITE_RING ).length )
+    assert_equal( 4, g.board.count( :WHITE_RING ) )
     assert( g.board[:f5].nil? )
     assert_equal( 1, g.score( :white ) )
   end

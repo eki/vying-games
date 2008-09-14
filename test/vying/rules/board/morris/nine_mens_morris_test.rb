@@ -73,9 +73,9 @@ class TestNineMensMorris < Test::Unit::TestCase
       g << g.moves.first
     end
 
-    assert_equal( 3, g.board.occupied( :black ).length )
-    assert_equal( 3, g.board.occupied( :white ).length )
-    assert_equal( 18, g.board.unoccupied.length )
+    assert_equal( 3, g.board.count( :black ) )
+    assert_equal( 3, g.board.count( :white ) )
+    assert_equal( 18, g.board.empty_count )
 
     g.moves.each do |move|
       assert_equal( 2, move.to_coords.length )
@@ -182,7 +182,7 @@ class TestNineMensMorris < Test::Unit::TestCase
     assert_equal( nil, g.board[:b4] )
     assert( ! g.removing )
 
-    assert_equal( 3 * g.board.unoccupied.length, g.moves.uniq.length )
+    assert_equal( 3 * g.board.empty_count, g.moves.uniq.length )
     
     g.moves.each do |move|
       assert_equal( 2, move.to_coords.length )

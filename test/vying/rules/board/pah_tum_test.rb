@@ -21,7 +21,7 @@ class TestPahTum < Test::Unit::TestCase
   def test_initialize
     g = Game.new( rules, 1234 )
     assert_equal( :white, g.turn )
-    assert_equal( 11, g.board.occupied( :x ).length )
+    assert_equal( 11, g.board.count( :x ) )
     assert_equal( [], g.board.occupied( :white ) )
     assert_equal( [], g.board.occupied( :black ) )
   end
