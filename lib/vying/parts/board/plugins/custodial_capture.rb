@@ -33,15 +33,15 @@ module Board::Plugins::CustodialCapture
     cap = []
     a = directions.zip( coords.neighbors_nil( c ) )
     a.each do |d,nc|
-      next if self[nc].nil? || self[nc] == self[c]
+      next if self[nc].nil? || self[nc] == p
 
       bt = [nc]
       while (bt << coords.next( bt.last, d ))
         break if self[bt.last].nil?
-        next  if range && bt.length < range.first
-        break if range && bt.length > range.last + 1
+        next  if range && bt.length < range.first + 1
+        break if range && bt.length > range.last  + 1
 
-        if self[bt.last] == self[c]
+        if self[bt.last] == p
           bt.pop
           cap += bt
           break
@@ -55,5 +55,25 @@ module Board::Plugins::CustodialCapture
 
     cap
   end
+
+  def custodial_capture?( c, p, range=nil )
+    cap = []
+    a = directions.zip( coords.neighbors_nil( c ) )
+    a.each do |d,nc|
+      next if self[nc].nil? || self[nc] == p 
+
+      bt = [nc]
+      while (bt << coords.next( bt.last, d ))
+        break if self[bt.last].nil?
+        next  if range && bt.length < range.first + 1
+        break if range && bt.length > range.last  + 1
+
+        return true if self[bt.last] == p 
+      end
+    end
+
+    false
+  end
+
 end
 
