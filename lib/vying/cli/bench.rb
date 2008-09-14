@@ -200,13 +200,14 @@ module CLI
         end
 
         # Coords benchmarks
-        b = Board.new( :shape => :hexagon, :length => 5 )
+        b = Board.hexagon( 5 )
         coords = b.coords.instance_variable_get( "@coords" )
         cell_shape = b.cell_shape
         directions = b.directions
 
-        x.report( "Coords.new( 19, 19 )" ) do
-          n.times { Coords.new( 19, 19 ) }
+        bounds = Coords.bounds_for( 19, 19 )
+        x.report( "Coords.new(  bf( 19, 19 ) )" ) do
+          n.times { Coords.new( bounds ) }
         end
 
         x.report( "Coords#dup" ) do
@@ -252,27 +253,27 @@ module CLI
         # Board benchmarks
 
         x.report( "Board#square( len=8 )" ) do
-          n.times { Board.new( :shape => :square, :length => 8 ) }
+          n.times { Board.square( 8 ) }
         end
 
         x.report( "Board#square( len=19 )" ) do
-          n.times { Board.new( :shape => :square, :length => 19 ) }
+          n.times { Board.square( 19 ) }
         end
 
         x.report( "Board#rect( w=7, h=6 )" ) do
-          n.times { Board.new( :shape => :rect, :width => 7, :height => 6 ) }
+          n.times { Board.rect( 7, 6 ) }
         end
 
         x.report( "Board#triangle( len=12 )" ) do
-          n.times { Board.new( :shape => :triangle, :length => 12 ) }
+          n.times { Board.triangle( 12 ) }
         end
 
         x.report( "Board#hexagon( len=5 )" ) do
-          n.times { Board.new( :shape => :hexagon, :length => 5 ) }
+          n.times { Board.hexagon( 5 ) }
         end
 
         x.report( "Board#hexagon( len=10 )" ) do
-          n.times { Board.new( :shape => :hexagon, :length => 10 ) }
+          n.times { Board.hexagon( 10 ) }
         end
 
       end
