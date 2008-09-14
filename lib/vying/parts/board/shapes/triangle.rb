@@ -3,7 +3,7 @@
 
 class Board::Triangle < Board
 
-  attr_reader :length
+  attr_reader :length, :cell_orientation
 
   prototype
 

@@ -3,6 +3,8 @@
 
 class Board::Rhombus < Board
 
+  attr_reader :cell_orientation
+
   prototype
 
   # Initializes a rhombus board.
