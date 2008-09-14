@@ -30,7 +30,7 @@ Rules.create( 'Attangle' ) do
     end
 
     def has_moves
-      return [turn] if pool[turn] > 0 || moves( turn ).any?
+      pool[turn] > 0 || moves( turn ).any? ? [turn] : []
     end
 
     def moves( player=nil )
