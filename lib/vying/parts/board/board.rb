@@ -5,7 +5,7 @@
 class Board
 
   attr_reader :shape, :cell_shape, :coords, :cells, 
-              :width, :height, :length, :occupied, :plugins
+              :width, :height, :occupied, :plugins
 
   protected :cells
 
@@ -102,7 +102,7 @@ class Board
   def dup
     return __dup if plugins.empty?
 
-    b = Board.allocate
+    b = self.class.allocate
 
     instance_variables.each do |iv|
       b.instance_variable_set( iv, instance_variable_get( iv ) )

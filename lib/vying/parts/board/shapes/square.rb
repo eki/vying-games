@@ -3,6 +3,8 @@
 
 class Board::Square < Board
 
+  attr_reader :length
+
   prototype
 
   # Initializes a square board.

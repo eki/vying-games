@@ -11,7 +11,6 @@ class TestBoardInfinite < Test::Unit::TestCase
     assert_equal( [:n, :e, :w, :s, :ne, :nw, :se, :sw], b.directions )
     assert_equal( 4, b.width )
     assert_equal( 5, b.height )
-    assert_equal( nil, b.length )
     assert_equal( [], b.coords.omitted )
     assert_equal( [Coord[-1,-2], Coord[2,2]], b.bounds )
     assert_equal( [Coord[0,0], Coord[0,0]], b.bounds_occupied )

@@ -3,6 +3,8 @@
 
 class Board::Hexagon < Board
 
+  attr_reader :length
+
   prototype
 
   # Initializes a hexagon shaped board.

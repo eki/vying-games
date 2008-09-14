@@ -37,6 +37,9 @@ class TestBoard < Test::Unit::TestCase
     assert_equal( :black, b[3,4] = :black )
     b2 = b.dup
 
+    assert_equal( Board::Rect, b.class )
+    assert_equal( Board::Rect, b2.class )
+
     assert_equal( :black, b2[3,4] )
     assert_equal( :white, b2[0,0] = :white )
     assert_equal( nil, b[0,0] )

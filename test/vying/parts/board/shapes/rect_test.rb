@@ -9,7 +9,6 @@ class TestBoardRect < Test::Unit::TestCase
     assert_equal( :rect, b.shape )
     assert_equal( 7, b.width )
     assert_equal( 6, b.height )
-    assert_equal( nil, b.length )
     assert_equal( [], b.coords.omitted )
 
     assert_raise( RuntimeError ) do

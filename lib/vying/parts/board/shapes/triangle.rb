@@ -3,6 +3,8 @@
 
 class Board::Triangle < Board
 
+  attr_reader :length
+
   prototype
 
   # Initializes a triangle shaped board.
