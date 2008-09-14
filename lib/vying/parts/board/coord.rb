@@ -28,62 +28,74 @@ end
 
 class String
 
-  # Returns the x coordinate of a string that's formated as "[a-z][1-9]+", 
-  # for example:
+  # Returns the x coordinate of a string that's formated as "[a-z][1-9]+" or
+  # "(x,y)" where x and y are positive or negative integers.
   #
-  #   "b1".x => 1
+  # For example:
+  #
+  #   "b1".x      => 1
+  #   "(-1,6)".x  => -1
   #
   # Note that "a1" is equivalent to (0,0).
 
   def x
-    self.ord - 97 if y
+    if self =~ /^\((-{0,1}\d+),-{0,1}\d+\)$/
+      $1.to_i
+    elsif self =~ /^(\w)\d+$/
+      $1.ord - 97
+    end
   end
 
-  # Returns the y coordinate of a string that's formated as "[a-z][1-9]+", 
-  # for example:
+  # Returns the y coordinate of a string that's formated as "[a-z][1-9]+" or
+  # "(x,y)" where x and y are positive or negative integers.
   #
-  #   "b1".y => 0
+  # For example:
+  #
+  #   "b1".y      => 0
+  #   "(-1,6)".y  => 6
   #
   # Note that "a1" is equivalent to (0,0).
 
   def y
-    $1.to_i-1 if self =~ /^\w(\d+)$/
+    if self =~ /^\(-{0,1}\d+,(-{0,1}\d+)\)$/
+      $1.to_i
+    elsif self =~ /^\w(\d+)$/
+      $1.to_i-1
+    end
   end
 
-  # If this string represents multipe coordinates in the form "([a-z][1-9]+)*",
-  # they are parsed out and returned as an array of Coord's.
+  # If this string represents multipe coordinates in the form "([a-z][1-9]+)*"
+  # or "((x,y))*" they are parsed out and returned as an array of Coord's.
+  # The two "styles" of coords can be intermixed.
+  #
+  # For example:
+  #
+  #   "a1b3(0,-1)".to_coords  => [Coord[0,0], Coord[1,2], Coord[0,-1]]
+  #
 
   def to_coords
-    scan( /[a-z]\d+/ ).map { |s| Coord[s] }
+    scan( /(?:[a-z]\d+)|(?:\(-{0,1}\d+,-{0,1}\d+\))/ ).map { |s| Coord[s] }
   end
 end
 
 class Symbol
 
-  # Returns the x coordinate of a symbol that's formated as "[a-z][1-9]+", 
-  # for example:
-  #
-  #   :b1.x => 1
-  #
-  # Note that :a1 is equivalent to (0,0).
+  # Returns the x coordinate of a symbol by first converting to a String
+  # and then calling String#x.
 
   def x
     to_s.x
   end
 
-  # Returns the y coordinate of a symbol that's formated as "[a-z][1-9]+", 
-  # for example:
-  #
-  #   :b1.y => 0
-  #
-  # Note that :a1 is equivalent to (0,0).
+  # Returns the y coordinate of a symbol by first converting to a String
+  # and then calling String#y.
 
   def y
     to_s.y
   end
 
-  # If this symbol represents multipe coordinates in the form "([a-z][1-9]+)*",
-  # they are parsed out and returned as an array of Coord's.
+  # Returns an array of Coord objects parsed by converting the symbol to
+  # a String and then calling String#to_coords.
 
   def to_coords
     to_s.scan( /[a-z]\d+/ ).map { |s| Coord[s] }
@@ -104,7 +116,8 @@ class Coord
 
   def initialize( x, y )
     @x, @y = x, y
-    @s = to_s
+    @s_chess = to_s( true  )
+    @s       = to_s( false )
   end
 
   @@coords_cache = {}
@@ -173,8 +186,15 @@ class Coord
     (t = y <=> c.y) != 0 ? t : x <=> c.x
   end
 
-  def to_s
-    @s || "#{(97+x).chr}#{y+1}"
+  def to_s( chess=true )
+    return @s_chess if chess && @s_chess
+    return @s       if chess && @s
+
+    if chess && x >= 0 && x < 26 && y >= 0
+      "#{(97+x).chr}#{y+1}"
+    else
+      "(#{x},#{y})"
+    end
   end
 
   def to_sym

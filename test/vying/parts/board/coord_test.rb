@@ -19,10 +19,31 @@ class TestCoord < Test::Unit::TestCase
     assert_equal( 1, c.y )
     assert_equal( c, Coord.new( 0, 1 ) )
 
-    cs = Coord[:a2, [0,0], 'c3']
+    c = Coord["(0,1)"]
+    assert_equal( 0, c.x )
+    assert_equal( 1, c.y )
+    assert_equal( c, Coord.new( 0, 1 ) )
+
+    c = Coord["(-10,7)"]
+    assert_equal( -10, c.x )
+    assert_equal(   7, c.y )
+    assert_equal( c, Coord.new( -10, 7 ) )
+
+    c = Coord["(-10,-7)"]
+    assert_equal( -10, c.x )
+    assert_equal(  -7, c.y )
+    assert_equal( c, Coord.new( -10, -7 ) )
+
+    c = Coord["(11,-70)"]
+    assert_equal(  11, c.x )
+    assert_equal( -70, c.y )
+    assert_equal( c, Coord.new( 11, -70 ) )
+
+    cs = Coord[:a2, [0,0], 'c3', '(-1,-2)']
     assert_equal( Coord.new( 0, 1 ), cs[0] )
     assert_equal( Coord.new( 0, 0 ), cs[1] )
     assert_equal( Coord.new( 2, 2 ), cs[2] )
+    assert_equal( Coord.new( -1, -2 ), cs[3] )
 
     assert_equal( nil, Coord[:h11o4] )
     assert_equal( nil, Coord["blah blah"] )
@@ -143,6 +164,8 @@ class TestCoord < Test::Unit::TestCase
     assert_equal( [Coord[:a1]], Coord[:a1].to_coords )
     assert_equal( [Coord[:a1]], :a1.to_coords )
     assert_equal( [Coord[:a1]], "a1".to_coords )
+    assert_equal( [Coord[:a1], Coord[-10,-10], Coord[:b3], Coord[:d3],
+                  Coord[:a1]], "a1(-10,-10)(1,2)d3(0,0)".to_coords )
   end
 
   def test_to_sym
