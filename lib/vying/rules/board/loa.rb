@@ -34,7 +34,7 @@ Rules.create( "LinesOfAction" ) do
 
       a = []
 
-      coords = board.occupied[turn]
+      coords = board.occupied( turn )
 
       coords.each do |c|
         [:n,:e,:w,:s,:ne,:nw,:se,:sw].each do |d|
@@ -86,7 +86,7 @@ Rules.create( "LinesOfAction" ) do
 
     def final?
       players.each do |p|
-        coords = board.occupied[p].dup
+        coords = board.occupied( p ).dup
         return true if all_connected?( coords )
       end
 
@@ -97,10 +97,10 @@ Rules.create( "LinesOfAction" ) do
     # with the player who just moved as the winner
 
     def winner?( player )
-      coords = board.occupied[player].dup
+      coords = board.occupied( player ).dup
       if all_connected?( coords )
         turn != player || 
-        ! all_connected?( board.occupied[opponent( player )].dup )
+        ! all_connected?( board.occupied( opponent( player ) ).dup )
       end
     end
 

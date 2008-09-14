@@ -16,8 +16,8 @@ class TestHexxagon < Test::Unit::TestCase
     assert_equal( 5, g.board.length )
     assert_equal( [:red, :red, :red], g.board[:a1,:i5,:e9] )
     assert_equal( [:blue, :blue, :blue], g.board[:e1,:a5,:i9] )
-    assert_equal( 3, g.board.occupied[:red].length )
-    assert_equal( 3, g.board.occupied[:blue].length )
+    assert_equal( 3, g.board.occupied( :red ).length )
+    assert_equal( 3, g.board.occupied( :blue ).length )
     assert_equal( :red, g.turn )
 
     
@@ -26,8 +26,8 @@ class TestHexxagon < Test::Unit::TestCase
     assert_equal( 5, g.board.length )
     assert_equal( [:red, :red, :red], g.board[:a1,:i5,:e9] )
     assert_equal( [:blue, :blue, :blue], g.board[:e1,:a5,:i9] )
-    assert_equal( 3, g.board.occupied[:red].length )
-    assert_equal( 3, g.board.occupied[:blue].length )
+    assert_equal( 3, g.board.occupied( :red ).length )
+    assert_equal( 3, g.board.occupied( :blue ).length )
     assert_equal( :red, g.turn )
 
     g = Game.new( rules, 1234, :number_of_players => 3 )
@@ -36,9 +36,9 @@ class TestHexxagon < Test::Unit::TestCase
     assert_equal( [:red, :red], g.board[:a5,:i5] )
     assert_equal( [:blue, :blue], g.board[:a1,:i9] )
     assert_equal( [:white, :white], g.board[:e1,:e9] )
-    assert_equal( 2, g.board.occupied[:red].length )
-    assert_equal( 2, g.board.occupied[:blue].length )
-    assert_equal( 2, g.board.occupied[:white].length )
+    assert_equal( 2, g.board.occupied( :red ).length )
+    assert_equal( 2, g.board.occupied( :blue ).length )
+    assert_equal( 2, g.board.occupied( :white ).length )
     assert_equal( :red, g.turn )
 
     assert_raise( RuntimeError ) do

@@ -31,7 +31,7 @@ Rules.create( "Amazons" ) do
       cs = move.to_coords
       return false unless cs.length == 2
 
-      queens = board.occupied[turn]
+      queens = board.occupied( turn )
 
       return false unless queens.include?( cs.first )
       return false unless d = cs.first.direction_to( cs.last )
@@ -46,14 +46,14 @@ Rules.create( "Amazons" ) do
     end
 
     def has_moves
-      queens = board.occupied[turn]
+      queens = board.occupied( turn )
       queens.any? { |q| ! board.mobility[q].empty? } ? [turn] : []
     end
 
     def moves
       a = []
 
-      queens = board.occupied[turn]
+      queens = board.occupied( turn )
 
       if lastc.nil? || board[lastc] == :arrow
         queens.each do |q|

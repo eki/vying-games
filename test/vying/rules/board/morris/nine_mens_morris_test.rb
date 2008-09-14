@@ -73,8 +73,8 @@ class TestNineMensMorris < Test::Unit::TestCase
       g << g.moves.first
     end
 
-    assert_equal( 3, g.board.occupied[:black].length )
-    assert_equal( 3, g.board.occupied[:white].length )
+    assert_equal( 3, g.board.occupied( :black ).length )
+    assert_equal( 3, g.board.occupied( :white ).length )
     assert_equal( 18, g.board.unoccupied.length )
 
     g.moves.each do |move|

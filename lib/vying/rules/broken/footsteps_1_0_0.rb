@@ -62,7 +62,7 @@ Rules.create( "Footsteps" ) do
       bids[:right] ||= 0 if points[:right] == 0
 
       if bids[:left] && bids[:right]
-        c = board.occupied[:white].first
+        c = board.occupied( :white ).first
 
         if bids[:left] > bids[:right]
           board[c], board[c.x-1,c.y] = nil, :white
@@ -84,25 +84,25 @@ Rules.create( "Footsteps" ) do
     end
 
     def final?
-      c = board.occupied[:white].first
+      c = board.occupied( :white ).first
       c.x == 0 || c.x == 6 || 
       (points[:left] == 0 && points[:right] == 0)
     end
 
     def winner?( player )
-      c = board.occupied[:white].first
+      c = board.occupied( :white ).first
       (player == :left  && c.x == 0) ||
       (player == :right && c.x == 6)
     end
 
     def loser?( player )
-      c = board.occupied[:white].first
+      c = board.occupied( :white ).first
       (player == :left  && c.x == 6) ||
       (player == :right && c.x == 0)
     end
 
     def draw?
-      c = board.occupied[:white].first
+      c = board.occupied( :white ).first
       c.x != 0 && c.x != 6 && points[:left] == 0 && points[:right] == 0
     end
 

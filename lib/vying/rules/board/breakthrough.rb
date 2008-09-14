@@ -39,7 +39,7 @@ Rules.create( "Breakthrough" ) do
       cds = { :white => [:ne, :nw], :black => [:se, :sw] }
       mds = { :white => [:n],       :black => [:s]       }
 
-      board.occupied[turn].each do |c|
+      board.occupied( turn ).each do |c|
         mds[turn].each do |d|
           p1 = board[c1 = board.coords.next( c, d )]
           found << "#{c}#{c1}" if p1.nil? && ! c1.nil?
@@ -86,7 +86,7 @@ Rules.create( "Breakthrough" ) do
     end
 
     def score( player )
-      16 - board.occupied[opponent( player )].length
+      16 - board.occupied( opponent( player ) ).length
     end
 
     def hash

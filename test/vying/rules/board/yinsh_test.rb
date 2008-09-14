@@ -60,7 +60,7 @@ class TestYinsh < Test::Unit::TestCase
 
     assert_equal( :white, g.turn )
     assert( g.rows.length == 1 )
-    assert_equal( g.board.occupied[:white].sort, g.rows.first.sort )
+    assert_equal( g.board.occupied( :white ).sort, g.rows.first.sort )
 
     g << ["e7", "e6", "e5", "e4", "e3"]
 
@@ -73,7 +73,7 @@ class TestYinsh < Test::Unit::TestCase
     assert( g.removed_markers.empty? )
 
     assert_equal( :black, g.turn )
-    assert_equal( 4, g.board.occupied[:WHITE_RING].length )
+    assert_equal( 4, g.board.occupied( :WHITE_RING ).length )
     assert( g.board[:f5].nil? )
     assert_equal( 1, g.score( :white ) )
   end
@@ -119,7 +119,7 @@ class TestYinsh < Test::Unit::TestCase
     assert( g.removed_markers.empty? )
 
     assert_equal( :black, g.turn )
-    assert_equal( 4, g.board.occupied[:WHITE_RING].length )
+    assert_equal( 4, g.board.occupied( :WHITE_RING ).length )
     assert( g.board[:f5].nil? )
     assert_equal( 1, g.score( :white ) )
   end

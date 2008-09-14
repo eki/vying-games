@@ -24,7 +24,7 @@ class TestThreeMusketeers < Test::Unit::TestCase
     assert_equal( [:red,:red,:red], g.board[:a5,:c3,:e1] )
     assert_equal( 5, g.board.width )
     assert_equal( 5, g.board.height )
-    assert_equal( 22, g.board.occupied[:blue].length )
+    assert_equal( 22, g.board.occupied( :blue ).length )
   end
 
   def test_has_moves

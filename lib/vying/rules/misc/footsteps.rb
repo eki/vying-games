@@ -41,7 +41,7 @@ Rules.create( "Footsteps" ) do
       players.each { |p| bids[p]  ||= 0 if points[p]  == 0 }
 
       if players.all? { |p| bids[p] }
-        c = board.occupied[:white].first
+        c = board.occupied( :white ).first
 
         max_bid = bids.values.max
         wps = players.select { |p| bids[p] == max_bid }
@@ -62,25 +62,25 @@ Rules.create( "Footsteps" ) do
     end
 
     def final?
-      c = board.occupied[:white].first
+      c = board.occupied( :white ).first
       c.x == 0 || c.x == 6 || 
       (points[:left] == 0 && points[:right] == 0)
     end
 
     def winner?( player )
-      c = board.occupied[:white].first
+      c = board.occupied( :white ).first
       (player == :left  && c.x == 0) ||
       (player == :right && c.x == 6)
     end
 
     def loser?( player )
-      c = board.occupied[:white].first
+      c = board.occupied( :white ).first
       (player == :left  && c.x == 6) ||
       (player == :right && c.x == 0)
     end
 
     def draw?
-      c = board.occupied[:white].first
+      c = board.occupied( :white ).first
       c.x != 0 && c.x != 6 && points[:left] == 0 && points[:right] == 0
     end
 

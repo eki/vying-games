@@ -53,7 +53,7 @@ Rules.create( "Cephalopod" ) do
 
       # Remove dice
 
-      qs = board.occupied["?"]
+      qs = board.occupied( "?" )
       unless qs.empty?
         cc = qs.first
         ns = board.coords.neighbors( cc ).reject { |c| board[c].nil? }
@@ -132,7 +132,7 @@ Rules.create( "Cephalopod" ) do
     end
 
     def final?
-      board.empty_count == 0 && board.occupied["?"].empty?
+      board.empty_count == 0 && board.occupied( "?" ).empty?
     end
 
     def score( player )

@@ -5,7 +5,7 @@
 class Board
 
   attr_reader :shape, :cell_shape, :coords, :cells, 
-              :width, :height, :occupied, :plugins
+              :width, :height, :plugins
 
   protected :cells
 
@@ -81,7 +81,8 @@ class Board
   def initialize_copy( original )
     @cells = original.cells.dup
     @occupied = Hash.new( [] )
-    original.occupied.each { |k,v| @occupied[k] = v.dup }
+    occ = original.instance_variable_get( "@occupied" )
+    occ.each { |k,v| @occupied[k] = v.dup }
   end
 
   # Initialize plugins.  The init_plugin method should be implemented by
@@ -195,15 +196,15 @@ class Board
   # cells are never counted (see #empty_count).
 
   def count( p=nil )
-    return occupied[p].length if p
-    occupied.inject(0) { |m,v| m + (v[0] ? v[1].length : 0) }
+    return occupied( p ).length if p
+    @occupied.inject(0) { |m,v| m + (v[0] ? v[1].length : 0) }
   end
 
   # Count of empty (unoccupied) cells.  This is equivalent to calling
   # unoccupied.length.
 
   def empty_count
-    width * height - count
+    @occupied[nil].length
   end
 
   # Get all the pieces in the selected row.
@@ -220,11 +221,23 @@ class Board
     self
   end
 
+  # Get a list of all the pieces on the board.
+
+  def pieces
+    @occupied.keys.compact
+  end
+
+  # Get a list of all the coords of the cells occupied by the given piece.
+
+  def occupied( p )
+    @occupied[p]
+  end
+
   # Get a list of the coords of unoccupied cells (that is the value at
   # the coord is nil).
 
   def unoccupied
-    occupied[nil]
+    @occupied[nil]
   end
 
   # Iterate over each piece on the board.

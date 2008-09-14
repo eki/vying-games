@@ -32,13 +32,13 @@ Rules.create( "ThreeMusketeers" ) do
     def has_moves
       return []     if red_in_a_line?
 
-      board.occupied[turn].any? { |c| can_move?( c ) } ? [turn] : []
+      board.occupied( turn ).any? { |c| can_move?( c ) } ? [turn] : []
     end
 
     def moves
       return [] if red_in_a_line?
 
-      board.occupied[turn].map { |c| moves_for( c ) }.flatten!
+      board.occupied( turn ).map { |c| moves_for( c ) }.flatten!
     end
 
     def apply!( move )
@@ -68,8 +68,8 @@ Rules.create( "ThreeMusketeers" ) do
     private
 
     def red_in_a_line?
-       board.occupied[:red].map { |c| c.x }.uniq.length == 1 ||
-       board.occupied[:red].map { |c| c.y }.uniq.length == 1
+       board.occupied( :red ).map { |c| c.x }.uniq.length == 1 ||
+       board.occupied( :red ).map { |c| c.y }.uniq.length == 1
     end
 
     def can_move?( c )

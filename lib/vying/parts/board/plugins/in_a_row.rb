@@ -35,7 +35,9 @@ module Board::Plugins::InARow
 
     if n != old
       threats.clear
-      occupied.each { |p,cs| cs.each { |c| update_threats( c.x, c.y ) } if p }
+      pieces.each do |p|
+        occupied( p ).each { |cs| cs.each { |c| update_threats( c.x, c.y ) } }
+      end
     end
   end
 

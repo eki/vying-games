@@ -56,12 +56,12 @@ Rules.create( "Phutball" ) do
     end
 
     def final?
-      c = board.occupied[:white].first
+      c = board.occupied( :white ).first
       c.y == 0 || c.y == 20 || (!jumping && (c.y == 1 || c.y == 19))
     end
 
     def winner?( player )
-      c = board.occupied[:white].first
+      c = board.occupied( :white ).first
       (player == :ohs && (c.y == 1 || c.y == 0)) ||
       (player == :eks && (c.y == 19 || c.y == 20))
     end
@@ -75,7 +75,7 @@ Rules.create( "Phutball" ) do
     end
 
     def jumping_moves
-      sc = board.occupied[:white].first
+      sc = board.occupied( :white ).first
       jmoves = []
 
       board.directions.each do |d|

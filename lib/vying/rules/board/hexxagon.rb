@@ -45,7 +45,7 @@ Rules.create( "Hexxagon" ) do
 
       # Adjacent moves
 
-      board.occupied[p].each do |c|
+      board.occupied( p ).each do |c|
         board.coords.ring( c, 1 ).each do |c1|
           found << "#{c}#{c1}" if board[c1].nil?
         end
@@ -53,7 +53,7 @@ Rules.create( "Hexxagon" ) do
 
       # Jump moves
 
-      board.occupied[p].each do |c|
+      board.occupied( p ).each do |c|
         board.coords.ring( c, 2 ).each do |c2|
           found << "#{c}#{c2}" if board[c2].nil?
         end
@@ -118,7 +118,7 @@ Rules.create( "Hexxagon" ) do
     end
 
     def clear_blocks
-      board[*board.occupied[:x]] = nil
+      board[*board.occupied( :x )] = nil
       @block_pattern = ""
     end
   end

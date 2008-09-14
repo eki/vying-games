@@ -40,8 +40,8 @@ module Board::Plugins::Amazons
 
     def initialize( board, coords, queens=nil )
       if queens.nil?
-        @white = board.occupied[:white].dup
-        @black = board.occupied[:black].dup
+        @white = board.occupied( :white ).dup
+        @black = board.occupied( :black ).dup
       else
         @white = queens.select { |q| board[q] == :white }
         @black = queens.select { |q| board[q] == :black }
@@ -198,7 +198,7 @@ module Board::Plugins::Amazons
         end
       end
 
-      update_mobility( occupied[:black] + occupied[:white] )
+      update_mobility( occupied( :black ) + occupied( :white ) )
     end
   end
 
@@ -300,8 +300,8 @@ module Board::Plugins::Amazons
 
     @mobility = {}
     @blocked = {}
-    update_mobility( occupied[:black] )
-    update_mobility( occupied[:white] )
+    update_mobility( occupied( :black ) )
+    update_mobility( occupied( :white ) )
   end
 
 end

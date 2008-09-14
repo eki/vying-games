@@ -21,8 +21,8 @@ class TestLinesOfAction < Test::Unit::TestCase
   def test_initialize       # Need to be more thorough here
     g = Game.new( rules )
     assert_equal( :black, g.turn )
-    assert_equal( 12, g.board.occupied[:white].length )
-    assert_equal( 12, g.board.occupied[:black].length )
+    assert_equal( 12, g.board.occupied( :white ).length )
+    assert_equal( 12, g.board.occupied( :black ).length )
   end
 
   def test_has_moves
@@ -63,8 +63,8 @@ class TestLinesOfAction < Test::Unit::TestCase
 
     assert_equal( 5, g.count( Coord[:c1], :e ) )
 
-    assert_equal( 12, g.board.occupied[:white].length )
-    assert_equal( 11, g.board.occupied[:black].length )
+    assert_equal( 12, g.board.occupied( :white ).length )
+    assert_equal( 11, g.board.occupied( :black ).length )
   end
 
   def test_final
@@ -94,8 +94,8 @@ class TestLinesOfAction < Test::Unit::TestCase
 
     g << "e1b1"
 
-    assert( g.all_connected?( g.board.occupied[:black] ) )
-    assert( g.all_connected?( g.board.occupied[:white] ) )
+    assert( g.all_connected?( g.board.occupied( :black ) ) )
+    assert( g.all_connected?( g.board.occupied( :white ) ) )
 
     assert_equal( :white, g.history.last.turn )
 

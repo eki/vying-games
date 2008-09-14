@@ -36,7 +36,7 @@ Rules.create( "NineMensMorris" ) do
     end
 
     def has_moves
-      if remaining[turn] > 0 || removing || board.occupied[turn].length == 3
+      if remaining[turn] > 0 || removing || board.occupied( turn ).length == 3
         return [turn]
       end
 
@@ -45,7 +45,7 @@ Rules.create( "NineMensMorris" ) do
         return []
       end
 
-      board.occupied[turn].any? { |c| can_move?( c ) } ? [turn] : []
+      board.occupied( turn ).any? { |c| can_move?( c ) } ? [turn] : []
     end
 
     def moves
@@ -58,7 +58,7 @@ Rules.create( "NineMensMorris" ) do
       # Removing an opponent's stone
 
       if removing
-        ops = board.occupied[opponent( turn )]
+        ops = board.occupied( opponent( turn ) )
         ms = ops.select { |c| ! mill?( c ) }
 
         return ms.empty? ? ops : ms
@@ -72,13 +72,13 @@ Rules.create( "NineMensMorris" ) do
 
       # Moving stones
 
-      if board.occupied[turn].length > 3
-        return board.occupied[turn].map { |c| moves_for( c ) }.flatten
+      if board.occupied( turn ).length > 3
+        return board.occupied( turn ).map { |c| moves_for( c ) }.flatten
       end
 
       # Flying
 
-      board.occupied[turn].map { |c| flying_moves_for( c ) }.flatten
+      board.occupied( turn ).map { |c| flying_moves_for( c ) }.flatten
     end
 
     def apply!( move )
