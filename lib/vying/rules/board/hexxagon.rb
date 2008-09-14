@@ -40,20 +40,15 @@ Rules.create( "Hexxagon" ) do
     def moves
       return [] if final?
 
-      p   = turn
       found = []
 
-      # Adjacent moves
-
-      board.occupied( p ).each do |c|
+      board.occupied( turn ).each do |c|
+        # Adjacent moves
         board.coords.ring( c, 1 ).each do |c1|
           found << "#{c}#{c1}" if board[c1].nil?
         end
-      end
 
-      # Jump moves
-
-      board.occupied( p ).each do |c|
+        # Jump moves
         board.coords.ring( c, 2 ).each do |c2|
           found << "#{c}#{c2}" if board[c2].nil?
         end

@@ -34,21 +34,16 @@ Rules.create( "Ataxx" ) do
     def moves
       return [] if players.any? { |p| board.count( p ) == 0 }
 
-      p     = turn
-      cd    = [:n, :s, :e, :w, :se, :sw, :ne, :nw]
       found = []
 
-      # Adjacent moves
+      board.occupied( turn ).each do |c|
 
-      board.occupied( p ).each do |c|
+        # Adjacent moves
         board.coords.ring( c, 1 ).each do |c1|
           found << "#{c}#{c1}" if board[c1].nil? && !c1.nil?
         end
-      end
 
-      # Jump moves
-
-      board.occupied( p ).each do |c|
+        # Jump moves
         board.coords.ring( c, 2 ).each do |c2|
           found << "#{c}#{c2}" if board[c2].nil? && !c2.nil?
         end
