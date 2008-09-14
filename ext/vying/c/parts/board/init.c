@@ -52,14 +52,15 @@ void Init_boardext() {
   rb_define_method( Frontier, "update_frontier", frontier_update, 1 );
                                                            /* in frontier.c */
 
-  /* Map Board::Plugins::CustodialFlip */
+  /* Map Board::Plugins::CustodialCapture */
 
-  CustodialFlip = rb_define_module_under( Plugins, "CustodialFlip" );
+  CustodialCapture = rb_define_module_under( Plugins, "CustodialCapture" );
 
-  rb_define_method( CustodialFlip, "custodial_flip?", custodial_flip_valid, 2 );
-                                                     /* in custodial_flip.c */
-  rb_define_method( CustodialFlip, "custodial_flip", custodial_flip, 2 );
-                                                     /* in custodial_flip.c */
+  rb_define_method( CustodialCapture, "custodial_capture?", 
+                                       custodial_capture_valid, -1 );
+                                                  /* in custodial_capture.c */
+  rb_define_method( CustodialCapture, "custodial", custodial, -1 );
+                                                  /* in custodial_capture.c */
 
   /* Look up all our ids */
 
@@ -89,6 +90,8 @@ void Init_boardext() {
   id_set = rb_intern( "set" );
   id_before_set = rb_intern( "before_set" );
   id_after_set = rb_intern( "after_set" );
+  id_first = rb_intern( "first" );
+  id_last = rb_intern( "last" );
 
   /* Look up all our symbols */
 

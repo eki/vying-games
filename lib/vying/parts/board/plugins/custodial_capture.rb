@@ -28,6 +28,35 @@ module Board::Plugins::CustodialCapture
   # in which case p is still placed at coord c.
 
   def custodial_capture( c, p, range=nil )
+    custodial( c, p, nil, range )
+  end
+
+  # Will playing piece p at coord c result in a custodial capture?  The 
+  # optional range can be used to restrict the capture test.
+
+  def custodial_capture?( c, p, range=nil )
+    a = directions.zip( coords.neighbors_nil( c ) )
+    a.each do |d,nc|
+      next if self[nc].nil? || self[nc] == p 
+
+      bt = [nc]
+      while (bt << coords.next( bt.last, d ))
+        break if self[bt.last].nil?
+        next  if range && bt.length - 1 < range.first
+        break if range && bt.length - 1 > range.last
+
+        return true if self[bt.last] == p 
+      end
+    end
+
+    false
+  end
+
+  # Does the heavy lifting for custodial actions.  Takes the coord to play,
+  # the piece to place, what to replace captured pieces with, and the range
+  # to effect.
+
+  def custodial( c, p, replacement=nil, range=nil )
     self[c] = p
 
     cap = []
@@ -38,8 +67,8 @@ module Board::Plugins::CustodialCapture
       bt = [nc]
       while (bt << coords.next( bt.last, d ))
         break if self[bt.last].nil?
-        next  if range && bt.length < range.first + 1
-        break if range && bt.length > range.last  + 1
+        next  if range && bt.length - 1 < range.first
+        break if range && bt.length - 1 > range.last
 
         if self[bt.last] == p
           bt.pop
@@ -50,30 +79,13 @@ module Board::Plugins::CustodialCapture
     end
 
     cap.each do |cc|
-      self[cc] = nil
+      self[cc] = replacement
     end
 
     cap
   end
 
-  def custodial_capture?( c, p, range=nil )
-    cap = []
-    a = directions.zip( coords.neighbors_nil( c ) )
-    a.each do |d,nc|
-      next if self[nc].nil? || self[nc] == p 
-
-      bt = [nc]
-      while (bt << coords.next( bt.last, d ))
-        break if self[bt.last].nil?
-        next  if range && bt.length < range.first + 1
-        break if range && bt.length > range.last  + 1
-
-        return true if self[bt.last] == p 
-      end
-    end
-
-    false
-  end
+  private :custodial
 
 end
 

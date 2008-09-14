@@ -8,44 +8,39 @@ require 'vying'
 
 module Board::Plugins::CustodialFlip
 
-  def custodial_flip?( c, bp )
-    return false if !self[c].nil?
-
-    a = directions.zip( coords.neighbors_nil( c ) )
-    a.each do |d,nc|
-      p = self[nc]
-      next if p.nil? || p == bp
-
-      i = nc
-      while (i = coords.next( i, d ))
-        p = self[i]
-        return true if p == bp 
-        break       if p.nil?
-      end
-    end
-
-    false
+  def self.dependencies
+    [:custodial_capture]
   end
 
-  def custodial_flip( c, bp )
-    a = directions.zip( coords.neighbors_nil( c ) )
-    a.each do |d,nc|
-      p = self[nc]
-      next if p.nil? || p == bp
+  # Place the given piece p at Coord c and make any valid custodial flips 
+  # as a side effect.  To limit the flips to a certain number of pieces,
+  # provide a range.  To make unlimited flips the range can be omitted.
+  #
+  # For example:
+  #
+  #   b.custodial_flip( Coord[:a1], :x, 3..4 )
+  #
+  # With the given lines (where :a1 is represented with a '.'):
+  #
+  #     .oox    => no flip
+  #     .ooox   => flip
+  #     .oooox  => flip
+  #     .ooooox => no flip
+  #
+  # This method returns an array containing the coords of pieces that were
+  # successfully flipped.  It is possible that no pieces will be flipped,
+  # in which case p is still placed at coord c.
 
-      bt = [nc]
-      while (bt << coords.next( bt.last, d ))
-        p = self[bt.last]
-        break if p.nil?
-
-        if p == bp
-          bt.each { |bc| self[bc] = bp }
-          break
-        end
-      end
-    end
-
-    self[c] = bp
+  def custodial_flip( c, p, range=nil )
+    custodial( c, p, p, range )
   end
+
+  # Will pieces be flipped if piece p is placed at coord c?  Optional range
+  # limites the number of pieces that may be flipped.
+
+  def custodial_flip?( c, p, range=nil )
+    custodial_capture?( c, p, range )
+  end
+
 end
 

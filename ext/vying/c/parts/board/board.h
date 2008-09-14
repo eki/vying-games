@@ -11,7 +11,7 @@ VALUE Coord;
 VALUE Coords;
 VALUE Plugins;
 VALUE Frontier;
-VALUE CustodialFlip;
+VALUE CustodialCapture;
 
 
 /* Board prototypes */
@@ -52,10 +52,10 @@ VALUE coords_next( VALUE self, VALUE c, VALUE d );
 VALUE frontier_update( VALUE self, VALUE c );
 
 
-/* CustodialFlip prototypes */
+/* CustodialCapture prototypes */
 
-VALUE custodial_flip_valid( VALUE self, VALUE c, VALUE p );
-VALUE custodial_flip( VALUE self, VALUE c, VALUE p );
+VALUE custodial_capture_valid( int argc, VALUE *argv, VALUE self );
+VALUE custodial( int argc, VALUE *argv, VALUE self );
 
 
 /* IDs */
@@ -63,7 +63,7 @@ VALUE custodial_flip( VALUE self, VALUE c, VALUE p );
 ID id_dup, id_x, id_y, id_subscript, id_subscript_assign, id_new,
    id_hash, id_include, id_n, id_s, id_w, id_e, id_se, id_nw, id_sw, id_ne,
    id_DIRECTIONS, id_directions, id_white, id_black, id_delete, id_uniq_ex,
-   id_to_s, id_set, id_before_set, id_after_set;
+   id_to_s, id_set, id_before_set, id_after_set, id_first, id_last;
 
 
 /* SYMs */

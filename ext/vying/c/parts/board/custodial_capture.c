@@ -10,21 +10,39 @@
  *  in pieces being flipped any of the Board#directions.
  *
  *  call-seq:
- *    will_flip?( coord, piece ) -> boolean
+ *    custodial_capture?( coord, piece, range=nil ) -> boolean
  *
  */
 
-VALUE custodial_flip_valid( VALUE self, VALUE c, VALUE p ) {
-  int x = NUM2INT(rb_funcall( c, id_x, 0 ));
-  int y = NUM2INT(rb_funcall( c, id_y, 0 ));
+VALUE custodial_capture_valid( int argc, VALUE *argv, VALUE self ) {
+  int x = NUM2INT(rb_funcall( argv[0], id_x, 0 ));
+  int y = NUM2INT(rb_funcall( argv[0], id_y, 0 ));
+
+  VALUE p = argv[1];
+
+  VALUE range = Qnil;
+  int first;
+  int last;
+
   VALUE cells = rb_iv_get( self, "@cells" );
   VALUE dir = rb_iv_get( self, "@directions" );
 
-  int i;
+  int w = NUM2INT(rb_iv_get( self, "@width" ));
+  int h = NUM2INT(rb_iv_get( self, "@height" ));
+
+  if( argc > 2 && RTEST(argv[2]) ) {
+    range = argv[2];
+    first = NUM2INT(rb_funcall( range, id_first, 0 ));
+    last  = NUM2INT(rb_funcall( range, id_last,  0 ));
+  }
+
+  int i, blen;
   for( i = 0; i < RARRAY(dir)->len; i++ ) {
     VALUE d = rb_ary_entry( dir, i );
     int dx, dy, nx, ny;
     VALUE np;
+
+    blen = 0;
 
     if( d == sym_n ) {
       dx = 0;
@@ -62,8 +80,10 @@ VALUE custodial_flip_valid( VALUE self, VALUE c, VALUE p ) {
     nx = x+dx;
     ny = y+dy;
 
+    blen++;
+
     np = board_get( self, INT2NUM(nx), INT2NUM(ny) );
-    if( np == Qnil || np == p ) {
+    if( NIL_P(np) || np == p ) {
       continue;
     }
 
@@ -71,12 +91,18 @@ VALUE custodial_flip_valid( VALUE self, VALUE c, VALUE p ) {
     ny += dy;
     np = board_get( self, INT2NUM(nx), INT2NUM(ny) );
     while( np != Qnil ) {
-      if( np == p ) {
+      if( range != Qnil && blen > last ) {
+        break;
+      }
+      if( np == p && ! (range != Qnil && blen < first) ) {
         return Qtrue;
       }
 
       nx += dx;
       ny += dy;
+
+      blen++;
+
       np = board_get( self, INT2NUM(nx), INT2NUM(ny) );
     }
   }
@@ -85,24 +111,46 @@ VALUE custodial_flip_valid( VALUE self, VALUE c, VALUE p ) {
 }
 
 /*
- *  Place the given piece at the given coord.  Flip any pieces that would
- *  be victims of custodial capture in one of Board#directions.  This is
- *  essentially the behavior of placing a piece in Othello.
+ *  Place the given piece at the given coord.  Replace any pieces that would
+ *  be victims of custodial capture in one of Board#directions.
  *
  *  call-seq:
- *    place( coord, piece ) -> piece
+ *    custodial( coord, piece, replacement=nil, range=nil ) -> [captured coords]
  *
  */
 
-VALUE custodial_flip( VALUE self, VALUE c, VALUE p ) {
-  int x = NUM2INT(rb_funcall( c, id_x, 0 ));
-  int y = NUM2INT(rb_funcall( c, id_y, 0 ));
-  int w = NUM2INT(rb_iv_get( self, "@width" ));
+VALUE custodial( int argc, VALUE *argv, VALUE self ) {
+  int x = NUM2INT(rb_funcall( argv[0], id_x, 0 ));
+  int y = NUM2INT(rb_funcall( argv[0], id_y, 0 ));
+
+  VALUE p = argv[1];
+
+  VALUE replacement = Qnil;
+
+  VALUE range = Qnil;
+  int first;
+  int last;
+
   VALUE cells = rb_iv_get( self, "@cells" );
   VALUE dir = rb_iv_get( self, "@directions" );
 
-  int bt[w];
+  VALUE cap = rb_ary_new();
+
+  int w = NUM2INT(rb_iv_get( self, "@width" ));
+  int h = NUM2INT(rb_iv_get( self, "@height" ));
+
+  int bt[(w > h) ? w : h][2];
   int blen = 0;
+
+  if( argc > 2 ) {
+    replacement = argv[2];
+  }
+
+  if( argc > 3 && RTEST(argv[3]) ) {
+    range = argv[3];
+    first = NUM2INT(rb_funcall( range, id_first, 0 ));
+    last  = NUM2INT(rb_funcall( range, id_last,  0 ));
+  }
 
   int i;
   for( i = 0; i < RARRAY(dir)->len; i++ ) {
@@ -149,26 +197,37 @@ VALUE custodial_flip( VALUE self, VALUE c, VALUE p ) {
     ny = y+dy;
 
     np = board_get( self, INT2NUM(nx), INT2NUM(ny) );
-    if( np == Qnil || np == p ) {
+    if( NIL_P(np) || np == p ) {
       continue;
     }
 
-    bt[blen++] = nx + ny * w;
+    bt[blen][0] = nx;
+    bt[blen][1] = ny;
+    blen++;    
 
     nx += dx;
     ny += dy;
     np = board_get( self, INT2NUM(nx), INT2NUM(ny) );
     while( np != Qnil ) {
-      if( np == p ) {
+      if( range != Qnil && blen > last ) {
+        break;
+      }
+      if( np == p && ! (range != Qnil && blen < first ) ) {
         int j;
         for( j = 0; j < blen; j++ ) {
-          board_set( self, INT2NUM(bt[j]%w), INT2NUM(bt[j]/w), p );
+          VALUE cx = INT2NUM(bt[j][0]);
+          VALUE cy = INT2NUM(bt[j][1]);
+
+          rb_funcall( self, id_set, 3, cx, cy, replacement );
+          rb_ary_push( cap, rb_funcall( Coord, id_new, 2, cx, cy ) );
         }
 
         break;
       }
 
-      bt[blen++] = nx + ny * w;
+      bt[blen][0] = nx;
+      bt[blen][1] = ny;
+      blen++;    
 
       nx += dx;
       ny += dy;
@@ -176,6 +235,8 @@ VALUE custodial_flip( VALUE self, VALUE c, VALUE p ) {
     }
   }
 
-  return board_set( self, INT2NUM(x), INT2NUM(y), p );
+  board_set( self, INT2NUM(x), INT2NUM(y), p );
+
+  return cap;
 }
 
