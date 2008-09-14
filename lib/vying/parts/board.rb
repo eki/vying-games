@@ -10,6 +10,7 @@ require 'vying/parts/board/shapes/rhombus'
 require 'vying/parts/board/shapes/square'
 require 'vying/parts/board/shapes/triangle'
 
+require 'vying/parts/board/plugins/custodial_capture'
 require 'vying/parts/board/plugins/custodial_flip'
 require 'vying/parts/board/plugins/in_a_row'
 require 'vying/parts/board/plugins/frontier'
