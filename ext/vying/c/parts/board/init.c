@@ -56,7 +56,7 @@ void Init_boardext() {
 
   CustodialFlip = rb_define_module_under( Plugins, "CustodialFlip" );
 
-  rb_define_method( CustodialFlip, "will_flip?", custodial_flip_valid, 2 );
+  rb_define_method( CustodialFlip, "custodial_flip?", custodial_flip_valid, 2 );
                                                      /* in custodial_flip.c */
   rb_define_method( CustodialFlip, "custodial_flip", custodial_flip, 2 );
                                                      /* in custodial_flip.c */

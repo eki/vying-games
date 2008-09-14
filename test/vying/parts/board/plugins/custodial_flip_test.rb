@@ -56,40 +56,40 @@ class TestCustodialFlip < Test::Unit::TestCase
     assert_equal( b, b2 )
   end
 
-  def test_will_flip_ns
+  def test_custodial_flip_ns
     b = Board.square( 8, :plugins => [:custodial_flip] )
 
     b[3,3] = :black
     b[3,4] = :white
 
-    assert(   b.will_flip?( Coord[3,5], :black ) )
-    assert( ! b.will_flip?( Coord[3,5], :white ) )
+    assert(   b.custodial_flip?( Coord[3,5], :black ) )
+    assert( ! b.custodial_flip?( Coord[3,5], :white ) )
 
-    assert(   b.will_flip?( Coord[3,2], :white ) ) 
-    assert( ! b.will_flip?( Coord[3,2], :black ) ) 
+    assert(   b.custodial_flip?( Coord[3,2], :white ) ) 
+    assert( ! b.custodial_flip?( Coord[3,2], :black ) ) 
   end
 
-  def test_will_flip_ew
+  def test_custodial_flip_ew
     b = Board.square( 8, :plugins => [:custodial_flip] )
 
     b[3,3] = :black
     b[4,3] = :white
 
-    assert(   b.will_flip?( Coord[5,3], :black ) )
-    assert( ! b.will_flip?( Coord[5,3], :white ) )
+    assert(   b.custodial_flip?( Coord[5,3], :black ) )
+    assert( ! b.custodial_flip?( Coord[5,3], :white ) )
 
-    assert(   b.will_flip?( Coord[2,3], :white ) ) 
-    assert( ! b.will_flip?( Coord[2,3], :black ) ) 
+    assert(   b.custodial_flip?( Coord[2,3], :white ) ) 
+    assert( ! b.custodial_flip?( Coord[2,3], :black ) ) 
 
     # check flip 2 in same direction
 
     b[5,3] = :white
 
-    assert(   b.will_flip?( Coord[6,3], :black ) ) 
-    assert( ! b.will_flip?( Coord[6,3], :white ) ) 
+    assert(   b.custodial_flip?( Coord[6,3], :black ) ) 
+    assert( ! b.custodial_flip?( Coord[6,3], :white ) ) 
   end
 
-  def test_will_flip_nw_se
+  def test_custodial_flip_nw_se
     b = Board.square( 8, :plugins => [:custodial_flip] )
 
     b[0,0] = :white
@@ -97,11 +97,11 @@ class TestCustodialFlip < Test::Unit::TestCase
     b[3,3] = :black
     b[4,4] = :white
 
-    assert(   b.will_flip?( Coord[2,2], :white ) ) 
-    assert( ! b.will_flip?( Coord[2,2], :black ) ) 
+    assert(   b.custodial_flip?( Coord[2,2], :white ) ) 
+    assert( ! b.custodial_flip?( Coord[2,2], :black ) ) 
   end
 
-  def test_will_flip_ne_sw
+  def test_custodial_flip_ne_sw
     b = Board.square( 8, :plugins => [:custodial_flip] )
 
     b[7,0] = :black
@@ -110,31 +110,31 @@ class TestCustodialFlip < Test::Unit::TestCase
     b[3,4] = :white
     b[2,5] = :black
 
-    assert(   b.will_flip?( Coord[4,3], :black ) )
-    assert( ! b.will_flip?( Coord[4,3], :white ) )
+    assert(   b.custodial_flip?( Coord[4,3], :black ) )
+    assert( ! b.custodial_flip?( Coord[4,3], :white ) )
   end
 
-  def test_will_flip_empty
+  def test_custodial_flip_empty
     b = Board.square( 8, :plugins => [:custodial_flip] )
 
     b[3,3] = :black
     b[5,5] = :white
 
     b.coords.each do |c| 
-      assert( ! b.will_flip?( c, :black ) )
-      assert( ! b.will_flip?( c, :white ) )
+      assert( ! b.custodial_flip?( c, :black ) )
+      assert( ! b.custodial_flip?( c, :white ) )
     end
   end
 
-  def test_will_flip_edges
+  def test_custodial_flip_edges
     b = Board.square( 8, :plugins => [:custodial_flip] )
 
     b[0,0] = b[3,0] = b[3,1] = b[7,0] = b[7,3] = :black
     b[7,7] = b[3,7] = b[3,6] = b[0,7] = b[0,3] = :white
 
     b.coords.each do |c| 
-      assert( ! b.will_flip?( c, :black ), "#{c}, :black" )
-      assert( ! b.will_flip?( c, :white ), "#{c}, :white" )
+      assert( ! b.custodial_flip?( c, :black ), "#{c}, :black" )
+      assert( ! b.custodial_flip?( c, :white ), "#{c}, :white" )
     end
   end
 

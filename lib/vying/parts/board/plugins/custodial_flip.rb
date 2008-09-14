@@ -3,12 +3,12 @@
 
 require 'vying'
 
-# Adds the #will_flip? and #flip methods to Board.  These methods can be used
-# for implementing Othello and like games.
+# Adds the #custodial_flip? and #custodial_flip methods to Board.  These 
+# methods can be used for implementing Othello and like games.
 
 module Board::Plugins::CustodialFlip
 
-  def will_flip?( c, bp )
+  def custodial_flip?( c, bp )
     return false if !self[c].nil?
 
     a = directions.zip( coords.neighbors_nil( c ) )

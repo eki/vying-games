@@ -25,17 +25,17 @@ Rules.create( "Othello" ) do
     end
 
     def has_moves
-      board.frontier.any? { |c| board.will_flip?( c, turn ) } ? [turn] : []
+      board.frontier.any? { |c| board.custodial_flip?( c, turn ) } ? [turn] : []
     end
 
     def move?( move )
       cs = move.to_coords
 
-      board.will_flip?( cs.first, turn ) unless cs.length != 1
+      board.custodial_flip?( cs.first, turn ) unless cs.length != 1
     end
 
     def moves
-      board.frontier.select { |c| board.will_flip?( c, turn ) }
+      board.frontier.select { |c| board.custodial_flip?( c, turn ) }
     end
 
     def apply!( move )
