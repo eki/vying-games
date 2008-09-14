@@ -10,7 +10,22 @@ module Board::Plugins::Stacking
   # Display the board in such a way that entire stacks can be seen.
 
   def to_s
-    super  # Change me
+    off = height >= 10 ? 2 : 1
+    w = width
+    sp = @cells.compact.max { |a,b| a.length <=> b.length }
+    sp = sp ? sp.length : 1
+    letters = "#{' ' * off}#{('a'...(?a+w).chr).collect { |l| ' ' + l + ' ' * sp }}#{' ' * off}\n"
+
+    s = letters
+    height.times do |y|
+      s += sprintf( "%*d", off, y+1 )
+      s += row(y).inject( '' ) do |rs,p|
+        stack = p.collect { |x| x.to_s[0..0] }.join if p
+        rs + (p ? " #{stack}#{'_' * (sp - stack.length)} " : " #{'_' * sp} ")
+      end
+      s += sprintf( "%*d\n", -off, y+1 )
+    end
+    s + letters
   end
 
 end
