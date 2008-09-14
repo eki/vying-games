@@ -13,7 +13,7 @@ Rules.create( 'Attangle' ) do
   version  '0.1.0'
 
   players :white, :black
-  option :board_size, :default => 4, :values => Array(3..10)
+  option :board_size, :default => 4, :values => Array( 3..6 )
 
   score_determines_outcome
 
@@ -27,6 +27,10 @@ Rules.create( 'Attangle' ) do
       p = ((@options[:board_size] * 2 - 1) ** 2 - @options[:board_size] * (@options[:board_size] - 1) - 1) / 2
       @pool = { :white => p, :black => p }
       @triples = ((@options[:board_size] - 3) * 2 + 1).freeze
+    end
+
+    def has_moves
+      return [turn] if pool[turn] > 0 || moves( turn ).any?
     end
 
     def moves( player=nil )
