@@ -13,7 +13,7 @@ Rules.create( 'Attangle' ) do
   version  '0.1.0'
 
   players :white, :black
-  option :board_size, :default => 10, :values => Array(3..10)
+  option :board_size, :default => 4, :values => Array(3..10)
 
   score_determines_outcome
 
@@ -24,8 +24,9 @@ Rules.create( 'Attangle' ) do
 
     def init
       @board = Board.hexagon( :length => @options[:board_size], :plugins => [:stacking] )
-      @pool = { :white => [9, 18, 30][@options[:board_size] - 3], :black => [9, 18, 30][@options[:board_size] - 3] }
-      @triples = ( [1, 3, 5][@options[:board_size] - 3] ).freeze
+      p = ((@options[:board_size] * 2 - 1) ** 2 - @options[:board_size] * (@options[:board_size] - 1) - 1) / 2
+      @pool = { :white => p, :black => p }
+      @triples = ((@options[:board_size] - 3) * 2 + 1).freeze
     end
 
     def moves( player=nil )
