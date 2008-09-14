@@ -1,6 +1,8 @@
 .*.swp
 *.o
 *.so
+*.class
+*.jar
 Makefile
 pkg/*
 doc/*
