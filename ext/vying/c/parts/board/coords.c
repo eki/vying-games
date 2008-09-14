@@ -14,12 +14,21 @@
  */
 
 VALUE coords_include( VALUE self, VALUE c ) {
-  int w = NUM2INT(rb_iv_get( self, "@width" ));
-  int h = NUM2INT(rb_iv_get( self, "@height" ));
   int x = NUM2INT(rb_funcall( c, id_x, 0 ));
   int y = NUM2INT(rb_funcall( c, id_y, 0 ));
 
-  if( x < 0 || x >= w || y < 0 || y >= h ) {
+  VALUE bounds = rb_iv_get( self, "@bounds" );
+
+  VALUE first = rb_ary_entry( bounds, 0 );
+  VALUE last  = rb_ary_entry( bounds, 1 );
+  
+  int min_x = NUM2INT(rb_funcall( first, id_x, 0 ));
+  int max_x = NUM2INT(rb_funcall( last,  id_x, 0 ));
+
+  int min_y = NUM2INT(rb_funcall( first, id_y, 0 ));
+  int max_y = NUM2INT(rb_funcall( last,  id_y, 0 ));
+
+  if( x < min_x || x > max_x || y < min_y || y > max_y ) {
     return Qnil;
   }
 

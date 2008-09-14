@@ -9,9 +9,8 @@ Rules.create( "Connect4" ) do
 
   players :red, :blue
 
-  init_moves( Coords.new( 7, 6 ).group_by { |c| c.x }.map do |sa|
-     sa.map { |c| c.to_s }
-  end )
+  init_moves( Coords.new( Coords.bounds_for( 7, 6 ) ).group_by { |c| c.x }.
+     map { |sa| sa.map { |c| c.to_s } })
 
   position do
     attr_reader :board, :unused_moves

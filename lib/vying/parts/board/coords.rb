@@ -12,7 +12,7 @@ class Coords
     memoize :new
   end
 
-  attr_reader :width, :height, :coords, :omitted
+  attr_reader :bounds, :width, :height, :coords, :omitted
   protected :coords
 
   DIRECTIONS = { :n  => Coord.new( 0, -1 ),  :s  => Coord.new( 0, 1 ),
@@ -20,10 +20,20 @@ class Coords
                  :nw => Coord.new( -1, -1 ), :ne => Coord.new( 1, -1 ),
                  :sw => Coord.new( -1, 1 ),  :se => Coord.new( 1, 1 ) }
 
-  def initialize( w, h, omit=[] )
-    @width = w
-    @height = h
-    @coords = (Array.new( w*h ) { |i| Coord.new( i%w, i/w ) } - omit).freeze
+  def initialize( bounds, omit=[] )
+    @bounds  = canonical_bounds( bounds )
+    @width   = (bounds.first.x - bounds.last.x).abs + 1
+    @height  = (bounds.first.y - bounds.last.y).abs + 1
+
+    @coords = []
+
+    ((bounds.first.y)..(bounds.last.y)).each do |y|
+      ((bounds.first.x)..(bounds.last.x)).each do |x|
+        c = Coord.new( x, y )
+        @coords << c unless omit.include?( c )
+      end
+    end
+
     @omitted = omit.dup.freeze
   end
 
@@ -32,7 +42,9 @@ class Coords
   end
 
   def include?( c )
-    if c.x < 0 || c.x >= width || c.y < 0 || c.y >= height
+    bs = bounds
+    if c.x < bs.first.x || c.x > bs.last.x || 
+       c.y < bs.first.y || c.y > bs.last.y 
       return nil
     end
 
@@ -63,15 +75,15 @@ class Coords
   end
 
   def _dump( depth=-1 )
-    Marshal.dump( [width, height, omitted] )
+    Marshal.dump( [bounds, omitted] )
   end
 
   def self._load( str )
-    width, height, omitted = Marshal.load( str )
+    bounds, omitted = Marshal.load( str )
     if omitted.empty?          # extra care to make sure memoize works
-      new( width, height )
+      new( bounds )
     else
-      new( width, height, omitted )
+      new( bounds, omitted )
     end
   end
 
@@ -151,11 +163,24 @@ class Coords
     inject( '' ) { |s,c| s + "#{c}" }
   end
 
+  def self.bounds_for( width, height )
+    [Coord[0,0], Coord[width-1,height-1]]
+  end
+
   memoize :row
   memoize :column
   memoize :diagonal
   memoize :neighbors
   memoize :neighbors_nil
   memoize :ring
+
+  private
+
+  def canonical_bounds( bounds )
+    xs = bounds.first.x, bounds.last.x
+    ys = bounds.first.y, bounds.last.y
+
+    [Coord[xs.min,ys.min], Coord[xs.max,ys.max]]
+  end
 end
 

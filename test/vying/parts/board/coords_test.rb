@@ -4,13 +4,13 @@ require 'vying'
 
 class TestCoords < Test::Unit::TestCase
   def test_initialize
-    coords = Coords.new( 3, 4 )
+    coords = Coords.new( Coords.bounds_for( 3, 4 ) )
     assert_equal( 3, coords.width )
     assert_equal( 4, coords.height )
   end
 
   def test_each
-    coords = Coords.new( 2, 3 )
+    coords = Coords.new( Coords.bounds_for( 2, 3 ) )
     a = [Coord[0,0], Coord[1,0], Coord[0,1],
          Coord[1,1], Coord[0,2], Coord[1,2]]
     i = 0
@@ -18,7 +18,7 @@ class TestCoords < Test::Unit::TestCase
   end
 
   def test_include
-    coords = Coords.new( 2, 3 )
+    coords = Coords.new( Coords.bounds_for( 2, 3 ) )
 
     assert( coords.include?( Coord[0,0] ) )
     assert( coords.include?( Coord[1,0] ) )
@@ -34,7 +34,8 @@ class TestCoords < Test::Unit::TestCase
     assert( ! coords.include?( Coord[2,3] ) )
     assert( ! coords.include?( Coord[100,100] ) )
 
-    coords = Coords.new( 2, 3, [Coord[0,0], Coord[1,0], Coord[0,2]] )
+    coords = Coords.new( Coords.bounds_for( 2, 3 ), 
+                         [Coord[0,0], Coord[1,0], Coord[0,2]] )
 
     assert( ! coords.include?( Coord[0,0] ) )
     assert( ! coords.include?( Coord[1,0] ) )
@@ -42,7 +43,8 @@ class TestCoords < Test::Unit::TestCase
     assert( coords.include?( Coord[1,2] ) )
     assert( coords.include?( Coord[1,1] ) )
 
-    coords = Coords.new( 2, 3, [Coord[0,0], Coord[1,0]] )
+    coords = Coords.new( Coords.bounds_for( 2, 3 ),
+                         [Coord[0,0], Coord[1,0]] )
 
     assert( ! coords.include?( Coord[0,0] ) )
     assert( ! coords.include?( Coord[1,0] ) )
@@ -52,7 +54,7 @@ class TestCoords < Test::Unit::TestCase
   end
 
   def test_row
-    coords = Coords.new( 2, 3 )
+    coords = Coords.new( Coords.bounds_for( 2, 3 ) )
 
     assert_equal( 2, coords.row( Coord[0,0] ).length )
     assert_equal( 2, coords.row( Coord[0,1] ).length )
@@ -69,7 +71,7 @@ class TestCoords < Test::Unit::TestCase
   end
 
   def test_column
-    coords = Coords.new( 2, 3 )
+    coords = Coords.new( Coords.bounds_for( 2, 3 ) )
 
     assert_equal( 3, coords.column( Coord[0,0] ).length )
     assert_equal( 3, coords.column( Coord[1,0] ).length )
@@ -87,7 +89,7 @@ class TestCoords < Test::Unit::TestCase
   end
 
   def test_diagonal
-    coords = Coords.new( 2, 3 )
+    coords = Coords.new( Coords.bounds_for( 2, 3 ) )
 
     diag1p = [Coord[0,0], Coord[1,1]]
     diag2p = [Coord[1,0]]
@@ -141,7 +143,7 @@ class TestCoords < Test::Unit::TestCase
   end
 
   def test_neighbors
-    coords = Coords.new( 8, 8 )
+    coords = Coords.new( Coords.bounds_for( 8, 8 ) )
 
     n00 = [Coord[0,1], Coord[1,0], Coord[1,1]]
     n70 = [Coord[6,0], Coord[7,1], Coord[6,1]]
@@ -189,7 +191,7 @@ class TestCoords < Test::Unit::TestCase
   end
 
   def test_next
-    coords = Coords.new( 8, 8 )
+    coords = Coords.new( Coords.bounds_for( 8, 8 ) )
 
     assert_equal( Coord[0,1], coords.next( Coord[0,0], :s ) )
     assert_equal( Coord[1,0], coords.next( Coord[0,0], :e ) )
@@ -213,18 +215,18 @@ class TestCoords < Test::Unit::TestCase
   end
 
   def test_to_s
-    coords = Coords.new( 2, 2 )
+    coords = Coords.new( Coords.bounds_for( 2, 2 ) )
     assert_equal( "a1b1a2b2", coords.to_s )
   end
 
   def test_dup
-    coords = Coords.new( 3, 5 )
+    coords = Coords.new( Coords.bounds_for( 3, 5 ) )
     assert_equal( coords, coords.dup )
     assert_equal( coords.object_id, coords.dup.object_id )
   end
 
   def test_marshal
-    coords = Coords.new( 3, 5 )
+    coords = Coords.new( Coords.bounds_for( 3, 5 ) )
     assert_equal( coords, Marshal.load( Marshal.dump( coords ) ) )
     assert_equal( coords.object_id,
                   Marshal.load( Marshal.dump( coords ) ).object_id )
