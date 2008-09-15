@@ -57,6 +57,12 @@ class Board::Infinite < Board
   # boards.
 
   def initialize( min_width=nil, min_height=nil, h={} )
+    if min_width.kind_of?( Hash )
+      min_width, min_height, h = nil, nil, min_width
+    elsif min_height.kind_of?( Hash )
+      min_height, h = nil, min_height
+    end
+
     @shape = :infinite
 
     @width  = min_width  || 11

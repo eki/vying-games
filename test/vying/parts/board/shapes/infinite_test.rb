@@ -22,6 +22,24 @@ class TestBoardInfinite < Test::Unit::TestCase
     assert( b.occupied( nil ).include?( Coord[-1,2] ) )
     assert( b.occupied( nil ).include?( Coord[2,-2] ) )
 
+    b = Board.infinite( 4, 5, :cell_shape => :triangle )
+    assert_equal( :infinite, b.shape )
+    assert_equal( :triangle, b.cell_shape )
+    assert_equal( 4, b.width )
+    assert_equal( 5, b.height )
+
+    b = Board.infinite( 4, :cell_shape => :triangle )
+    assert_equal( :infinite, b.shape )
+    assert_equal( :triangle, b.cell_shape )
+    assert_equal( 4, b.width )
+    assert_equal( 11, b.height )
+
+    b = Board.infinite( :cell_shape => :triangle )
+    assert_equal( :infinite, b.shape )
+    assert_equal( :triangle, b.cell_shape )
+    assert_equal( 11, b.width )
+    assert_equal( 11, b.height )
+
     assert_raise( RuntimeError ) do
       Board.infinite( 4, 5, :cell_shape => :nonexistant )
     end
