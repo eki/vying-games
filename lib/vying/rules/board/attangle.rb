@@ -27,6 +27,7 @@ Rules.create( 'Attangle' ) do
       p = ((@options[:board_size] * 2 - 1) ** 2 - @options[:board_size] * (@options[:board_size] - 1) - 1) / 2
       @pool = { :white => p, :black => p }
       @triples = ((@options[:board_size] - 3) * 2 + 1).freeze
+      @center = Coord.new( board.length - 1, board.length - 1 ).freeze
     end
 
     def has_moves
@@ -35,11 +36,7 @@ Rules.create( 'Attangle' ) do
 
     def moves
       all = []
-
-      # Every empty cell (except the center) is a valid move
-      all += board.unoccupied - [ Coord.new( board.length - 1, board.length - 1 ) ] if pool[turn] > 0
-
-      # All possible capture moves
+      all += board.unoccupied - [@center] if pool[turn] > 0
       all += capture_moves
     end
 
