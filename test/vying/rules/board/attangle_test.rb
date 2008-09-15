@@ -47,11 +47,14 @@ class TestAttangle < Test::Unit::TestCase
   def test_placement
     g = Game.new( rules )
 
+    assert_raise( RuntimeError ) { g << "d4" }
+
     g << "a1"
     assert_equal( [:white], g.board[:a1] )
     assert_equal( 17, g.pool[:white] )
     assert_equal( 18, g.pool[:black] )
 
+    assert_raise( RuntimeError ) { g << "a1" }
     g << "c3"
     assert_equal( [:black], g.board[:c3] )
     assert_equal( 17, g.pool[:white] )
@@ -65,6 +68,15 @@ class TestAttangle < Test::Unit::TestCase
     assert_equal( [:white, :black], g.board[:c3] )
     assert_equal( 17, g.pool[:white] )
     assert_equal( 16, g.pool[:black] )
+
+    g << "a1" << "d7"
+
+    assert_raise( RuntimeError ) { g << "c3d7g7" }
+    g << "c1"
+
+    g << "c3d7g7"
+    assert_equal( 1, g.score( :white ))
+    assert_equal( 0, g.score( :black ))
   end
 
 end
