@@ -10,7 +10,7 @@ require 'vying'
 
 Rules.create( 'Attangle' ) do
   name    'Attangle'
-  version '0.1.0'
+  version '1.0.0'
 
   players :white, :black
   option :board_size, :default => 4, :values => Array( 3..6 )
