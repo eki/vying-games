@@ -30,12 +30,10 @@ Rules.create( 'Attangle' ) do
     end
 
     def has_moves
-      pool[turn] > 0 || capture_moves.any? ? [turn] : []
+      score( opponent( turn ) ) < triples && ( pool[turn] > 0 || capture_moves.any? ) ? [turn] : []
     end
 
     def moves
-      return [] if turn.nil?
-      
       all = []
 
       # Every empty cell (except the center) is a valid move
@@ -65,7 +63,7 @@ Rules.create( 'Attangle' ) do
     end
 
     def final?
-      players.any? { |p| score( p ) >= triples } || has_moves.empty?
+      has_moves.empty?
     end
 
     def score( player )
