@@ -23,15 +23,20 @@ Rules.create( 'Attangle' ) do
     attr_reader :board, :pool, :triples
 
     def init
-      @board = Board.hexagon( :length => @options[:board_size], :plugins => [:stacking] )
-      p = ((board.length * 2 - 1) ** 2 - board.length * (board.length - 1) - 1) / 2
-      @pool = { :white => p, :black => p }
-      @triples = ((board.length - 3) * 2 + 1).freeze
-      @center = Coord.new( board.length - 1, board.length - 1 ).freeze
+      length   = @options[:board_size]
+
+      @board   = Board.hexagon( length, :plugins => [:stacking] )
+      @pool    = Hash.new( initial_pool( length ) )
+      @triples = required_triples( length )
+      @center  = center( length )
     end
 
     def has_moves
-      score( opponent( turn ) ) < triples && ( pool[turn] > 0 || capture_moves.any? ) ? [turn] : []
+      return []      if score( opponent( turn ) ) == triples
+      return [turn]  if pool[turn] > 0
+      return [turn]  if capture_moves.any?
+
+      []
     end
 
     def moves
@@ -65,9 +70,11 @@ Rules.create( 'Attangle' ) do
 
     def score( player )
       count = 0
-      board.occupied.each_pair do |c, p|
-        next if c.nil?
-        count += p.length if c.first == player && c.length == 3
+      board.pieces.each do |p|
+        cs = board.occupied( p )
+
+        next if cs.nil?
+        count += cs.length if p.first == player && p.length == 3
       end
       count
     end
@@ -78,12 +85,24 @@ Rules.create( 'Attangle' ) do
 
     private
 
+    def initial_pool( length )
+      ((length * 2 - 1) ** 2 - length * (length - 1) - 1) / 2
+    end
+
+    def required_triples( length )
+      ((length - 3) * 2 + 1)
+    end
+
+    def center( length )
+      Coord[length-1,length-1]
+    end
+
     def capture_moves
       all = []
-      board.occupied.each do |allc|
-        if !allc.first.nil? && allc.first.first == opponent( turn )
+      board.pieces.each do |p|
+        if p && p.first == opponent( turn )
 
-          allc.last.each do |c|
+          board.occupied( p ).each do |c|
             # Collect all possible attacking pieces
             attackers = []
             board.directions.each do |d|
@@ -104,12 +123,14 @@ Rules.create( 'Attangle' ) do
                 end
               end
             end
-
           end
+
         end
       end
+
       all
     end
 
   end
 end
+
