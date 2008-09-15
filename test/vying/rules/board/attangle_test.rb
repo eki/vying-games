@@ -12,6 +12,8 @@ class TestAttangle < Test::Unit::TestCase
 
   def test_info
     assert_equal( "Attangle", rules.name )
+    assert( rules.version == '1.0.0' )
+    assert( rules.score_determines_outcome )
   end
 
   def test_players
@@ -20,6 +22,10 @@ class TestAttangle < Test::Unit::TestCase
 
   def test_initialize
     g = Game.new( rules )
+
+    assert_equal( 37, g.board.unoccupied.length )
+    assert_equal( 18, g.pool[:white] )
+    assert_equal( 18, g.pool[:black] )
     assert_equal( :white, g.turn )
   end
 
@@ -44,9 +50,10 @@ class TestAttangle < Test::Unit::TestCase
     assert_equal( [:black], g.has_moves )
   end
 
-  def test_placement
+  def test_play
     g = Game.new( rules )
 
+    assert_equal( 36, g.moves.length )
     assert_raise( RuntimeError ) { g << "d4" }
 
     g << "a1"
@@ -75,8 +82,11 @@ class TestAttangle < Test::Unit::TestCase
     g << "c1"
 
     g << "c3d7g7"
-    assert_equal( 1, g.score( :white ))
-    assert_equal( 0, g.score( :black ))
+    assert_equal( 1, g.score( :white ) )
+    assert_equal( 0, g.score( :black ) )
+
+    # TODO: more moves until winning position for :white
+    # test for outcome
   end
 
 end
