@@ -9,8 +9,9 @@ require 'vying'
 # or the official Attangle site: http://attangle.com
 
 Rules.create( 'Attangle' ) do
-  name    'Attangle'
-  version '1.0.0'
+  name     'Attangle'
+  version  '1.0.0'
+  notation :attangle_notation
 
   players :white, :black
   option :board_size, :default => 4, :values => Array( 3..6 )
@@ -20,10 +21,10 @@ Rules.create( 'Attangle' ) do
   cache :moves
 
   position do
-    attr_reader :board, :pool, :triples
+    attr_reader :board, :length, :pool, :triples
 
     def init
-      length   = @options[:board_size]
+      @length   = @options[:board_size]
 
       @board   = Board.hexagon( length, :plugins => [:stacking] )
       @pool    = Hash.new( initial_pool( length ) )
@@ -106,10 +107,10 @@ Rules.create( 'Attangle' ) do
             # Collect all possible attacking pieces
             attackers = []
             board.directions.each do |d|
-              scanc = c
-              while scanc = board.coords.next( scanc, d )
-                if !board[scanc].nil? && board[scanc].first == turn
-                  attackers << [ scanc, board[scanc].length ]
+              nc = c
+              while nc = board.coords.next( nc, d )
+                if board[nc] && board[nc].first == turn
+                  attackers << [ nc, board[nc].length ]
                   break
                 end
               end
