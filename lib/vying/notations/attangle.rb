@@ -4,19 +4,26 @@ class AttangleNotation < Notation
     :attangle_notation
   end
  
+  def initialize( game )
+    super( game )
+    @board_size = game.options[:board_size]
+  end
+
   def to_move( s, player )
-    if s =~ /(\w\d),?(\w\d)-?(\w\d)/
+    if s =~ /^\s*(\w\d)\s*$/
+      conv( $1 )
+    elsif s =~ /^\s*(\w\d),?(\w\d)-?(\w\d)\s*$/
       conv( $1 ) + conv( $2 ) + conv( $3 )
     else
-      conv( s )
+      raise "#{s} is an invalid notation format"
     end
   end
  
   def translate( move, player )
     s = ''
     move.to_coords.each do |c|
-      if c.x >= game.length
-        s += (97 + c.x).chr + (c.y - (c.x - game.length)).to_s
+      if c.x >= @board_size
+        s += (97 + c.x).chr + (c.y - (c.x - @board_size)).to_s
       else
         s += c.to_s
       end
@@ -27,8 +34,8 @@ class AttangleNotation < Notation
   private
 
   def conv( c )
-    if c.x >= game.length
-      (97 + c.x).chr + (c.y + (c.x - game.length) + 2).to_s
+    if c.x >= @board_size
+      (97 + c.x).chr + (c.y + (c.x - @board_size) + 2).to_s
     else
       c
     end
