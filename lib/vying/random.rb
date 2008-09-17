@@ -90,6 +90,10 @@ class RandomNumberGenerator
     eql? o
   end
 
+  def hash
+    [@seed, @count].hash
+  end
+
   # Special inspect string that shows the seed and number of numbers that 
   # have been generated.
 
