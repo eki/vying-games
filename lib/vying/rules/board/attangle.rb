@@ -21,10 +21,10 @@ Rules.create( 'Attangle' ) do
   cache :moves
 
   position do
-    attr_reader :board, :length, :pool, :triples
+    attr_reader :board, :pool, :triples
 
     def init
-      @length   = @options[:board_size]
+      length   = @options[:board_size]
 
       @board   = Board.hexagon( length, :plugins => [:stacking] )
       @pool    = Hash.new( initial_pool( length ) )

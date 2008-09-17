@@ -89,5 +89,19 @@ class TestAttangle < Test::Unit::TestCase
     # test for outcome
   end
 
+  def test_notation
+    g = Game.new( rules )
+    
+    assert_equal( "a1", g.notation.to_move( "a1", :white ))
+    assert_equal( "e2", g.notation.to_move( "e1", :white ))
+    assert_equal( "e4c6c2", g.notation.to_move( "e3,c6-c2", :white ))
+    assert_equal( "e4c6c2", g.notation.to_move( "e3c6c2", :white ))
+    assert_raise( RuntimeError ) { g.notation.to_move( "e3-c6-c2", :white ) }
+
+    assert_equal( "a1", g.notation.translate( "a1", :white ))
+    assert_equal( "e1", g.notation.translate( "e2", :white ))
+    assert_equal( "e3,c6-c2", g.notation.translate( "e4c6c2", :white ))
+  end
+
 end
 
