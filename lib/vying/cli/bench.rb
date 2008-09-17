@@ -102,6 +102,12 @@ module CLI
             n.times { |i| positions[i].final? }
           end
 
+          positions.each { |p| p.clear_cache } if h[:clear_cache]
+
+          x.report( "#{r} hash" ) do
+            n.times { |i| positions[i].hash }
+          end
+
           x.report( "#{r} random play" ) do
             p = r.new
             n.times do
