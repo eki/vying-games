@@ -110,6 +110,9 @@ module CLI
 
   def CLI.play
     rules = Othello
+    seed = nil
+    options = {}   # These are rules specific options, not cli options.
+
     p2b = {}
     number = 1
     curses = false
@@ -120,10 +123,18 @@ module CLI
     opts.on( "-r", "--rules RULES" ) { |r| rules = Rules.find( r ) }
     opts.on( "-n", "--number NUMBER" ) { |num| number = Integer( num ) }
     opts.on( "-c", "--curses" ) { curses = true }
+    opts.on( "-s", "--seed NUMBER" ) { |s| seed = s.to_i }
+
     opts.on( "-p", "--player PLAYER=BOT" ) do |s|
       s =~ /(\w*)=([\w:]*)/
       b = Bot.find( $2 )
       p2b[$1.downcase.intern] = (b ? b.new : Human.new( $2 ))
+    end
+
+    opts.on( "-o", "--option OPTION=VALUE" ) do |s|
+      if s =~ /(\w+)=(.+)/
+        options[$1.to_sym] = $2 
+      end
     end
 
     opts.parse( ARGV )
@@ -141,7 +152,7 @@ module CLI
     games = []
     number.times do |n|
 
-      g = Game.new( rules )
+      g = Game.new( rules, seed, options )
       p2b.each { |p,b| g[p].user = b }
 
       until g.final?
