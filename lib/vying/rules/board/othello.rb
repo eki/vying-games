@@ -58,10 +58,6 @@ Rules.create( "Othello" ) do
     def score( player )
       board.count( player )
     end
-
-    def hash
-      [board, turn].hash
-    end
   end
 
 end

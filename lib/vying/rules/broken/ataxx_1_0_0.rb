@@ -98,10 +98,6 @@ Rules.create( "Ataxx" ) do
       board.count( player )
     end
 
-    def hash
-      [board,turn].hash
-    end
-
     def set_blocks( p )
       p.scan( /./m ) do |c|
         board[*rules.block_coords[c]] = :x

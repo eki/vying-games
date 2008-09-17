@@ -42,10 +42,6 @@ Rules.create( "TicTacToe" ) do
     def draw?
       board.unoccupied.empty? && ! board.threats.any? { |t| t.degree == 0 }
     end
-
-    def hash
-      [board, turn].hash
-    end
   end
 
 end

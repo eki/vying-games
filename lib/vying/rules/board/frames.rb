@@ -81,10 +81,6 @@ Rules.create( "Frames" ) do
       points[player]
     end
 
-    def hash
-      [board,points,sealed].hash
-    end
-
     def censor( player )
       position = super( player )
 

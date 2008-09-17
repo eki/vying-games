@@ -57,10 +57,6 @@ Rules.create( "Pig" ) do
     def score( player )
       total[player] 
     end
-
-    def hash
-      [total, current_score, roll_history].hash
-    end
   end
 
 end

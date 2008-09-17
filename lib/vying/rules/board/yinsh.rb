@@ -216,10 +216,6 @@ Rules.create( "Yinsh" ) do
       removed[rules.ring[player]]
     end
 
-    def hash
-      [board,removed,rows,removed_markers,turn].hash
-    end
-
     def markers_remaining
       51 - board.count( :white ) - board.count( :black )
     end

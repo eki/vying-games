@@ -130,10 +130,6 @@ Rules.create( "Oware" ) do
       scoring_pits[player]
     end
 
-    def hash
-      [board, score( :one ), score( :two ), turn].hash
-    end
-
     private
 
     def clear

@@ -84,10 +84,6 @@ Rules.create( "Footsteps" ) do
       c.x != 0 && c.x != 6 && points[:left] == 0 && points[:right] == 0
     end
 
-    def hash
-      [board,points,bids].hash
-    end
-
     def censor( player )
       position = super( player )
 

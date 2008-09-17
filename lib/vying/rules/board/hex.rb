@@ -58,6 +58,7 @@ Rules.create( "Hex" ) do
 
   position do
     attr_reader :board, :groups
+    ignore :groups
 
     def init
       length = @options[:board_size]
@@ -108,10 +109,6 @@ Rules.create( "Hex" ) do
 
     def loser?( player )
       winner?( opponent( player ) )
-    end
-
-    def hash
-      [board,turn].hash
     end
   end
 

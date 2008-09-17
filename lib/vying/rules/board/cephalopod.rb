@@ -138,10 +138,6 @@ Rules.create( "Cephalopod" ) do
     def score( player )
       dice[player]
     end
-
-    def hash
-      [board,turn].hash
-    end
   end
 
 end

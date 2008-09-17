@@ -54,10 +54,6 @@ Rules.create( "KeryoPente" ) do
     def score( player )
       captured[player]
     end
-
-    def hash
-      [board, captured, turn].hash
-    end
   end
 
 end

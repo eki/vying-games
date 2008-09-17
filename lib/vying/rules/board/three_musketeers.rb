@@ -61,10 +61,6 @@ Rules.create( "ThreeMusketeers" ) do
       winner?( opponent( player ) )
     end
 
-    def hash
-      [board,turn].hash
-    end
-
     private
 
     def red_in_a_line?

@@ -60,6 +60,7 @@ Rules.create( "Y" ) do
 
   position do
     attr_reader :board, :groups
+    ignore :groups
 
     def init
       @board = Board.triangle( @options[:board_size] )
@@ -110,10 +111,6 @@ Rules.create( "Y" ) do
 
     def loser?( player )
       winner?( opponent( player ) )
-    end
-
-    def hash
-      [board,turn].hash
     end
   end
 

@@ -164,6 +164,7 @@ Rules.create( "Havannah" ) do
 
   position do
     attr_reader :board, :groups
+    ignore :groups
 
     def init
       @board = Board.hexagon( 10 )
@@ -219,10 +220,6 @@ Rules.create( "Havannah" ) do
 
     def draw?
       board.unoccupied.empty? && players.all? { |p| ! winner?( p ) }
-    end
-
-    def hash
-      [board,turn].hash
     end
   end
 

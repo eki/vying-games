@@ -96,10 +96,6 @@ Rules.create( "Amazons" ) do
     def score( player )
       board.territory( player ).length
     end
-
-    def hash
-      [board,turn].hash
-    end
   end
 
 end

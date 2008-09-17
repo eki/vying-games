@@ -51,10 +51,6 @@ Rules.create( "Connect4" ) do
     def draw?
       board.unoccupied.empty? && ! board.threats.any? { |t| t.degree == 0 }
     end
-
-    def hash
-      [board, turn].hash
-    end
   end
 
 end

@@ -124,10 +124,6 @@ Rules.create( "NineMensMorris" ) do
       9 - remaining[opp] - board.count( opp )
     end
 
-    def hash
-      [board,remaining,removing,turn].hash
-    end
-
     def mill?( coord )
       p = board[coord]
 

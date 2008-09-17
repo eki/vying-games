@@ -108,10 +108,6 @@ Rules.create( "LinesOfAction" ) do
       ! winner?( player )
     end
 
-    def hash
-      [board,turn].hash
-    end
-
     def all_connected?( coords )
       all, check = {}, [coords.first]
 

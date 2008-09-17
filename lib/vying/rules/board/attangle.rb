@@ -80,10 +80,6 @@ Rules.create( 'Attangle' ) do
       count
     end
 
-    def hash
-      [board, pool, triples, turn].hash
-    end
-
     private
 
     def initial_pool( length )

@@ -69,10 +69,6 @@ Rules.create( "DotsAndBoxes" ) do
     def score( player )
       grid.boxes.values.select { |v| v == player }.length
     end
-
-    def hash
-      [grid,turn].hash
-    end
   end
 
 end

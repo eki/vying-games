@@ -119,10 +119,6 @@ Rules.create( "AmericanCheckers" ) do
       12 - board.count( opp ) - board.count( oppk )
     end
 
-    def hash
-      [board,turn].hash
-    end
-
     private
 
     def can_step?( c )

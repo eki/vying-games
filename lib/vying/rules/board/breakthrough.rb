@@ -88,10 +88,6 @@ Rules.create( "Breakthrough" ) do
     def score( player )
       16 - board.occupied( opponent( player ) ).length
     end
-
-    def hash
-      [board,turn].hash
-    end
   end
 
 end

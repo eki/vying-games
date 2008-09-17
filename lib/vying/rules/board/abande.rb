@@ -74,10 +74,6 @@ Rules.create( 'Abande' ) do
       count
     end
 
-    def hash
-      [board, pool, pass, turn].hash
-    end
-
     private
 
     def placement_moves

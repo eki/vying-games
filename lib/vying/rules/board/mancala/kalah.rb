@@ -128,10 +128,6 @@ Rules.create( "Kalah" ) do
     def score( player )
       scoring_pits[player]
     end
-
-    def hash
-      [board, scoring_pits, turn].hash
-    end
   end
 
 end

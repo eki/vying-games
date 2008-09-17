@@ -70,10 +70,6 @@ Rules.create( "Phutball" ) do
       winner?( opponent( player ) )
     end
 
-    def hash
-      [board,turn].hash
-    end
-
     def jumping_moves
       sc = board.occupied( :white ).first
       jmoves = []

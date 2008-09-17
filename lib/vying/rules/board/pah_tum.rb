@@ -69,10 +69,6 @@ Rules.create( "PahTum" ) do
       score
     end
 
-    def hash
-      [board,turn].hash
-    end
-
     # How many points is a line of n-in-a-row worth?  
     #
     #   n < 3, score = 0
