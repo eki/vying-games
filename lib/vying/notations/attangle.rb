@@ -20,8 +20,12 @@ class AttangleNotation < Notation
   end
  
   def translate( move, player )
+    cs = move.to_coords
+
+    return move if cs.empty?
+
     s = ''
-    move.to_coords.each do |c|
+    cs.each do |c|
       if c.x >= @board_size
         s += (97 + c.x).chr + (c.y - (c.x - @board_size)).to_s
       else

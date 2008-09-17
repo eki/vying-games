@@ -30,6 +30,9 @@ class TestAttangleNotation < Test::Unit::TestCase
     assert_equal( "a1", n.translate( "a1", :white ))
     assert_equal( "e1", n.translate( "e2", :white ))
     assert_equal( "e3,c6-c2", n.translate( "e4c6c2", :white ))
+
+    assert_equal( "undo", n.translate( "undo", :black ) )
+    assert_equal( "undo", n.translate( "undo", :white ) )
   end
 end
 
