@@ -9,13 +9,13 @@ class AttangleNotation < Notation
     @board_size = game.options[:board_size]
   end
 
-  def to_move( s, player )
+  def to_move( s )
     if s =~ /^\s*(\w\d)\s*$/
       conv( $1 )
     elsif s =~ /^\s*(\w\d),?(\w\d)-?(\w\d)\s*$/
       conv( $1 ) + conv( $2 ) + conv( $3 )
     else
-      raise "#{s} is an invalid notation format"
+      s
     end
   end
  

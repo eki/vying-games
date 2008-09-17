@@ -15,12 +15,9 @@ class TestNotation < Test::Unit::TestCase
     g = Game.new TicTacToe
     n = Notation.new( g )
 
-    assert_equal( "a1", n.to_move( "a1", :x ) )
-    assert_equal( "a1", n.to_move( "a1", :o ) )
-    assert_equal( "draw", n.to_move( "draw", :x ) )
-    assert_equal( "draw", n.to_move( "draw", :o ) )
-    assert_equal( "anything really", n.to_move( "anything really", :x ) )
-    assert_equal( "anything really", n.to_move( "anything really", :o ) )
+    assert_equal( "a1", n.to_move( "a1" ) )
+    assert_equal( "draw", n.to_move( "draw" ) )
+    assert_equal( "anything really", n.to_move( "anything really" ) )
   end
 
   def test_translate

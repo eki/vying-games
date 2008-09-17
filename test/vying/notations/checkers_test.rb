@@ -16,14 +16,11 @@ class TestCheckersNotation < Test::Unit::TestCase
     g = Game.new AmericanCheckers
     n = CheckersNotation.new( g )
 
-    assert_equal( "b1c2", n.to_move( "1-6", :red ) )
-    assert_equal( "b1c2", n.to_move( "1-6", :white ) )
+    assert_equal( "b1c2", n.to_move( "1-6" ) )
+    assert_equal( "a8b7", n.to_move( "29-25" ) )
+    assert_equal( "f3e2", n.to_move( "11-7" ) )
 
-    assert_equal( "a8b7", n.to_move( "29-25", :red ) )
-    assert_equal( "a8b7", n.to_move( "29-25", :white ) )
-
-    assert_equal( "f3e2", n.to_move( "11-7", :red ) )
-    assert_equal( "f3e2", n.to_move( "11-7", :white ) )
+    assert_equal( "undo", n.to_move( "undo" ) )
   end
 
   def test_translate

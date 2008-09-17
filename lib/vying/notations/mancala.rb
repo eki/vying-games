@@ -19,8 +19,8 @@ class MancalaNotation < Notation
          'E' => 'b1',
          'F' => 'a1' }
 
-  def to_move( s, player )
-    TO[s]
+  def to_move( s )
+    TO[s] ? TO[s] : s
   end
 
   FROM = [ ['F', 'E', 'D', 'C', 'B', 'A'],

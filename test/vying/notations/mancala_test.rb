@@ -16,14 +16,11 @@ class TestMancalaNotation < Test::Unit::TestCase
     g = Game.new Kalah
     n = MancalaNotation.new( g )
 
-    assert_equal( "e1", n.to_move( "B", :one ) )
-    assert_equal( "e1", n.to_move( "B", :two ) )
+    assert_equal( "e1", n.to_move( "B" ) )
+    assert_equal( "f2", n.to_move( "f" ) )
+    assert_equal( "b1", n.to_move( "E" ) )
 
-    assert_equal( "f2", n.to_move( "f", :one ) )
-    assert_equal( "f2", n.to_move( "f", :two ) )
-
-    assert_equal( "b1", n.to_move( "E", :one ) )
-    assert_equal( "b1", n.to_move( "E", :two ) )
+    assert_equal( "undo", n.to_move( "undo" ) )
   end
 
   def test_translate

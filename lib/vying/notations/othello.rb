@@ -5,7 +5,7 @@ class OthelloNotation < Notation
     :othello_notation
   end
 
-  def to_move( s, player )
+  def to_move( s )
     s.to_s.downcase
   end
 

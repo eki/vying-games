@@ -16,10 +16,10 @@ class TestOthelloNotation < Test::Unit::TestCase
     g = Game.new Othello
     n = OthelloNotation.new( g )
 
-    assert_equal( "c2", n.to_move( "C2", :black ) )
-    assert_equal( "c2", n.to_move( "C2", :white ) )
-    assert_equal( "c2", n.to_move( "c2", :black ) )
-    assert_equal( "c2", n.to_move( "c2", :white ) )
+    assert_equal( "c2", n.to_move( "C2" ) )
+    assert_equal( "c2", n.to_move( "c2" ) )
+
+    assert_equal( "undo", n.to_move( "undo" ) )
   end
 
   def test_translate
