@@ -19,9 +19,12 @@ class History
   # initializes a history.
 
   def initialize( rules, seed, options )
-    @rules, @seed, @options = rules, seed, options
+    @rules = rules
     @moves, @positions = [], [rules.new( seed, options )]
-    @seed ||= @positions.last.seed
+
+    @seed    = @positions.last.seed
+    @options = @positions.last.options.dup.freeze
+
     @created_at = @last_move_at = Time.now
   end
 

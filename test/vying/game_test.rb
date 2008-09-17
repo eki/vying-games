@@ -22,6 +22,16 @@ class TestGame < Test::Unit::TestCase
     assert_equal( :red, g.turn )
     assert_equal( 1234, g.seed )
     assert( g.respond_to?( :rng ) )
+
+    g = Game.new Kalah, :seeds_per_cup => 3
+    assert_equal( {:seeds_per_cup=>3}, g.history.last.options )
+    assert_equal( {:seeds_per_cup=>3}, g.history.options )
+    assert_equal( {:seeds_per_cup=>3}, g.options )
+
+    g = Game.new Kalah
+    assert_equal( {:seeds_per_cup=>6}, g.history.last.options )
+    assert_equal( {:seeds_per_cup=>6}, g.history.options )
+    assert_equal( {:seeds_per_cup=>6}, g.options )
   end
 
   def test_replay
