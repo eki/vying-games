@@ -100,10 +100,24 @@ class Position
     true
   end
 
-  # See Rules#eql?
+  # See Position#eql?
 
   def ==( o )
     eql?( o )
+  end
+
+  # Automatically guess at a "good" hash value for this position.  This
+  # involves hashing on #rules and any instance variables that are not 
+  # ignored.
+
+  def hash
+    a = [rules]
+
+    instance_variables. each do |iv|
+      a << instance_variable_get( iv ) unless self.class.ignored?( iv )
+    end
+
+    a.hash
   end
 
   # Indicates that an instance variable should be ignored (for purposes of
