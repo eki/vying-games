@@ -109,8 +109,8 @@ end
 
 # Load all SpecialMoves, Rules, Notations, and Bots
 
-SpecialMove.require_all
-Rules.require_all
-Notation.require_all
-Bot.require_all( $:.select { |p| p =~ /vying/ } )
+SpecialMove.require_all( File.dirname( __FILE__ ) )
+Rules.require_all( File.dirname( __FILE__ ) )
+Notation.require_all( File.dirname( __FILE__ ) )
+Bot.require_all( File.dirname( __FILE__ ) )
 
