@@ -227,10 +227,15 @@ class Board
     @occupied.keys.compact
   end
 
-  # Get a list of all the coords of the cells occupied by the given piece.
+  # Get a list of all the coords of the cells occupied by the given piece,
+  # or, if no piece is given, occupied by any piece.
 
-  def occupied( p )
-    @occupied[p]
+  def occupied( p=nil )
+    if p
+      @occupied[p]
+    else
+      coords.coords - unoccupied
+    end
   end
 
   # Get a list of the coords of unoccupied cells (that is the value at

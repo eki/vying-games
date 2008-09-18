@@ -10,10 +10,11 @@ require 'vying'
 
 Rules.create( 'Abande' ) do
   name     'Abande'
-  version  '0.1.0'
-#  notation :abande_notation
+  version  '0.2.0'
+  notation :abande_notation
 
   players :black, :white
+  option :board_size, :default => 4, :values => Array( 3..6 )
 
   score_determines_outcome
 
@@ -23,10 +24,11 @@ Rules.create( 'Abande' ) do
     attr_reader :board, :pool, :pass
 
     def init
-      @board = Board.hexagon( 4, :plugins => [:stacking] )
-      @pool = { :white => 18, :black => 18 }
-      @pass = { :white => false, :black => false }
-      @moves = { :white => 0, :black => 0 }
+      length = @options[:board_size]
+
+      @board = Board.hexagon( length, :plugins => [:stacking] )
+      @pool  = Hash.new( @pool_size = initial_pool( length ) )
+      @pass  = { :white => false, :black => false }
     end
 
     def has_moves
@@ -44,7 +46,10 @@ Rules.create( 'Abande' ) do
     end
 
     def apply!( move )
-      unless pass[turn] = move == :pass
+      if move == 'pass'
+        pass[turn] = true
+      else
+        pass[turn] = pass[opponent( turn )] = false
         coords = move.to_coords
         if coords.length == 1
           board[coords.first] = [turn]
@@ -54,7 +59,6 @@ Rules.create( 'Abande' ) do
           board[coords.first] = nil
         end
       end
-      @moves[turn] += 1
       rotate_turn
       self
     end
@@ -69,32 +73,66 @@ Rules.create( 'Abande' ) do
         cs = board.occupied( p )
 
         next if cs.nil?
-        count += cs.length if p.first == player # TODO: && adjacent to enemy!
+        count += cs.length if p.first == player # TODO: && adjacent to opponent
       end
       count
     end
 
     private
 
+    def initial_pool( length )
+      ((length * 2 - 1) ** 2 - length * (length - 1) - 1) / 2
+    end
+
     def placement_moves
-      if turn == :black && @moves[:black] == 0
-        board.unoccupied
+      all = []
+      if turn == :black && pool[:black] == @pool_size
+        all += board.unoccupied
       else
-        board.unoccupied # FIXME: adjacent placements only!
+        board.unoccupied.each do |c|
+          nboard = board.dup
+          nboard[c] = [turn]
+          all << c if all_connected?( nboard.occupied )
+        end
       end
+
+      all
     end
 
     def capture_moves
       all = []
-      unless turn == :black && @moves[:black] == 1
+      unless turn == :black && pool[:black] == @pool_size-1
         board.pieces.each do |p|
           if p && p.first == turn
-            # TODO: moves which preserve connectivity
+            board.occupied( p ).each do |c|
+              board.coords.neighbors( c ).each do |n|
+                if board[n] && board[n].first == opponent( turn ) && board[c].length + board[n].length <= 3
+                  nboard = board.dup
+                  nboard[n] = nboard[c] + nboard[n]
+                  nboard[c] = nil
+                  all << "#{c}#{n}" if all_connected?( nboard.occupied )
+                end
+              end
+            end
           end
         end
       end
 
       all
+    end
+
+    def all_connected?( coords )
+      check = [coords.first]
+
+      while c = check.pop
+        coords.delete c
+
+        board.coords.neighbors( c ).each do |nc|
+          check << nc if coords.include?( nc )
+        end
+      end
+
+      coords.empty?
     end
 
   end
