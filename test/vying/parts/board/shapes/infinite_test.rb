@@ -15,12 +15,13 @@ class TestBoardInfinite < Test::Unit::TestCase
     assert_equal( [Coord[-1,-2], Coord[2,2]], b.bounds )
     assert_equal( [Coord[0,0], Coord[0,0]], b.bounds_occupied )
 
-    assert_equal( 20, b.occupied( nil ).length )
-    assert( b.occupied( nil ).include?( Coord[0,0] ) )
-    assert( b.occupied( nil ).include?( Coord[-1,-2] ) )
-    assert( b.occupied( nil ).include?( Coord[2,2] ) )
-    assert( b.occupied( nil ).include?( Coord[-1,2] ) )
-    assert( b.occupied( nil ).include?( Coord[2,-2] ) )
+    assert_equal( 20, b.unoccupied.length )
+    assert_equal( 20, b.empty_count )
+    assert( b.unoccupied.include?( Coord[0,0] ) )
+    assert( b.unoccupied.include?( Coord[-1,-2] ) )
+    assert( b.unoccupied.include?( Coord[2,2] ) )
+    assert( b.unoccupied.include?( Coord[-1,2] ) )
+    assert( b.unoccupied.include?( Coord[2,-2] ) )
 
     b = Board.infinite( 4, 5, :cell_shape => :triangle )
     assert_equal( :infinite, b.shape )
@@ -136,7 +137,7 @@ class TestBoardInfinite < Test::Unit::TestCase
     assert( b.coords.include?( Coord[0,0] ) )
 
     assert_equal( [Coord[0,0]], b.occupied( :x ) )
-    assert_equal( 19, b.occupied( nil ).length )
+    assert_equal( 19, b.unoccupied.length )
 
     b[2,0] = :x
 
@@ -158,7 +159,7 @@ class TestBoardInfinite < Test::Unit::TestCase
     assert( b.coords.include?( Coord[0,0] ) )
 
     assert_equal( [Coord[0,0],Coord[2,0]].sort, b.occupied( :x ).sort )
-    assert_equal( 23, b.occupied( nil ).length )
+    assert_equal( 23, b.unoccupied.length )
 
     b[-3,-5] = :x
 
@@ -181,7 +182,7 @@ class TestBoardInfinite < Test::Unit::TestCase
 
     assert_equal( [Coord[0,0],Coord[2,0],Coord[-3,-5]].sort, 
                   b.occupied( :x ).sort )
-    assert_equal( 69, b.occupied( nil ).length )
+    assert_equal( 69, b.unoccupied.length )
 
 
   end

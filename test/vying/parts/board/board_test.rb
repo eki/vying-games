@@ -160,8 +160,20 @@ class TestBoard < Test::Unit::TestCase
     b.clear
     b[:a1] = :black
     assert_equal( [Coord[:a1]], b.occupied( :black ) )   
-    assert_equal( 15, b.occupied( nil ).length )   
-    assert( ! b.occupied( nil ).include?( Coord[:a1] ) )   
+    assert_equal( 1, b.occupied.length )
+    assert_equal( 15, b.unoccupied.length )   
+    assert_equal( 15, b.empty_count )   
+    assert( ! b.unoccupied.include?( Coord[:a1] ) )   
+
+    b[:a2] = :white
+    assert_equal( [Coord[:a1]], b.occupied( :black ) )   
+    assert_equal( [Coord[:a2]], b.occupied( :white ) )   
+    assert_equal( [Coord[:a1],Coord[:a2]].sort, b.occupied.sort )   
+    assert_equal( 2, b.occupied.length )
+    assert_equal( 14, b.unoccupied.length )   
+    assert_equal( 14, b.empty_count )   
+    assert( ! b.unoccupied.include?( Coord[:a2] ) )   
+
     assert_nothing_raised { Marshal.dump( b ) }
   end
 
