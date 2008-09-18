@@ -9,19 +9,23 @@ class AbandeNotation < Notation
     @board_size = game.options[:board_size]
   end
 
-  def to_move( s, player )
+  def to_move( s )
     if s =~ /^\s*(\w\d)\s*$/
       conv( $1 )
     elsif s =~ /^\s*(\w\d)-?(\w\d)\s*$/
       conv( $1 ) + conv( $2 )
     else
-      raise "#{s} is an invalid notation format"
+      s
     end
   end
  
   def translate( move, player )
+    cs = move.to_coords
+
+    return move if cs.empty?
+
     s = ''
-    move.to_coords.each do |c|
+    cs.each do |c|
       if c.x >= @board_size
         s += (97 + c.x).chr + (c.y - (c.x - @board_size)).to_s
       else
