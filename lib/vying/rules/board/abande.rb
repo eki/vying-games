@@ -28,7 +28,7 @@ Rules.create( 'Abande' ) do
 
       @board = Board.hexagon( length, :plugins => [:stacking] )
       @pool  = Hash.new( @pool_size = initial_pool( length ) )
-      @pass  = { :white => false, :black => false }
+      @pass  = {}
     end
 
     def has_moves
@@ -49,7 +49,7 @@ Rules.create( 'Abande' ) do
       if move == 'pass'
         pass[turn] = true
       else
-        pass[turn] = pass[opponent( turn )] = false
+        pass.clear
         coords = move.to_coords
         if coords.length == 1
           board[coords.first] = [turn]
