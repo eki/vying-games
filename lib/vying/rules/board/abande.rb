@@ -10,7 +10,7 @@ require 'vying'
 
 Rules.create( 'Abande' ) do
   name     'Abande'
-  version  '0.2.0'
+  version  '1.0.0'
   notation :abande_notation
 
   players :black, :white
@@ -27,7 +27,7 @@ Rules.create( 'Abande' ) do
       length = @options[:board_size]
 
       @board = Board.hexagon( length, :plugins => [:stacking] )
-      @pool  = Hash.new( @pool_size = initial_pool( length ) )
+      @pool  = Hash.new( @initial_pool_size = initial_pool( length ) )
       @pass  = {}
     end
 
@@ -69,11 +69,9 @@ Rules.create( 'Abande' ) do
 
     def score( player )
       count = 0
-      board.pieces.each do |p|
-        cs = board.occupied( p )
-
-        next if cs.nil?
-        count += cs.length if p.first == player # TODO: && adjacent to opponent
+      board.occupied.each do |c|
+        next if board[c].nil?
+        count += board[c].length if board[c].first == player && ! sleeping?( c )
       end
       count
     end
@@ -86,7 +84,7 @@ Rules.create( 'Abande' ) do
 
     def placement_moves
       all = []
-      if turn == :black && pool[:black] == @pool_size
+      if turn == :black && pool[:black] == @initial_pool_size
         all += board.unoccupied
       else
         board.unoccupied.each do |c|
@@ -101,10 +99,12 @@ Rules.create( 'Abande' ) do
 
     def capture_moves
       all = []
-      unless turn == :black && pool[:black] == @pool_size-1
+      unless turn == :black && pool[:black] == @initial_pool_size-1
         board.pieces.each do |p|
+
           if p && p.first == turn
             board.occupied( p ).each do |c|
+
               board.coords.neighbors( c ).each do |n|
                 if board[n] && board[n].first == opponent( turn ) && board[c].length + board[n].length <= 3
                   nboard = board.dup
@@ -113,6 +113,7 @@ Rules.create( 'Abande' ) do
                   all << "#{c}#{n}" if all_connected?( nboard.occupied )
                 end
               end
+
             end
           end
         end
@@ -133,6 +134,15 @@ Rules.create( 'Abande' ) do
       end
 
       coords.empty?
+    end
+
+    def sleeping?( coord )
+      player = opponent( board[coord].first )
+
+      board.coords.neighbors( coord ).each do |c|
+        return false if board[c] && board[c].first == player
+      end
+      true
     end
 
   end

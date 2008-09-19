@@ -12,7 +12,7 @@ class TestAbande < Test::Unit::TestCase
 
   def test_info
     assert_equal( "Abande", rules.name )
-    assert( rules.version == '0.2.0' )
+    assert( rules.version == '1.0.0' )
     assert( rules.score_determines_outcome )
   end
 
@@ -59,6 +59,8 @@ class TestAbande < Test::Unit::TestCase
     assert_equal( [:black], g.board[:d4] )
     assert_equal( 18, g.pool[:white] )
     assert_equal( 17, g.pool[:black] )
+    assert_equal( 0, g.score( :white ) )
+    assert_equal( 0, g.score( :black ) )
 
     assert_raise( RuntimeError ) { g << "d4" }
     assert_raise( RuntimeError ) { g << "a1" }
@@ -67,6 +69,9 @@ class TestAbande < Test::Unit::TestCase
     assert_equal( [:white], g.board[:c3] )
     assert_equal( 17, g.pool[:white] )
     assert_equal( 17, g.pool[:black] )
+    assert_equal( 1, g.score( :white ) )
+    assert_equal( 1, g.score( :black ) )
+
   end
 
 end
