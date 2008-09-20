@@ -11,15 +11,14 @@ module Board::Plugins::Stacking
 
   def to_s
     off = height >= 10 ? 2 : 1
-    w = width
     sp = @cells.compact.max { |a,b| a.length <=> b.length }
     sp = sp ? sp.length : 1
-    letters = "#{' ' * off}#{('a'...(?a+w).chr).collect { |l| ' ' + l + ' ' * sp }}#{' ' * off}\n"
+    letters = "#{' ' * off}#{('a'...(97 + width).chr).collect { |l| ' ' + l + ' ' * sp }}#{' ' * off}\n"
 
     s = letters
     height.times do |y|
       s += sprintf( "%*d", off, y+1 )
-      s += row(y).inject( '' ) do |rs,p|
+      s += row( y ).inject( '' ) do |rs,p|
         stack = p.collect { |x| x.to_s[0..0] }.join if p
         rs + (p ? " #{stack}#{'_' * (sp - stack.length)} " : " #{'_' * sp} ")
       end
