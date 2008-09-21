@@ -43,48 +43,6 @@ class TestY < Test::Unit::TestCase
     assert_equal( [:red], g.has_moves )
   end
 
-  def test_groups
-    g = Game.new( rules )
-
-    g << "b1"
-    
-    assert_equal( 1, g.groups[:blue].length )
-    assert_equal( 0, g.groups[:red].length )
-
-    assert_equal( 1, g.groups[:blue].first.sides )
-
-    g << "a1"
-
-    assert_equal( 1, g.groups[:blue].length )
-    assert_equal( 1, g.groups[:red].length )
-
-    assert_equal( 2, g.groups[:red].first.sides )
-
-    g << "b3"
-    
-    assert_equal( 2, g.groups[:blue].length )
-    assert_equal( 1, g.groups[:red].length )
-
-    g << "a2"
-
-    assert_equal( 2, g.groups[:blue].length )
-    assert_equal( 1, g.groups[:red].length )
-
-    g << "c2" << "a3"
-
-    assert_equal( 2, g.groups[:blue].length )
-    assert_equal( 1, g.groups[:red].length )
-
-    g << "b2"
-
-    assert_equal( 1, g.groups[:blue].length )
-    assert_equal( 1, g.groups[:red].length )
-
-    cs = [:b1, :b2, :b3, :c2].map { |c| Coord[c] }.sort
-
-    assert_equal( cs, g.groups[:blue].first.coords.sort )
-  end
-
   def test_sides12
     g = Game.new( rules )
     g << ["a9", "a4", 
@@ -92,15 +50,10 @@ class TestY < Test::Unit::TestCase
           "c9", "c2",
           "d9"]
 
-    assert_equal( 1, g.groups[:blue].length )
-    assert_equal( 1, g.groups[:red].length )
-
-    assert_equal( 2, g.groups[:blue].first.sides )
-    assert_equal( 1, g.groups[:red].first.sides )
+    assert_equal( 1, g.board.groups[:blue].length )
+    assert_equal( 1, g.board.groups[:red].length )
 
     g << "d1"
-
-    assert_equal( 2, g.groups[:red].first.sides )
 
     g << ["e8", "f7",
           "e7", "g6",
@@ -110,21 +63,18 @@ class TestY < Test::Unit::TestCase
           "e3", "k2",
           "e2", "l1"]
 
-    assert_equal( 2, g.groups[:blue].first.sides )
-    assert_equal( 2, g.groups[:red].length )
-    assert_equal( [2,2],  g.groups[:red].map { |group| group.sides } )
+    assert_equal( 2, g.board.groups[:red].length )
 
     assert( ! g.final? )
 
     g << "f1"
 
-    assert_equal( 3, g.groups[:blue].first.sides )
-    assert( g.groups[:blue].first.winning? )
     assert( g.final? )
     assert( g.winner?( :blue ) )
     assert( g.loser?( :red ) )
     assert( ! g.winner?( :red ) )
     assert( ! g.loser?( :blue ) )
+    assert( ! g.draw? )
   end
 
   def test_sides14
@@ -136,15 +86,10 @@ class TestY < Test::Unit::TestCase
           "e9", "e2",
           "f9",]
 
-    assert_equal( 1, g.groups[:blue].length )
-    assert_equal( 1, g.groups[:red].length )
-
-    assert_equal( 2, g.groups[:blue].first.sides )
-    assert_equal( 1, g.groups[:red].first.sides )
+    assert_equal( 1, g.board.groups[:blue].length )
+    assert_equal( 1, g.board.groups[:red].length )
 
     g << "f1"
-
-    assert_equal( 2, g.groups[:red].first.sides )
 
     g << ["f8", "h7",
           "f7", "i6",
@@ -154,21 +99,18 @@ class TestY < Test::Unit::TestCase
           "f3", "m2",
           "f2", "n1"]
 
-    assert_equal( 2, g.groups[:blue].first.sides )
-    assert_equal( 2, g.groups[:red].length )
-    assert_equal( [2,2],  g.groups[:red].map { |group| group.sides } )
+    assert_equal( 2, g.board.groups[:red].length )
 
     assert( ! g.final? )
 
     g << "g1"
 
-    assert_equal( 3, g.groups[:blue].first.sides )
-    assert( g.groups[:blue].first.winning? )
     assert( g.final? )
     assert( g.winner?( :blue ) )
     assert( g.loser?( :red ) )
     assert( ! g.winner?( :red ) )
     assert( ! g.loser?( :blue ) )
+    assert( ! g.draw? )
   end
 end
 
