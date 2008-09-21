@@ -370,6 +370,29 @@ class Board
       @coords.neighbors_nil( coord, @board.directions( coord ) )
     end
 
+    # Are the given coords all connected?  This checks that the list of coords 
+    # are connected (in terms of Board#directions and Coords#include?).
+    #
+    # Note:  This method is kind of difficult to place.  It's very intimate
+    # with both Board (because it needs #directions) and, yet, it's really
+    # more of a Coords method (because it needs Coords#include? and doesn't
+    # depend on anything else from Board).
+
+    def connected?( cs )
+      cs = cs.dup
+      all, check = {}, [cs.first]
+
+      while c = check.pop
+        cs.delete( c )
+
+        neighbors( c ).each do |nc|
+          check << nc  if cs.include?( nc )
+        end
+      end
+  
+      cs.empty?
+    end
+
     def to_a
       @coords.to_a
     end

@@ -94,8 +94,8 @@ class TestLinesOfAction < Test::Unit::TestCase
 
     g << "e1b1"
 
-    assert( g.board.connected?( g.board.occupied( :black ) ) )
-    assert( g.board.connected?( g.board.occupied( :white ) ) )
+    assert( g.board.coords.connected?( g.board.occupied( :black ) ) )
+    assert( g.board.coords.connected?( g.board.occupied( :white ) ) )
 
     assert_equal( :white, g.history.last.turn )
 

@@ -91,7 +91,7 @@ module Board::Plugins::Connection
 
       ncs = coords.neighbors( c ).select { |nc| oldg.include?( nc ) }
 
-      if ncs.empty? || ! connected?( ncs )
+      if ncs.empty? || ! coords.connected?( ncs )
         groups[oldp].delete( oldg )  # The group has been split or emptied
 
         new_groups = []
@@ -126,26 +126,6 @@ module Board::Plugins::Connection
         groups[p] << new_groups.inject( g ) { |m,a| m | a }
       end
     end
-  end
-
-  # Are the given coords all connected?  This does *not* take into account
-  # what the related cells may or may not be occupied with.  It only checks
-  # that the list of coords are connected (in terms of Board#directions and
-  # Coords#include?).
-
-  def connected?( cs )
-    cs = cs.dup
-    all, check = {}, [cs.first]
-
-    while c = check.pop
-      cs.delete( c )
-
-      coords.neighbors( c ).each do |nc|
-        check << nc  if cs.include?( nc )
-      end
-    end
-
-    cs.empty?
   end
 
   private

@@ -23,7 +23,7 @@ Rules.create( 'Abande' ) do
     attr_reader :board, :pool, :pass
 
     def init
-      @board = Board.hexagon( 4, :plugins => [:stacking, :connection] )
+      @board = Board.hexagon( 4, :plugins => [:stacking] )
       @pool  = Hash.new( 18 )
       @pass  = Hash.new( false )
     end
@@ -81,7 +81,7 @@ Rules.create( 'Abande' ) do
         all += board.unoccupied
       else
         board.unoccupied.each do |c|
-          all << c if board.connected?( board.occupied + [c] )
+          all << c if board.coords.connected?( board.occupied + [c] )
         end
       end
 
@@ -98,7 +98,7 @@ Rules.create( 'Abande' ) do
 
               board.coords.neighbors( c ).each do |n|
                 if board[n] && board[n].first == opponent( turn ) && board[c].length + board[n].length <= 3
-                  all << "#{c}#{n}" if board.connected?( board.occupied - [c])
+                  all << "#{c}#{n}" if board.coords.connected?( board.occupied - [c])
                 end
               end
 
