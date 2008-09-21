@@ -45,44 +45,6 @@ class TestHex < Test::Unit::TestCase
     assert_equal( [:blue], g.has_moves )
   end
 
-  def test_groups
-    g = Game.new( rules )
-
-    g << "b1"
-    
-    assert_equal( 1, g.groups[:red].length )
-    assert_equal( 0, g.groups[:blue].length )
-
-    g << "a1"
-
-    assert_equal( 1, g.groups[:red].length )
-    assert_equal( 1, g.groups[:blue].length )
-
-    g << "b3"
-    
-    assert_equal( 2, g.groups[:red].length )
-    assert_equal( 1, g.groups[:blue].length )
-
-    g << "a2"
-
-    assert_equal( 2, g.groups[:red].length )
-    assert_equal( 1, g.groups[:blue].length )
-
-    g << "c2" << "a3"
-
-    assert_equal( 2, g.groups[:red].length )
-    assert_equal( 1, g.groups[:blue].length )
-
-    g << "b2"
-
-    assert_equal( 1, g.groups[:red].length )
-    assert_equal( 1, g.groups[:blue].length )
-
-    cs = [:b1, :b2, :b3, :c2].map { |c| Coord[c] }.sort
-
-    assert_equal( cs, g.groups[:red].first.coords.sort )
-  end
-
   def test_sides_red
     g = Game.new( rules, :board_size => 9 )
     g << [:c1, :a3,
@@ -95,20 +57,14 @@ class TestHex < Test::Unit::TestCase
           :b8, :g2,
           :b9, :h2]
 
-    assert_equal( 2, g.groups[:red].length )
-    assert_equal( 2, g.groups[:blue].length )
-
-    assert( ! g.groups[:red].any? { |group| group.winning?( :red ) } )
-    assert( ! g.groups[:blue].any? { |group| group.winning?( :blue ) } )
+    assert_equal( 2, g.board.groups[:red].length )
+    assert_equal( 2, g.board.groups[:blue].length )
 
     assert( ! g.final? )
 
     g << :c3
 
-    assert_equal( 1, g.groups[:red].length )
-
-    assert( g.groups[:red].any? { |group| group.winning?( :red ) } )
-    assert( ! g.groups[:blue].any? { |group| group.winning?( :blue ) } )
+    assert_equal( 1, g.board.groups[:red].length )
 
     assert( g.final? )
 
@@ -116,6 +72,7 @@ class TestHex < Test::Unit::TestCase
     assert( g.loser?( :blue ) )
     assert( ! g.winner?( :blue ) )
     assert( ! g.loser?( :red ) )
+    assert( ! g.draw? )
   end
 
   def test_sides_blue
@@ -132,20 +89,14 @@ class TestHex < Test::Unit::TestCase
           :a1, :i2,
           :a2 ]
 
-    assert_equal( 3, g.groups[:red].length )
-    assert_equal( 2, g.groups[:blue].length )
-
-    assert( ! g.groups[:red].any? { |group| group.winning?( :red ) } )
-    assert( ! g.groups[:blue].any? { |group| group.winning?( :blue ) } )
+    assert_equal( 3, g.board.groups[:red].length )
+    assert_equal( 2, g.board.groups[:blue].length )
 
     assert( ! g.final? )
 
     g << :c3
 
-    assert_equal( 1, g.groups[:blue].length )
-
-    assert( ! g.groups[:red].any? { |group| group.winning?( :red ) } )
-    assert( g.groups[:blue].any? { |group| group.winning?( :blue ) } )
+    assert_equal( 1, g.board.groups[:blue].length )
 
     assert( g.final? )
 
@@ -153,6 +104,7 @@ class TestHex < Test::Unit::TestCase
     assert( g.loser?( :red ) )
     assert( ! g.winner?( :red ) )
     assert( ! g.loser?( :blue ) )
+    assert( ! g.draw? )
   end
 end
 
