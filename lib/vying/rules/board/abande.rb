@@ -26,7 +26,7 @@ Rules.create( 'Abande' ) do
     def init
       length = @options[:board_size]
 
-      @board = Board.hexagon( length, :plugins => [:stacking] )
+      @board = Board.hexagon( length, :plugins => [:stacking, :connection] )
       @pool  = Hash.new( @initial_pool_size = initial_pool( length ) )
       @pass  = {}
     end
@@ -88,9 +88,7 @@ Rules.create( 'Abande' ) do
         all += board.unoccupied
       else
         board.unoccupied.each do |c|
-          nboard = board.dup
-          nboard[c] = [turn]
-          all << c if all_connected?( nboard.occupied )
+          all << c if board.connected?( board.occupied + [c] )
         end
       end
 
@@ -107,10 +105,7 @@ Rules.create( 'Abande' ) do
 
               board.coords.neighbors( c ).each do |n|
                 if board[n] && board[n].first == opponent( turn ) && board[c].length + board[n].length <= 3
-                  nboard = board.dup
-                  nboard[n] = nboard[c] + nboard[n]
-                  nboard[c] = nil
-                  all << "#{c}#{n}" if all_connected?( nboard.occupied )
+                  all << "#{c}#{n}" if board.connected?( board.occupied - [c])
                 end
               end
 
@@ -120,20 +115,6 @@ Rules.create( 'Abande' ) do
       end
 
       all
-    end
-
-    def all_connected?( coords )
-      check = [coords.first]
-
-      while c = check.pop
-        coords.delete c
-
-        board.coords.neighbors( c ).each do |nc|
-          check << nc if coords.include?( nc )
-        end
-      end
-
-      coords.empty?
     end
 
     def sleeping?( coord )
