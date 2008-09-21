@@ -19,7 +19,7 @@ Rules.create( "LinesOfAction" ) do
     attr_reader :board, :counts
 
     def init
-      @board = Board.square( 8 )
+      @board = Board.square( 8, :plugins => [:connection] )
       @board[:a2,:a3,:a4,:a5,:a6,:a7] = :black
       @board[:h2,:h3,:h4,:h5,:h6,:h7] = :black
       @board[:b1,:c1,:d1,:e1,:f1,:g1] = :white
@@ -37,7 +37,7 @@ Rules.create( "LinesOfAction" ) do
       coords = board.occupied( turn )
 
       coords.each do |c|
-        [:n,:e,:w,:s,:ne,:nw,:se,:sw].each do |d|
+        board.directions.each do |d|
            count = count( c, d )
 
            nc = c
@@ -85,41 +85,24 @@ Rules.create( "LinesOfAction" ) do
     end
 
     def final?
-      players.each do |p|
-        coords = board.occupied( p ).dup
-        return true if all_connected?( coords )
-      end
-
-      return false
+      players.any? { |p| board.groups[p].length <= 1 }
     end
 
-    # If both players are simultaneously connected the game should end
-    # with the player who just moved as the winner
+    # Treat simultaneous connection as a draw.  For a long time this was the
+    # accepted rule, until it was later changed by the designer.
 
     def winner?( player )
-      coords = board.occupied( player ).dup
-      if all_connected?( coords )
-        turn != player || 
-        ! all_connected?( board.occupied( opponent( player ) ).dup )
-      end
+         board.groups[player].length <= 1 && 
+      ! (board.groups[opponent( player )].length <= 1)
     end
 
     def loser?( player )
-      ! winner?( player )
+      ! (board.groups[player].length <= 1) && 
+         board.groups[opponent( player )].length <= 1
     end
 
-    def all_connected?( coords )
-      all, check = {}, [coords.first]
-
-      while c = check.pop
-        coords.delete c
-
-        board.coords.neighbors( c ).each do |nc|
-          check << nc if coords.include?( nc )
-        end
-      end
-
-      coords.empty?
+    def draw?
+      players.all? { |p| board.groups[p].length <= 1 }
     end
 
     def count( c, d )

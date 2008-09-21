@@ -94,20 +94,20 @@ class TestLinesOfAction < Test::Unit::TestCase
 
     g << "e1b1"
 
-    assert( g.all_connected?( g.board.occupied( :black ) ) )
-    assert( g.all_connected?( g.board.occupied( :white ) ) )
+    assert( g.board.connected?( g.board.occupied( :black ) ) )
+    assert( g.board.connected?( g.board.occupied( :white ) ) )
 
     assert_equal( :white, g.history.last.turn )
 
     assert( g.final? )
 
-    assert( g.winner?( :black ) )
+    assert( ! g.winner?( :black ) )
     assert( ! g.winner?( :white ) )
 
-    assert( g.loser?( :white ) )
+    assert( ! g.loser?( :white ) )
     assert( ! g.loser?( :black ) )
 
-    assert( ! g.draw? )
+    assert( g.draw? )
   end
 
 end
