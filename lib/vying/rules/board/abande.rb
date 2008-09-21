@@ -14,7 +14,6 @@ Rules.create( 'Abande' ) do
   notation :abande_notation
 
   players :black, :white
-  option :board_size, :default => 4, :values => Array( 3..6 )
 
   score_determines_outcome
 
@@ -24,10 +23,8 @@ Rules.create( 'Abande' ) do
     attr_reader :board, :pool, :pass
 
     def init
-      length = @options[:board_size]
-
-      @board = Board.hexagon( length, :plugins => [:stacking, :connection] )
-      @pool  = Hash.new( @initial_pool_size = initial_pool( length ) )
+      @board = Board.hexagon( 4, :plugins => [:stacking, :connection] )
+      @pool  = Hash.new( 18 )
       @pass  = {}
     end
 
@@ -78,13 +75,9 @@ Rules.create( 'Abande' ) do
 
     private
 
-    def initial_pool( length )
-      ((length * 2 - 1) ** 2 - length * (length - 1) - 1) / 2
-    end
-
     def placement_moves
       all = []
-      if turn == :black && pool[:black] == @initial_pool_size
+      if turn == :black && pool[:black] == 18
         all += board.unoccupied
       else
         board.unoccupied.each do |c|
@@ -97,7 +90,7 @@ Rules.create( 'Abande' ) do
 
     def capture_moves
       all = []
-      unless turn == :black && pool[:black] == @initial_pool_size-1
+      unless turn == :black && pool[:black] == 17
         board.pieces.each do |p|
 
           if p && p.first == turn
