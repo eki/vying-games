@@ -106,7 +106,7 @@ class Board
     b = self.class.allocate
 
     instance_variables.each do |iv|
-      b.instance_variable_set( iv, instance_variable_get( iv ) )
+      b.instance_variable_set( iv, instance_variable_get( iv ).deep_dup )
     end
 
     plugins.each { |p| b.extend( Board.find_plugin( p ) ) }
