@@ -25,7 +25,7 @@ Rules.create( 'Abande' ) do
     def init
       @board = Board.hexagon( 4, :plugins => [:stacking, :connection] )
       @pool  = Hash.new( 18 )
-      @pass  = {}
+      @pass  = Hash.new( false )
     end
 
     def has_moves
@@ -43,10 +43,9 @@ Rules.create( 'Abande' ) do
     end
 
     def apply!( move )
-      if move == 'pass'
+      if move.to_s == 'pass'
         pass[turn] = true
       else
-        pass.clear
         coords = move.to_coords
         if coords.length == 1
           board[coords.first] = [turn]
@@ -55,6 +54,7 @@ Rules.create( 'Abande' ) do
           board[coords.last] = board[coords.first] + board[coords.last]
           board[coords.first] = nil
         end
+        pass.clear
       end
       rotate_turn
       self
