@@ -6,7 +6,7 @@ class AbandeNotation < Notation
  
   def initialize( game )
     super( game )
-    @board_size = game.options[:board_size]
+    @board_size = game.board.length
   end
 
   def to_move( s )
