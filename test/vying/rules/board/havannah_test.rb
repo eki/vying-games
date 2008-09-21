@@ -30,12 +30,60 @@ class TestHavannah < Test::Unit::TestCase
     assert_equal( [:red], g.has_moves )
   end
 
+  def test_bridge_01
+    g = play_sequence ["s10", "a1", "r10", "a2", "r11", "b2", "r12", "b3",
+                       "r13", "c1", "r14", "c2", "r15", "d2", "r16", "d3",
+                       "r17", "e1", "r18", "e3", "s19"]
+
+    assert( !g.draw? )
+    assert( g.winner?( :blue ) )
+    assert( !g.loser?( :blue ) )
+    assert( !g.winner?( :red ) )
+    assert( g.loser?( :red ) )
+  end
+
+  def test_bridge_02
+    g = play_sequence ["s10", "a1", "s11", "a2", "s12", "b2", "s13", "b3",
+                       "s14", "c1", "s15", "c2", "s16", "d2", "s17", "d3",
+                       "s18", "e1", "s19"]
+
+    assert( !g.draw? )
+    assert( g.winner?( :blue ) )
+    assert( !g.loser?( :blue ) )
+    assert( !g.winner?( :red ) )
+    assert( g.loser?( :red ) )
+  end
+
+  def test_fork_01
+    g = play_sequence ["s18", "a1", "r19", "a2", "r18", "b2", "q17", "b3",
+                       "p16", "c1", "o15", "c2", "n14", "d2", "n13", "d3",
+                       "n12", "e1", "n11", "e3", "n10", "e4", "n9",  "e5",
+                       "n8",  "f1", "n7",  "f3", "n6",  "f5", "n5"]
+
+    assert( !g.draw? )
+    assert( g.winner?( :blue ) )
+    assert( !g.loser?( :blue ) )
+    assert( !g.winner?( :red ) )
+    assert( g.loser?( :red ) )
+  end
+
+  def test_fork_02
+    g = play_sequence ["s18", "a1", "s19", "a2", "r18", "b2", "q17", "b3",
+                       "p16", "c1", "o15", "c2", "n14", "d2", "n13", "d3",
+                       "n12", "e1", "n11", "e3", "n10", "e4", "n9",  "e5",
+                       "n8",  "f1", "n7",  "f3", "n6",  "f5", "n5",  "f6",
+                       "r19"]
+
+    assert( !g.draw? )
+    assert( g.winner?( :blue ) )
+    assert( !g.loser?( :blue ) )
+    assert( !g.winner?( :red ) )
+    assert( g.loser?( :red ) )
+  end
+
   def test_ring_01
     g = play_sequence ["d6", "j11", "c5", "j10", "c4", "j9", 
                        "d4", "j8", "e5", "j7", "e6"]
-
-    assert_equal( 1, g.groups[:blue].length )
-    assert( g.groups[:blue].first.ring? )
 
     assert( !g.draw? )
     assert( g.winner?( :blue ) )
@@ -48,9 +96,6 @@ class TestHavannah < Test::Unit::TestCase
     g = play_sequence ["b6", "j11", "a5", "j10", "c6", "j9", 
                        "b4", "j8", "c5", "j7", "a4"]
 
-    assert_equal( 1, g.groups[:blue].length )
-    assert( g.groups[:blue].first.ring? )
-
     assert( !g.draw? )
     assert( g.winner?( :blue ) )
     assert( !g.loser?( :blue ) )
@@ -62,10 +107,6 @@ class TestHavannah < Test::Unit::TestCase
     g = play_sequence ["p16", "o8", "q17", "o9", "r18", "o10", "r17", "o11",
                        "q16", "o12", "q18", "o13", "p17"]
                        
-
-    assert_equal( 1, g.groups[:blue].length )
-    assert( g.groups[:blue].first.ring? )
-
     assert( !g.draw? )
     assert( g.winner?( :blue ) )
     assert( !g.loser?( :blue ) )
@@ -77,10 +118,6 @@ class TestHavannah < Test::Unit::TestCase
     g = play_sequence ["p17", "q17", "p16", "o9", "r18", "o10", "r17", "o11",
                        "q16", "o12", "q18"]
                        
-
-    assert_equal( 1, g.groups[:blue].length )
-    assert( g.groups[:blue].first.ring? )
-
     assert( !g.draw? )
     assert( g.winner?( :blue ) )
     assert( !g.loser?( :blue ) )
@@ -94,8 +131,8 @@ class TestHavannah < Test::Unit::TestCase
     g << ["s19", "o8", "s18", "o9", "r18", "o10", 
           "r19", "o11", "q18", "o12", "q19"]
 
-    assert_equal( 1, g.groups[:blue].length )
-    assert( ! g.groups[:blue].first.ring? )
+    assert_equal( 1, g.board.groups[:blue].length )
+    assert( ! g.final? )
   end
 
   def test_draw
@@ -138,7 +175,6 @@ class TestHavannah < Test::Unit::TestCase
     assert( !g.winner?( :red ) )
     assert( !g.loser?( :red ) )
   end
-
 
 end
 

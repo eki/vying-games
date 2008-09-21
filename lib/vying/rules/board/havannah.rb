@@ -3,151 +3,6 @@
 
 require 'vying'
 
-class HavannahGroup
-  attr_reader :coords, :side_map, :corner_map, :size, :board
-
-  def initialize( board, c=nil )
-    @board = board
-    @coords, @size = [], board.length
-    @side_map, @corner_map, @ring = 0, 0, false
-    self << c if c
-  end
-
-  def initialize_copy( other )
-    @coords = other.coords.dup
-  end
-
-  def sides
-    (0...6).inject( 0 ) { |n,i| n + ((side_map >> i) & 1) }
-  end
-
-  def corners
-    (0...6).inject( 0 ) { |n,i| n + ((corner_map >> i) & 1) }
-  end
-
-  def fork?
-    sides >= 3
-  end
-
-  def bridge?
-    corners >= 2
-  end
-
-  def ring?
-    @ring
-  end
-
-  def winning?
-    ring? || bridge? || fork?
-  end
-
-  def |( group )
-    g = HavannahGroup.new( board )
-    g.instance_variable_set( "@coords",      coords      | group.coords )
-    g.instance_variable_set( "@side_map",    side_map    | group.side_map )
-    g.instance_variable_set( "@corner_map",  corner_map  | group.corner_map )
-    g.instance_variable_set( "@ring",        ring?      || group.ring? )
-    g
-  end
-
-  def <<( c )
-    coords << c
-
-    s1, s12 = size - 1, (size - 1) * 2
-
-       if c.x == 0         && c.y == 0    then @corner_map |=  1
-    elsif c.x == 0         && c.y == s1   then @corner_map |=  2
-    elsif c.x == s1        && c.y == 0    then @corner_map |=  4
-    elsif c.x == s12       && c.y == s1   then @corner_map |=  8
-    elsif c.x == s1        && c.y == s12  then @corner_map |= 16
-    elsif c.x == s12       && c.y == s12  then @corner_map |= 32
-
-    elsif c.x == 0                        then @side_map   |=  1
-    elsif                     c.y == 0    then @side_map   |=  2
-    elsif c.x == s12                      then @side_map   |=  4
-    elsif                     c.y == s12  then @side_map   |=  8
-    elsif c.x - c.y == s1                 then @side_map   |= 16
-    elsif c.y - c.x == s1                 then @side_map   |= 32; end
-
-    # ring detection
-
-    return self if coords.length < 6  # minimum ring needs 6 cells
-
-    ns = board.coords.neighbors( c )
-    ms = ns.select { |nc| coords.include?( nc ) }
-    return self unless ms.length >= 2  # can't form a ring without connecting
-                                       # at least two cells
-
-    # check for a "blob" -- a 7-cell hexagon pattern
-
-    (ms + [c]).each do |bc|
-      bns = board.coords.neighbors( bc )
-      if bns.length == 6 && bns.all? { |bnc| coords.include?( bnc ) }
-        @ring = true
-        return self
-      end
-    end
-
-    # check for rings with holes
-    #
-    # Iterate over empty neighbors and their neighbors, marking them as we
-    # go.  If we can find an edge, the empty neighbor is not contained in
-    # a ring.  Note, the "empty" neighbors are simply not a part of this
-    # group.  That means they may be empty or owned by an opponent.
-    #
-    # Break and return immediately if a ring is found.
-    #
-    # On subsequent passes it's enough to find a previously marked coord,
-    # because we know it must be connected to an edge.
-    #
-    # This doesn't find blob patterns, hence the previous check.
-
-    es = ns - ms
-
-    marked = []
-    es.each_with_index do |sc, i|
-      check, found_marked, found = [sc], false, true
-
-      until check.empty?
-        nc = check.pop
-        marked << nc
-
-        if nc == sc || ! coords.include?( nc )
-          board.coords.neighbors( nc ).each do |nnc|
-            if i > 0 && marked.include?( nnc )
-              found_marked = true
-              break
-            end
-
-            check << nnc unless marked.include?( nnc ) || coords.include?( nnc )
-          end
-        end
-
-        if found_marked       ||
-           nc.x == 0          || nc.y == 0   || 
-           nc.x == s12        || nc.y == s12 ||
-           nc.x - nc.y == s12 || nc.y - nc.x == s12
-
-          found = false
-          break
-        end
-      end
-
-      if found
-        @ring = true
-        break
-      end     
-    end
-
-    self
-  end
-
-  def ==( o )
-    o && coords == o.coords
-  end
-
-end
-
 # Havannah
 #
 # For detailed rules see:  http://vying.org/games/havannah
@@ -160,15 +15,14 @@ Rules.create( "Havannah" ) do
 
   players :blue, :red
 
-  cache :moves
+  cache :init, :moves
 
   position do
     attr_reader :board, :groups
     ignore :groups
 
     def init
-      @board = Board.hexagon( 10 )
-      @groups = { :blue => [], :red => [] }
+      @board = Board.hexagon( 10, :plugins => [:connection] )
     end
 
     def moves
@@ -178,31 +32,8 @@ Rules.create( "Havannah" ) do
     end
 
     def apply!( move )
-      coord = Coord[move]
-
-      board[coord] = turn
-
-      new_groups = []
-      board.directions.each do |d|
-        n = board.coords.next( coord, d )
-
-        groups[turn].delete_if do |g|
-          if g.coords.include?( n )
-            g << coord
-            new_groups << g
-          end
-        end
-      end
-
-      if new_groups.empty?
-        groups[turn] << HavannahGroup.new( board, coord )
-      else
-        g = HavannahGroup.new( board )
-        groups[turn] << new_groups.inject( g ) { |m,a| m | a }
-      end
-
+      board[move] = turn
       rotate_turn
-
       self
     end
 
@@ -211,7 +42,8 @@ Rules.create( "Havannah" ) do
     end
 
     def winner?( player )
-      (g = groups[player].last) && g.winning?
+      (g = board.groups[player].last) && 
+      (bridge?( g ) || fork?( g ) || ring?( g ))
     end
 
     def loser?( player )
@@ -221,6 +53,132 @@ Rules.create( "Havannah" ) do
     def draw?
       board.unoccupied.empty? && players.all? { |p| ! winner?( p ) }
     end
+
+    private
+
+    # Is the given coord in a corner?
+
+    def corner?( c )
+      s1, s12 = board.length - 1, (board.length - 1) * 2
+
+      (c.x == 0  && c.y == 0)   || (c.x == 0   && c.y == s1) ||
+      (c.x == s1 && c.y == 0)   || (c.x == s12 && c.y == s1) ||
+      (c.x == s1 && c.y == s12) || (c.x == s12 && c.y == s12)
+    end
+
+    # Does the given group connect (any) 3 sides?  Corners are not considered
+    # a part of the sides for a fork.
+
+    def fork?( group )
+      s1, s12 = board.length - 1, (board.length - 1) * 2
+
+      count = 0
+
+      count += 1 if group.coords.any? { |c| c.x == 0   && ! corner?( c ) }
+      count += 1 if group.coords.any? { |c| c.y == 0   && ! corner?( c ) }
+      count += 1 if group.coords.any? { |c| c.x == s12 && ! corner?( c ) }
+
+      return true if count == 3
+
+      count += 1 if group.coords.any? { |c| c.y == s12 && ! corner?( c ) }
+
+      return true if count == 3
+
+      count += 1 if group.coords.any? { |c| c.x - c.y == s1 && ! corner?( c ) }
+
+      return true if count == 3
+
+      count += 1 if group.coords.any? { |c| c.y - c.x == s1 && ! corner?( c ) }
+
+      count == 3
+    end
+
+    # Does the group represent a bridge?  It must connect two corners.
+
+    def bridge?( group )
+      group.coords.select { |c| corner?( c ) }.length == 2
+    end
+
+    # Does this group represent a ring?  In Havannah a ring is a set of coords
+    # that surround at least one cell.  The surrounded cell maybe empty or
+    # occupied with a piece of any color.
+
+    def ring?( group )
+      return false if group.coords.length < 6  # minimum ring needs 6 cells
+
+      c = group.coords.last  # HACK ALERT:  Assumes the last coord in the
+                             # group is the last added, also assumes all
+                             # other coords in the group have been checked!
+
+      ns = board.coords.neighbors( c )
+      ms = ns.select { |nc| group.coords.include?( nc ) }
+      return false  unless ms.length >= 2  # can't form a ring without
+                                           # connecting at least two cells
+
+      # check for a "blob" -- a 7-cell hexagon pattern
+
+      (ms + [c]).each do |bc|
+        bns = board.coords.neighbors( bc )
+        if bns.length == 6 && bns.all? { |bnc| group.coords.include?( bnc ) }
+          return true
+        end
+      end
+
+      # check for rings with holes
+      #
+      # Iterate over empty neighbors and their neighbors, marking them as we
+      # go.  If we can find an edge, the empty neighbor is not contained in
+      # a ring.  Note, the "empty" neighbors are simply not a part of this
+      # group.  That means they may be empty or owned by an opponent.
+      #
+      # Break and return immediately if a ring is found.
+      #
+      # On subsequent passes it's enough to find a previously marked coord,
+      # because we know it must be connected to an edge.
+      #
+      # This doesn't find blob patterns, hence the previous check.
+
+      s1, s12 = board.length - 1, (board.length - 1) * 2
+
+      es = ns - ms
+
+      marked = []
+      es.each_with_index do |sc, i|
+        check, found_marked, found = [sc], false, true
+
+        until check.empty?
+          nc = check.pop
+          marked << nc
+
+          if nc == sc || ! group.coords.include?( nc )
+            board.coords.neighbors( nc ).each do |nnc|
+              if i > 0 && marked.include?( nnc )
+                found_marked = true
+                break
+              end
+
+              unless marked.include?( nnc ) || group.coords.include?( nnc )
+                check << nnc
+              end
+            end
+          end
+
+          if found_marked       ||
+             nc.x == 0          || nc.y == 0   || 
+             nc.x == s12        || nc.y == s12 ||
+             nc.x - nc.y == s12 || nc.y - nc.x == s12
+
+            found = false
+            break
+          end
+        end
+
+        return true  if found
+      end
+
+      false
+    end
+
   end
 
 end
