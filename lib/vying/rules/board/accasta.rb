@@ -96,25 +96,34 @@ Rules.create( 'Accasta' ) do
     def score( player )
       count = 0
       home[opponent( player )].each do |c|
-        count += 1 if board[c] && board[c].first == player
+        count += 1 if board[c] && belongs_to?( board[c].first, player )
       end
       count
     end
 
     private
 
-    def occupied_by( coord, player )
+    def belongs_to?( piece, player )
       if @options[:variant] == :pari
-        board[coord].first == player
+        piece == player
       else
-        (board[coord].first.to_s =~ /^[CHS]/ && player == :white) ||
-        (board[coord].first.to_s =~ /^[chs]/ && player == :black)
+        (piece.to_s =~ /^[CHS]/ && player == :white) ||
+        (piece.to_s =~ /^[chs]/ && player == :black)
+      end
+    end
+
+    def valid_stack?( stack )
+      if @options[:variant] == :pari
+        ((stack - [turn]).length <= 3) && ((stack - [opponent( turn )]).length <= 3)
+      else
+        ((stack - [:Chariot] - [:Horse] - [:Shield]).length <= 3) &&
+        ((stack - [:chariot] - [:horse] - [:shield]).length <= 3)
       end
     end
 
     def moves_from( coord )
       a = []
-      if board[coord] && occupied_by( coord, turn )
+      if board[coord] && belongs_to?( board[coord].first, turn )
 
         if @options[:variant] == :pari
           # Number of own pieces in the stack determines range.
@@ -127,6 +136,9 @@ Rules.create( 'Accasta' ) do
         # Number of pieces equals number of move options.
         # Take one from the top, then two pieces, etc...
         board[coord].length.times do |p|
+
+          # Cannot release an opponent piece in home area.
+          break if belongs_to?( board[coord][p+1], opponent( turn ) ) && home[turn].include?( coord.to_sym )
 
           # The moving stack.
           mstack = board[coord][0..p]
@@ -144,10 +156,8 @@ Rules.create( 'Accasta' ) do
 
               # ... otherwise move and combine the two stacks.
               else
-                nstack = mstack + board[nc]
-
                 # Only if the number of pieces of one color is less or equal three.
-                if ((nstack - [turn]).length <= 3) && ((nstack - [opponent( turn )]).length <= 3)
+                if valid_stack?( mstack + board[nc] )
                   a << "#{mstack.length}#{coord}#{nc}"
                 end
                 
