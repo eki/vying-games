@@ -3,17 +3,18 @@
 
 require 'vying'
 
-# Accasta Pari
+# Accasta
 #
-# For detailed rules see:  http://vying.org/games/accasta_pari
-# or the official Accasta site: http://accasta.com/rules/variants/pari
+# For detailed rules see:  http://vying.org/games/accasta
+# or the official Accasta site: http://accasta.com
 
-Rules.create( 'AccastaPari' ) do
-  name     'Accasta Pari'
+Rules.create( 'Accasta' ) do
+  name     'Accasta'
   version  '0.1.0'
-# notation :accasta_pari_notation
+# notation :accasta_notation
 
   players :white, :black
+  option :variant, :default => :standard, :values => [:standard, :pari]
 
   score_determines_outcome
 
@@ -29,12 +30,23 @@ Rules.create( 'AccastaPari' ) do
           :black => [:d5,:e5,:d6,:e6,:f6,:d7,:e7,:f7,:g7]
       }
       @lastc = nil
-      board[:a1, :b1, :c1, :d1] = [:white, :white, :white]
-      board[:b2, :c2, :d2] = [:white, :white]
-      board[:c3, :d3] = [:white]
-      board[:d5, :e5] = [:black]
-      board[:d6, :e6, :f6] = [:black, :black]
-      board[:d7, :e7, :f7, :g7] = [:black, :black, :black]
+      case @options[:variant]
+        when :pari
+          board[:a1, :b1, :c1, :d1] = [:white, :white, :white]
+          board[:b2, :c2, :d2]      = [:white, :white]
+          board[:c3, :d3]           = [:white]
+          board[:d5, :e5]           = [:black]
+          board[:d6, :e6, :f6]      = [:black, :black]
+          board[:d7, :e7, :f7, :g7] = [:black, :black, :black]
+        else
+          board[:a1, :b1, :c1, :d1] = [:Chariot, :Horse, :Shield]
+          board[:b2, :c2, :d2]      = [:Horse, :Shield]
+          board[:c3, :d3]           = [:Shield]
+          board[:d5, :e5]           = [:shield]
+          board[:d6, :e6, :f6]      = [:horse, :shield]
+          board[:d7, :e7, :f7, :g7] = [:chariot, :horse, :shield]
+          @ranges = { :shield => 1, :horse => 2, :chariot => 3 }
+      end
    end
 
     def has_moves
@@ -86,12 +98,28 @@ Rules.create( 'AccastaPari' ) do
 
     private
 
+    def occupied_by( coord, player )
+      case @options[:variant]
+        when :pari
+          board[coord].first == player
+        else
+          (board[coord].first.to_s =~ /^[CHS]/ && player == :white) ||
+          (board[coord].first.to_s =~ /^[chs]/ && player == :black)
+      end
+    end
+
     def moves_from( coord )
       a = []
-      if board[coord] && board[coord].first == turn
+      if board[coord] && occupied_by( coord, turn )
 
-        # Number of own pieces in the stack determines range.
-        range = (board[coord] - [opponent( turn )]).length
+        case @options[:variant]
+          when :pari
+            # Number of own pieces in the stack determines range.
+            range = (board[coord] - [opponent( turn )]).length
+          else
+            # Piece type determines range.
+            range = @ranges[board[coord].first.to_s.downcase]
+        end
   
         # Number of pieces equals number of move options.
         # Take one from the top, then two pieces, etc...
