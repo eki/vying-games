@@ -30,29 +30,29 @@ Rules.create( 'Accasta' ) do
           :black => [:d5,:e5,:d6,:e6,:f6,:d7,:e7,:f7,:g7]
       }
       @lastc = nil
-      case @options[:variant]
-        when :pari
-          board[:a1, :b1, :c1, :d1] = [:white, :white, :white]
-          board[:b2, :c2, :d2]      = [:white, :white]
-          board[:c3, :d3]           = [:white]
-          board[:d5, :e5]           = [:black]
-          board[:d6, :e6, :f6]      = [:black, :black]
-          board[:d7, :e7, :f7, :g7] = [:black, :black, :black]
-        else
-          board[:a1, :b1, :c1, :d1] = [:Chariot, :Horse, :Shield]
-          board[:b2, :c2, :d2]      = [:Horse, :Shield]
-          board[:c3, :d3]           = [:Shield]
-          board[:d5, :e5]           = [:shield]
-          board[:d6, :e6, :f6]      = [:horse, :shield]
-          board[:d7, :e7, :f7, :g7] = [:chariot, :horse, :shield]
-          @ranges = { :shield => 1, :horse => 2, :chariot => 3 }
+      if @options[:variant] == :pari
+        board[:a1, :b1, :c1, :d1] = [:white, :white, :white]
+        board[:b2, :c2, :d2]      = [:white, :white]
+        board[:c3, :d3]           = [:white]
+        board[:d5, :e5]           = [:black]
+        board[:d6, :e6, :f6]      = [:black, :black]
+        board[:d7, :e7, :f7, :g7] = [:black, :black, :black]
+      else
+        board[:a1, :b1, :c1, :d1] = [:Chariot, :Horse, :Shield]
+        board[:b2, :c2, :d2]      = [:Horse, :Shield]
+        board[:c3, :d3]           = [:Shield]
+        board[:d5, :e5]           = [:shield]
+        board[:d6, :e6, :f6]      = [:horse, :shield]
+        board[:d7, :e7, :f7, :g7] = [:chariot, :horse, :shield]
+        @ranges = { :shield => 1, :horse => 2, :chariot => 3 }
       end
    end
 
     def has_moves
-      return [] if score( opponent( turn ) ) >= 3
+      return [turn]  if score( opponent( turn ) ) < 3
+      return [turn]  if moves.any?
 
-      [turn]
+      []
     end
 
     def moves
@@ -71,7 +71,7 @@ Rules.create( 'Accasta' ) do
     end
 
     def apply!( move )
-      if move.to_s == 'pass'
+      if move == :pass
         @lastc = nil
         rotate_turn
       else
@@ -81,8 +81,7 @@ Rules.create( 'Accasta' ) do
         board[coords.first] = nil if board[coords.first].empty?
         @lastc = coords.first
 
-        m = moves
-        if m.length == 1 && m.first.to_s == 'pass'
+        if moves == [:pass]
           @lastc = nil
           rotate_turn
         end
@@ -105,12 +104,11 @@ Rules.create( 'Accasta' ) do
     private
 
     def occupied_by( coord, player )
-      case @options[:variant]
-        when :pari
-          board[coord].first == player
-        else
-          (board[coord].first.to_s =~ /^[CHS]/ && player == :white) ||
-          (board[coord].first.to_s =~ /^[chs]/ && player == :black)
+      if @options[:variant] == :pari
+        board[coord].first == player
+      else
+        (board[coord].first.to_s =~ /^[CHS]/ && player == :white) ||
+        (board[coord].first.to_s =~ /^[chs]/ && player == :black)
       end
     end
 
@@ -118,13 +116,12 @@ Rules.create( 'Accasta' ) do
       a = []
       if board[coord] && occupied_by( coord, turn )
 
-        case @options[:variant]
-          when :pari
-            # Number of own pieces in the stack determines range.
-            range = (board[coord] - [opponent( turn )]).length
-          else
-            # Piece type determines range.
-            range = @ranges[board[coord].first.to_s.downcase]
+        if @options[:variant] == :pari
+          # Number of own pieces in the stack determines range.
+          range = (board[coord] - [opponent( turn )]).length
+        else
+          # Piece type determines range.
+          range = @ranges[board[coord].first.to_s.downcase]
         end
   
         # Number of pieces equals number of move options.
