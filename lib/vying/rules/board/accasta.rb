@@ -71,7 +71,7 @@ Rules.create( 'Accasta' ) do
     end
 
     def apply!( move )
-      if move == :pass
+      if move.to_s == 'pass'
         @lastc = nil
         rotate_turn
       else
