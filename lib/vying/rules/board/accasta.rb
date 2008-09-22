@@ -80,6 +80,12 @@ Rules.create( 'Accasta' ) do
         board[coords.first] = board[coords.first][length..-1]
         board[coords.first] = nil if board[coords.first].empty?
         @lastc = coords.first
+
+        m = moves
+        if m.length == 1 && m.first.to_s == 'pass'
+          @lastc = nil
+          rotate_turn
+        end
       end
       self
     end
