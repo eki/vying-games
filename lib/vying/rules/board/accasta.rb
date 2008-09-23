@@ -130,7 +130,7 @@ Rules.create( 'Accasta' ) do
           range = (board[coord] - [opponent( turn )]).length
         else
           # Piece type determines range.
-          range = @ranges[board[coord].first.to_s.downcase]
+          range = @ranges[board[coord].first.to_s.downcase.to_sym]
         end
   
         # Number of pieces equals number of move options.
