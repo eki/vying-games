@@ -138,7 +138,7 @@ Rules.create( 'Accasta' ) do
         board[coord].length.times do |p|
 
           # Cannot release an opponent piece in home area.
-          break if belongs_to?( board[coord][p+1], opponent( turn ) ) && home[turn].include?( coord.to_sym )
+          next if belongs_to?( board[coord][p+1], opponent( turn ) ) && home[turn].include?( coord.to_sym )
 
           # The moving stack.
           mstack = board[coord][0..p]
