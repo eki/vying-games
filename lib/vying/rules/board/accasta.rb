@@ -50,7 +50,6 @@ Rules.create( 'Accasta' ) do
 
     def has_moves
       return [turn]  if score( opponent( turn ) ) < 3
-      return [turn]  if moves.any?
 
       []
     end
