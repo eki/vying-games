@@ -92,6 +92,8 @@ void Init_boardext() {
   id_after_set = rb_intern( "after_set" );
   id_first = rb_intern( "first" );
   id_last = rb_intern( "last" );
+  id_resize_q = rb_intern( "resize?" );
+  id_resize = rb_intern( "resize" );
 
   /* Look up all our symbols */
 

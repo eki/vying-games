@@ -74,6 +74,8 @@ class Board::Infinite < Board
     @min_y = -((@height / 2) - 1 + @height % 2)
     @max_y =   (@height / 2)
 
+    @origin = Coord[@min_x, @min_y]
+
     @min_occupied_x, @max_occupied_x = 0, 0
     @min_occupied_y, @max_occupied_y = 0, 0
 
@@ -116,34 +118,14 @@ class Board::Infinite < Board
     super( h )   
   end
 
-  def set( x, y, p )
-    if resize?( x, y )
-      resize( x, y )
-    end
-
-    old = @cells[ci( x, y )]
-
-    before_set( x, y, old )
-
-    @occupied[old].delete( Coord.new( x, y ) )
-      
-    if @occupied[p].nil? || @occupied[p].empty?
-      @occupied[p] = [Coord.new( x, y )]
-    else
-      @occupied[p] << Coord.new( x, y )
-    end
+  def after_set( x, y, p )
+    super
 
     @min_occupied_x = x if x < @min_occupied_x
     @max_occupied_x = x if x > @max_occupied_x
 
     @min_occupied_y = y if y < @min_occupied_y
     @max_occupied_y = y if y > @max_occupied_y
-
-    @cells[ci( x, y )] = p
-
-    after_set( x, y, p )
-
-    p
   end
 
   def resize?( x, y )
@@ -167,41 +149,28 @@ class Board::Infinite < Board
     w = (@max_x - @min_x) + 1
     h = (@max_y - @min_y) + 1
 
+    new_bounds = [Coord[@min_x, @min_y], Coord[@max_x, @max_y]]
+
     cells = Array.new( w * h, nil )
-    coords = CoordsProxy.new( self, Coords.new( bounds, [] ) )
+    coords = CoordsProxy.new( self, Coords.new( new_bounds, [] ) )
 
     occupied = @occupied.deep_dup
     occupied[nil] = []
 
-    @width.times do |ox|
-      @height.times do |oy|
-        cells[ox+oy*w] = @cells[ox+oy*@width]
-      end
+    @coords.each do |c|
+      cells[(c.x - @min_x) + (c.y - @min_y) * w] = @cells[ci(c.x, c.y)]
     end
 
-    ((@min_y)..(@max_y)).each do |ny|
-      ((@min_x)..(@max_x)).each do |nx|
-        p = cells[nx+ny*w]
-        occupied[p] << Coord[nx,ny] if p.nil?
-      end
+    coords.each do |c|
+      p = cells[(c.x - @min_x) + (c.y - @min_y) * w]
+      occupied[p] << c  if p.nil?
     end
 
+    @origin = Coord[@min_x, @min_y]
     @width, @height = w, h
     @cells = cells
     @coords = coords
     @occupied = occupied
-  end
-
-  def in_bounds?( x, y )
-    if x < @min_x || x > @max_x || y < @min_y || y > @max_y
-      return nil
-    end
-
-    true
-  end
-
-  def bounds
-    [Coord[@min_x, @min_y], Coord[@max_x, @max_y]]
   end
 
   def bounds_occupied
