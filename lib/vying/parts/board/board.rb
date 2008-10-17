@@ -338,6 +338,56 @@ class Board
     raise "This board doesn't support the resize operation."
   end
 
+  # Is there a path between the two coords made up of cells occupied by
+  # the same piece as the endpoints.
+
+  def path?( c1, c2 )
+    check = [c1]
+    checked = []
+    p = self[c1]
+
+    while c = check.pop
+      return true if c == c2
+
+      checked << c
+
+      coords.neighbors( c ).select { |nc| self[nc] == p }.each do |nc|
+        check << nc  unless checked.include?( nc )
+      end
+    end
+
+    false
+  end
+
+  # Break the set of coords up into groups such that each group is both 
+  # occupied by the same piece and connected.
+
+  def group_by_connectivity( cs )
+    cs = cs.dup
+    groups = []
+
+    until cs.empty?
+      check = [cs.first]
+      group = []
+      p = self[check.first]
+
+      while c = check.pop
+        cs.delete( c )
+        group << c
+
+        coords.neighbors( c ).each do |nc|
+          check << nc  if cs.include?( nc ) && self[nc] == p
+        end
+      end
+
+      group.uniq!
+
+      groups << group
+    end
+
+    groups
+  end
+
   # This can be overridden perform some action before a cell on the board is
   # overwritten (as with #[]=).  The given piece (p) is the value at the given
   # (x,y) coordinate before it's changed.
