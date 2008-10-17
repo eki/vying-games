@@ -15,6 +15,8 @@ Rules.create( "Phalango" ) do
   players :white, :black
   option :board_size, :default => 6, :values => [4, 6, 8]
 
+  cache :init, :moves
+
   position do
     attr_reader :board
 
@@ -50,13 +52,15 @@ Rules.create( "Phalango" ) do
         board.directions.each do |d|
           nc = c
           while (nc = board.coords.next( nc, d ))
+            break if board[nc] == turn
+
+            if ! board.coords.neighbors( nc ).any? { |nnc| board[nnc] == turn }
+              next
+            end
+
             if board.coords.connected?( pieces - [Coord[c]] + [Coord[nc]] )
-              if board[nc].nil?
-                all << "#{c}#{nc}"
-              else
-                all << "#{c}#{nc}" if board[nc] != turn
-                break
-              end
+              all << "#{c}#{nc}"
+              break unless board[nc].nil?
             end
           end
         end
