@@ -401,7 +401,7 @@ class Board
 
     def connected?( cs )
       cs = cs.dup
-      all, check = {}, [cs.first]
+      check = [cs.first]
 
       while c = check.pop
         cs.delete( c )
