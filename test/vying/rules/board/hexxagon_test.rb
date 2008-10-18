@@ -52,8 +52,8 @@ class TestHexxagon < Test::Unit::TestCase
 
   def test_moves
     g = Game.new( rules, 1234 )
-    g.clear_blocks
-    g.set_blocks( "" )
+
+    g.board[* g.board.occupied( :x )] = nil
 
     moves = g.moves
 
@@ -75,8 +75,8 @@ class TestHexxagon < Test::Unit::TestCase
 
   def test_has_score
     g = Game.new( rules, 1234 )
-    g.clear_blocks
-    g.set_blocks( "" )
+
+    g.board[* g.board.occupied( :x )] = nil
 
     g << "a1a2"
 
@@ -84,5 +84,19 @@ class TestHexxagon < Test::Unit::TestCase
     assert_equal( 4, g.score( :red ) )
     assert_equal( 3, g.score( :blue ) )
   end
+
+  def test_block_maps
+    assert( rules.block_maps.keys.include?( 2 ) )
+    assert( rules.block_maps.keys.include?( 3 ) )
+
+    map_2p = rules.block_maps[2]
+
+    assert( 61, 6 + map_2p.to_a.flatten.uniq.length )
+
+    map_3p = rules.block_maps[3]
+
+    assert( 61, 6 + map_3p.to_a.flatten.uniq.length )
+  end
+
 end
 
