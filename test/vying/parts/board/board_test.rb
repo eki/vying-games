@@ -25,10 +25,10 @@ class TestBoard < Test::Unit::TestCase
 
   def test_ci
     b = Board.rect( 7, 6 )
-    assert_equal( 0, b.ci( 0, 0 ) )
-    assert_equal( 2, b.ci( 2, 0 ) )
-    assert_equal( 14, b.ci( 0, 2 ) )
-    assert_equal( 17, b.ci( 3, 2 ) )
+    assert_equal( 0, b.send( :ci, 0, 0 ) )
+    assert_equal( 2, b.send( :ci, 2, 0 ) )
+    assert_equal( 14, b.send( :ci, 0, 2 ) )
+    assert_equal( 17, b.send( :ci, 3, 2 ) )
   end
 
   def test_dup

@@ -574,5 +574,7 @@ class Board
     end
   end
 
+  private :ci
+
 end
 

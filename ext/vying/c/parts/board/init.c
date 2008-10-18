@@ -37,7 +37,7 @@ void Init_boardext() {
   rb_define_method( Board, "get", board_get, 2 );             /* in board.c */
   rb_define_method( Board, "set", board_set, 3 );             /* in board.c */
 
-  rb_define_method( Board, "ci", board_ci, 2 );               /* in board.c */
+  rb_define_private_method( Board, "ci", board_ci, 2 );       /* in board.c */
 
 
   /* Map CoordsProxy */
