@@ -10,7 +10,7 @@ require 'vying'
 
 Rules.create( "Phalango" ) do
   name    "Phalango"
-  version "1.0.0"
+  version "0.9.0"
 
   players :white, :black
   option :board_size, :default => 6, :values => [4, 6, 8]
@@ -24,56 +24,58 @@ Rules.create( "Phalango" ) do
       length = @options[:board_size]
       center = length / 2
 
-      @board = Board.square( length, :plugins => [:connection] )
-      @baseline = {
-        :white => (0...length).collect { |x| Coord[x, 0].to_sym },
-        :black => (0...length).collect { |x| Coord[x, length-1].to_sym }
-      }
+      @board = Board.square( length )
+
       length.times do |x|
         length.times do |y|
           board[Coord[x,y]] = y < center ? :white : :black
         end
       end
-      @connected = Hash.new( true )
+
+      @baseline     = { :white => 0, :black => length-1 }
+      @last         = nil
+      @finished     = false
+
+      @disconnected = false
+      @permanently_disconnected = false
     end
 
     def has_moves
-      return []  unless @connected[opponent( turn )]
-      return []  if @baseline[turn].any? { |c| board[c] == opponent( turn ) }
+      return []  if @permanently_disconnected
+      return []  if @last && @last.y == @baseline[opponent( turn )]
       return []  if board.occupied( turn ).empty?
 
       [turn]
     end
 
     def moves
-      all = []
-      pieces = board.occupied( turn )
-      pieces.each do |c|
-        board.directions.each do |d|
-          nc = c
-          while (nc = board.coords.next( nc, d ))
-            break if board[nc] == turn
-
-            if ! board.coords.neighbors( nc ).any? { |nnc| board[nnc] == turn }
-              next
-            end
-
-            if board.coords.connected?( pieces - [Coord[c]] + [Coord[nc]] )
-              all << "#{c}#{nc}"
-              break unless board[nc].nil?
-            end
-          end
-        end
+      if @disconnected
+        rejoin_moves
+      else
+        normal_moves
       end
-      all
     end
 
     def apply!( move )
       coords = move.to_coords
+      op = board[coords.last]
+
       board.move( coords.first, coords.last )
-      @connected[turn] = board.coords.connected?( board.occupied( turn ) )
+
+      @disconnected = false
+      @last = coords.last
 
       rotate_turn
+
+      # Determine if this move disconnected the opponent... hence requiring
+      # a reconnect move (if one exists, or the game has ended)
+
+      if op == turn && ! safe_to_remove?( @last, turn ) 
+        @disconnected = true
+
+        @permanently_disconnected = true  if moves.empty?
+      end
+
       self
     end
 
@@ -82,11 +84,90 @@ Rules.create( "Phalango" ) do
     end
 
     def winner?( player )
-      @baseline[opponent( player )].any? { |c| board[c] == player }
+      player != turn
     end
     
     def loser?( player )
       winner?( opponent( player ) )
+    end
+
+    private
+
+    def safe_to_remove?( c, p )
+      ns = board.coords.neighbors( c ).select { |nnc| board[nnc] == p }
+      groups = board.group_by_connectivity( ns )
+
+      groups.length == 1 || 
+      groups.inject { |g1,g2| g1 ? 
+        (board.path?( g1.first, g2.first ) ? g2 : nil) : nil }
+    end
+
+    def normal_moves
+      all = []
+
+      board.occupied( turn ).each do |c|
+        board.directions.each do |d|
+          nc = c
+
+          # A starting coord (c) is only valid if it does *not* cause a
+          # disconnect
+
+          valid_start = nil
+
+          while (nc = board.coords.next( nc, d ))
+
+            # Can't move through your own pieces
+
+            break  if board[nc] == turn
+
+            # Can't land on a square that doesn't have any neighbors 
+            # occupied by your own pieces (obvious disconnect)
+
+            ns = board.coords.neighbors( nc )
+            next  unless ns.any? { |nnc| board[nnc] == turn }
+
+            valid_start = safe_to_remove?( c, turn )  if valid_start.nil?
+
+            break  unless valid_start
+
+            all << "#{c}#{nc}"
+            break  if board[nc]
+          end
+
+        end
+      end
+
+      all
+    end
+
+    def rejoin_moves
+      all, pieces = [], board.occupied( turn )
+
+      pieces.each do |c|
+        board.directions.each do |d|
+          nc = c
+
+          while (nc = board.coords.next( nc, d ))
+
+            # Can't move through your own pieces
+
+            break  if board[nc] == turn
+
+            # Can't land on a square that doesn't have any neighbors 
+            # occupied by your own pieces (obvious disconnect)
+
+            ns = board.coords.neighbors( nc )
+            next  unless ns.any? { |nnc| board[nnc] == turn }
+
+            if board.coords.connected?( pieces - [Coord[c]] + [Coord[nc]] )
+              all << "#{c}#{nc}"
+              break  if board[nc]
+            end
+          end
+        end
+      end
+
+      all
     end
 
   end
