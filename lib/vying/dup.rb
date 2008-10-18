@@ -23,6 +23,12 @@ class Fixnum
   end
 end
 
+class Bignum
+  def deep_dup
+    self
+  end
+end
+
 class TrueClass
   def deep_dup
     self
