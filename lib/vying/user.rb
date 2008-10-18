@@ -41,7 +41,7 @@ class User
   end
 
   def eql?( u )
-    u && u.respond_to?( :username ) && username == u.username
+    u && username == u.username
   end
 
   def ==( u )
