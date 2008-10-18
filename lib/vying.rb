@@ -78,6 +78,8 @@ require 'vying/ruby'
 require 'vying/dup'
 require 'vying/memoize'
 
+require 'vying/subset'
+
 require 'vying/parts/board'
 require 'vying/parts/dice'
 require 'vying/parts/cards/card'
