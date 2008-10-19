@@ -13,10 +13,10 @@ require 'vying'
 
 Rules.create( "Hexxagon" ) do
   name    "Hexxagon"
-  version "0.9.0"
+  version "1.0.0"
 
   players :red, :blue, :white
-  option :number_of_players, :default => 2, :values => [2, 3]
+  option :number_of_players, :default => 3, :values => [2, 3]
 
   score_determines_outcome
   random
