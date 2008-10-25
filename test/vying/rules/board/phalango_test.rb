@@ -50,7 +50,7 @@ class TestPhalango < Test::Unit::TestCase
     g = Game.new( rules )
 
     g << "a3a4" << "b4a4"
-    assert_raise( RuntimeError ) { g << "b3a4" }
+    assert( ! g.move?( "b3a4" ) )
   end
 
 end

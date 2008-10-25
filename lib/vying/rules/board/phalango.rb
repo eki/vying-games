@@ -124,7 +124,7 @@ Rules.create( "Phalango" ) do
             # occupied by your own pieces (obvious disconnect)
 
             ns = board.coords.neighbors( nc )
-            next  unless ns.any? { |nnc| board[nnc] == turn }
+            next  unless ns.any? { |nnc| nnc != c && board[nnc] == turn }
 
             valid_start = safe_to_remove?( c, turn )  if valid_start.nil?
 
@@ -157,7 +157,7 @@ Rules.create( "Phalango" ) do
             # occupied by your own pieces (obvious disconnect)
 
             ns = board.coords.neighbors( nc )
-            next  unless ns.any? { |nnc| board[nnc] == turn }
+            next  unless ns.any? { |nnc| nnc != c && board[nnc] == turn }
 
             if board.coords.connected?( pieces - [Coord[c]] + [Coord[nc]] )
               all << "#{c}#{nc}"
