@@ -130,7 +130,7 @@ class Game
     if results.respond_to?( :last_move_at )
       m = g.history.moves.last
       if m && m.at.nil?
-        m.instance_variable_set( "@at", results.last_move_at )
+        g.history.moves[-1] = m.stamp( results.last_move_at )
       end
       g.history.instance_variable_set( "@last_move_at", results.last_move_at )
     end
