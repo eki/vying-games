@@ -332,6 +332,13 @@ class Game
     players.find { |player| player.name == p }
   end
 
+  # Assign a user via Player#user=.  This is deprecated.  Don't use it.
+
+  def []=( p, u )
+    puts "Warning: Don't use Game#[]=  !!!"
+    self[p].user = u
+  end
+
   # Get the User associated with the given player name.  This is equivalent
   # to:
   #
