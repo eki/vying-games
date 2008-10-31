@@ -94,6 +94,9 @@ VALUE custodial_capture_valid( int argc, VALUE *argv, VALUE self ) {
       if( range != Qnil && blen > last ) {
         break;
       }
+      if( range != Qnil && blen < first && np == p ) {
+        break;
+      }
       if( np == p && ! (range != Qnil && blen < first) ) {
         return Qtrue;
       }
@@ -210,6 +213,9 @@ VALUE custodial( int argc, VALUE *argv, VALUE self ) {
     np = board_get( self, INT2NUM(nx), INT2NUM(ny) );
     while( np != Qnil ) {
       if( range != Qnil && blen > last ) {
+        break;
+      }
+      if( range != Qnil && blen < first && np == p ) {
         break;
       }
       if( np == p && ! (range != Qnil && blen < first ) ) {
