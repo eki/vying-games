@@ -13,7 +13,8 @@ require 'vying'
 
 Rules.create( "Hexxagon" ) do
   name    "Hexxagon"
-  version "1.1.0"
+  version "1.0.0"
+  broken
 
   players :red, :blue, :white
   option :number_of_players, :default => 3, :values => [2, 3]
@@ -105,7 +106,7 @@ Rules.create( "Hexxagon" ) do
       n = rand_number_of_blocks( np )
       m = rules.block_maps[np]
 
-      m.keys.sort_by { |c| c.to_s }.sort_by { rand }.each do |c|
+      m.keys.sort_by { rand }.each do |c|
         if n - 1 - m[c].length >= 0
           board[c] = board[*m[c]] = :x
           n -= (1 + m[c].length)
