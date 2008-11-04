@@ -9,7 +9,7 @@ require 'vying'
 
 Rules.create( "Y" ) do
   name    "Y"
-  version "0.8.0"
+  version "1.0.0"
 
   players :blue, :red
 
