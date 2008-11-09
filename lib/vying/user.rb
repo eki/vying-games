@@ -113,5 +113,9 @@ class Human < User
     ! @queue.empty?
   end
 
+  def yaml_initialize( tag, vals )
+    vals.each { |iv,v| instance_variable_set( "@#{iv}", v ) }
+    @queue = []
+  end
 end
 
