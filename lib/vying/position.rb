@@ -368,8 +368,8 @@ class Position
   # When loading a YAML-ized Position, be sure to re-extend any special
   # move mixins.
 
-  def yaml_initialize( t, v )
-    v.each do |iv,v| 
+  def yaml_initialize( tag, vals )
+    vals.each do |iv,v| 
       instance_variable_set( "@#{iv}", v )
       extend Kernel.nested_const_get( v ) if iv == "includes"
     end

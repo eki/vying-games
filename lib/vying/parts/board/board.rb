@@ -530,7 +530,7 @@ class Board
 
   # When loading a YAML-ized Board, be sure to re-extend plugins.
 
-  def yaml_initialize( t, vals )
+  def yaml_initialize( tag, vals )
     vals.each do |iv,v|
       instance_variable_set( "@#{iv}", v )
       v.each { |p| extend Board.find_plugin( p ) } if iv == "plugins"

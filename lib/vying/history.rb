@@ -228,8 +228,8 @@ class History
     ["@rules","@seed", "@options", "@moves", "@created_at", "@last_move_at"]
   end
 
-  def yaml_initialize( t, v )
-    v.each { |iv,v| instance_variable_set( "@#{iv}", v ) }
+  def yaml_initialize( tag, vals )
+    vals.each { |iv,v| instance_variable_set( "@#{iv}", v ) }
     @positions ||= []
     first
   end
