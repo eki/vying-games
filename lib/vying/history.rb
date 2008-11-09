@@ -231,6 +231,7 @@ class History
   def yaml_initialize( t, v )
     v.each { |iv,v| instance_variable_set( "@#{iv}", v ) }
     @positions ||= []
+    first
   end
 
 end
