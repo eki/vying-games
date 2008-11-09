@@ -85,7 +85,7 @@ class TestHistory < Test::Unit::TestCase
     h.append( Move.new( "a3", TicTacToe.players.first ) )
 
     h2 = YAML.load( h.to_yaml )
-    assert_equal( [], h2.instance_variable_get( "@positions" ) )
+    assert_equal( [TicTacToe.new], h2.instance_variable_get( "@positions" ) )
     assert_equal( h, h2 )
   end
 
