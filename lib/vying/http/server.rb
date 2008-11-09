@@ -56,7 +56,6 @@ class Vying::Server
     response = http.get( path, headers )
 
     if response.code == "200"
-      puts response.body
       YAML.load( response.body )
     else
       nil
