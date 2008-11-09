@@ -59,6 +59,11 @@ class User
   def to_s
     username
   end
+
+  def to_yaml_properties
+    ["@username", "@id"]
+  end
+
 end
 
 # This is just a simple dummy Human bot class.  It accepts moves into a 
