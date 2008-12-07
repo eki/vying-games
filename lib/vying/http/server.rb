@@ -58,6 +58,8 @@ class Vying::Server
       path += params.map { |n,v| "#{n}=#{v}" }.join( "&" )
     end
 
+    puts "get path: #{path}"  if debug?
+
     headers = {}
 
     if c = cookie
@@ -67,9 +69,9 @@ class Vying::Server
     http = Net::HTTP.new( host, port )
     response = http.get( path, headers )
 
-    if response.code == "200"
-      update_cookies( response.get_fields( 'set-cookie' ) )
+    update_cookies( response.get_fields( 'set-cookie' ) )
 
+    if response.code == "200"
       open( "./last.yaml", "w" ) { |f| f.puts response.body }  if debug?
 
       YAML.load( response.body )
@@ -108,20 +110,22 @@ class Vying::Server
   end
 
   class << self
-    attr_reader :current
+    def current
+      @current || connect
+    end
 
     def connect( params={} )
       params.merge!( load_auth_token( params ) )
 
       @current = new( params )
 
-      yield @current
+      yield @current  if block_given?
 
       @current
     end
 
     def get( path, params={} )
-      current.get( path, params={} )
+      current.get( path, params )
     end
 
     def create_vying_dir
