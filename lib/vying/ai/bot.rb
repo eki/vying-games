@@ -227,10 +227,8 @@ class Bot < User
     self.class.difficulty_for( rules )
   end
 
-  def yaml_initialize( tag, vals )
-    vals.each { |iv,v| instance_variable_set( "@#{iv}", v ) }
-    @cache = Search::Cache::FallThrough.new
-    @delegates = {}
+  def to_yaml( opts={} )
+    User.new( username, id ).to_yaml( opts )
   end
 end
 

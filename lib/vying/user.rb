@@ -60,6 +60,13 @@ class User
     username
   end
 
+  # Take over YAML deserialization.  Try to look up Bots by username, otherwise
+  # returns a User object.
+
+  def self.yaml_new( klass, tag, val )
+    Bot.find( val['username'] ) || User.new( val['username'], val['id'] )
+  end
+
   def to_yaml_properties
     ["@username", "@id"]
   end
@@ -113,9 +120,8 @@ class Human < User
     ! @queue.empty?
   end
 
-  def yaml_initialize( tag, vals )
-    vals.each { |iv,v| instance_variable_set( "@#{iv}", v ) }
-    @queue = []
+  def to_yaml( opts={} )
+    User.new( username, id ).to_yaml( opts )
   end
 end
 
