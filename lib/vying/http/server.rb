@@ -46,7 +46,7 @@ class Vying::Server
 
     @session = h['_session_id']  if h['_session_id'] != session
 
-    if h['auth_token'] != auth_token
+    if h['auth_token'] && h['auth_token'] != auth_token
       @auth_token = h['auth_token']
       save_auth_token
     end
@@ -68,6 +68,31 @@ class Vying::Server
 
     http = Net::HTTP.new( host, port )
     response = http.get( path, headers )
+
+    update_cookies( response.get_fields( 'set-cookie' ) )
+
+    if response.code == "200"
+      open( "./last.yaml", "w" ) { |f| f.puts response.body }  if debug?
+
+      YAML.load( response.body )
+    else
+      nil
+    end
+  end
+
+  def post( path, params={} )
+    data =  params.map { |n,v| "#{n}=#{v}" }.join( "&" )
+
+    puts "post path: #{path}"  if debug?
+
+    headers = {}
+
+    if c = cookie
+      headers['Cookie'] = c
+    end
+
+    http = Net::HTTP.new( host, port )
+    response = http.post( path, data, headers )
 
     update_cookies( response.get_fields( 'set-cookie' ) )
 
@@ -126,6 +151,10 @@ class Vying::Server
 
     def get( path, params={} )
       current.get( path, params )
+    end
+
+    def post( path, params={} )
+      current.post( path, params )
     end
 
     def create_vying_dir
