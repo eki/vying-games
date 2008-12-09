@@ -112,6 +112,26 @@ class TestPente < Test::Unit::TestCase
     assert( !g.move?( :d4 ) )
   end
 
+  def test_capture03
+    g = Game.new( rules )
+    g << ["c3", "c5", "c4", "s19"]
+    
+    assert_equal( 0, g.score( :black ) )
+    assert_equal( 0, g.score( :white ) )
+    assert_equal( :white, g.board[:c3] )
+    assert_equal( :white, g.board[:c4] )
+    assert_equal( :black, g.board[:c5] )
+
+    g << :c6
+
+    assert_equal( 0, g.score( :black ) )
+    assert_equal( 0, g.score( :white ) )
+    assert_equal( :white, g.board[:c3] )
+    assert_equal( :white, g.board[:c4] )
+    assert_equal( :black, g.board[:c5] )
+    assert_equal( :white, g.board[:c6] )
+  end
+
   def test_game01
     g = play_sequence [:a1,:b1,:a2,:b2,:a3,:b3,:a4,:b4,:a5]
 

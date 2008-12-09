@@ -130,7 +130,7 @@ class Game
     if results.respond_to?( :last_move_at )
       m = g.history.moves.last
       if m && m.at.nil?
-        m.instance_variable_set( "@at", results.last_move_at )
+        g.history.moves[-1] = m.stamp( results.last_move_at )
       end
       g.history.instance_variable_set( "@last_move_at", results.last_move_at )
     end
@@ -330,6 +330,13 @@ class Game
 
   def []( p )
     players.find { |player| player.name == p }
+  end
+
+  # Assign a user via Player#user=.  This is deprecated.  Don't use it.
+
+  def []=( p, u )
+    puts "Warning: Don't use Game#[]=  !!!"
+    self[p].user = u
   end
 
   # Get the User associated with the given player name.  This is equivalent

@@ -29,10 +29,7 @@ class TestUser < Test::Unit::TestCase
     assert_equal( User.new( "RandomBot" ), RandomBot.new )
     assert_not_equal( nil, User.new( "dude" ) )
     assert_not_equal( User.new( "dude" ), nil )
-    assert_not_equal( "dude", User.new( "dude" ) )
-    assert_not_equal( User.new( "dude" ), "dude" )
-    assert_not_equal( 1234, User.new( "dude" ) )
-    assert_not_equal( User.new( "dude" ), 1234 )
+    assert_not_equal( User.new( "dude" ), User.new( "dudette" ) )
   end
 
   def test_human

@@ -123,7 +123,7 @@ if defined?( Gem ) && Vying.const_defined?( 'VERSION' )
     s.rubyforge_project = 'silence stupid WARNINGS'
     s.has_rdoc = true
     s.files = PKG_FILES.to_a
-    s.extensions = "ext/vying/parts/board/extconf.rb"
+    s.extensions = "ext/vying/c/parts/board/extconf.rb"
     s.executables = ['vying']
     s.require_paths << "ext"
     s.author = 'Eric K Idema'

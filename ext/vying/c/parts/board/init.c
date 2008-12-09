@@ -37,7 +37,15 @@ void Init_boardext() {
   rb_define_method( Board, "get", board_get, 2 );             /* in board.c */
   rb_define_method( Board, "set", board_set, 3 );             /* in board.c */
 
-  rb_define_method( Board, "ci", board_ci, 2 );               /* in board.c */
+  rb_define_private_method( Board, "ci", board_ci, 2 );       /* in board.c */
+
+
+  /* Map CoordsProxy */
+
+  CoordsProxy = rb_define_class_under( Board, "CoordsProxy", rb_cObject );
+
+  rb_define_method( CoordsProxy, "connected?", coords_proxy_connected, 1 ); 
+                                                       /* in coords_proxy.c */
 
 
   /* Plugins namespace. */
@@ -92,6 +100,9 @@ void Init_boardext() {
   id_after_set = rb_intern( "after_set" );
   id_first = rb_intern( "first" );
   id_last = rb_intern( "last" );
+  id_resize_q = rb_intern( "resize?" );
+  id_resize = rb_intern( "resize" );
+  id_neighbors = rb_intern( "neighbors" );
 
   /* Look up all our symbols */
 

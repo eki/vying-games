@@ -295,7 +295,7 @@ module Board::Plugins::Amazons
     props
   end
 
-  def yaml_initialize( t, v )
+  def yaml_initialize( tag, vals )
     super
 
     @mobility = {}

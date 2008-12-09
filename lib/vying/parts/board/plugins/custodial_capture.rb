@@ -42,6 +42,7 @@ module Board::Plugins::CustodialCapture
       bt = [nc]
       while (bt << coords.next( bt.last, d ))
         break if self[bt.last].nil?
+        break if range && bt.length - 1 < range.first && self[bt.last] == p
         next  if range && bt.length - 1 < range.first
         break if range && bt.length - 1 > range.last
 
@@ -67,6 +68,7 @@ module Board::Plugins::CustodialCapture
       bt = [nc]
       while (bt << coords.next( bt.last, d ))
         break if self[bt.last].nil?
+        break if range && bt.length - 1 < range.first && self[bt.last] == p
         next  if range && bt.length - 1 < range.first
         break if range && bt.length - 1 > range.last
 

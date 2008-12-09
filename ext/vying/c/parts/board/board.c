@@ -106,6 +106,10 @@ VALUE board_get( VALUE self, VALUE x, VALUE y ) {
  */
 
 VALUE board_set( VALUE self, VALUE x, VALUE y, VALUE p ) {
+  if( RTEST(rb_funcall( self, id_resize_q, 2, x, y )) ) {
+    rb_funcall( self, id_resize, 2, x, y );
+  }
+
   if( RTEST(board_in_bounds( self, x, y )) ) {
     VALUE cells = rb_iv_get( self, "@cells" );
     VALUE old = rb_funcall( cells, id_subscript, 1, board_ci( self, x, y ) );
@@ -143,12 +147,16 @@ VALUE board_set_coord( VALUE self, VALUE c, VALUE p ) {
  */
 
 VALUE board_in_bounds( VALUE self, VALUE x, VALUE y ) {
+  VALUE origin = rb_iv_get( self, "@origin" );
+  int ox = NUM2INT(rb_funcall( origin, id_x, 0 ));
+  int oy = NUM2INT(rb_funcall( origin, id_y, 0 ));
+  
   int w = NUM2INT(rb_iv_get( self, "@width" ));
   int h = NUM2INT(rb_iv_get( self, "@height" ));
   int xi = NUM2INT(x);
   int yi = NUM2INT(y);
 
-  if( xi < 0 || xi >= w || yi < 0 || yi >= h ) {
+  if( xi < ox || xi >= (ox + w) || yi < oy || yi >= (oy + h) ) {
     return Qnil;
   } 
   
@@ -164,8 +172,12 @@ VALUE board_in_bounds( VALUE self, VALUE x, VALUE y ) {
  */
 
 VALUE board_ci( VALUE self, VALUE x, VALUE y ) {
+  VALUE origin = rb_iv_get( self, "@origin" );
+  int ox = NUM2INT(rb_funcall( origin, id_x, 0 ));
+  int oy = NUM2INT(rb_funcall( origin, id_y, 0 ));
   int w = NUM2INT(rb_iv_get( self, "@width" ));
-  return INT2NUM( NUM2INT(x) + NUM2INT(y) * w );
+
+  return INT2NUM( (NUM2INT(x) - ox) + (NUM2INT(y) - oy) * w );
 }
 
 /*

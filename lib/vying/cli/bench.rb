@@ -210,6 +210,8 @@ module CLI
         coords = b.coords.instance_variable_get( "@coords" )
         cell_shape = b.cell_shape
         directions = b.directions
+        b2 = Board.square( 6 )
+        cs = b2.coords.to_a.select { |c| c.y < 3 }
 
         bounds = Coords.bounds_for( 19, 19 )
         x.report( "Coords.new(  bf( 19, 19 ) )" ) do
@@ -254,6 +256,10 @@ module CLI
 
         x.report( "Coords#ring( d=2 )" ) do
           n.times { coords.ring( c1, 2, cell_shape, directions ) }
+        end
+
+        x.report( "Coords#connected?" ) do
+          n.times { b2.coords.connected?( cs ) }
         end
 
         # Board benchmarks

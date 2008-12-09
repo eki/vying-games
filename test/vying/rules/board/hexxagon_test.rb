@@ -14,12 +14,13 @@ class TestHexxagon < Test::Unit::TestCase
     g = Game.new( rules, 1234 )
 
     assert_equal( 5, g.board.length )
-    assert_equal( [:red, :red, :red], g.board[:a1,:i5,:e9] )
-    assert_equal( [:blue, :blue, :blue], g.board[:e1,:a5,:i9] )
-    assert_equal( 3, g.board.count( :red ) )
-    assert_equal( 3, g.board.count( :blue ) )
+    assert_equal( [:red, :red], g.board[:a5,:i5] )
+    assert_equal( [:blue, :blue], g.board[:a1,:i9] )
+    assert_equal( [:white, :white], g.board[:e1,:e9] )
+    assert_equal( 2, g.board.count( :red ) )
+    assert_equal( 2, g.board.count( :blue ) )
+    assert_equal( 2, g.board.count( :white ) )
     assert_equal( :red, g.turn )
-
     
     g = Game.new( rules, 1234, :number_of_players => 2 )
 
@@ -51,9 +52,9 @@ class TestHexxagon < Test::Unit::TestCase
   end
 
   def test_moves
-    g = Game.new( rules, 1234 )
-    g.clear_blocks
-    g.set_blocks( "" )
+    g = Game.new( rules, 1234, :number_of_players => 2 )
+
+    g.board[* g.board.occupied( :x )] = nil
 
     moves = g.moves
 
@@ -68,15 +69,17 @@ class TestHexxagon < Test::Unit::TestCase
   end
 
   def test_players
-    assert_equal( [:red,:blue], rules.new.players )
+    assert_equal( [:red,:blue,:white], rules.new.players )
+    assert_equal( [:red,:blue],
+                  rules.new( :number_of_players => 2 ).players )
     assert_equal( [:red,:blue,:white], 
                   rules.new( :number_of_players => 3 ).players )
   end
 
   def test_has_score
-    g = Game.new( rules, 1234 )
-    g.clear_blocks
-    g.set_blocks( "" )
+    g = Game.new( rules, 1234, :number_of_players => 2 )
+
+    g.board[* g.board.occupied( :x )] = nil
 
     g << "a1a2"
 
@@ -84,5 +87,19 @@ class TestHexxagon < Test::Unit::TestCase
     assert_equal( 4, g.score( :red ) )
     assert_equal( 3, g.score( :blue ) )
   end
+
+  def test_block_maps
+    assert( rules.block_maps.keys.include?( 2 ) )
+    assert( rules.block_maps.keys.include?( 3 ) )
+
+    map_2p = rules.block_maps[2]
+
+    assert( 61, 6 + map_2p.to_a.flatten.uniq.length )
+
+    map_3p = rules.block_maps[3]
+
+    assert( 61, 6 + map_3p.to_a.flatten.uniq.length )
+  end
+
 end
 

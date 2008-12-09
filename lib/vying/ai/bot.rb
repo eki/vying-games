@@ -24,11 +24,11 @@ class Bot < User
   end
 
   def self.plays?( rules )
-    self.w_const_defined?( rules.class_name.intern )
+    Object.nested_const_defined?( "#{self}::#{Rules.find( rules ).class_name}" )
   end
 
   def plays?( rules )
-    self.class.w_const_defined?( rules.class_name.intern )
+    self.class.plays?( rules )
   end
 
   def delegate_for( position )
@@ -36,7 +36,7 @@ class Bot < User
 
     return @delegates[k] if @delegates.key?( k )
 
-    if self.class.w_const_defined?( k )
+    if self.plays?( k )
       @delegates[k] = self.class.w_const_get( k ).new
       @delegates[k].cache = cache
       @delegates[k]
@@ -215,8 +215,9 @@ class Bot < User
   end
 
   def self.difficulty_for( rules )
-    if self.w_const_defined?( "#{rules.class_name}".intern )
-      d = self.w_const_get( "#{rules.class_name}".intern ).difficulty
+    if self.plays?( rules )
+      k = Module.nested_const_get "#{self}::#{Rules.find( rules).class_name}"
+      d = k.difficulty
       return DIFFICULTY_LEVELS.invert[d] if d && DIFFICULTY_LEVELS.invert[d]
     end
     return :unknown
@@ -226,5 +227,8 @@ class Bot < User
     self.class.difficulty_for( rules )
   end
 
+  def to_yaml( opts={} )
+    User.new( username, id ).to_yaml( opts )
+  end
 end
 

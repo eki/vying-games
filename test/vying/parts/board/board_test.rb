@@ -25,10 +25,10 @@ class TestBoard < Test::Unit::TestCase
 
   def test_ci
     b = Board.rect( 7, 6 )
-    assert_equal( 0, b.ci( 0, 0 ) )
-    assert_equal( 2, b.ci( 2, 0 ) )
-    assert_equal( 14, b.ci( 0, 2 ) )
-    assert_equal( 17, b.ci( 3, 2 ) )
+    assert_equal( 0, b.send( :ci, 0, 0 ) )
+    assert_equal( 2, b.send( :ci, 2, 0 ) )
+    assert_equal( 14, b.send( :ci, 0, 2 ) )
+    assert_equal( 17, b.send( :ci, 3, 2 ) )
   end
 
   def test_dup
@@ -363,6 +363,62 @@ EOF
                   b.coords.neighbors( Coord[:c2] ).map { |c| c.to_s }.sort )
     assert_equal( ['a2','b3','c2'],
                   b.coords.neighbors( Coord[:b2] ).map { |c| c.to_s }.sort )
+  end
+
+  def test_group_by_connectivity
+    b = Board.square 3
+
+    b[:a1, :b3, :c3] = :x
+
+    groups = b.group_by_connectivity( b.occupied( :x ) )
+
+    assert_equal( 2, groups.length )
+    assert( groups.include?( [Coord[:a1]] ) )
+    assert( groups.include?( [Coord[:b3],Coord[:c3]] ) )
+
+    b[:b2] = :x
+
+    groups = b.group_by_connectivity( b.occupied( :x ) )
+
+    assert_equal( 1, groups.length )
+    assert_equal( [Coord[:a1],Coord[:b2],Coord[:b3],Coord[:c3]].sort,
+                  groups.first.sort )
+
+    b[:b2] = :o
+
+    groups = b.group_by_connectivity( b.occupied( :x ) )
+
+    assert_equal( 2, groups.length )
+    assert( groups.include?( [Coord[:a1]] ) )
+    assert( groups.include?( [Coord[:b3],Coord[:c3]] ) )
+  end
+
+  def test_path
+    b = Board.square 3
+
+    b[:a1, :b3, :c3] = :x
+
+    assert( ! b.path?( Coord[:a1], Coord[:c3] ) )
+
+    b[:b2] = :x
+
+    assert( b.path?( Coord[:a1], Coord[:c3] ) )
+
+    b[:b2] = :o
+
+    assert( ! b.path?( Coord[:a1], Coord[:c3] ) )
+
+    b[:c2] = :x
+
+    assert( ! b.path?( Coord[:a1], Coord[:c3] ) )
+
+    b[:c1] = :x
+
+    assert( ! b.path?( Coord[:a1], Coord[:c3] ) )
+
+    b[:b1] = :x
+
+    assert( b.path?( Coord[:a1], Coord[:c3] ) )
   end
 
 end

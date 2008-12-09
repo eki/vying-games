@@ -41,7 +41,7 @@ class User
   end
 
   def eql?( u )
-    u && u.respond_to?( :username ) && username == u.username
+    u && username == u.username
   end
 
   def ==( u )
@@ -59,6 +59,18 @@ class User
   def to_s
     username
   end
+
+  # Take over YAML deserialization.  Try to look up Bots by username, otherwise
+  # returns a User object.
+
+  def self.yaml_new( klass, tag, val )
+    Bot.find( val['username'] ) || User.new( val['username'], val['id'] )
+  end
+
+  def to_yaml_properties
+    ["@username", "@id"]
+  end
+
 end
 
 # This is just a simple dummy Human bot class.  It accepts moves into a 
@@ -108,5 +120,8 @@ class Human < User
     ! @queue.empty?
   end
 
+  def to_yaml( opts={} )
+    User.new( username, id ).to_yaml( opts )
+  end
 end
 

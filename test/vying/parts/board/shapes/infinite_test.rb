@@ -183,8 +183,55 @@ class TestBoardInfinite < Test::Unit::TestCase
     assert_equal( [Coord[0,0],Coord[2,0],Coord[-3,-5]].sort, 
                   b.occupied( :x ).sort )
     assert_equal( 69, b.unoccupied.length )
+  end
 
+  def test_resize_02    # Based on a bug report
+    b = Board.infinite( 11, 11 )
 
+    b[-1,-1] = :fixed
+    b[0,0] = :mobile
+
+    assert_equal( :fixed, b[-1,-1] )
+    assert_equal( :mobile, b[0,0] )
+    assert_equal( [Coord[-5,-5], Coord[5,5]], b.bounds )
+
+    assert_equal( 11, b.width )
+    assert_equal( 11, b.height )
+    assert_equal( 11, b.coords.width )
+    assert_equal( 11, b.coords.height )
+
+    b[-3,-3] = :x
+
+    assert_equal( :fixed, b[-1,-1] )
+    assert_equal( :mobile, b[0,0] )
+    assert_equal( [Coord[-5,-5], Coord[5,5]], b.bounds )
+
+    assert_equal( 11, b.width )
+    assert_equal( 11, b.height )
+    assert_equal( 11, b.coords.width )
+    assert_equal( 11, b.coords.height )
+
+    b[-4,-4] = :y
+
+    assert_equal( :fixed, b[-1,-1] )
+    assert_equal( :mobile, b[0,0] )
+    assert_equal( [Coord[-5,-5], Coord[5,5]], b.bounds )
+
+    assert_equal( 11, b.width )
+    assert_equal( 11, b.height )
+    assert_equal( 11, b.coords.width )
+    assert_equal( 11, b.coords.height )
+
+    b[-5,-5] = :z
+
+    assert_equal( :fixed, b[-1,-1] )
+    assert_equal( :mobile, b[0,0] )
+    assert_equal( [Coord[-6,-6], Coord[5,5]], b.bounds )
+
+    assert_equal( 12, b.width )
+    assert_equal( 12, b.height )
+    assert_equal( 12, b.coords.width )
+    assert_equal( 12, b.coords.height )
   end
 end
 

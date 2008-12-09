@@ -119,11 +119,27 @@ class Rules
     position_class.new( seed, opts )
   end
 
+  # Return a list of all available versions of these rules.
+
+  def versions
+    Rules.list.select { |r| r.class_name == class_name }.
+               map { |r| r.version }.
+               sort
+  end
+
   # Returns the Position subclass used by these rules.
 
   def position_class
     pkn = "#{class_name}_#{version.gsub( /\./, '_' )}"
     Positions.const_get( pkn )
+  end
+
+  # Returns a list of all Position subclasses used by every available version
+  # of these rules.
+
+  def position_classes
+    versions.map { |v| Rules.find( class_name, v ) }.
+             map { |r| r.position_class }
   end
 
   # Validate options that can be passed to Rules#new.  Checks that all

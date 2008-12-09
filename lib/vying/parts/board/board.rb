@@ -25,6 +25,8 @@ class Board
   def initialize( h )
     omit = (h[:omit] || []).map { |c| Coord[c] }
 
+    @origin ||= Coord[0,0]
+
     @cells = Array.new( @width * @height, nil )
     @coords = CoordsProxy.new( self, Coords.new( bounds, omit ) )
 
@@ -153,7 +155,11 @@ class Board
   end
 
   def set( x, y, p )
-     if in_bounds?( x, y )
+    if resize?( x, y )
+      resize( x, y )
+    end
+
+    if in_bounds?( x, y )
       old = @cells[ci( x, y )]
 
       before_set( x, y, old )
@@ -175,7 +181,7 @@ class Board
   end
 
   def ci( x, y )
-    x + y * width
+    (x - @origin.x) + (y - @origin.y) * width
   end
 
   # Compare boards for equality.
@@ -306,7 +312,8 @@ class Board
   end
 
   def in_bounds?( x, y )
-    if x < 0 || x >= width || y < 0 || y >= height
+    if x < @origin.x || x >= @origin.x + width || 
+       y < @origin.y || y >= @origin.y + height
       return nil
     end
 
@@ -314,7 +321,71 @@ class Board
   end
 
   def bounds
-    [Coord[0,0], Coord[width-1,height-1]]
+    [@origin, Coord[@origin.x + @width - 1, @origin.y + @height - 1]]
+  end
+
+  # Can this board be resized to include (x,y).  The default implementation
+  # always returns false.  Right now only Board::Infinite can be resized.
+
+  def resize?( x, y )
+    false
+  end
+
+  # Resize the board to include (x,y).  The default implementation raises
+  # an error.  Right now only Board::Infinite implements resize.
+
+  def resize( x, y )
+    raise "This board doesn't support the resize operation."
+  end
+
+  # Is there a path between the two coords made up of cells occupied by
+  # the same piece as the endpoints.
+
+  def path?( c1, c2 )
+    check = [c1]
+    checked = []
+    p = self[c1]
+
+    while c = check.pop
+      return true if c == c2
+
+      checked << c
+
+      coords.neighbors( c ).select { |nc| self[nc] == p }.each do |nc|
+        check << nc  unless checked.include?( nc )
+      end
+    end
+
+    false
+  end
+
+  # Break the set of coords up into groups such that each group is both 
+  # occupied by the same piece and connected.
+
+  def group_by_connectivity( cs )
+    cs = cs.dup
+    groups = []
+
+    until cs.empty?
+      check = [cs.first]
+      group = []
+      p = self[check.first]
+
+      while c = check.pop
+        cs.delete( c )
+        group << c
+
+        coords.neighbors( c ).each do |nc|
+          check << nc  if cs.include?( nc ) && self[nc] == p
+        end
+      end
+
+      group.uniq!
+
+      groups << group
+    end
+
+    groups
   end
 
   # This can be overridden perform some action before a cell on the board is
@@ -380,7 +451,7 @@ class Board
 
     def connected?( cs )
       cs = cs.dup
-      all, check = {}, [cs.first]
+      check = [cs.first]
 
       while c = check.pop
         cs.delete( c )
@@ -459,7 +530,7 @@ class Board
 
   # When loading a YAML-ized Board, be sure to re-extend plugins.
 
-  def yaml_initialize( t, vals )
+  def yaml_initialize( tag, vals )
     vals.each do |iv,v|
       instance_variable_set( "@#{iv}", v )
       v.each { |p| extend Board.find_plugin( p ) } if iv == "plugins"
@@ -502,6 +573,8 @@ class Board
 
     end
   end
+
+  private :ci
 
 end
 
