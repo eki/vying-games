@@ -2,6 +2,7 @@
 
 class Vying::Server
   attr_reader :host, :port, :session, :username, :auth_token
+  attr_writer :debug
 
   def initialize( params={} )
     @host, @port, @username = params[:host], params[:port], params[:username]
