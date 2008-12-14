@@ -173,6 +173,15 @@ class Position
     p
   end
 
+  # Return a list of "sealed" moves.  That is, moves that should be hidden
+  # from the given player because they would reveal censored position info.
+  #
+  # This feeds History#censored_sequence.
+
+  def sealed_moves( player )
+    []
+  end
+
   # If we're checking for cycles, and one is found, what do we do?
 
   def cycle_found

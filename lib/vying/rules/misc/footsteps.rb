@@ -93,6 +93,16 @@ Rules.create( "Footsteps" ) do
 
       position
     end
+
+    def sealed_moves( player )
+      sealed = []
+
+      players.each do |p|
+        sealed << bids[p]  if p != player && ! bids[p].nil?
+      end
+
+      sealed
+    end
   end
 
 end

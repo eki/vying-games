@@ -88,6 +88,34 @@ class History
     moves.map { |m| m.to_s }
   end
 
+  # The censored sequence of moves.  Any sealed moves are replaced with the
+  # symbol :hidden.  The list will be censored for the given player (that is
+  # a sealed move that the player can see will *not* be hidden).
+  #
+  # This method depends on Position#sealed_moves.
+  #
+  # The sealed moves are assumed to come at the end of the sequence of moves.
+  # For example, if the sequence is [9,8,7,9] and the sealed_moves are [9,8]
+  # the result will be [9,:hidden,7,:hidden].  If the sealed_moves list was
+  # [9,9] the result would be [:hidden,8,7,:hidden].
+  #
+  # TODO:  This should be deprecated in favor of a, yet unwritten,
+  #        censored_moves method.
+
+  def censored_sequence( player )
+    seq = sequence
+    sealed = last.sealed_moves( player ).map { |m| m.to_s }
+
+    i = seq.length - 1
+
+    until i < 0 || sealed.empty?
+      seq[i] = :hidden if sealed.delete( seq[i] )
+      i -= 1
+    end
+
+    seq
+  end
+
   # A list of who made each move.  This is deprecated.  History#moves should
   # be used instead.
 
