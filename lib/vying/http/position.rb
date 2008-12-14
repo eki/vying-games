@@ -1,7 +1,7 @@
 
 class Position 
 
-  attr_reader :game_id, :sequence_index
+  attr_reader :game_id, :sequence_index, :sequence, :you
 
   def self.fetch( game_id, n=nil )
     params = { :game_id => game_id }
@@ -10,8 +10,10 @@ class Position
     r = Vying::Server.get( "/api/position", params )
 
     if p = (r && r['position'])
-      p.instance_variable_set( "@game_id", r['game_id'] )
+      p.instance_variable_set( "@game_id",        r['game_id'] )
+      p.instance_variable_set( "@sequence",       r['sequence'] )
       p.instance_variable_set( "@sequence_index", r['n'] )
+      p.instance_variable_set( "@you",            r['you'] )
     end
 
     p
@@ -45,6 +47,8 @@ class Position
 end
 
 Rules.list.each do |r| 
-  r.position_class.class_eval { ignore :game_id, :sequence_index }
+  r.position_class.class_eval do 
+    ignore :game_id, :sequence_index, :sequence, :you
+  end
 end
 

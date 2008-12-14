@@ -7,6 +7,12 @@ class User
     r && r['user']
   end
 
+  def self.myself
+    r = Vying::Server.get( "/api/myself" )
+
+    r && r['user']
+  end
+
   def profile
     return nil       if id.nil?
     return @profile  if @profile
@@ -39,8 +45,10 @@ class User
     r = Vying::Server.get( "/api/cycle", :user_id => id )
 
     if p = (r && r['position'])
-      p.instance_variable_set( "@game_id", r['game_id'] )
+      p.instance_variable_set( "@game_id",        r['game_id'] )
+      p.instance_variable_set( "@sequence",       r['sequence'] )
       p.instance_variable_set( "@sequence_index", r['n'] )
+      p.instance_variable_set( "@you",            r['you'] )
     end
 
     p
