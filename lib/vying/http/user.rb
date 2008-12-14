@@ -41,7 +41,6 @@ class User
     if p = (r && r['position'])
       p.instance_variable_set( "@game_id", r['game_id'] )
       p.instance_variable_set( "@sequence_index", r['n'] )
-      p.class.class_eval { ignore :game_id, :sequence_index }
     end
 
     p

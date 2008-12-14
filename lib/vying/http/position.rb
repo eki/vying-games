@@ -12,7 +12,6 @@ class Position
     if p = (r && r['position'])
       p.instance_variable_set( "@game_id", r['game_id'] )
       p.instance_variable_set( "@sequence_index", r['n'] )
-      p.class.class_eval { ignore :game_id, :sequence_index }
     end
 
     p
@@ -37,12 +36,15 @@ class Position
       if p = (r && r['position'])
         p.instance_variable_set( "@game_id", r['game_id'] )
         p.instance_variable_set( "@sequence_index", r['n'] )
-        p.class.class_eval { ignore :game_id, :sequence_index }
       end
 
       p
     end
   end
 
+end
+
+Rules.list.each do |r| 
+  r.position_class.class_eval { ignore :game_id, :sequence_index }
 end
 
