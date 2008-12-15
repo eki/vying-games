@@ -181,7 +181,7 @@ class Bot < User
   end
 
   def Bot.play( rules )
-    @@bots_play[Rules.find( rules )]
+    list.select { |b| b.plays?( rules ) }
   end
 
   def Bot.find( name )

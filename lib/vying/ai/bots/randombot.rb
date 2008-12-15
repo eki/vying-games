@@ -11,19 +11,13 @@ class RandomBot < Bot
     super( username, id )
   end
 
-  def RandomBot.select( sequence, position, player )
+  def select( sequence, position, player )
     moves = position.moves( player )
     moves[rand(moves.size)]
   end
 
-  Rules.list.each do |r|
-    class_eval <<-EVAL
-      class #{r.class_name} < Bot
-        def select( sequence, position, player )
-          RandomBot.select( sequence, position, player )
-        end
-      end
-    EVAL
+  def self.plays?( rules )
+    true
   end
 end
 
