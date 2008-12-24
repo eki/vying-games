@@ -107,7 +107,8 @@ Rules.create( "Hexxagon" ) do
 
       m.keys.sort_by { |c| c.to_s }.sort_by { rand }.each do |c|
         if n - 1 - m[c].length >= 0
-          board[c] = board[*m[c]] = :x
+          board[c] = :x
+          m[c].each { |mc| board[mc] = :x }
           n -= (1 + m[c].length)
         end
 
