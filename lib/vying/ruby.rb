@@ -24,7 +24,11 @@ class Module
   # via nested_const_get.
 
   def nested_const_get( s )
-    s.to_s.split( /::/ ).inject( self ) { |n,m| n.const_get( m ) }
+    o = [Object, Module, Kernel].include?( self ) ? Object : self
+
+    s.to_s.split( /::/ ).inject( o ) do |n,m| 
+      n && n.w_const_defined?( m ) ? n.w_const_get( m ) : nil
+    end
   end
 
   # Like Module#const_get with the exception that this handles nested
@@ -32,8 +36,10 @@ class Module
   # via nested_const_get.
 
   def nested_const_defined?( s )
-    !! s.to_s.split( /::/ ).inject( self ) do |n,m| 
-      n && n.const_defined?( m ) ? n.const_get( m ) : false
+    o = [Object, Module, Kernel].include?( self ) ? Object : self
+
+    !! s.to_s.split( /::/ ).inject( o ) do |n,m| 
+      n && n.w_const_defined?( m ) ? n.w_const_get( m ) : false
     end
   end
 
