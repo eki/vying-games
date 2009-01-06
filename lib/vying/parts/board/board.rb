@@ -433,12 +433,14 @@ class Board
       @coords.ring( coord, d, @board.cell_shape, @board.directions( coord ) )
     end
 
-    def neighbors( coord )
-      @coords.neighbors( coord, @board.directions( coord ) )
+    def neighbors( coord, directions=nil )
+      directions ||= @board.directions( coord )
+      @coords.neighbors( coord, directions )
     end
 
-    def neighbors_nil( coord )
-      @coords.neighbors_nil( coord, @board.directions( coord ) )
+    def neighbors_nil( coord, directions=nil )
+      directions ||= @board.directions( coord )
+      @coords.neighbors_nil( coord, directions )
     end
 
     # Are the given coords all connected?  This checks that the list of coords 
