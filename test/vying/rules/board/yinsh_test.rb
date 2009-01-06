@@ -26,8 +26,10 @@ class TestYinsh < Test::Unit::TestCase
   def test_has_moves
     g = Game.new( rules )
     assert_equal( [:white], g.has_moves )
+    assert( g.instructions =~ /^Place/ )
     g << g.moves.first
     assert_equal( [:black], g.has_moves )
+    assert( g.instructions =~ /^Place/ )
   end
 
   def test_moves
@@ -61,16 +63,20 @@ class TestYinsh < Test::Unit::TestCase
     assert_equal( :white, g.turn )
     assert( g.rows.length == 1 )
     assert_equal( g.board.occupied( :white ).sort, g.rows.first.sort )
+    assert( g.instructions =~ /^Remove a 5/ )
 
     g << ["e7", "e6", "e5", "e4", "e3"]
 
     assert_equal( :white, g.turn )
     assert( ! g.rows.empty? )
+    assert( g.instructions =~ /^Remove one of your rings/ )
 
     g << "f5"
 
     assert( g.rows.empty? )
     assert( g.removed_markers.empty? )
+
+    assert( g.instructions =~ /^Move/ )
 
     assert_equal( :black, g.turn )
     assert_equal( 4, g.board.count( :WHITE_RING ) )
@@ -364,6 +370,27 @@ class TestYinsh < Test::Unit::TestCase
     assert( ! g.loser?( :white ) )
     assert( ! g.draw? )
     assert_equal( 3, g.score( :white ) )
+  end
+
+  def test_markers_warning
+    g = Game.new rules
+
+    g << ["b1", "c1", "d1", "e1", 
+          "a2", "b2", "c2", "d2", "e2", "f2", 
+          "a2a3", "b2b3", "c2c3", "d2d3", "e2e3", "f2f3", 
+          "a3a4", "e1g3", "c3c4", "b3b4", "e3e4", "c1f4", "a4a5", 
+          "d3d4", "c4c5", "f3g4", "e4e5", "g3g2", "b1f5", "b4b5", 
+          "a5b6", "f4g5", "c5c6", "d4d5", "e5e6", "g4h4", "d1h5", 
+          "g2h3", "f5f6", "g5g6", "b6b7", "d5d6", "c6c7", "b5d7", 
+          "e6e7", "h4i4", "h5h6", "g6g7", "f6f7", "d7d8"]
+
+    assert_equal( 11, g.markers_remaining )
+    assert( g.instructions =~ /^Move/ )
+
+    g << "b7c8"
+
+    assert_equal( 10, g.markers_remaining )
+    assert( g.instructions =~ /^Be careful/ )
   end
 
   def test_out_of_markers

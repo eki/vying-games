@@ -219,6 +219,22 @@ Rules.create( "Yinsh" ) do
     def markers_remaining
       51 - board.count( :white ) - board.count( :black )
     end
+
+    def instructions
+      rings = board.occupied( rules.ring[turn] )
+
+      if rings.length < 5 && removed[rules.ring[turn]] == 0
+        "Place a ring on any empty intersection."
+      elsif removed_markers.length == 5
+        "Remove one of your rings from the board."
+      elsif ! rows.empty?
+        "Remove a 5-in-a-row from the board."
+      elsif markers_remaining <= 10
+        "Be careful, only #{markers_remaining} markers remaining.  Move a ring."
+      else
+        "Move a ring."
+      end
+    end
   end
 
 end

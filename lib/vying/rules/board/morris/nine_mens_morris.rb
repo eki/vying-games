@@ -164,6 +164,20 @@ Rules.create( "NineMensMorris" ) do
     def flying_moves_for( c )
       board.unoccupied.map { |c1| "#{c}#{c1}" }
     end
+
+    public
+
+    def instructions
+      if removing
+        "Remove one of your opponent's pieces."
+      elsif remaining[turn] == 1
+        "Place your last piece."
+      elsif remaining[turn] > 1
+        "Place one of your #{remaining[turn]} pieces."
+      else
+        "Move one of your pieces."
+      end 
+    end
   end
 
   mills ( [[:a1,:d1,:g1], [:g1, :g4, :g7], [:g7, :d7, :a7], [:a7, :a4, :a1],
