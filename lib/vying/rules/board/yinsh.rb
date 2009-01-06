@@ -221,6 +221,8 @@ Rules.create( "Yinsh" ) do
     end
 
     def instructions
+      return ""  if final?
+
       rings = board.occupied( rules.ring[turn] )
 
       if rings.length < 5 && removed[rules.ring[turn]] == 0

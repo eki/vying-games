@@ -24,6 +24,7 @@ module RulesTests
     assert( r.respond_to?( :winner? ) )
     assert( r.respond_to?( :loser? ) )
     assert( r.respond_to?( :draw? ) )
+    assert( r.respond_to?( :instructions ) )
   end
 
   def test__arity
@@ -69,6 +70,7 @@ module RulesTests
     assert( ! g.move?( s[-1] ) )
     assert( ! g.move?( nil ) )
     assert( g.has_moves.empty? )
+    assert( g.instructions == "" )
 
     rules.players.each do |p|
       assert( g.moves( p ).empty? )

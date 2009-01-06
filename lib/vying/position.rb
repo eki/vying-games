@@ -317,6 +317,14 @@ class Position
     moves( player ).map { |move| apply( move, player ) }
   end
 
+  # Return a short sentence describing what the player is to do in this
+  # position.  The default implementation always returns an empty string.
+  # When overriding, be sure to return an empty string for final? positions.
+
+  def instructions
+    ""
+  end
+
   # Extend this Position with a special move mixin.  The mixin changes the
   # behavior of this Position.  For example, mixing in
   # Move::Draw::PositionMixin will change the normal behavior of #draw?.

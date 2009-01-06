@@ -168,6 +168,8 @@ Rules.create( "NineMensMorris" ) do
     public
 
     def instructions
+      return ""  if final?
+
       if removing
         "Remove one of your opponent's pieces."
       elsif remaining[turn] == 1
