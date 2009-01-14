@@ -28,6 +28,8 @@ Rules.create( "Hex" ) do
     end
 
     def moves
+      return []  if final?
+
       board.unoccupied
     end
 
