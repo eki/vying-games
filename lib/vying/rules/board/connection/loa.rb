@@ -96,11 +96,6 @@ Rules.create( "LinesOfAction" ) do
       ! (board.groups[opponent( player )].length <= 1)
     end
 
-    def loser?( player )
-      ! (board.groups[player].length <= 1) && 
-         board.groups[opponent( player )].length <= 1
-    end
-
     def draw?
       players.all? { |p| board.groups[p].length <= 1 }
     end
