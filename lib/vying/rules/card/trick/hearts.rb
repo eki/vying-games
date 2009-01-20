@@ -9,6 +9,8 @@ Rules.create( "Hearts" ) do
 
   players [:n, :e, :s, :w]
 
+  lowest_score_determines_winner
+
   random
 
 
@@ -100,18 +102,6 @@ Rules.create( "Hearts" ) do
 
     def final?
       @score.select { |k,v| v >= 100 }.size > 0
-    end
-
-    def winner?( player )
-      lowest = [:nobody,200]
-      @score.each { |k,v| lowest = [k,v] if v < lowest[1] }
-      player == lowest[0]
-    end
-
-    def loser?( player )
-      lowest = [:nobody,200]
-      @score.each { |k,v| lowest = [k,v] if v < lowest[1] }
-      player != lowest[0]
     end
 
     def score( player )
