@@ -89,10 +89,6 @@ Rules.create( "Amazons" ) do
       player != turn
     end
 
-    def loser?( player )
-      player == turn
-    end
-
     def score( player )
       board.territory( player ).length
     end
