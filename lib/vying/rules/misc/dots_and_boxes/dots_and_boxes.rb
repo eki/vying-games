@@ -13,7 +13,9 @@ Rules.create( "DotsAndBoxes" ) do
 
   players :black, :white
 
-  score_determines_outcome
+  highest_score_determines_winner
+
+  misere
 
   cache :moves
 

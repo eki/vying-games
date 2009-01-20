@@ -59,10 +59,6 @@ Rules.create( "Spangles" ) do
       false
     end
 
-    def loser?( player )
-      winner?( opponent( player ) )
-    end
-
     # Returns the color of the surrounding triangles if they are all the same.
     # Otherwise, returns nil.  Note:  Expects the given coord to be occupied,
     # if it isn't, nil is returned.

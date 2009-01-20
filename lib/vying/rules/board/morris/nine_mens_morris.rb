@@ -115,10 +115,6 @@ Rules.create( "NineMensMorris" ) do
       board.count( opponent( player ) ) == 2 || final? && turn != player
     end
 
-    def loser?( player )
-      winner?( opponent( player ) )
-    end
-
     def score( player )
       opp = opponent( player )
       9 - remaining[opp] - board.count( opp )

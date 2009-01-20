@@ -15,7 +15,8 @@ Rules.create( "Ataxx" ) do
 
   players :red, :blue
 
-  score_determines_outcome
+  highest_score_determines_winner
+
   random
 
   cache :moves

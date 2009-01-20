@@ -47,10 +47,6 @@ Rules.create( "Yavalath" ) do
        players.select { |p| three_in_a_row?( p ) }.length == players.length - 1)
     end
 
-    def loser?( player )
-      winner?( opponent( player ) )
-    end
-
     def draw?
       board.unoccupied.empty? && ! board.threats.any? { |t| t.degree == 0 }
     end

@@ -81,10 +81,6 @@ Rules.create( "Breakthrough" ) do
        board.coords.row( Coord[:a8] ).any? { |c| board[c] == :black })
     end
 
-    def loser?( player )
-      winner?( opponent( player ) )
-    end
-
     def score( player )
       16 - board.occupied( opponent( player ) ).length
     end

@@ -55,10 +55,6 @@ Rules.create( "Hexplode" ) do
       ! board.coords.any? { |c| board[c] && board[c].player == opp }
     end
 
-    def loser?( player )
-      winner?( opponent( player ) )
-    end
-
     def score( player )
       board.coords.inject( 0 ) do |s,c| 
         s + (board[c] && board[c].player == player ? board[c].count : 0)

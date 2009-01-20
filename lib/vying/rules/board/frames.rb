@@ -9,7 +9,7 @@ Rules.create( "Frames" ) do
 
   players :black, :white
 
-  score_determines_outcome
+  highest_score_determines_winner
 
   cache :moves
 

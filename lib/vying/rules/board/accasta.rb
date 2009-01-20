@@ -16,7 +16,7 @@ Rules.create( 'Accasta' ) do
   players :white, :black
   option :variant, :default => :standard, :values => [:standard, :pari]
 
-  score_determines_outcome
+  highest_score_determines_winner
 
   cache :moves
 

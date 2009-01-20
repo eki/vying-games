@@ -14,7 +14,7 @@ Rules.create( "Cephalopod" ) do
 
   players :white, :black
 
-  score_determines_outcome
+  highest_score_determines_winner
 
   combos [1,1]     => 2,
          [1,2]     => 3,

@@ -160,5 +160,54 @@ module RulesTests
     end
   end
 
+  def test__misere
+    srand 1234
+
+    unless rules.misere?
+      misere_rules = Rules.create_misere( rules )
+
+      if rules.score_determines_outcome?
+        assert( misere_rules.score_determines_outcome? )
+        assert_equal( rules.highest_score_determines_winner?,
+                      misere_rules.lowest_score_determines_winner? )
+        assert_equal( rules.lowest_score_determines_winner?,
+                      misere_rules.highest_score_determines_winner? )
+      end
+
+      if rules.random?
+        g = Game.new( rules, 1234 )
+        mg = Game.new( misere_rules, 1234 )
+      else
+        g = Game.new( rules )
+        mg = Game.new( misere_rules )
+      end
+
+      until g.final? || mg.final?
+        g.has_moves.each do |p|
+          m = g.moves( p )[rand( g.moves( p ).length )]
+
+          assert( g.move?( m, p ) )
+          assert( mg.move?( m, p ) )
+
+          g[p]  << m
+          mg[p] << m
+        end
+      end
+
+      assert( g.final? )
+      assert( mg.final? )
+
+      assert_equal( g.draw?, mg.draw? )
+
+      # At least one winner will now be a loser and vice versa.  Note that
+      # in a game with 3 or more players it's possible for one or more
+      # players to remain losers under both sets of rules.
+
+      unless g.draw?
+        assert( rules.players.any? { |p| g.winner?( p ) && mg.loser?( p ) } )
+        assert( rules.players.any? { |p| g.loser?( p ) && mg.winner?( p ) } )
+      end
+    end
+  end
 end
 

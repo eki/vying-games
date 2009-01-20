@@ -13,7 +13,7 @@ class TestAbande < Test::Unit::TestCase
   def test_info
     assert_equal( "Abande", rules.name )
     assert( rules.version == '1.0.0' )
-    assert( rules.score_determines_outcome )
+    assert( rules.highest_score_determines_winner? )
   end
 
   def test_players

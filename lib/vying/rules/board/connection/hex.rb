@@ -57,10 +57,6 @@ Rules.create( "Hex" ) do
           end
       end
     end
-
-    def loser?( player )
-      winner?( opponent( player ) )
-    end
   end
 
 end

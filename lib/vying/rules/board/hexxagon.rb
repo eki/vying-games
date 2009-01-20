@@ -18,7 +18,8 @@ Rules.create( "Hexxagon" ) do
   players :red, :blue, :white
   option :number_of_players, :default => 3, :values => [2, 3]
 
-  score_determines_outcome
+  highest_score_determines_winner
+
   random
 
   cache :moves

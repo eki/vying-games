@@ -57,10 +57,6 @@ Rules.create( "ThreeMusketeers" ) do
       player == :red ? !bw : bw
     end
 
-    def loser?( player )
-      winner?( opponent( player ) )
-    end
-
     private
 
     def red_in_a_line?

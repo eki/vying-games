@@ -50,10 +50,6 @@ Rules.create( "Y" ) do
         group.coords.any? { |c| c.x + c.y == board.length - 1 } 
       end
     end
-
-    def loser?( player )
-      winner?( opponent( player ) )
-    end
   end
 
 end

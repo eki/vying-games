@@ -13,7 +13,7 @@ class TestAccasta < Test::Unit::TestCase
   def test_info
     assert_equal( "Accasta", rules.name )
     assert( rules.version == '0.1.0' )
-    assert( rules.score_determines_outcome )
+    assert( rules.highest_score_determines_winner? )
   end
 
   def test_players

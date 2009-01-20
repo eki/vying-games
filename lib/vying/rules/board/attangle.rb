@@ -16,7 +16,7 @@ Rules.create( 'Attangle' ) do
   players :white, :black
   option :board_size, :default => 4, :values => Array( 3..6 )
 
-  score_determines_outcome
+  highest_score_determines_winner
 
   cache :moves
 

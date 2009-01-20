@@ -16,7 +16,7 @@ Rules.create( "Yinsh" ) do
   ring :white => :WHITE_RING,
        :black => :BLACK_RING
 
-  score_determines_outcome
+  highest_score_determines_winner
 
   cache :moves
 
