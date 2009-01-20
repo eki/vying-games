@@ -76,10 +76,6 @@ Rules.create( "Dodgem" ) do
       turn == player
     end
 
-    def loser?( player )
-      turn != player
-    end
-
     def off_board?( c, player )
       (player == :blue && c.x == board.width - 1) ||
       (player == :red  && c.y == 0)
