@@ -109,10 +109,6 @@ Rules.create( "AmericanCheckers" ) do
       player != turn
     end
 
-    def loser?( player )
-      player == turn
-    end
-
     def score( player )
       opp = opponent( player )
       oppk = rules.king[opp]
