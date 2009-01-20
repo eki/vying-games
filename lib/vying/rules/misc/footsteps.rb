@@ -73,12 +73,6 @@ Rules.create( "Footsteps" ) do
       (player == :right && c.x == 6)
     end
 
-    def loser?( player )
-      c = board.occupied( :white ).first
-      (player == :left  && c.x == 6) ||
-      (player == :right && c.x == 0)
-    end
-
     def draw?
       c = board.occupied( :white ).first
       c.x != 0 && c.x != 6 && points[:left] == 0 && points[:right] == 0
