@@ -238,36 +238,41 @@ class Position
   # If the position is final?, is the given player a winner?  Note, that
   # more than one player may be considered winners.
   #
-  # If rules.score_determines_outcome? is true and the given player has the
-  # highest score, true is return.
+  # If rules.highest_score_determines_winner? or
+  # rules.lowest_score_determines_winner? is true and the given player has the
+  # highest / lowest score, true is return.
   # 
   # Otherwise, false is returned and the Position subclass should override 
   # this method.
 
   def winner?( player )
-    if rules.score_determines_outcome?
-      scores = players.map { |p| score( p ) }
-      return scores.uniq.length > 1 && score( player ) == scores.max
+    if rules.highest_score_determines_winner?
+      ! draw? && highest_scorers.include?( player )
+    elsif rules.lowest_score_determines_winner?
+      ! draw? && lowest_scorers.include?( player )
     end
-
-    false
   end
 
   # If the position is final?, is the given player a loser?  Note, that
   # more than one player may be considered losers.
   #
-  # If rules.score_determines_outcome? is true and the given player does NOT
-  # have the highest score, true is return.
+  # If rules.highest_score_determines_winner? or
+  # rules.lowest_score_determines_winner? is true and the given player does NOT
+  # have the highest / lowest score, true is return.
   # 
-  # Otherwise, false is returned and the Position subclass should override 
-  # this method.
+  # Otherwise, loser? is defined in terms of winner?.  If the opponent of the
+  # player is the winner? then this player must be the loser?.  If this is
+  # not the case (such as with 3+ player games where more than one player
+  # may be the winner), then this method should be overridden.
 
   def loser?( player )
-    if rules.score_determines_outcome?
-      return score( player ) != players.map { |p| score( p ) }.max
+    if rules.highest_score_determines_winner?
+      ! draw? && ! highest_scorers.include?( player )
+    elsif rules.lowest_score_determines_winner?
+      ! draw? && ! lowest_scorers.include?( player )
+    else
+      winner?( opponent( player ) )
     end
-
-    false
   end
 
   # If the position is final?, does it represent a draw?
@@ -280,10 +285,38 @@ class Position
 
   def draw?
     if rules.score_determines_outcome?
-      return players.map { |p| score( p ) }.uniq.length == 1
+      return highest_scorers.length == players.length
     end
 
     false
+  end
+
+  # Returns a list of the highest scoring players in the game.  This is usually
+  # a list of a single player unless there is a tie among the players for the
+  # highest score.
+
+  def highest_scorers
+    return []  unless rules.has_score?
+
+    h = {}
+
+    players.each { |p| (h[score( p )] ||= []) << p }
+
+    h[h.keys.max]
+  end
+
+  # Returns a list of the lowest scoring players in the game.  This is usually
+  # a list of a single player unless there is a tie among the players for the
+  # lowest score.
+
+  def lowest_scorers
+    return []  unless rules.has_score?
+
+    h = {}
+
+    players.each { |p| (h[score( p )] ||= []) << p }
+
+    h[h.keys.min]
   end
 
   # Returns a list of all the players who have moves from this position.  This
