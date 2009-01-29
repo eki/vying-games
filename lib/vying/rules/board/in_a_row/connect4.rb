@@ -44,10 +44,6 @@ Rules.create( "Connect4" ) do
       board.threats.any? { |t| t.degree == 0 && t.player == player }
     end
 
-    def loser?( player )
-      winner?( opponent( player ) )
-    end
-
     def draw?
       board.unoccupied.empty? && ! board.threats.any? { |t| t.degree == 0 }
     end

@@ -86,6 +86,72 @@ class TestFootsteps < Test::Unit::TestCase
     assert_equal( nil, p.bids[:right] )
   end
 
+  def test_sealed_moves
+    g = Game.new( rules )
+   
+    assert_equal( [],  g.sealed_moves( :left ) ) 
+    assert_equal( [], g.sealed_moves( :right ) ) 
+    assert_equal( [], g.sealed_moves( nil ) ) 
+
+    assert_equal( [], g.history.censored_sequence( :left ) )
+    assert_equal( [], g.history.censored_sequence( :right ) )
+    assert_equal( [], g.history.censored_sequence( nil ) )
+
+    g.append( 4, :left )
+
+    assert_equal( [],  g.sealed_moves( :left ) ) 
+    assert_equal( [4], g.sealed_moves( :right ) ) 
+    assert_equal( [4], g.sealed_moves( nil ) ) 
+
+    assert_equal( ["4"], g.history.censored_sequence( :left ) )
+    assert_equal( [:hidden], g.history.censored_sequence( :right ) )
+    assert_equal( [:hidden], g.history.censored_sequence( nil ) )
+
+    g.append( 5, :right )
+
+    assert_equal( [], g.sealed_moves( :left ) ) 
+    assert_equal( [], g.sealed_moves( :right ) ) 
+    assert_equal( [], g.sealed_moves( nil ) ) 
+
+    assert_equal( ["4", "5"], g.history.censored_sequence( :left ) )
+    assert_equal( ["4", "5"], g.history.censored_sequence( :right ) )
+    assert_equal( ["4", "5"], g.history.censored_sequence( nil ) )
+
+    g.append( 6, :right )
+
+    assert_equal( [6], g.sealed_moves( :left ) ) 
+    assert_equal( [],  g.sealed_moves( :right ) ) 
+    assert_equal( [6], g.sealed_moves( nil ) ) 
+
+    assert_equal( ["4", "5", :hidden], g.history.censored_sequence( :left ) )
+    assert_equal( ["4", "5", "6"], g.history.censored_sequence( :right ) )
+    assert_equal( ["4", "5", :hidden], g.history.censored_sequence( nil ) )
+
+    g.append( 4, :left )
+
+    assert_equal( [], g.sealed_moves( :left ) ) 
+    assert_equal( [], g.sealed_moves( :right ) ) 
+    assert_equal( [], g.sealed_moves( nil ) ) 
+
+    assert_equal( ["4", "5", "6", "4"], g.history.censored_sequence( :left ) )
+    assert_equal( ["4", "5", "6", "4"], g.history.censored_sequence( :right ) )
+    assert_equal( ["4", "5", "6", "4"], g.history.censored_sequence( nil ) )
+
+    g.append( 4, :left )
+
+    assert_equal( [], g.sealed_moves( :left ) ) 
+    assert_equal( [4], g.sealed_moves( :right ) ) 
+    assert_equal( [4], g.sealed_moves( nil ) ) 
+
+
+    assert_equal( ["4", "5", "6", "4", "4"], 
+                  g.history.censored_sequence( :left ) )
+    assert_equal( ["4", "5", "6", "4", :hidden], 
+                  g.history.censored_sequence( :right ) )
+    assert_equal( ["4", "5", "6", "4", :hidden], 
+                  g.history.censored_sequence( nil ) )
+  end
+
   def test_game01
     g = play_sequence( [Move.new( "50", :left ), Move.new( "40", :right ),
                         Move.new( "1", :right ), Move.new( "1", :right ),

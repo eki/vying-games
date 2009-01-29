@@ -28,6 +28,8 @@ Rules.create( "Hex" ) do
     end
 
     def moves
+      return []  if final?
+
       board.unoccupied
     end
 
@@ -54,10 +56,6 @@ Rules.create( "Hex" ) do
             group.coords.any? { |c| c.x == board.width - 1 }
           end
       end
-    end
-
-    def loser?( player )
-      winner?( opponent( player ) )
     end
   end
 

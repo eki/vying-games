@@ -38,11 +38,6 @@ class TestBot < Test::Unit::TestCase
   end
 
   def test_delegate_for
-    bot = RandomBot.new
-
-    assert_equal( RandomBot::TicTacToe.new, bot.delegate_for( TicTacToe.new ) )
-    assert_equal( RandomBot::Footsteps.new, bot.delegate_for( Footsteps.new ) )
-
     bot = FirstMoveBot.new
 
     assert_equal( FirstMoveBot::TicTacToe.new, 

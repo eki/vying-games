@@ -22,8 +22,8 @@ VALUE frontier_update( VALUE self, VALUE c ) {
   int i;
   for( i = 0; i < RARRAY(dir)->len; i++ ) {
     VALUE d = rb_ary_entry( dir, i );
-    int dx, dy, nx, ny;
-    VALUE np;
+    int dx, dy;
+    VALUE nx, ny;
 
     if( d == sym_n ) {
       dx = 0;
@@ -58,15 +58,14 @@ VALUE frontier_update( VALUE self, VALUE c ) {
       dy = 1;
     }
 
-    nx = x + dx;
-    ny = y + dy;
+    nx = INT2NUM(x + dx);
+    ny = INT2NUM(y + dy);
 
-    if( 0 <= nx && nx < w && 0 <= ny && ny < h &&
-        rb_ary_entry( cells, nx+ny*w ) == Qnil ) {
+    if( RTEST(board_in_bounds( self, nx, ny )) ) {
+      VALUE fc = rb_funcall( Coord, id_new, 2, nx, ny );
 
-      VALUE fc = rb_funcall( Coord, id_new, 2, INT2NUM(nx), INT2NUM(ny) );
-
-      if( rb_funcall( coords, id_include, 1, fc ) == Qtrue ) {
+      if( rb_funcall( coords, id_include, 1, fc ) == Qtrue &&
+          board_get( self, nx, ny ) == Qnil ) {
         rb_ary_push( frontier, fc );
       }
     }

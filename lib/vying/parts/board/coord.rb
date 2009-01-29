@@ -289,5 +289,20 @@ class Coord
 
     expanded
   end
+
+  yaml_as "tag:ruby.yaml.org,2002:object:Coord"
+
+  # Take over YAML deserialization.  Perform a lookup via Coord.[] instead
+  # of allocating a new Coord object.
+
+  def Coord.yaml_new( klass, tag, val )
+    Coord[val['x'], val['y']]
+  end
+
+  # Dumps this Coord object to YAML.  Only x,y are dumped.
+
+  def to_yaml_properties
+    ["@x", "@y"]
+  end
 end
 

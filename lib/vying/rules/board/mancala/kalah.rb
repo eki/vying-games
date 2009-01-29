@@ -12,7 +12,7 @@ Rules.create( "Kalah" ) do
 
   pie_rule
 
-  score_determines_outcome
+  highest_score_determines_winner
 
   option :seeds_per_cup, :default => 6, :values => [3,4,5,6]
 

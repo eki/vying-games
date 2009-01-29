@@ -9,7 +9,7 @@ require 'vying'
 
 Rules.create( "Y" ) do
   name    "Y"
-  version "0.8.0"
+  version "1.0.0"
 
   players :blue, :red
 
@@ -28,6 +28,8 @@ Rules.create( "Y" ) do
     end
 
     def moves
+      return []  if final?
+
       board.unoccupied
     end
 
@@ -47,10 +49,6 @@ Rules.create( "Y" ) do
         group.coords.any? { |c| c.y == 0 } &&
         group.coords.any? { |c| c.x + c.y == board.length - 1 } 
       end
-    end
-
-    def loser?( player )
-      winner?( opponent( player ) )
     end
   end
 

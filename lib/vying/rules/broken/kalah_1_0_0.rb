@@ -12,7 +12,7 @@ Rules.create( "Kalah" ) do
 
   players :one, :two
 
-  score_determines_outcome
+  highest_score_determines_winner
 
   position do
     attr_reader :board, :scoring_pits, :annotation

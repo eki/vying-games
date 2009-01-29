@@ -3,7 +3,7 @@
 
 module CLI
 
-  SUBCOMMANDS = %w{ bench bot_rank branch play }.freeze
+  SUBCOMMANDS = %w{ bench bot bot_rank branch play login }.freeze
 
   def self.subcommand?( s )
     SUBCOMMANDS.include?( s )

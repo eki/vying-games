@@ -24,6 +24,7 @@ class TestPahTum < Test::Unit::TestCase
     assert_equal( 11, g.board.count( :x ) )
     assert_equal( [], g.board.occupied( :white ) )
     assert_equal( [], g.board.occupied( :black ) )
+    assert_equal( [:n, :e, :w, :s], g.board.directions )
   end
 
   def test_has_moves

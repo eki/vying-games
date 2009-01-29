@@ -115,10 +115,6 @@ Rules.create( "NineMensMorris" ) do
       board.count( opponent( player ) ) == 2 || final? && turn != player
     end
 
-    def loser?( player )
-      winner?( opponent( player ) )
-    end
-
     def score( player )
       opp = opponent( player )
       9 - remaining[opp] - board.count( opp )
@@ -163,6 +159,22 @@ Rules.create( "NineMensMorris" ) do
 
     def flying_moves_for( c )
       board.unoccupied.map { |c1| "#{c}#{c1}" }
+    end
+
+    public
+
+    def instructions
+      return ""  if final?
+
+      if removing
+        "Remove one of your opponent's pieces."
+      elsif remaining[turn] == 1
+        "Place your last piece."
+      elsif remaining[turn] > 1
+        "Place one of your #{remaining[turn]} pieces."
+      else
+        "Move one of your pieces."
+      end 
     end
   end
 

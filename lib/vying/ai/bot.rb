@@ -37,9 +37,13 @@ class Bot < User
     return @delegates[k] if @delegates.key?( k )
 
     if self.plays?( k )
-      @delegates[k] = self.class.w_const_get( k ).new
-      @delegates[k].cache = cache
-      @delegates[k]
+      d = self.class.nested_const_get( k )
+
+      if d
+        @delegates[k] = d.new
+        @delegates[k].cache = cache
+        @delegates[k]
+      end
     end
   end
 
@@ -181,7 +185,7 @@ class Bot < User
   end
 
   def Bot.play( rules )
-    @@bots_play[Rules.find( rules )]
+    list.select { |b| b.plays?( rules ) }
   end
 
   def Bot.find( name )
@@ -216,9 +220,11 @@ class Bot < User
 
   def self.difficulty_for( rules )
     if self.plays?( rules )
-      k = Module.nested_const_get "#{self}::#{Rules.find( rules).class_name}"
-      d = k.difficulty
-      return DIFFICULTY_LEVELS.invert[d] if d && DIFFICULTY_LEVELS.invert[d]
+      k = nested_const_get( Rules.find( rules ).class_name )
+      if k
+        d = k.difficulty
+        return DIFFICULTY_LEVELS.invert[d] if d && DIFFICULTY_LEVELS.invert[d]
+      end
     end
     return :unknown
   end
@@ -227,5 +233,8 @@ class Bot < User
     self.class.difficulty_for( rules )
   end
 
+  def to_yaml( opts={} )
+    User.new( username, id ).to_yaml( opts )
+  end
 end
 

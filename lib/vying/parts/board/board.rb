@@ -433,12 +433,14 @@ class Board
       @coords.ring( coord, d, @board.cell_shape, @board.directions( coord ) )
     end
 
-    def neighbors( coord )
-      @coords.neighbors( coord, @board.directions( coord ) )
+    def neighbors( coord, directions=nil )
+      directions ||= @board.directions( coord )
+      @coords.neighbors( coord, directions )
     end
 
-    def neighbors_nil( coord )
-      @coords.neighbors_nil( coord, @board.directions( coord ) )
+    def neighbors_nil( coord, directions=nil )
+      directions ||= @board.directions( coord )
+      @coords.neighbors_nil( coord, directions )
     end
 
     # Are the given coords all connected?  This checks that the list of coords 
@@ -530,7 +532,7 @@ class Board
 
   # When loading a YAML-ized Board, be sure to re-extend plugins.
 
-  def yaml_initialize( t, vals )
+  def yaml_initialize( tag, vals )
     vals.each do |iv,v|
       instance_variable_set( "@#{iv}", v )
       v.each { |p| extend Board.find_plugin( p ) } if iv == "plugins"

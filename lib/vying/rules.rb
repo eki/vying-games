@@ -46,59 +46,167 @@
 class Rules
   # private :new   # TODO
 
-  attr_reader :class_name, :name, :version, :players, :options, :defaults
+  attr_reader :class_name, :name, :version, :players, :options, :defaults,
+              :misere_rules
 
   def initialize( class_name )
     @class_name, @options, @defaults, @cached = class_name, {}, {}, []
   end
 
-  # Create a new Rules instance.  This takes a class name and block.  Example:
-  # 
-  #   Rules.create( "TicTacToe" ) do
-  #     # ...
-  #   end
-  #
-  # This will create an instance of Rules and assign it to the constant
-  # TicTacToe.  If there are multiple versions of the same rules, all but
-  # one should be marked as broken:
-  #
-  #   Rules.create( "TicTacToe" ) do
-  #     version "1.0.0"
-  #   end
-  #
-  #   Rules.create( "TicTacToe" ) do
-  #     version "0.9.0"
-  #     broken
-  #   end
-  #
-  # The block is executed in the context of a Rules::Builder.
+  class << self
 
-  def self.create( class_name, &block )
-    rules = new( class_name )
-    builder = Builder.new( rules )
-    builder.instance_eval( &block )
+    # Create a new Rules instance.  This takes a class name and block.  
+    # Example:
+    # 
+    #   Rules.create( "TicTacToe" ) do
+    #     # ...
+    #   end
+    #
+    # This will create an instance of Rules and assign it to the constant
+    # TicTacToe.  If there are multiple versions of the same rules, all but
+    # one should be marked as broken:
+    #
+    #   Rules.create( "TicTacToe" ) do
+    #     version "1.0.0"
+    #   end
+    #
+    #   Rules.create( "TicTacToe" ) do
+    #     version "0.9.0"
+    #     broken
+    #   end
+    #
+    # The block is executed in the context of a Rules::Builder.
 
-    rules.instance_variables.each do |iv|
-      rules.instance_variable_get( iv ).freeze
-    end
+    def create( class_name, &block )
+      rules = new( class_name )
+      builder = Builder.new( rules )
+      builder.instance_eval( &block )
 
-    unless rules.broken?
-      Kernel.const_set( class_name, rules )
-    end
-
-    list << rules
-
-    in_list = false
-    latest_versions.length.times do |i|
-      if latest_versions[i].class_name == rules.class_name
-        if rules.version > latest_versions[i].version
-          latest_versions[i] = rules
-        end
-        in_list = true
+      rules.instance_variables.each do |iv|
+        rules.instance_variable_get( iv ).freeze
       end
+
+      unless rules.broken?
+        Kernel.const_set( class_name, rules )
+      end
+
+      list_rules( rules )
+
+      rules
     end
 
-    latest_versions << rules unless in_list
+    # Creates rules and position classes for the misere variation of the given
+    # rules.  Under misere rules the winner? and loser? methods are inverted,
+    # but the rules are otherwise unchanged.  If, for example, the rules are
+    # DotsAndBoxes, the misere rules will be put in MisereDotsAndBoxes.  The
+    # name will also be prefixed so, "Dots and Boxes" becomes "Misere Dots and
+    # Boxes".  In DotsAndBoxes the player with the highest score will be the
+    # winner, in MisereDotsAndBoxes the player with the lowest score will be
+    # the winner.
+    #
+    # This can be triggered with Rules.create like so:
+    #
+    #   Rules.create( "DotsAndBoxes" ) do
+    #
+    #     misere
+    #
+    #   end
+    #
+    # Alternately, you can call this on an existing Rules object that does not
+    # already have misere rules:
+    #
+    #  >> Rules.create_misere( Othello )
+    #  => #<Rules name: 'Misere Othello', version: 1.0.0>
+    #
+
+    def create_misere( rules )
+      return rules.misere_rules    if rules.misere_rules
+      return rules.inverted_rules  if rules.misere?
+
+      mrs = rules.dup
+
+      mrs.instance_variable_set( "@class_name", "Misere#{rules.class_name}" )
+      mrs.instance_variable_set( "@name", "Misere #{rules.name}" )
+      mrs.instance_variable_set( "@inverted_rules", rules )
+
+      unless mrs.broken?
+        Kernel.const_set( mrs.class_name, mrs )
+      end
+ 
+      list_rules( mrs )
+ 
+      class_name = "#{mrs.class_name}_#{mrs.version.gsub( /\./, '_' )}"
+      klass = Positions.const_set( class_name, 
+        Class.new( rules.position_class ) )
+ 
+      klass.instance_variable_set( "@inverted_rules", rules )
+      klass.instance_variable_set( "@rules", mrs )
+
+      if rules.highest_score_determines_winner?
+
+        mrs.instance_variable_set( "@highest_score_determines_winner", nil )
+        mrs.instance_variable_set( "@lowest_score_determines_winner", true )
+
+      elsif rules.lowest_score_determines_winner?
+
+        mrs.instance_variable_set( "@highest_score_determines_winner", true )
+        mrs.instance_variable_set( "@lowest_score_determines_winner", nil )
+
+      else
+
+        klass.class_eval do
+          alias_method :__original_winner?, :winner?
+          alias_method :__original_loser?,  :loser?
+
+          if ! Rules.overrides.include?( "#{rules.position_class}#loser?" )
+
+            def winner?( player )
+              loser?( opponent( player ) )
+            end
+
+          else
+
+            def winner?( player )
+              __original_loser?( player )
+            end
+
+          end
+
+          def loser?( player )
+            __original_winner?( player )
+          end
+        end
+
+      end
+
+      rules.instance_variable_set( "@misere_rules", mrs )
+
+      mrs
+    end
+
+    def overrides
+      @overrides ||= []
+    end
+  
+    # Add the given Rules object to Rules.list.
+ 
+    def list_rules( rules )
+      list << rules
+ 
+      in_list = false
+      latest_versions.length.times do |i|
+        if latest_versions[i].class_name == rules.class_name
+          if rules.version > latest_versions[i].version
+            latest_versions[i] = rules
+          end
+          in_list = true
+        end
+      end
+
+      latest_versions << rules unless in_list
+    end
+
+    private :list_rules
   end
 
   # Returns a starting position for these rules.  The given options are
@@ -241,14 +349,37 @@ class Rules
   # example, if there are four players and their scores are [9,9,7,1], the
   # players who scored 9 are winners, the players who scored 7 and 1 are
   # the losers.  If all players score the same, the game is a draw.
+
+  def score_determines_outcome?
+    @highest_score_determines_winner || @lowest_score_determines_winner
+  end
+
+  # Is this game's winner determined by (the highest) score?  Setting this
+  # causes the default implementation of #winner?, #loser?, and #draw? to
+  # use score.  See score_determines_outcome?
+  #
+  # This is set with:
   #
   #   Rules.create( "Hexxagon" ) do
-  #     score_determines_outcome
+  #     highest_score_determines_winner
   #   end
   #
 
-  def score_determines_outcome?
-    @score_determines_outcome
+  def highest_score_determines_winner?
+    @highest_score_determines_winner
+  end
+
+  # Is this game's winner determined by (the lowest) score?  Setting this
+  # causes the default implementation of #winner?, #loser?, and #draw? to
+  # use score.  See score_determines_outcome?
+  #
+  #   Rules.create( "..." ) do
+  #     lowest_score_determines_winner
+  #   end
+  #
+
+  def lowest_score_determines_winner?
+    @lowest_score_determines_winner
   end
 
   # Do these rules define a score?
@@ -281,6 +412,13 @@ class Rules
 
   def check_cycles?
     @check_cycles
+  end
+
+  # Is this the misere version of another Rules object?  That is, were these
+  # rules created with the Rules.create_misere method?
+
+  def misere?
+    !! @inverted_rules
   end
 
   # Do these rules use sealed moves (aka simultaneous moves)?  More than one
@@ -478,7 +616,20 @@ class Rules
       class_name = "#{@rules.class_name}_#{@rules.version.gsub( /\./, '_' )}"
       klass = Positions.const_set( class_name, Class.new( Position ) )
 
+      # Record the methods added to the Position subclass.
+
+      klass.class.class_eval do
+        def method_added( name )
+          if Position.method_defined?( name )
+            Rules.overrides << "#{self}##{name}"
+          end
+        end
+      end
+
+      # Execute the position block
+
       klass.class_eval( &block )
+
       klass.instance_variable_set( "@rules", @rules )
 
       # Wrap (replace) #move?, #moves, and #apply!
@@ -506,6 +657,12 @@ class Rules
         end
       end
 
+      # Stop recording added methods.
+
+      klass.class.class_eval do
+        def method_added( name ); end
+      end
+
       # caching
 
       @rules.cached.each do |m|
@@ -516,6 +673,8 @@ class Rules
           klass.immutable_memoize m
         end
       end
+
+      misere_rules = Rules.create_misere( @rules )  if @misere
 
       klass
     end
@@ -558,6 +717,11 @@ class Rules
       @rules.instance_variable_set( "@cached", args )
     end
 
+    # Automatically create the misere version of these rules.
+
+    def misere
+      @misere = true
+    end
   end
 
 end

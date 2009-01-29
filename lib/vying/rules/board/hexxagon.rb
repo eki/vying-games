@@ -18,7 +18,8 @@ Rules.create( "Hexxagon" ) do
   players :red, :blue, :white
   option :number_of_players, :default => 3, :values => [2, 3]
 
-  score_determines_outcome
+  highest_score_determines_winner
+
   random
 
   cache :moves
@@ -107,7 +108,8 @@ Rules.create( "Hexxagon" ) do
 
       m.keys.sort_by { |c| c.to_s }.sort_by { rand }.each do |c|
         if n - 1 - m[c].length >= 0
-          board[c] = board[*m[c]] = :x
+          board[c] = :x
+          m[c].each { |mc| board[mc] = :x }
           n -= (1 + m[c].length)
         end
 

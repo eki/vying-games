@@ -20,7 +20,7 @@ Rules.create( "PahTum" ) do
 
   pie_rule
 
-  score_determines_outcome
+  highest_score_determines_winner
   allow_draws_by_agreement
   random
 
@@ -29,7 +29,7 @@ Rules.create( "PahTum" ) do
 
     def init
       w, h = 7, 7
-      @board = Board.rect( w, h )
+      @board = Board.rect( w, h, :directions => [:n, :e, :w, :s] )
 
       num_blocks = [5,7,9,11,13][rand( 5 )]
       num_blocks.times do

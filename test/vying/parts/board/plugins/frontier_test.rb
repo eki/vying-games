@@ -127,5 +127,11 @@ class TestFrontier < Test::Unit::TestCase
     assert_not_equal( b.frontier.object_id, b2.frontier.object_id )
   end
 
+  def test_set_infinite
+    b = Board.infinite( 4, :plugins => [:frontier] )
+    b[:a1] = :x
+    assert( b.frontier.include?( Coord[-1,0] ) )
+  end
+
 end
 

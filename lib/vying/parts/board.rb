@@ -1,4 +1,6 @@
 
+require 'vying/parts/board/pieces/counter'
+
 require 'vying/parts/board/coord'
 require 'vying/parts/board/coords'
 

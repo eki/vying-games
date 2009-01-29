@@ -39,6 +39,8 @@ class TestNineMensMorris < Test::Unit::TestCase
 
     assert_equal( r, g.remaining )
 
+    assert( g.instructions =~ /^Place/ )
+
     assert_equal( false, g.removing )
 
     assert_equal( :black, g.turn )
@@ -68,6 +70,14 @@ class TestNineMensMorris < Test::Unit::TestCase
         assert_equal( 1, move.to_coords.length )
       end
 
+      rp = g.remaining[g.history.last.turn]
+
+      if rp > 1
+        assert( g.instructions =~ /^Place one of your #{rp}/ )
+      elsif rp == 1
+        assert( g.instructions =~ /^Place your last/ )
+      end
+
       # This test is a little flawed, if the moves fall out right we'd "capture"
       # which we don't want to do.
       g << g.moves.first
@@ -79,6 +89,7 @@ class TestNineMensMorris < Test::Unit::TestCase
 
     g.moves.each do |move|
       assert_equal( 2, move.to_coords.length )
+      assert( g.instructions =~ /^Move/ )
     end
   end
 
@@ -92,6 +103,7 @@ class TestNineMensMorris < Test::Unit::TestCase
 
     assert_equal( :black, g.turn )
     assert( g.removing )
+    assert( g.instructions =~ /^Remove/ )
     assert_equal( 2, g.moves.length )
     assert( g.move?( "d1" ) )
     assert( g.move?( "d2" ) )

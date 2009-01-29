@@ -46,10 +46,6 @@ Rules.create( "Havannah" ) do
       (bridge?( g ) || fork?( g ) || ring?( g ))
     end
 
-    def loser?( player )
-      winner?( opponent( player ) )
-    end
-
     def draw?
       board.unoccupied.empty? && players.all? { |p| ! winner?( p ) }
     end

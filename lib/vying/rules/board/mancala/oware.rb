@@ -10,7 +10,7 @@ Rules.create( "Oware" ) do
 
   players :one, :two
 
-  score_determines_outcome
+  highest_score_determines_winner
   allow_draws_by_agreement
   check_cycles
 

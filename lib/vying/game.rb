@@ -609,6 +609,8 @@ class Game
     undo while history.last.draw_offered?
   end
 
+  alias_method :cancel_draw, :reject_draw
+
   def accept_undo
     if undo_accepted?
       undo while undo_requested?
@@ -619,6 +621,8 @@ class Game
   def reject_undo
     undo while history.last.undo_requested?
   end
+
+  alias_method :cancel_undo, :reject_undo
 
   # The user for the given player withdraws the game.  This is the method that's
   # executed for special moves like <player>_withdraws.

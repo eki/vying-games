@@ -66,10 +66,6 @@ Rules.create( "Phutball" ) do
       (player == :eks && (c.y == 19 || c.y == 20))
     end
 
-    def loser?( player )
-      winner?( opponent( player ) )
-    end
-
     def jumping_moves
       sc = board.occupied( :white ).first
       jmoves = []

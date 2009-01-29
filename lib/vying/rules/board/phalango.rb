@@ -87,10 +87,6 @@ Rules.create( "Phalango" ) do
       player != turn
     end
     
-    def loser?( player )
-      winner?( opponent( player ) )
-    end
-
     private
 
     def safe_to_remove?( c, p )
