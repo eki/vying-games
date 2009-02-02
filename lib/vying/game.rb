@@ -677,6 +677,13 @@ class Game
     "!ruby/object:#{self.class}"
   end
 
+  # Save this game to the specified format.  See Format.list for available
+  # formats.
+
+  def to_format( type )
+    Vying.dump( self, type )
+  end
+
   # Provides a string describing the matchup.  For example:
   #
   #   eki (black) defeated SiriusBot (white), 34-30
