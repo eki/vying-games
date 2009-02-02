@@ -133,7 +133,7 @@ class History
   # through History#[] (or History#last).
 
   def append( move )
-    unless no_timestamps
+    unless no_timestamps || move.at
       move = move.stamp
     end
 
