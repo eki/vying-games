@@ -81,7 +81,7 @@ class YamlFormat < Format
       h['draw'] = game.draw?
     end
 
-    if game.random?
+    if game.random? && (game.deterministic? || game.final?)
       h['random'] = { 'seed' => game.seed }
     end
 
