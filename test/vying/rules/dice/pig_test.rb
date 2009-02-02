@@ -12,6 +12,8 @@ class TestPig < Test::Unit::TestCase
 
   def test_info
     assert_equal( "Pig", rules.name )
+    assert( Pig.random? )
+    assert( ! Pig.deterministic? )
   end
 
   def test_players

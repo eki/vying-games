@@ -22,6 +22,7 @@ Rules.create( "Hexxagon" ) do
   highest_score_determines_winner
 
   random
+  deterministic
 
   cache :moves
 

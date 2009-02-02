@@ -19,6 +19,7 @@ Rules.create( "Ataxx" ) do
   highest_score_determines_winner
 
   random
+  deterministic
 
   position do
     attr_reader :board, :block_pattern, :moves_cache

@@ -12,6 +12,8 @@ class TestPahTum < Test::Unit::TestCase
 
   def test_info
     assert_equal( "Pah-Tum", rules.name )
+    assert( rules.random? )
+    assert( rules.deterministic? )
   end
 
   def test_players

@@ -13,7 +13,8 @@ class TestAtaxx < Test::Unit::TestCase
   def test_info
     assert_equal( "Ataxx", rules.name )
     assert( rules.version > "1.0.0" )
-    assert( rules.random )
+    assert( rules.random? )
+    assert( rules.deterministic? )
   end
 
   def test_initialize

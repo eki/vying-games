@@ -10,6 +10,12 @@ class TestHexxagon < Test::Unit::TestCase
     Hexxagon
   end
 
+  def test_info
+    assert( "Hexxagon", rules.name )
+    assert( rules.random? )
+    assert( rules.deterministic? )
+  end
+
   def test_initialize
     g = Game.new( rules, 1234 )
 

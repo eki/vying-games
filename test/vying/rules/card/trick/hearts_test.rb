@@ -12,6 +12,8 @@ class TestHearts < Test::Unit::TestCase
 
   def test_info
     assert_equal( "Hearts", rules.name )
+    assert( rules.random? )
+    assert( ! rules.deterministic? )
   end
 
   def test_players

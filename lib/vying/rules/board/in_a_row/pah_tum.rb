@@ -23,6 +23,7 @@ Rules.create( "PahTum" ) do
   highest_score_determines_winner
   allow_draws_by_agreement
   random
+  deterministic
 
   position do
     attr_reader :board

@@ -314,6 +314,29 @@ class Rules
     @random
   end
 
+  # Is the game defined by these rules deterministic?  That is, the outcome is
+  # determined solely by the players -- chance does not play a role.  It is
+  # possible for a game to have a random opening but otherwise be
+  # deterministic.  For example, Ataxx starts with a random (but fair) board, 
+  # but the game play is itself deterministic.  A game like Pig which is
+  # strongly influenced by the roll of dice is nondeterministic and should
+  # return false.
+  #
+  # This property can be set like this:
+  #
+  #   Rules.create( "Ataxx" ) do
+  #     random
+  #     deterministic
+  #   end
+  #
+  # Note, if you don't set 'random' you don't need to set 'deterministic'.
+  # If you don't ask for a random number generator the game is assumed to be
+  # deterministic.
+
+  def deterministic?
+    !! (! random? || @deterministic)
+  end
+
   # Should caching be applied to the given method?
   #
   # Example:

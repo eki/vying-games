@@ -84,5 +84,11 @@ class TestRules < Test::Unit::TestCase
     assert_equal( "#<Rules name: 'Kalah', version: 2.0.0>",
                   Rules.find( Kalah, "2.0.0" ).inspect )
   end
+
+  def test_deterministic
+    assert( Othello.deterministic? )
+    assert( ! Pig.deterministic? )
+    assert( Ataxx.deterministic? )
+  end
 end
 
