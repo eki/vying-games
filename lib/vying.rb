@@ -73,6 +73,13 @@ module Vying
 end
 
 require 'yaml'
+require 'time'
+
+begin
+  require 'json'
+rescue LoadError
+  # The json gem is optional
+end
 
 require 'vying/ruby'
 require 'vying/dup'
