@@ -9,15 +9,15 @@ Games <http://vying.org>.
 
 Some of vying's features are:
 
-  * Support for a wide range of game elements
-    * Games with random starting positions
-    * Games with random events (dice rolls, for example)
-    * While turn-based, games may feature simultaneous turns (or sealed moves) 
-  * Includes support for board games and card games (though the card game
-    support is a little primitive still)
-  * Most "rules" can be implemented approximately 100 lines of Ruby code
-  * Fairly simple bot interface can make AI programming fairly simple (this
-    needs improvement) 
+* Support for a wide range of game elements
+  * Games with random starting positions
+  * Games with random events (dice rolls, for example)
+  * While turn-based, games may feature simultaneous turns (or sealed moves) 
+* Includes support for board games and card games (though the card game
+  support is a little primitive still)
+* Most "rules" can be implemented approximately 100 lines of Ruby code
+* Fairly simple bot interface can make AI programming fairly simple (this
+  needs improvement) 
 
 
 == Development Info
