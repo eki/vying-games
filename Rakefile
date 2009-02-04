@@ -1,6 +1,5 @@
 require 'rake'
 require 'rake/testtask'
-require 'rake/rdoctask'
 require 'rake/clean'
 require 'fileutils'
 include FileUtils
@@ -37,12 +36,21 @@ end
 ### rdoc task
 ###
 
+begin
+  require 'hanna/rdoctask'
+rescue LoadError
+  require 'rake/rdoctask'
+end
+
 Rake::RDocTask.new do |rd|
   rd.main = "README"
   rd.rdoc_dir = "doc/api"
   rd.rdoc_files.include( "README", "LICENSE", "COPYING", 
-                         "doc/*.txt", "lib/**/*.rb", 
-                         "ext/**/*.h", "ext/**/*.c" )
+                         "lib/**/*.rb" ).
+                exclude( "lib/**/board/shapes/*.rb",
+                         "lib/**/special_moves/*.rb",
+                         "lib/**/rules/**/*.rb",
+                         "lib/**/cli/*.rb" )
 end
 
 ###
