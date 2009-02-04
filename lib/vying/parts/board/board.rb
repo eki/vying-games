@@ -1,6 +1,29 @@
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
+# Board is a general purpose data structure for abstract board games.  It 
+# actually comes in a few varieties based on the overall shape of the board.
+# For example, the board could be shaped like a square, rectangle, hexagon,
+# or triangle.  While not really a shape, the board can also be infinite.
+#
+# To create a Board use one of the shape methods, for example:
+#
+#   b = Board.square( 8 )    # create a square board with sides 8 cells long
+#
+#   b = Board.hexagon( 4 )   # create a hexagon shaped tesselation of hexagons
+#                            # -- each side is 4 cells long
+#
+#   b = Board.infinite( :cell_shape => :triangle )  # An infinite board of
+#                                                   # triangles.
+#
+# There are several plugins available.  Plugins add functionality that isn't
+# universally useful.  For example, Othello benefits from the frontier and
+# custodial_flip plugins:
+#
+#   b = Board.square( 8, :plugins => [:frontier, :custodial_flip] )
+#
+# The frontier plugin, for example, wouldn't make sense as universal board code
+# because it adds overhead to every #set call.
 
 class Board
 
@@ -22,7 +45,7 @@ class Board
   #              can be referred to as :frontier.
   #
 
-  def initialize( h )
+  def initialize( h )  # :nodoc:
     omit = (h[:omit] || []).map { |c| Coord[c] }
 
     @origin ||= Coord[0,0]
@@ -545,7 +568,7 @@ class Board
   # alias (stemming from the fact that Board has subclasses who's new methods
   # are not private) when run under ruby 1.9.
 
-  def Board.new( *args )
+  def Board.new( *args )   # :nodoc:
     if self == Board
       raise NoMethodError, "undefined method `new' for Board:Class"
     end
