@@ -45,7 +45,7 @@ class Board
   #              can be referred to as :frontier.
   #
 
-  def initialize( h )  # :nodoc:
+  def initialize( h )                         # :nodoc:
     omit = (h[:omit] || []).map { |c| Coord[c] }
 
     @origin ||= Coord[0,0]
@@ -103,7 +103,7 @@ class Board
 
   # Perform a deep copy on this board.
 
-  def initialize_copy( original )
+  def initialize_copy( original )             # :nodoc:
     @cells = original.cells.dup
     @occupied = Hash.new( [] )
     occ = original.instance_variable_get( "@occupied" )
@@ -115,17 +115,17 @@ class Board
   # implementations should be sure to call super (or, else not all plugins
   # will be initialized).
 
-  def init_plugin
+  def init_plugin                             # :nodoc:
 
   end
 
-  alias_method :__dup, :dup
+  alias_method :__dup, :dup                   # :nodoc:
 
   # Make a dup of this board.  If it has been extended by any plugins, dup
   # will re-extend the board prior to calling #intialize_copy.  Thus, plugins
   # can implement #initialize_copy as long as they call super.
 
-  def dup
+  def dup                                     # :nodoc:
     return __dup if plugins.empty?
 
     b = self.class.allocate
@@ -139,6 +139,19 @@ class Board
     b.send( :initialize_copy, self )
     b
   end
+ 
+  # Boards can be indexed by an (x,y) pair, or any number of Coord-like
+  # objects (ie, objects with #x and #y methods).  These Coord-like objects
+  # include Symbol, String, Array, and, obviously, Coord.
+  #
+  # Example usage:
+  #
+  #   board[x,y]
+  #   board[:symbol]
+  #   board["string"]
+  #   board[coord]
+  #   board[coord1,coord2,...,coordn]
+  #
 
   def []( *args )
     if args.length == 2 && args.first.class == Fixnum &&
@@ -155,6 +168,17 @@ class Board
     nil
   end
 
+  # Assign to a cell on a board.  Takes an (x,y) pair, or any number of
+  # Coord-like objects.  If multiple coords are passed, they will all be
+  # set to the same value.
+  #
+  # Example usage:
+  #
+  #   board[x,y] = :whatever
+  #   board[coord] = :whatever
+  #   board[coord1,coord2,...,coordn] = :whatever
+  #
+
   def []=( *args )
     if args.length == 3 && args[0].class == Fixnum &&
                            args[1].class == Fixnum
@@ -169,6 +193,8 @@ class Board
     nil
   end
 
+  # Returns the value at the given (x,y) coordinate.
+
   def get( x, y )
     if in_bounds?( x, y )
       return @cells[ci( x, y )]
@@ -176,6 +202,15 @@ class Board
 
     nil
   end
+
+  # Sets the piece p at the given (x,y) coordinate.  Plugins use the methods 
+  # after_set and before_set to observe set.  Most methods that modify the
+  # state of the Board are routed through set.  The fill and clear methods are
+  # exceptions to this rule.
+  # 
+  # The pieces put on the board should be immutable.  Or, in the very least
+  # *not* changed.  Good choices for pieces include symbols and fixnums, or
+  # immutable objects like Counter or Dice.
 
   def set( x, y, p )
     if resize?( x, y )
@@ -203,7 +238,10 @@ class Board
     p
   end
 
-  def ci( x, y )
+  # Translates (x,y) coordinates into an index for the underlying array.  You
+  # shouldn't need this.
+
+  def ci( x, y )                              # :nodoc:
     (x - @origin.x) + (y - @origin.y) * width
   end
 
@@ -334,6 +372,14 @@ class Board
     self
   end
 
+  # Returns true if the given (x,y) coordinate is within the bounds of this
+  # Board.  Note:  This doesn't mean the given coordinate is *actually* on the
+  # Board.  It's possible that a coordinate within bounds has been omitted.  It
+  # is probably safer to use Coords#include? as in:
+  #
+  #   board.coords.include?( Coord[x,y] )
+  #
+
   def in_bounds?( x, y )
     if x < @origin.x || x >= @origin.x + width || 
        y < @origin.y || y >= @origin.y + height
@@ -342,6 +388,14 @@ class Board
 
     true
   end
+
+  # Returns the bounds for this board expressed as two Coord objects.  For
+  # example:
+  #
+  #   Board.square( 8 ).bounds  # => [a1, h8]
+  #
+  # This is usually fixed, but if the board is infinite the bounds will grow
+  # to accomodate pieces that have been placed out of bounds.
 
   def bounds
     [@origin, Coord[@origin.x + @width - 1, @origin.y + @height - 1]]
@@ -555,7 +609,7 @@ class Board
 
   # When loading a YAML-ized Board, be sure to re-extend plugins.
 
-  def yaml_initialize( tag, vals )
+  def yaml_initialize( tag, vals )            # :nodoc:
     vals.each do |iv,v|
       instance_variable_set( "@#{iv}", v )
       v.each { |p| extend Board.find_plugin( p ) } if iv == "plugins"
@@ -568,7 +622,7 @@ class Board
   # alias (stemming from the fact that Board has subclasses who's new methods
   # are not private) when run under ruby 1.9.
 
-  def Board.new( *args )   # :nodoc:
+  def Board.new( *args )                      # :nodoc:
     if self == Board
       raise NoMethodError, "undefined method `new' for Board:Class"
     end
