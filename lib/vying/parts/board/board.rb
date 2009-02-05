@@ -210,7 +210,7 @@ class Board
   # 
   # The pieces put on the board should be immutable.  Or, in the very least
   # *not* changed.  Good choices for pieces include symbols and fixnums, or
-  # immutable objects like Counter or Dice.
+  # immutable objects like Counter.
 
   def set( x, y, p )
     if resize?( x, y )
@@ -272,12 +272,6 @@ class Board
 
   def empty_count
     @occupied[nil].length
-  end
-
-  # Get all the pieces in the selected row.
-
-  def row( y )
-    (0...width).map { |x| cells[ci(x,y)] }
   end
 
   # Move whatever piece is at the start coord (sc) to the end coord (ec).
@@ -492,8 +486,10 @@ class Board
 
     s = letters
     height.times do |y|
+      row = (0...width).map { |x| cells[ci(x,y)] }
+
       s += sprintf( "%*d", off, y+1 )
-      s += row(y).inject( '' ) do |rs,p|
+      s += row.inject( '' ) do |rs,p|
         rs + (p.nil? ? ' ' : p.to_s[0..0])
       end
       s += sprintf( "%*d\n", -off, y+1 )

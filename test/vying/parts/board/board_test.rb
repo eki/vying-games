@@ -212,14 +212,6 @@ class TestBoard < Test::Unit::TestCase
     assert_equal( 0, count5 )
   end
 
-  def test_row
-    b = Board.rect( 3, 2 )
-
-    assert_equal( [nil,nil,nil], b.row(0) )
-    assert_equal( :black, b[:a1,:b1] = :black )
-    assert_equal( [:black,:black,nil], b.row(0) )
-  end
-
   def test_move
     b = Board.square( 3 )
 
