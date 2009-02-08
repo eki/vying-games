@@ -102,6 +102,11 @@ class Symbol
   end
 end
 
+# Coord is used to reference cells on a board.  These are currently 2d
+# structures with a (x,y) coords.  Often any object that responds to #x and #y
+# can be used in place of a Coord.  However, String, Symbol, etc don't have
+# the full complement of utility methods.
+
 class Coord
   extend Memoizable
 
@@ -121,6 +126,23 @@ class Coord
   end
 
   @@coords_cache = {}
+
+  # Create a new Coord from the given argument.  If given x and y, it is
+  # the equivalent to calling new.  If given a symbol the Symbol will be 
+  # converted to a String and parsed.  If given a +string+ the first value is 
+  # expected to be a letter and the second a number.  For example, Coord[:a1] 
+  # would be the equivalent of Coord[0,0].
+  #
+  # Technically, any object that responds to #x and #y can be passed in.
+  #
+  # Coord's are cached and immutable.
+  #
+  # Example usage:
+  #
+  #  Coord[x,y]
+  #  Coord[symbol]
+  #  Coord[string]
+  #
 
   def self.[]( *args )
     if args.length == 2 && args.first.class == Fixnum &&
@@ -166,25 +188,51 @@ class Coord
     return nil
   end
 
-  def dup
+  # Coords are immutable so dup just returns self.
+
+  def dup                                     # :nodoc:
     self
   end
 
-  def _dump( depth=-1 )
+  # Dumps the coord.
+
+  def _dump( depth=-1 )                       # :nodoc:
     to_s
   end
 
-  def self._load( str )
+  # Loads the coord from marshal data.  This actually does a cache lookup, it
+  # does *not* result in loading another instance of a given Coord.
+
+  def self._load( str )                       # :nodoc:
     Coord[str]
   end
+
+  # Simple addition.
+  #
+  # For example:
+  #
+  #   Coord[1,2] + Coord[3,4]   # => Coord[4,6]
+  #
 
   def +( o )
     Coord.new( x + o.x, y + o.y )
   end
 
+  # Define an ordering for Coord's.  They are sorted first by y, then x.
+
   def <=>( c )
     (t = y <=> c.y) != 0 ? t : x <=> c.x
   end
+
+  # Return a string representation of this Coord.  There are two possible 
+  # representations:
+  #
+  #   Coord[0,0].to_s            # => "a1"
+  #   Coord[0,0].to_s( false )   # => "(0,0)"
+  #
+  # As a rule, the library uses chess notation (the default).  But, for games
+  # with negative coordinates or more than 26 columns, it can be useful to
+  # use the mathematical notation.
 
   def to_s( chess=true )
     return @s_chess if chess && @s_chess
@@ -197,17 +245,33 @@ class Coord
     end
   end
 
+  # Convert the Coord to a Symbol:
+  #
+  #   Coord[0,0].to_sym   # => :a1
+
   def to_sym
     to_s.intern
   end
+
+  # Calls #to_s.
 
   def inspect
     to_s
   end
 
+  # Convert the Coord to an array of Coords.  The result is obvious.  This
+  # is more for compatibility with String#to_coords, for example.
+
   def to_coords
     [self]
   end
+
+  # Return the next Coord in the given direction.  Valid directions are the
+  # symbols: [:n, :e, :w, :s, :ne, :nw, :se, :sw].
+  #
+  # For example:
+  #
+  #   Coord[0,0].next( :n )  # => Coord[0,1]
 
   def next( d )
     return Coord[x+1,y] if d == :e
@@ -220,6 +284,20 @@ class Coord
     return Coord[x-1,y+1] if d == :sw
     nil
   end
+
+  # Calculates and returns the direction from self to the given Coord.  
+  # Directions are only found if there is a straight line between the two 
+  # Coord's.  
+  #
+  # Returns nil if there isn't a straight line between the Coord's.
+  #
+  # The directions are symbols in this list: [:n, :e, :w, :s, :ne, :nw, :se,
+  # :sw].
+  #
+  # Example:
+  #
+  #   Coord[0,0].direction_to( Coord[3,3] )   # => :s3
+  #
 
   def direction_to( o )
     dx, dy = x - o.x, y - o.y
@@ -274,6 +352,15 @@ class Coord
     self == o
   end
 
+  # Expand the given list of Coord's.  It's expected that the given list is
+  # in order and the first and last Coord's are end points on a straight line.
+  #
+  # Example:
+  #
+  #   Coord.expand( [Coord[0,0], Coord[2,2], Coord[4,4]] )
+  #     # => [Coord[0,0], Coord[1,1], Coord[2,2], Coord[3,3], Coord[4,4]]
+  #
+
   def self.expand( coords )
     d = coords.first.direction_to( coords.last )
     return coords unless d
@@ -295,13 +382,13 @@ class Coord
   # Take over YAML deserialization.  Perform a lookup via Coord.[] instead
   # of allocating a new Coord object.
 
-  def Coord.yaml_new( klass, tag, val )
+  def Coord.yaml_new( klass, tag, val )       # :nodoc:
     Coord[val['x'], val['y']]
   end
 
   # Dumps this Coord object to YAML.  Only x,y are dumped.
 
-  def to_yaml_properties
+  def to_yaml_properties                      # :nodoc:
     ["@x", "@y"]
   end
 end
