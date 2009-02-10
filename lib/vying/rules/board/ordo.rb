@@ -10,7 +10,7 @@ require 'vying'
 
 Rules.create( "Ordo" ) do
   name    "Ordo"
-  version "0.1.0"
+  version "0.2.0"
 
   players :white, :black
 
@@ -167,42 +167,63 @@ Rules.create( "Ordo" ) do
       all
     end
 
-    #
-    # TODO: !!! this is still under construction !!!
-    #
+    # 
+    # TODO
+    # Still only *vertical* ordo moves implemented!
+    # 
     def ordo_moves( rejoin )
       all = []
       
       # horizontal ordo lines move forwards (or backwards for rejoins)
-      directions = rejoin ? [:n, :s] : (turn == :white ? [:s] : [:n])
+      # directions = rejoin ? [:n, :s] : (turn == :white ? [:s] : [:n])
+      dir = turn == :white ? :s : :n
       
-      board.occupied( turn ).each do |c|
-        ordo_size = 1
-        
-        # always scan to the east
-        while( oc = board.coords.next( c, :e ))
-          # not a friendly piece found
-          next  if board[oc] != turn
-        
-          ordo_size += 1
-          directions.each do |d|
-            dc = c
-            while( dc = board.coords.next( dc, d ))
-              # if all spaces from dc .. dc+ordo_size in eastern direction are empty
-              ddc = dc
-              lastc = nil
-              valid = false
-              ordo_size.times do
-                valid = board[ddc].nil?
-                lastc = ddc = board.coords.next( ddc, :e )
+      # Find the next friendly piece
+      friendly_pieces = board.occupied( turn )
+      friendly_pieces.each do |c|
+
+        # Find all friendly neighbors to the east
+        nc = c
+        neighbors = 0
+        while( nc = board.coords.next( nc, :e ))
+          break  if board[nc] != turn
+          neighbors += 1
+        end
+
+        # No singleton ordos
+        next  if neighbors < 1
+
+        # Steps the ordo could go
+        fc = c
+        while( fc = board.coords.next( fc, dir ))
+          break  if board[fc]
+          
+          # Now scan the row to the east
+          # first, make a step (no singleton ordos)
+          cc = c
+          from = [Coord[cc]]
+          ffc = fc
+          to   = [Coord[ffc]]
+          neighbors.times do |n|
+            ffc = board.coords.next( ffc, :e )
+
+            # Found an empty space, valid ordo move?
+            if board[ffc].nil?
+              from << Coord[cc = board.coords.next( cc, :e )]
+              to   << Coord[ffc]
+              # Is the group still connected?
+              if board.coords.connected?( friendly_pieces - from + to )
+                all << "#{c}#{cc}#{fc}"
               end
-              all << "#{c}#{lastc}#{dc}"  if valid # TODO: and still connected!
+            else
+              neighbors = n
+              break
             end
           end
+          break  if neighbors < 1
         end
-      
+
       end
-      
       all
     end
 
