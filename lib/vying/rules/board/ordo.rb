@@ -212,7 +212,7 @@ Rules.create( "Ordo" ) do
               to   << Coord[ffc]
               # Is the group still connected?
               if board.coords.connected?( friendly_pieces - from + to )
-                all << "#{c}#{cc}#{fc}"
+                all << "#{c}#{cc}#{fc}" << "#{cc}#{c}#{ffc}"
               end
             else
               neighbors = n
