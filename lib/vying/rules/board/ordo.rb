@@ -50,11 +50,10 @@ Rules.create( "Ordo" ) do
 
     def moves
       if @disconnected
-        rejoin_moves
+        rejoin_moves + ordo_moves( true )
       else
-        normal_moves
+        normal_moves + ordo_moves( false )
       end
-      ordo_moves( @disconnected )
     end
 
     def apply!( move )

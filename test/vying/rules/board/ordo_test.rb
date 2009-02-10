@@ -25,7 +25,7 @@ class TestOrdo < Test::Unit::TestCase
     assert_equal( 10, rules.new.board.width )
     assert_equal(  8, rules.new.board.height )
 
-#    assert_equal( 40, g.board.occupied.length )
+    assert_equal( 40, g.board.occupied.length )
     assert_equal( :white, g.turn )
   end
 
