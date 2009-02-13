@@ -58,24 +58,39 @@ Rules.create( "Ordo" ) do
 
     def apply!( move )
       coords = move.to_coords
-      op = board[coords.last]
+      if coords.length == 2
+        op = board[coords.last]
 
-      board.move( coords.first, coords.last )
+        board.move( coords.first, coords.last )
 
-      @disconnected = false
-      @last = coords.last
+        @disconnected = false
+        @last = coords.last
 
-      rotate_turn
+        rotate_turn
 
-      # Determine if this move disconnected the opponent... hence requiring
-      # a reconnect move (if one exists, or the game has ended)
+        # Determine if this move disconnected the opponent... hence requiring
+        # a reconnect move (if one exists, or the game has ended)
 
-      if op == turn && ! safe_to_remove?( @last, turn ) 
-        @disconnected = true
+        if op == turn && ! safe_to_remove?( @last, turn ) 
+          @disconnected = true
 
-        @permanently_disconnected = true  if moves.empty?
+          @permanently_disconnected = true  if moves.empty?
+        end
+      else
+        # Ordo move
+        sc = coords[0]
+        dc = coords[2]
+        dir = coords[0].x < coords[1].x
+        
+        loop do        
+          board.move( sc, dc )
+          break  if sc.x == coords[1].x && dc.y == coords[2].y
+          sc = board.coords.next( sc, dir ? :e : :w )
+          dc = board.coords.next( dc, dir ? :e : :w )
+        end
+
+        rotate_turn
       end
-
       self
     end
 
@@ -184,7 +199,7 @@ Rules.create( "Ordo" ) do
         # Find all friendly neighbors to the east
         nc = c
         neighbors = 0
-        while( nc = board.coords.next( nc, :e ))
+        while nc = board.coords.next( nc, :e )
           break  if board[nc] != turn
           neighbors += 1
         end
@@ -194,7 +209,7 @@ Rules.create( "Ordo" ) do
 
         # Steps the ordo could go
         fc = c
-        while( fc = board.coords.next( fc, dir ))
+        while fc = board.coords.next( fc, dir )
           break  if board[fc]
           
           # Now scan the row to the east
@@ -208,6 +223,9 @@ Rules.create( "Ordo" ) do
 
             # Found an empty space, valid ordo move?
             if board[ffc].nil?
+              # Check for obvious disconnection
+              
+            
               from << Coord[cc = board.coords.next( cc, :e )]
               to   << Coord[ffc]
               # Is the group still connected?
@@ -221,7 +239,7 @@ Rules.create( "Ordo" ) do
           end
           break  if neighbors < 1
         end
-
+        
       end
       all
     end
