@@ -10,7 +10,7 @@ require 'vying'
 
 Rules.create( "Ordo" ) do
   name    "Ordo"
-  version "0.2.0"
+  version "0.5.0"
 
   players :white, :black
 
@@ -30,67 +30,64 @@ Rules.create( "Ordo" ) do
              :a2,:b2,:c2,:d2,:e2,:f2,:g2,:h2,:i2,:j2,
                      :c1,:d1,        :g1,:h1        ] = :white
 
-      @home_row   = { :white => 0, :black => 7 }
-      @last       = nil
-      @finished   = false
-      @directions = { :white => [:s, :e, :w, :se, :sw],
-                      :black => [:n, :e, :w, :ne, :nw] }
-      
-      @disconnected = false
-      @permanently_disconnected = false
+      @home_row = { :white => 0, :black => 7 }
+      @finish   = Hash.new( false )
     end
 
     def has_moves
-      return []  if @permanently_disconnected
-      return []  if @last && @last.y == @home_row[opponent( turn )]
+      return []  if @finish[opponent( turn )]
       return []  if board.occupied( turn ).empty?
 
       [turn]
     end
 
     def moves
-      if @disconnected
-        rejoin_moves + ordo_moves( true )
-      else
-        normal_moves + ordo_moves( false )
-      end
+      connected = board.coords.connected?( board.occupied( turn ))
+      normal_moves( connected ) + ordo_moves( connected )
     end
 
     def apply!( move )
       coords = move.to_coords
+      
       if coords.length == 2
-        op = board[coords.last]
 
+        # Normal move
         board.move( coords.first, coords.last )
 
-        @disconnected = false
-        @last = coords.last
-
-        rotate_turn
-
-        # Determine if this move disconnected the opponent... hence requiring
-        # a reconnect move (if one exists, or the game has ended)
-
-        if op == turn && ! safe_to_remove?( @last, turn ) 
-          @disconnected = true
-
-          @permanently_disconnected = true  if moves.empty?
-        end
       else
+
         # Ordo move
         sc = coords[0]
         dc = coords[2]
-        dir = coords[0].x < coords[1].x
+        h = coords[0].x - coords[1].x
+        v = coords[0].y - coords[1].y
         
-        loop do        
+        loop do
           board.move( sc, dc )
-          break  if sc.x == coords[1].x && dc.y == coords[2].y
-          sc = board.coords.next( sc, dir ? :e : :w )
-          dc = board.coords.next( dc, dir ? :e : :w )
-        end
 
-        rotate_turn
+          if h != 0
+            break  if sc.x == coords[1].x && dc.y == coords[2].y
+
+            if coords[0].y == coords[1].y
+              sc = board.coords.next( sc, h < 1 ? :e : :w )
+              dc = board.coords.next( dc, h < 1 ? :e : :w )
+            end
+          end
+                    
+          if v != 0
+            break  if sc.y == coords[1].y && dc.x == coords[2].x
+
+            if coords[0].x == coords[1].x
+              sc = board.coords.next( sc, v < 1 ? :s : :n )
+              dc = board.coords.next( dc, v < 1 ? :s : :n )
+            end
+          end
+          
+        end
       end
+
+      @finish[turn] = coords.last.y == @home_row[opponent( turn )]
+      rotate_turn
       self
     end
 
@@ -104,143 +101,105 @@ Rules.create( "Ordo" ) do
     
     private
 
-    def safe_to_remove?( c, p )
-      ns = board.coords.neighbors( c ).select { |nnc| board[nnc] == p }
-      groups = board.group_by_connectivity( ns )
-
-      groups.length == 1 || 
-      groups.inject { |g1,g2| g1 ? 
-        (board.path?( g1.first, g2.first ) ? g2 : nil) : nil }
-    end
-
-    def normal_moves
+    def normal_moves( connected )
       all = []
+      if connected
+        dirs = turn == :white ? [:s, :e, :w, :se, :sw] : [:n, :e, :w, :ne, :nw]
+      else      
+        dirs = board.directions
+      end
 
-      board.occupied( turn ).each do |c|
-        @directions[ turn ].each do |d|
+      pieces = board.occupied( turn )
+      pieces.each do |c|
+        dirs.each do |d|
           nc = c
-
-          # A starting coord (c) is only valid if it does *not* cause a
-          # disconnect
-
-          valid_start = nil
-
           while (nc = board.coords.next( nc, d ))
 
             # Can't move through your own pieces
-
             break  if board[nc] == turn
 
-            # Can't land on a square that doesn't have any neighbors 
-            # occupied by your own pieces (obvious disconnect)
+            if pieces.size == 1 || 
+                board.coords.connected?( pieces - [Coord[c]] + [Coord[nc]] )
+              all << "#{c}#{nc}"
+            end
 
-            ns = board.coords.neighbors( nc )
-            next  unless ns.any? { |nnc| nnc != c && board[nnc] == turn }
-
-            valid_start = safe_to_remove?( c, turn )  if valid_start.nil?
-
-            break  unless valid_start
-
-            all << "#{c}#{nc}"
+            # Stop move on occupied space
             break  if board[nc]
           end
-
         end
       end
 
       all
     end
 
-    def rejoin_moves
-      all, pieces = [], board.occupied( turn )
-
-      pieces.each do |c|
-        board.directions.each do |d|
-          nc = c
-
-          while (nc = board.coords.next( nc, d ))
-
-            # Can't move through your own pieces
-
-            break  if board[nc] == turn
-
-            # Can't land on a square that doesn't have any neighbors 
-            # occupied by your own pieces (obvious disconnect)
-
-            ns = board.coords.neighbors( nc )
-            next  unless ns.any? { |nnc| nnc != c && board[nnc] == turn }
-
-            if board.coords.connected?( pieces - [Coord[c]] + [Coord[nc]] )
-              all << "#{c}#{nc}"
-              break  if board[nc]
-            end
-          end
-        end
-      end
-
-      all
-    end
-
-    # 
-    # TODO
-    # Still only *vertical* ordo moves implemented!
-    # 
-    def ordo_moves( rejoin )
+    def ordo_moves( connected )
+      pieces = board.occupied( turn )
+      return []  if pieces.size == 1
+      
       all = []
       
-      # horizontal ordo lines move forwards (or backwards for rejoins)
-      # directions = rejoin ? [:n, :s] : (turn == :white ? [:s] : [:n])
-      dir = turn == :white ? :s : :n
-      
-      # Find the next friendly piece
-      friendly_pieces = board.occupied( turn )
-      friendly_pieces.each do |c|
-
-        # Find all friendly neighbors to the east
-        nc = c
-        neighbors = 0
-        while nc = board.coords.next( nc, :e )
-          break  if board[nc] != turn
-          neighbors += 1
-        end
-
-        # No singleton ordos
-        next  if neighbors < 1
-
-        # Steps the ordo could go
-        fc = c
-        while fc = board.coords.next( fc, dir )
-          break  if board[fc]
+      2.times do |d1|
+        
+        if d1 == 0
+          # horizontal ordos move forwards (or backwards for rejoins)
+          d2 = connected ? (turn == :white ? [:s] : [:n]) : [:n, :s]
+          dd = :e
           
-          # Now scan the row to the east
-          # first, make a step (no singleton ordos)
-          cc = c
-          from = [Coord[cc]]
-          ffc = fc
-          to   = [Coord[ffc]]
-          neighbors.times do |n|
-            ffc = board.coords.next( ffc, :e )
-
-            # Found an empty space, valid ordo move?
-            if board[ffc].nil?
-              # Check for obvious disconnection
-              
-            
-              from << Coord[cc = board.coords.next( cc, :e )]
-              to   << Coord[ffc]
-              # Is the group still connected?
-              if board.coords.connected?( friendly_pieces - from + to )
-                all << "#{c}#{cc}#{fc}" << "#{cc}#{c}#{ffc}"
-              end
-            else
-              neighbors = n
-              break
-            end
-          end
-          break  if neighbors < 1
+        else
+          # Vertical ordos move left or right
+          d2 = [:w, :e]
+          dd = :n
         end
         
+        d2.each do |d|
+          # Find the next friendly piece
+          pieces.each do |c|
+
+            # Find all friendly neighbors
+            nc = c
+            neighbors = 0
+            while nc = board.coords.next( nc, dd )
+              break  if board[nc] != turn
+              neighbors += 1
+            end
+
+            # No singleton ordos
+            next  if neighbors < 1
+
+            # Steps the ordo could go
+            fc = c
+            while fc = board.coords.next( fc, d )
+              break  if board[fc]
+              
+              # Now scan the row
+              # first, make a step (no singleton ordos)
+              from = [Coord[cc = c]]
+              to = [Coord[ffc = fc]]
+              neighbors.times do |n|
+                ffc = board.coords.next( ffc, dd )
+
+                # Found an empty space, valid ordo move?
+                if board[ffc].nil?
+                  from << Coord[cc = board.coords.next( cc, dd )]
+                  to << Coord[ffc]
+                  # Is the group still connected?
+                  if board.coords.connected?( pieces - from + to )
+                    all << "#{c}#{cc}#{fc}" << "#{cc}#{c}#{ffc}"
+                  end
+                else
+                  neighbors = n
+                  break
+                end
+              end
+              break  if neighbors < 1
+            end
+            
+          end
+
+        end
+
       end
+      
       all
     end
 

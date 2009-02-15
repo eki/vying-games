@@ -12,7 +12,7 @@ class TestOrdo < Test::Unit::TestCase
 
   def test_info
     assert_equal( "Ordo", rules.name )
-    assert( rules.version == '0.2.0' )
+    assert( rules.version == '0.5.0' )
   end
 
   def test_players
