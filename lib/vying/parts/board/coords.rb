@@ -3,6 +3,20 @@
 
 require 'vying'
 
+# Coords is a collection of Coord objects.  Coords can be thought of as a
+# part of a given Board.
+#
+# For example:
+#
+#   Board.square( 3 ).coords
+#     # => #<Coords @width=3, @height=3, @omitted=[], 
+#                   @coords=[a1, b1, c1, a2, b2, c2, a3, b3, c3], 
+#                   @bounds=[a1, c3]>
+#
+# Coords is an immutable collection, which allows more than one mutable Board
+# to share the same set of Coords.
+#
+
 class Coords
   include Enumerable
   extend Memoizable
@@ -19,6 +33,10 @@ class Coords
                  :w  => Coord.new( -1, 0 ),  :e  => Coord.new( 1, 0 ),
                  :nw => Coord.new( -1, -1 ), :ne => Coord.new( 1, -1 ),
                  :sw => Coord.new( -1, 1 ),  :se => Coord.new( 1, 1 ) }
+
+  # Creates a new Coords collection.  You shouldn't need to use this method,
+  # Coords get created automatically when Board's are instantiated.  This
+  # method is memoized.
 
   def initialize( bounds, omit=[] )
     @bounds  = canonical_bounds( bounds )
@@ -37,9 +55,18 @@ class Coords
     @omitted = omit.dup.freeze
   end
 
-  def dup
+  # Coords are immutable so dup returns self.
+
+  def dup                                     # :nodoc:
     self
   end
+
+  # Returns true if this set of Coords contains the given Coord.  This takes
+  # into account bounds and the list of omitted Coord's.  For an infinite
+  # Board this only returns true if the Coords *currently* include the given
+  # Coord.  Obviously, an infinite board would include any Coord.  Coords is
+  # finite and immutable so an infinite Board's Coords object is replaced each
+  # time the Board grows.
 
   def include?( c )
     bs = bounds
@@ -57,28 +84,43 @@ class Coords
     end
   end
 
+  # Returns the next Coord in the given direction (d) from the given Coord (c).
+  # This is like Coord#next but returns nil if the next coord is not a member
+  # of this Coords set.  This does *not* skip over omitted Coord's.
+
   def next( c, d )
     nc = c + DIRECTIONS[d]
     include?( nc ) ? nc : nil
   end
 
+  # Iterate over each Coord in this set.
+
   def each
     coords.each { |c| yield c }
   end
+
+  # Return an array of the Coord's in this set.
 
   def to_a
     coords
   end
 
+  # Return the number of Coord's in this set.
+
   def length
     coords.length
   end
 
-  def _dump( depth=-1 )
+  # Only dumps the bounds and omitted list.
+
+  def _dump( depth=-1 )                       # :nodoc:
     Marshal.dump( [bounds, omitted] )
   end
 
-  def self._load( str )
+  # Reconstruct the Coords object in the marshal string.  This is cached and
+  # will not create a dup object.
+
+  def self._load( str )                       # :nodoc:
     bounds, omitted = Marshal.load( str )
     if omitted.empty?          # extra care to make sure memoize works
       new( bounds )
@@ -87,9 +129,22 @@ class Coords
     end
   end
 
+  # Hash this Coords object.
+
   def hash
     [width, height].hash
   end
+
+  # Group the Coords in the set by the property specified in the block.
+  #
+  # Example:
+  #
+  #   Board.square( 3 ).coords.group_by { |c| c.x }
+  #     # => [[a1, a2, a3], [b1, b2, b3], [c1, c2, c3]]
+  #
+  #   Board.square( 3 ).coords.group_by { |c| c.y }
+  #     # => [[a1, b1, c1], [a2, b2, c2], [a3, b3, c3]]
+  #
 
   def group_by
     r, a = {}, []
@@ -101,28 +156,100 @@ class Coords
     a
   end
 
+  # Return the Coord's in the row indicated by the given Coord.
+  #
+  # Example:
+  #
+  #   Board.square( 3 ).coords.row( Coord[:a2] )
+  #     # => [a2, b2, c2]
+  #
+
   def row( coord )
     coords.select { |c| coord.y == c.y }
   end
+
+  # Return the Coord's in the column indicated by the given Coord.
+  #
+  # Example:
+  #
+  #   Board.square( 3 ).coords.column( Coord[:a2] )
+  #     # => [a1, a2, a3]
+  #
 
   def column( coord )
     coords.select { |c| coord.x == c.x }
   end
 
+  # Return the Coord's on the diagonal indicated by the given Coord.  The
+  # second parameter, slope, should be 1 or -1 to indicate which diagonal
+  # you want.  The default slope is 1.
+  #
+  # Example:
+  #
+  #   Board.square( 3 ).coords.diagonal( Coord[:b2], 1 )
+  #     # => [a1, b2, c3]
+  #
+  #   Board.square( 3 ).coords.diagonal( Coord[:b2], -1 )
+  #     # => [c1, b2, a3]
+  #
+
   def diagonal( coord, slope=1 )
     coords.select { |c| slope*(coord.y-c.y) == (coord.x-c.x) }
   end
+
+  # Like #neighbors but returns nil for Coord's that aren't a part of this
+  # Coords set.
 
   def neighbors_nil( coord, directions=[:n,:ne,:e,:se,:s,:sw,:w,:nw] )
     a = directions.map { |dir| coord + DIRECTIONS[dir] }
     a.map { |c| (! include?( c )) ? nil : c }
   end
 
+  # Returns the neighbors of the given Coord in the given directions.  You
+  # should probably not specify the list of directions with each call.
+  #
+  # Example:
+  #
+  #   b = Board.square( 3, :directions => [:n, :e, :w, :s] )
+  #
+  #   b.coords.neighbors( Coord[:a1] )              # => [b1, a2]
+  #   b.coords.neighbors( Coord[:a1], [:e, :w] )    # => [b1]
+  # 
+  # Notice how the default is set on a per Board basis with the :directions
+  # parameter.  With this approach you should almost never need to provide
+  # the directions parameter.  However, you can still override the default
+  # if necessary.
+
   def neighbors( coord, directions=[:n,:ne,:e,:se,:s,:sw,:w,:nw] )
     a = directions.map { |dir| coord + DIRECTIONS[dir] }
     a.reject! { |c| ! include?( c ) }
     a
   end
+
+  # Returns a "ring" of Coord's around the given coord.  The distance (d) 
+  # defines how large the ring is.  You should not need to provide a shape
+  # or directions array.  These are taken from the Board via CoordsProxy.
+  #
+  # Note:  A distance of 0 returns the given Coord itself.  A distance of
+  # 1 is equivalent to calling #neighbors.
+  #
+  # This method only includes those Coord's at distance d from the given
+  # Coord (not, for example, less than d), so there will be no overlap between
+  # rings.
+  #
+  # Example:
+  #
+  #   b = Board.square( 5 )
+  #   
+  #   b.coords.ring( Coord[:c3], 0 )
+  #     # => [c3]
+  #
+  #   b.coords.ring( Coord[:c3], 1 )
+  #     # => [c2, d3, b3, c4, d2, b2, d4, b4]
+  #
+  #   b.coords.ring( Coord[:c3], 2 )
+  #     # => [a1, b1, c1, d1, e1, a2, e2, a3, e3, a4, e4, a5, b5, c5, d5, e5]
+  #
 
   def ring( coord, d, shape, directions=nil )
     return coord                           if d == 0
@@ -159,9 +286,14 @@ class Coords
     end
   end
 
+  # Note:  Coords#to_s is oddly unhelpful.  I guess I never use it...
+
   def to_s
     inject( '' ) { |s,c| s + "#{c}" }
   end
+
+  # Returns the bounds for a given width and height.  This assumes the origin
+  # is (0,0).
 
   def self.bounds_for( width, height )
     [Coord[0,0], Coord[width-1,height-1]]
@@ -175,6 +307,10 @@ class Coords
   memoize :ring
 
   private
+
+  # Transform the given bounds into "canonical bounds", that is the first
+  # coord has the min x and y's and the last the max x and y's.  This prevents
+  # memoization trouble.
 
   def canonical_bounds( bounds )
     xs = bounds.first.x, bounds.last.x

@@ -497,19 +497,33 @@ class Board
     s + letters
   end
 
+  # When you ask for Board#coords you actually get a CoordsProxy object.  The
+  # CoordsProxy simplifies some of the Coords method calls.  For example,
+  # Coords#neighbors takes an optional directions array, CoordsProxy
+  # automatically sets directions to the Board default.
+
   class CoordsProxy
-    def initialize( board, coords )
+
+    # CoordsProxy matches a Board with a Coords object.
+
+    def initialize( board, coords )           # :nodoc:
       @board, @coords = board, coords
     end
+
+    # Calls Coords#ring but defaults the shape and directions correctly.
 
     def ring( coord, d )
       @coords.ring( coord, d, @board.cell_shape, @board.directions( coord ) )
     end
 
+    # Calls Coords#neighbors but defaults directions correctly.
+
     def neighbors( coord, directions=nil )
       directions ||= @board.directions( coord )
       @coords.neighbors( coord, directions )
     end
+
+    # Calls Coords#neighbors_nil but defaults directions correctly.
 
     def neighbors_nil( coord, directions=nil )
       directions ||= @board.directions( coord )
@@ -539,23 +553,33 @@ class Board
       cs.empty?
     end
 
-    def to_a
+    # Can't be passed through with method_missing.
+
+    def to_a                                  # :nodoc:
       @coords.to_a
     end
 
-    def to_s
+    # Can't be passed through with method_missing.
+
+    def to_s                                  # :nodoc:
       @coords.to_s
     end
 
-    def inspect
+    # Can't be passed through with method_missing.
+
+    def inspect                               # :nodoc:
       @coords.inspect
     end
 
-    def respond_to?( m )
+    # Override respond_to? to match method_missing.
+
+    def respond_to?( m )                      # :nodoc:
       m != :_dump && (super || @coords.respond_to?( m ))
     end
 
-    def method_missing( m, *args, &block )
+    # This is a proxy, so pass most method calls on to the proxied Coords.
+
+    def method_missing( m, *args, &block )    # :nodoc:
       if m != :_dump && @coords.respond_to?( m ) 
         @coords.send( m, *args, &block )
       else
@@ -566,7 +590,7 @@ class Board
     # No need to save the board itself.  Board#yaml_initialize will reset
     # itself.
 
-    def to_yaml_properties
+    def to_yaml_properties                    # :nodoc:
       ["@coords"]
     end
   end
