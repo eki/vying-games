@@ -30,7 +30,7 @@ Rules.create( "Ordo" ) do
              :a2,:b2,:c2,:d2,:e2,:f2,:g2,:h2,:i2,:j2,
                      :c1,:d1,        :g1,:h1        ] = :white
 
-      @home_row = { :white => 0, :black => 7 }
+      @home_row = { :white => 7, :black => 0 }
       @finish   = Hash.new( false )
     end
 
