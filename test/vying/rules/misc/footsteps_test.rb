@@ -23,10 +23,12 @@ class TestFootsteps < Test::Unit::TestCase
   def test_init
     g = Game.new( rules )
 
-    b = Board.rect( 7, 1 )
-    b[:d1] = :white
-
-    assert_equal( b, g.board )
+    assert_equal( 3, g.marker )
+    assert_equal( 50, g.points[:left] )
+    assert_equal( 50, g.points[:right] )
+    assert_equal( nil, g.bids[:left] )
+    assert_equal( nil, g.bids[:right] )
+    assert_equal( [], g.bid_history )
   end
 
   def test_has_score

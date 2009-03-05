@@ -5,22 +5,22 @@ require 'vying'
 
 Rules.create( "Footsteps" ) do
   name    "Footsteps"
-  version "2.0.0"
+  version "2.5.0"
 
   players :left, :right
 
-  winner_direction :left => :w, :right => :e
+  direction :left => -1, :right => 1
+  winner    :left =>  0, :right => 6
 
   position do
-    attr_reader :board, :points, :bids, :bid_history
+    attr_reader :points, :bids, :bid_history, :marker
 
     def init
-      @board = Board.rect( 7, 1 )
-      @board[:d1] = :white
+      @marker = 3
 
-      @points = { :left => 50, :right => 50 }
-      @bids = { :left => nil, :right => nil }
-      @bid_history = { :left => [], :right => [] }
+      @points = { :left => 50,  :right => 50  }
+      @bids   = { :left => nil, :right => nil }
+      @bid_history = []
     end
 
     def has_moves
@@ -38,22 +38,28 @@ Rules.create( "Footsteps" ) do
 
       bids[player] = bid
 
-      players.each { |p| bids[p]  ||= 0 if points[p]  == 0 }
+      players.each { |p| bids[p] ||= 0  if points[p] == 0 }
 
       if players.all? { |p| bids[p] }
-        c = board.occupied( :white ).first
-
-        max_bid = bids.values.max
-        wps = players.select { |p| bids[p] == max_bid }
-
-        if wps.length == 1
-          d = Coords::DIRECTIONS[rules.winner_direction[wps.first]]
-          board.move( c, c + d )
+        if bids[:left] == bids[:right]
+          winner = nil
+        else
+          winner = bids[:left] > bids[:right] ? :left : :right
         end
+
+        h = { :points => points.dup,
+              :bids   => bids.dup,
+              :winner => winner,
+              :marker => { :from => @marker } }
+
+        @marker += rules.direction[winner]  if winner
+
+        h[:marker][:to] = @marker
+
+        bid_history << h
 
         players.each do |p| 
           points[p] -= bids[p]
-          bid_history[p] << bids[p]
           bids[p] = nil 
         end
       end
@@ -62,20 +68,15 @@ Rules.create( "Footsteps" ) do
     end
 
     def final?
-      c = board.occupied( :white ).first
-      c.x == 0 || c.x == 6 || 
-      (points[:left] == 0 && points[:right] == 0)
+      marker == 0 || marker == 6 || points.values.all? { |p| p == 0 }
     end
 
     def winner?( player )
-      c = board.occupied( :white ).first
-      (player == :left  && c.x == 0) ||
-      (player == :right && c.x == 6)
+      rules.winner[player] == marker
     end
 
     def draw?
-      c = board.occupied( :white ).first
-      c.x != 0 && c.x != 6 && points[:left] == 0 && points[:right] == 0
+      ! players.any? { |p| winner?( p ) }
     end
 
     def censor( player )
