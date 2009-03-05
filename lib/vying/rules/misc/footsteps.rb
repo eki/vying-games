@@ -13,14 +13,14 @@ Rules.create( "Footsteps" ) do
   winner    :left =>  0, :right => 6
 
   position do
-    attr_reader :points, :bids, :bid_history, :marker
+    attr_reader :points, :bids, :rounds, :marker
 
     def init
       @marker = 3
 
       @points = { :left => 50,  :right => 50  }
       @bids   = { :left => nil, :right => nil }
-      @bid_history = []
+      @rounds = []
     end
 
     def has_moves
@@ -47,16 +47,16 @@ Rules.create( "Footsteps" ) do
           winner = bids[:left] > bids[:right] ? :left : :right
         end
 
-        h = { :points => points.dup,
-              :bids   => bids.dup,
-              :winner => winner,
-              :marker => { :from => @marker } }
+        round = { :points => points.dup,
+                  :bids   => bids.dup,
+                  :winner => winner,
+                  :marker => { :from => @marker } }
 
         @marker += rules.direction[winner]  if winner
 
-        h[:marker][:to] = @marker
+        round[:marker][:to] = @marker
 
-        bid_history << h
+        rounds << round
 
         players.each do |p| 
           points[p] -= bids[p]

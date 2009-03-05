@@ -28,7 +28,7 @@ class TestFootsteps < Test::Unit::TestCase
     assert_equal( 50, g.points[:right] )
     assert_equal( nil, g.bids[:left] )
     assert_equal( nil, g.bids[:right] )
-    assert_equal( [], g.bid_history )
+    assert_equal( [], g.rounds )
   end
 
   def test_has_score
