@@ -1,5 +1,5 @@
 
-class CheckersNotation < Notation
+class Vying::CheckersNotation < Vying::Notation
 
   def self.notation_name
     :checkers_notation

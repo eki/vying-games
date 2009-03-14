@@ -1,5 +1,5 @@
 
-class OthelloNotation < Notation
+class Vying::OthelloNotation < Vying::Notation
 
   def self.notation_name
     :othello_notation

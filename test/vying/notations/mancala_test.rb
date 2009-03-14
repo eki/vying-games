@@ -5,16 +5,17 @@ require 'vying'
 class TestMancalaNotation < Test::Unit::TestCase
 
   def test_name
-    assert_equal( :mancala_notation, MancalaNotation.notation_name )
+    assert_equal( :mancala_notation, Vying::MancalaNotation.notation_name )
   end
 
   def test_find
-    assert_equal( MancalaNotation, Notation.find( :mancala_notation ) )
+    assert_equal( Vying::MancalaNotation, 
+                  Vying::Notation.find( :mancala_notation ) )
   end
 
   def test_to_move
     g = Game.new Kalah
-    n = MancalaNotation.new( g )
+    n = Vying::MancalaNotation.new( g )
 
     assert_equal( "e1", n.to_move( "B" ) )
     assert_equal( "f2", n.to_move( "f" ) )
@@ -25,7 +26,7 @@ class TestMancalaNotation < Test::Unit::TestCase
 
   def test_translate
     g = Game.new Kalah
-    n = MancalaNotation.new( g )
+    n = Vying::MancalaNotation.new( g )
 
     assert_equal( "A", n.translate( "f1", :one ) )
     assert_equal( "A", n.translate( "f1", :two ) )
@@ -42,7 +43,7 @@ class TestMancalaNotation < Test::Unit::TestCase
 
   def test_sequence
     g = Game.new Kalah
-    n = MancalaNotation.new( g )
+    n = Vying::MancalaNotation.new( g )
 
     g << ["f1", "a1", "a2", "b1", "a2", "a1", "c1", "a2"]
 
@@ -55,7 +56,7 @@ class TestMancalaNotation < Test::Unit::TestCase
 
   def test_moves
     g = Game.new Kalah
-    n = MancalaNotation.new( g )
+    n = Vying::MancalaNotation.new( g )
 
     assert_equal( :one, g.turn )
 

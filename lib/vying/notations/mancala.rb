@@ -1,5 +1,5 @@
 
-class MancalaNotation < Notation
+class Vying::MancalaNotation < Vying::Notation
 
   def self.notation_name
     :mancala_notation

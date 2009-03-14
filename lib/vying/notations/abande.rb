@@ -1,4 +1,4 @@
-class AbandeNotation < Notation
+class Vying::AbandeNotation < Vying::Notation
  
   def self.notation_name
     :abande_notation

@@ -5,16 +5,17 @@ require 'vying'
 class TestAbandeNotation < Test::Unit::TestCase
 
   def test_name
-    assert_equal( :abande_notation, AbandeNotation.notation_name )
+    assert_equal( :abande_notation, Vying::AbandeNotation.notation_name )
   end
 
   def test_find
-    assert_equal( AbandeNotation, Notation.find( :abande_notation ) )
+    assert_equal( Vying::AbandeNotation, 
+                  Vying::Notation.find( :abande_notation ) )
   end
 
   def test_to_move
     g = Game.new( Abande )
-    n = AbandeNotation.new( g )
+    n = Vying::AbandeNotation.new( g )
 
     assert_equal( "a1", n.to_move( "a1" ) )
     assert_equal( "e2", n.to_move( "e1" ) )
@@ -27,7 +28,7 @@ class TestAbandeNotation < Test::Unit::TestCase
 
   def test_translate
     g = Game.new( Abande )
-    n = AbandeNotation.new( g )
+    n = Vying::AbandeNotation.new( g )
 
     assert_equal( "a1", n.translate( "a1", :white ))
     assert_equal( "e1", n.translate( "e2", :white ))

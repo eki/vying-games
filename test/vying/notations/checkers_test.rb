@@ -5,16 +5,17 @@ require 'vying'
 class TestCheckersNotation < Test::Unit::TestCase
 
   def test_name
-    assert_equal( :checkers_notation, CheckersNotation.notation_name )
+    assert_equal( :checkers_notation, Vying::CheckersNotation.notation_name )
   end
 
   def test_find
-    assert_equal( CheckersNotation, Notation.find( :checkers_notation ) )
+    assert_equal( Vying::CheckersNotation, 
+                  Vying::Notation.find( :checkers_notation ) )
   end
 
   def test_to_move
     g = Game.new AmericanCheckers
-    n = CheckersNotation.new( g )
+    n = Vying::CheckersNotation.new( g )
 
     assert_equal( "b1c2", n.to_move( "1-6" ) )
     assert_equal( "a8b7", n.to_move( "29-25" ) )
@@ -25,7 +26,7 @@ class TestCheckersNotation < Test::Unit::TestCase
 
   def test_translate
     g = Game.new AmericanCheckers
-    n = CheckersNotation.new( g )
+    n = Vying::CheckersNotation.new( g )
 
     assert_equal( "1-6", n.translate( "b1c2", :red ) )
     assert_equal( "1-6", n.translate( "b1c2", :white ) )
@@ -42,7 +43,7 @@ class TestCheckersNotation < Test::Unit::TestCase
 
   def test_sequence
     g = Game.new AmericanCheckers
-    n = CheckersNotation.new( g )
+    n = Vying::CheckersNotation.new( g )
 
     g << "f3e4" << "e6f5" << "e2f3" << "d7e6" << "d1e2" << "g6h5" << "e4g6"
 
@@ -57,7 +58,7 @@ class TestCheckersNotation < Test::Unit::TestCase
 
   def test_moves
     g = Game.new AmericanCheckers
-    n = CheckersNotation.new( g )
+    n = Vying::CheckersNotation.new( g )
 
     s = ["9-14", "9-13", "10-15", "10-14", "11-16", "11-15", "12-16"]
 

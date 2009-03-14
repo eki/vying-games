@@ -6,14 +6,14 @@ class TestNotation < Test::Unit::TestCase
 
   def test_initialize
     g = Game.new TicTacToe
-    n = Notation.new( g )
+    n = Vying::Notation.new( g )
 
     assert_equal( g.object_id, n.game.object_id )
   end
 
   def test_to_move
     g = Game.new TicTacToe
-    n = Notation.new( g )
+    n = Vying::Notation.new( g )
 
     assert_equal( "a1", n.to_move( "a1" ) )
     assert_equal( "draw", n.to_move( "draw" ) )
@@ -22,7 +22,7 @@ class TestNotation < Test::Unit::TestCase
 
   def test_translate
     g = Game.new TicTacToe
-    n = Notation.new( g )
+    n = Vying::Notation.new( g )
 
     assert_equal( "a1", n.translate( "a1", :x ) )
     assert_equal( "a1", n.translate( "a1", :o ) )
@@ -34,7 +34,7 @@ class TestNotation < Test::Unit::TestCase
 
   def test_sequence
     g = Game.new TicTacToe
-    n = Notation.new( g )
+    n = Vying::Notation.new( g )
 
     g << g.moves.first << g.moves.first << g.moves.first
 
@@ -51,7 +51,7 @@ class TestNotation < Test::Unit::TestCase
 
   def test_moves
     g = Game.new TicTacToe
-    n = Notation.new( g )
+    n = Vying::Notation.new( g )
 
     assert_equal( g.moves, n.moves )
     assert_equal( g.moves( :x ), n.moves( :x ) )
@@ -72,7 +72,7 @@ class TestNotation < Test::Unit::TestCase
 
   def test_sealed_moves
     g = Game.new Footsteps
-    n = Notation.new( g )
+    n = Vying::Notation.new( g )
 
     assert_equal( g.moves, n.moves )
     assert_equal( g.moves( :left ), n.moves( :left ) )
@@ -96,11 +96,11 @@ class TestNotation < Test::Unit::TestCase
   end
 
   def test_list
-    Notation.list.each do |n|
-      assert( n.ancestors.include?( Notation ) )
+    Vying::Notation.list.each do |n|
+      assert( n.ancestors.include?( Vying::Notation ) )
     end
 
-    assert( Notation.list.length, Notation.list.uniq.length )
+    assert( Vying::Notation.list.length, Vying::Notation.list.uniq.length )
   end
 
 

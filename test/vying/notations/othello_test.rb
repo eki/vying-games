@@ -5,16 +5,17 @@ require 'vying'
 class TestOthelloNotation < Test::Unit::TestCase
 
   def test_name
-    assert_equal( :othello_notation, OthelloNotation.notation_name )
+    assert_equal( :othello_notation, Vying::OthelloNotation.notation_name )
   end
 
   def test_find
-    assert_equal( OthelloNotation, Notation.find( :othello_notation ) )
+    assert_equal( Vying::OthelloNotation, 
+                  Vying::Notation.find( :othello_notation ) )
   end
 
   def test_to_move
     g = Game.new Othello
-    n = OthelloNotation.new( g )
+    n = Vying::OthelloNotation.new( g )
 
     assert_equal( "c2", n.to_move( "C2" ) )
     assert_equal( "c2", n.to_move( "c2" ) )
@@ -24,7 +25,7 @@ class TestOthelloNotation < Test::Unit::TestCase
 
   def test_translate
     g = Game.new Othello
-    n = OthelloNotation.new( g )
+    n = Vying::OthelloNotation.new( g )
 
     assert_equal( "C2", n.translate( "c2", :black ) )
     assert_equal( "c2", n.translate( "c2", :white ) )
@@ -41,7 +42,7 @@ class TestOthelloNotation < Test::Unit::TestCase
 
   def test_sequence
     g = Game.new Othello
-    n = OthelloNotation.new( g )
+    n = Vying::OthelloNotation.new( g )
 
     g << ["e6", "f6", "f5", "f4", "d3", "d6", "f3", "c5"]
 
@@ -54,7 +55,7 @@ class TestOthelloNotation < Test::Unit::TestCase
 
   def test_moves
     g = Game.new Othello
-    n = OthelloNotation.new( g )
+    n = Vying::OthelloNotation.new( g )
 
     assert_equal( :black, g.turn )
 

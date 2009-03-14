@@ -39,9 +39,9 @@ class Game
     @players = history.first.players.map { |p| Player.new( p, self ) }
 
     if rules.notation
-      @notation = Notation.find( self.rules.notation ).new( self )
+      @notation = Vying::Notation.find( self.rules.notation ).new( self )
     else
-      @notation = Notation.new( self )
+      @notation = Vying::Notation.new( self )
     end
 
     yield self if block_given?
@@ -63,9 +63,9 @@ class Game
 
     if history.rules.notation
       g.instance_variable_set( "@notation", 
-        Notation.find( history.rules.notation ).new( g ) )
+        Vying::Notation.find( history.rules.notation ).new( g ) )
     else
-      g.instance_variable_set( "@notation", Notation.new( g ) )
+      g.instance_variable_set( "@notation", Vying::Notation.new( g ) )
     end
 
     g

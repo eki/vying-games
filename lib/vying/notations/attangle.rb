@@ -1,4 +1,4 @@
-class AttangleNotation < Notation
+class Vying::AttangleNotation < Vying::Notation
  
   def self.notation_name
     :attangle_notation

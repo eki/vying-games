@@ -39,7 +39,7 @@ require 'vying'
 #    => ["9-14"]
 #
 
-class Notation
+class Vying::Notation
 
   attr_reader :game
 
@@ -112,7 +112,7 @@ class Notation
   #   <Dir from path>/**/notations/*.rb
   #
 
-  def Notation.require_all( path=$: )
+  def self.require_all( path=$: )
     required = []
     path.each do |d|
       Dir.glob( "#{d}/**/notations/*.rb" ) do |f|
@@ -135,7 +135,7 @@ class Notation
 
   # Get a list of all Notation subclasses.
 
-  def Notation.list
+  def self.list
     @@notation_list
   end
 
