@@ -3,6 +3,8 @@ require 'test/unit'
 require 'vying'
 
 class TestResign < Test::Unit::TestCase
+  include Vying
+
   def sm
     Move::Resign
   end

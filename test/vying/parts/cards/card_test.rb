@@ -3,6 +3,7 @@ require 'test/unit'
 require 'vying'
 
 class TestCard < Test::Unit::TestCase
+  include Vying
 
   def test_initialize
     c = Card.new( :clubs, 9 )

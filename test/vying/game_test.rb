@@ -3,6 +3,8 @@ require 'test/unit'
 require 'vying'
 
 class TestGame < Test::Unit::TestCase
+  include Vying
+
   def test_initialize
     g = Game.new TicTacToe
     assert_equal( TicTacToe, g.rules )

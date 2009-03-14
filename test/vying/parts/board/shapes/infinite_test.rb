@@ -3,6 +3,7 @@ require 'test/unit'
 require 'vying'
 
 class TestBoardInfinite < Test::Unit::TestCase
+  include Vying
 
   def test_initialize
     b = Board.infinite( 4, 5 )

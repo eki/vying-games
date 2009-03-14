@@ -3,6 +3,8 @@ require 'test/unit'
 require 'vying'
 
 class TestCoord < Test::Unit::TestCase
+  include Vying
+
   def test_initialize
     c = Coord[0,1]
     assert_equal( 0, c.x )

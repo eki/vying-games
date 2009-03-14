@@ -3,6 +3,7 @@ require 'test/unit'
 require 'vying'
 
 class TestCounter < Test::Unit::TestCase
+  include Vying
 
   def test_initialize
     c = Counter[:red, 1]

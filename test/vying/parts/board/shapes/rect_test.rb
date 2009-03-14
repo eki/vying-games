@@ -3,6 +3,7 @@ require 'test/unit'
 require 'vying'
 
 class TestBoardRect < Test::Unit::TestCase
+  include Vying
 
   def test_initialize
     b = Board.rect( 7, 6 )

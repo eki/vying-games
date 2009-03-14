@@ -2,6 +2,7 @@
 require 'vying'
 
 module RulesTests
+  include Vying
 
   def new_game( seed=nil, options={} )
     if seed.class == Hash

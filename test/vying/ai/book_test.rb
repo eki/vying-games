@@ -3,6 +3,8 @@ require 'test/unit'
 require 'vying'
 
 class TestOpeningBook < Test::Unit::TestCase
+  include Vying
+
   def test_initialize
     book = OpeningBook.new
 

@@ -3,6 +3,7 @@ require 'test/unit'
 require 'vying'
 
 class TestCustodialCapture < Test::Unit::TestCase
+  include Vying
 
   def full_ancestors( b )
     class << b; ancestors; end

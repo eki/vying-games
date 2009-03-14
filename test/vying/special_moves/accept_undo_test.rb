@@ -3,6 +3,8 @@ require 'test/unit'
 require 'vying'
 
 class TestAcceptUndo < Test::Unit::TestCase
+  include Vying
+
   def sm
     Move::AcceptUndo
   end

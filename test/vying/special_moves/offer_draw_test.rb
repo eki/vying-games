@@ -3,6 +3,8 @@ require 'test/unit'
 require 'vying'
 
 class TestOfferDraw < Test::Unit::TestCase
+  include Vying
+
   def sm
     Move::OfferDraw
   end

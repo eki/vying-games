@@ -3,19 +3,19 @@ require 'test/unit'
 require 'vying'
 
 class TestAttangleNotation < Test::Unit::TestCase
+  include Vying
 
   def test_name
-    assert_equal( :attangle_notation, Vying::AttangleNotation.notation_name )
+    assert_equal( :attangle_notation, AttangleNotation.notation_name )
   end
 
   def test_find
-    assert_equal( Vying::AttangleNotation, 
-                  Vying::Notation.find( :attangle_notation ) )
+    assert_equal( AttangleNotation, Notation.find( :attangle_notation ) )
   end
 
   def test_to_move
     g = Game.new( Attangle )
-    n = Vying::AttangleNotation.new( g )
+    n = AttangleNotation.new( g )
 
     assert_equal( "a1", n.to_move( "a1" ) )
     assert_equal( "e2", n.to_move( "e1" ) )
@@ -27,7 +27,7 @@ class TestAttangleNotation < Test::Unit::TestCase
 
   def test_translate
     g = Game.new( Attangle )
-    n = Vying::AttangleNotation.new( g )
+    n = AttangleNotation.new( g )
 
     assert_equal( "a1", n.translate( "a1", :white ))
     assert_equal( "e1", n.translate( "e2", :white ))

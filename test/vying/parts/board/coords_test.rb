@@ -3,6 +3,8 @@ require 'test/unit'
 require 'vying'
 
 class TestCoords < Test::Unit::TestCase
+  include Vying
+
   def test_initialize
     coords = Coords.new( Coords.bounds_for( 3, 4 ) )
     assert_equal( 3, coords.width )

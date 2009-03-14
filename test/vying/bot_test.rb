@@ -30,6 +30,8 @@ module NamespaceForTesting
 end
 
 class TestBot < Test::Unit::TestCase
+  include Vying
+
   def test_defaults
     assert( Bot.new.bot? )
     assert( Bot.new.ready? )

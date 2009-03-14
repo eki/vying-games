@@ -3,6 +3,8 @@ require 'test/unit'
 require 'vying'
 
 class TestSpecialMoves < Test::Unit::TestCase
+  include Vying
+
   def test_interface
     SpecialMove.list.each do |sm|
       assert( sm.respond_to?( :[] ) )

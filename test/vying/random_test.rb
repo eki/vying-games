@@ -3,6 +3,8 @@ require 'test/unit'
 require 'vying'
 
 class TestRandomNumberGenerator < Test::Unit::TestCase
+  include Vying
+
   def test_initialize
     rng = RandomNumberGenerator.new 1234
     rng2 = RandomNumberGenerator.new 1234

@@ -3,6 +3,7 @@ require 'test/unit'
 require 'vying'
 
 class TestAmazons < Test::Unit::TestCase
+  include Vying
 
   def test_initialize_01
     b = Board.square( 4, :plugins => [:amazons] )

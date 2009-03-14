@@ -3,6 +3,8 @@ require 'test/unit'
 require 'vying'
 
 class TestDie < Test::Unit::TestCase
+  include Vying
+
   def test_initialize
     die = Die.new( 3 )
 

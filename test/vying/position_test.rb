@@ -3,6 +3,7 @@ require 'test/unit'
 require 'vying'
 
 class TestPosition < Test::Unit::TestCase
+  include Vying
 
   def test_censor
     p = Ataxx.new 1234

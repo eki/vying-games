@@ -3,6 +3,7 @@ require 'test/unit'
 require 'vying'
 
 class TestBoardRhombus < Test::Unit::TestCase
+  include Vying
 
   def test_initialize
     b = Board.rhombus( 4, 5 )

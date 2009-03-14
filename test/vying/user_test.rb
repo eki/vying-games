@@ -3,6 +3,8 @@ require 'test/unit'
 require 'vying'
 
 class TestUser < Test::Unit::TestCase
+  include Vying
+
   def test_defaults
     assert( ! User.new.bot? )
     assert( ! User.new.ready? )

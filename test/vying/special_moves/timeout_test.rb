@@ -3,6 +3,8 @@ require 'test/unit'
 require 'vying'
 
 class TestTimeout < Test::Unit::TestCase
+  include Vying
+
   def sm
     Move::Timeout
   end

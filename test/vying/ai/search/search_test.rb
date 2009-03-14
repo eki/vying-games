@@ -45,6 +45,8 @@ class AlphaBetaBot < Bot
 end
 
 class TestSearch < Test::Unit::TestCase
+  include Vying
+
   def test_alphabeta_01
     mini = MiniMaxBot.new
     alpha = AlphaBetaBot.new

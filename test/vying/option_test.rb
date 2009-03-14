@@ -3,6 +3,8 @@ require 'test/unit'
 require 'vying'
 
 class TestOption < Test::Unit::TestCase
+  include Vying
+
   def test_initialize
     opt = Option.new( :my_option, :default => 42, :values => [41,42,43] )
 

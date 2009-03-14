@@ -3,6 +3,8 @@ require 'test/unit'
 require 'vying'
 
 class TestRules < Test::Unit::TestCase
+  include Vying
+
   def test_find
     Rules.latest_versions.each do |r|
       assert_equal( r, Rules.find( r.to_snake_case ) )

@@ -3,6 +3,8 @@ require 'test/unit'
 require 'vying'
 
 class TestHistory < Test::Unit::TestCase
+  include Vying
+
   def test_initialize
     h = History.new( TicTacToe, nil, TicTacToe.options )
     assert_equal( [], h.sequence )

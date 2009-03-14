@@ -3,6 +3,7 @@ require 'test/unit'
 require 'vying'
 
 class TestBoard < Test::Unit::TestCase
+  include Vying
 
   def test_initialize
     assert_raise( NoMethodError ) do

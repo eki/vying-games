@@ -3,6 +3,8 @@ require 'test/unit'
 require 'vying'
 
 class TestWithdraw < Test::Unit::TestCase
+  include Vying
+
   def sm
     Move::Withdraw
   end

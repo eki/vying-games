@@ -3,6 +3,7 @@ require 'test/unit'
 require 'vying'
 
 class TestConnection < Test::Unit::TestCase
+  include Vying
 
   def test_initialize
     b = Board.square( 4, :plugins => [:connection] )

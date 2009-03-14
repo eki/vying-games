@@ -3,6 +3,8 @@ require 'test/unit'
 require 'vying'
 
 class TestSwap < Test::Unit::TestCase
+  include Vying
+
   def sm
     Move::Swap
   end

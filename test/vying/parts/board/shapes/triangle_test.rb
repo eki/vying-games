@@ -3,6 +3,7 @@ require 'test/unit'
 require 'vying'
 
 class TestBoardTriangle < Test::Unit::TestCase
+  include Vying
 
   def test_initialize
     b = Board.triangle( 4 )
