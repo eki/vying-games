@@ -6,100 +6,102 @@ require 'vying'
 # This is the super class for all special moves.  Unlike normal moves, special
 # moves act on Games and / or Positions, rather than just Positions.
 
-class SpecialMove < Move
+module Vying
+  class SpecialMove < Move
 
-  def special?
-    true
-  end
-
-  def inspect
-    @move.to_s
-  end
-
-  def effects_history?
-    self.class.const_defined?( :PositionMixin )
-  end
-
-  def apply_to_position( p )
-    p = p.extend_special_mixin( self.class.const_get( :PositionMixin ) )
-    p.apply_special_move( @move, by )
-    p
-  end
-
-  def apply_to_game( g )
-    before_apply( g )
-
-    if effects_history?
-      g.history.append( self )
-    else
-      g.history.instance_variable_set( "@last_move_at", Time.now )
+    def special?
+      true
     end
 
-    after_apply( g )
-  end
+    def inspect
+      @move.to_s
+    end
 
-  def before_apply( game )
+    def effects_history?
+      self.class.const_defined?( :PositionMixin )
+    end
 
-  end
+    def apply_to_position( p )
+      p = p.extend_special_mixin( self.class.const_get( :PositionMixin ) )
+      p.apply_special_move( @move, by )
+      p
+    end
 
-  def after_apply( game )
+    def apply_to_game( g )
+      before_apply( g )
 
-  end
+      if effects_history?
+        g.history.append( self )
+      else
+        g.history.instance_variable_set( "@last_move_at", Time.now )
+      end
 
-  class << self
+      after_apply( g )
+    end
 
-    # Scans the RUBYLIB (unless overridden via path), for notation subclasses
-    # and requires them.  Looks for files that match:
-    #
-    #   <Dir from path>/**/notations/*.rb
-    #
+    def before_apply( game )
 
-    def require_all( path=$: )
-      required = []
-      path.each do |d|
-        Dir.glob( "#{d}/**/special_moves/*.rb" ) do |f|
-          f =~ /(.*)\/special_moves\/([\w\d]+\.rb)$/
-          if ! required.include?( $2 ) && !f["_test"]
-            required << $2
-            require "#{f}"
+    end
+
+    def after_apply( game )
+
+    end
+
+    class << self
+
+      # Scans the RUBYLIB (unless overridden via path), for notation subclasses
+      # and requires them.  Looks for files that match:
+      #
+      #   <Dir from path>/**/notations/*.rb
+      #
+
+      def require_all( path=$: )
+        required = []
+        path.each do |d|
+          Dir.glob( "#{d}/**/special_moves/*.rb" ) do |f|
+            f =~ /(.*)\/special_moves\/([\w\d]+\.rb)$/
+            if ! required.include?( $2 ) && !f["_test"]
+              required << $2
+              require "#{f}"
+            end
           end
         end
       end
+
+      @@special_moves_list, @@instance_cache = [], {}
+
+      # When a subclass extends SpecialMove it's added to @@special_move_list.
+
+      def inherited( child )
+        @@special_moves_list << child
+      end
+
+      def list
+        @@special_moves_list
+      end
+
+      def []( s )
+        return s                    if s.kind_of?( SpecialMove )
+        return @@instance_cache[s]  if @@instance_cache[s]
+
+        list.each { |sm| m = sm[s]; return @@instance_cache[s] = m if m }; nil
+      end
+
+      def generate_for( game, player=nil ) 
+        list.map { |sm| sm.generate_for( game, player ) }.flatten.compact
+      end
+
+      private :new
     end
 
-    @@special_moves_list, @@instance_cache = [], {}
-
-    # When a subclass extends SpecialMove it's added to @@special_move_list.
-
-    def inherited( child )
-      @@special_moves_list << child
+    def _dump( depth=-1 )
+      to_s
     end
 
-    def list
-      @@special_moves_list
+    def self._load( str )
+      self[str]
     end
 
-    def []( s )
-      return s                    if s.kind_of?( SpecialMove )
-      return @@instance_cache[s]  if @@instance_cache[s]
-
-      list.each { |sm| m = sm[s]; return @@instance_cache[s] = m if m }; nil
-    end
-
-    def generate_for( game, player=nil ) 
-      list.map { |sm| sm.generate_for( game, player ) }.flatten.compact
-    end
-
-    private :new
   end
-
-  def _dump( depth=-1 )
-    to_s
-  end
-
-  def self._load( str )
-    SpecialMove[str]
-  end
-
 end
 
