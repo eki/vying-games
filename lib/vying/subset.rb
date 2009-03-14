@@ -3,9 +3,10 @@
 
 require 'vying'
 
-# Utility methods related to counting subsets.
-
 module Vying
+
+  # Utility methods related to counting subsets.
+
   module Subset
     class << self
 

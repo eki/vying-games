@@ -3,9 +3,10 @@
 
 require 'vying'
 
-# Format.
-
 module Vying
+
+  # Format.
+
   class Format
 
     # Scans the RUBYLIB (unless overridden via path), for format subclasses and

@@ -3,10 +3,11 @@
 
 require 'vying'
 
-# This is the super class for all special moves.  Unlike normal moves, special
-# moves act on Games and / or Positions, rather than just Positions.
-
 module Vying
+
+  # This is the super class for all special moves.  Unlike normal moves, 
+  # special moves act on Games and / or Positions, rather than just Positions.
+
   class SpecialMove < Move
 
     def special?

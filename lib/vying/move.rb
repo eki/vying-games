@@ -3,16 +3,17 @@
 
 require 'vying'
 
-# Move is used solely by history.  It should be compatible with Game / Position
-# but as a rule, you want to use Strings to represent moves.  However, be aware
-# that the values in History#moves will be Move objects.
-#
-# Move#to_s will give you the String representation of the move.
-# Move#by will give you the player name symbol (not a Player object)
-# Move#at will give you the Time the move was made (if it's known)
-#
-
 module Vying
+
+  # Move is used solely by history.  It should be compatible with Game / 
+  # Position but as a rule, you want to use Strings to represent moves.  
+  # However, be aware that the values in History#moves will be Move objects.
+  #
+  # Move#to_s will give you the String representation of the move.
+  # Move#by will give you the player name symbol (not a Player object)
+  # Move#at will give you the Time the move was made (if it's known)
+  #
+
   class Move
 
     attr_reader :by, :at
