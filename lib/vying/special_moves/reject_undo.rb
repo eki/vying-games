@@ -3,29 +3,31 @@
 
 require 'vying'
 
-class Move::RejectUndo < SpecialMove
+module Vying
+  class Move::RejectUndo < SpecialMove
 
-  def self.[]( s )
-    new if s =~ /^reject_undo$/
+    def self.[]( s )
+      new if s =~ /^reject_undo$/
+    end
+
+    def initialize
+      @move = "reject_undo"
+    end
+
+    def valid_for?( game, player=nil )
+      game.undo_requested? && (player.nil? || 
+      ! (game.undo_requested_by?( player ) || game.undo_accepted_by?( player )))
+    end
+
+    def self.generate_for( game, player=nil )
+      m = new
+      m if m.valid_for?( game, player )
+    end
+
+    def before_apply( game )
+      game.reject_undo
+    end
+
   end
-
-  def initialize
-    @move = "reject_undo"
-  end
-
-  def valid_for?( game, player=nil )
-    game.undo_requested? && (player.nil? || 
-    ! (game.undo_requested_by?( player ) || game.undo_accepted_by?( player )))
-  end
-
-  def self.generate_for( game, player=nil )
-    m = new
-    m if m.valid_for?( game, player )
-  end
-
-  def before_apply( game )
-    game.reject_undo
-  end
-
 end
 

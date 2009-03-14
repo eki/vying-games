@@ -3,30 +3,31 @@
 
 require 'vying'
 
+module Vying
+  class Move::RejectDraw < SpecialMove
 
-class Move::RejectDraw < SpecialMove
+    def self.[]( s )
+      new if s =~ /^reject_draw$/
+    end
 
-  def self.[]( s )
-    new if s =~ /^reject_draw$/
+    def initialize
+      @move = "reject_draw"
+    end
+
+    def valid_for?( game, player=nil )
+      game.draw_offered? && (player.nil? || 
+      ! (game.draw_offered_by?( player ) || game.draw_accepted_by?( player )))
+    end
+
+    def self.generate_for( game, player=nil )
+      m = new
+      m if m.valid_for?( game, player )
+    end
+
+    def before_apply( game )
+      game.reject_draw
+    end
+
   end
-
-  def initialize
-    @move = "reject_draw"
-  end
-
-  def valid_for?( game, player=nil )
-    game.draw_offered? && (player.nil? || 
-    ! (game.draw_offered_by?( player ) || game.draw_accepted_by?( player )))
-  end
-
-  def self.generate_for( game, player=nil )
-    m = new
-    m if m.valid_for?( game, player )
-  end
-
-  def before_apply( game )
-    game.reject_draw
-  end
-
 end
 
