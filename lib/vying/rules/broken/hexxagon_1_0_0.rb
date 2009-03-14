@@ -121,10 +121,10 @@ Rules.create( "Hexxagon" ) do
     def rand_number_of_blocks( np )
       m = np == 2 ? 30 : 24
 
-      r = rand( Subset.count_subsets_less_than( 14, m ) )
+      r = rand( Vying::Subset.count_subsets_less_than( 14, m ) )
 
       (0..14).to_a.each do |n|
-        p = Subset.count_subsets( n, m )
+        p = Vying::Subset.count_subsets( n, m )
         return n  if r < p
         r -= p
       end

@@ -1,5 +1,11 @@
+# Copyright 2007-08, Eric Idema except where otherwise noted.
+# You may redistribute / modify this file under the same terms as Ruby.
 
-module Subset
+require 'vying'
+
+# Utility methods related to counting subsets.
+
+module Vying::Subset
   class << self
 
     def factorial( n )
