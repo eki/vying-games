@@ -5,11 +5,11 @@ require 'vying'
 class TestYamlFormat < Test::Unit::TestCase
 
   def test_type
-    assert_equal( :yaml, YamlFormat.type )
+    assert_equal( :yaml, Vying::YamlFormat.type )
   end
 
   def test_find
-    assert_equal( YamlFormat, Format.find( :yaml ) )
+    assert_equal( Vying::YamlFormat, Vying::Format.find( :yaml ) )
   end
 
   def test_dump_rules

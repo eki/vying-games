@@ -1,5 +1,5 @@
 
-class HashFormat < Format
+class Vying::HashFormat < Vying::Format
 
   def self.type
     :hash

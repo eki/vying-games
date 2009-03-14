@@ -1,5 +1,5 @@
 
-class YamlFormat < Format
+class Vying::YamlFormat < Vying::Format
 
   def self.type
     :yaml

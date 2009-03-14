@@ -2,16 +2,16 @@
 require 'test/unit'
 require 'vying'
 
-if Format.find( :json )
+if Vying::Format.find( :json )
 
   class TestJsonFormat < Test::Unit::TestCase
 
     def test_type
-      assert_equal( :json, JsonFormat.type )
+      assert_equal( :json, Vying::JsonFormat.type )
     end
 
     def test_find
-      assert_equal( JsonFormat, Format.find( :json ) )
+      assert_equal( Vying::JsonFormat, Vying::Format.find( :json ) )
     end
   
     def test_dump_rules

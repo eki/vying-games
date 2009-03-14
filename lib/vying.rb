@@ -123,6 +123,6 @@ end
 SpecialMove.require_all( [File.dirname( __FILE__ )] )
 Rules.require_all( [File.dirname( __FILE__ )] )
 Notation.require_all( [File.dirname( __FILE__ )] )
-Format.require_all( [File.dirname( __FILE__ )] )
+Vying::Format.require_all( [File.dirname( __FILE__ )] )
 Bot.require_all( [File.dirname( __FILE__ )] )
 

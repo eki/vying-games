@@ -1,6 +1,6 @@
 
 if defined?( JSON )
-  class JsonFormat < Format
+  class Vying::JsonFormat < Vying::Format
 
     def self.type
       :json

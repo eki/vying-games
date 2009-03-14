@@ -5,15 +5,15 @@ require 'vying'
 class TestFormat < Test::Unit::TestCase
 
   def test_list
-    Format.list.each do |n|
-      assert( n.ancestors.include?( Format ) )
+    Vying::Format.list.each do |n|
+      assert( n.ancestors.include?( Vying::Format ) )
     end
 
-    assert( Format.list.length, Format.list.uniq.length )
+    assert( Vying::Format.list.length, Vying::Format.list.uniq.length )
   end
 
   def test_find
-    assert( ! Format.find( :foo_bar ) )
+    assert( ! Vying::Format.find( :foo_bar ) )
   end
 
 end

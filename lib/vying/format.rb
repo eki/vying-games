@@ -5,7 +5,7 @@ require 'vying'
 
 # Format.
 
-class Format
+class Vying::Format
 
   # Scans the RUBYLIB (unless overridden via path), for format subclasses and
   # requires them.  Looks for files that match:
@@ -13,7 +13,7 @@ class Format
   #   <Dir from path>/**/formats/*.rb
   #
 
-  def Format.require_all( path=$: )
+  def self.require_all( path=$: )
     required = []
     path.each do |d|
       Dir.glob( "#{d}/**/formats/*.rb" ) do |f|
@@ -36,7 +36,7 @@ class Format
 
   # Get a list of all Format subclasses.
 
-  def Format.list
+  def self.list
     @@format_list
   end
 
@@ -51,7 +51,7 @@ end
 module Vying
 
   def self.load( string, type )
-    format = Format.find( type )
+    format = Vying::Format.find( type )
 
     raise "Couldn't find format for type #{type}"  unless format
 
@@ -59,7 +59,7 @@ module Vying
   end
 
   def self.dump( game, type )
-    format = Format.find( type )
+    format = Vying::Format.find( type )
 
     raise "Couldn't find format for type #{type}"  unless format
 
