@@ -1,48 +1,52 @@
-class Vying::AttangleNotation < Vying::Notation
- 
-  def self.notation_name
-    :attangle_notation
-  end
- 
-  def initialize( game )
-    super( game )
-    @board_size = game.options[:board_size]
-  end
 
-  def to_move( s )
-    if s =~ /^\s*(\w\d)\s*$/
-      conv( $1 )
-    elsif s =~ /^\s*(\w\d),?(\w\d)-?(\w\d)\s*$/
-      conv( $1 ) + conv( $2 ) + conv( $3 )
-    else
-      s
+module Vying
+  class AttangleNotation < Notation
+ 
+    def self.notation_name
+      :attangle_notation
     end
-  end
  
-  def translate( move, player )
-    cs = move.to_coords
+    def initialize( game )
+      super( game )
+      @board_size = game.options[:board_size]
+    end
 
-    return move if cs.empty?
-
-    s = ''
-    cs.each do |c|
-      if c.x >= @board_size
-        s += (97 + c.x).chr + (c.y - (c.x - @board_size)).to_s
+    def to_move( s )
+      if s =~ /^\s*(\w\d)\s*$/
+        conv( $1 )
+      elsif s =~ /^\s*(\w\d),?(\w\d)-?(\w\d)\s*$/
+        conv( $1 ) + conv( $2 ) + conv( $3 )
       else
-        s += c.to_s
+        s
       end
     end
-    s =~ /(\w\d)(\w\d)(\w\d)/ ? "#{$1},#{$2}-#{$3}" : s
-  end
+ 
+    def translate( move, player )
+      cs = move.to_coords
 
-  private
+      return move if cs.empty?
 
-  def conv( c )
-    if c.x >= @board_size
-      (97 + c.x).chr + (c.y + (c.x - @board_size) + 2).to_s
-    else
-      c
+      s = ''
+      cs.each do |c|
+        if c.x >= @board_size
+          s += (97 + c.x).chr + (c.y - (c.x - @board_size)).to_s
+        else
+          s += c.to_s
+        end
+      end
+      s =~ /(\w\d)(\w\d)(\w\d)/ ? "#{$1},#{$2}-#{$3}" : s
     end
-  end
 
+    private
+
+    def conv( c )
+      if c.x >= @board_size
+        (97 + c.x).chr + (c.y + (c.x - @board_size) + 2).to_s
+      else
+        c
+      end
+    end
+
+  end
 end
+
