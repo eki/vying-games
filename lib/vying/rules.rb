@@ -136,7 +136,7 @@ class Rules
       list_rules( mrs )
  
       class_name = "#{mrs.class_name}_#{mrs.version.gsub( /\./, '_' )}"
-      klass = Positions.const_set( class_name, 
+      klass = Vying::Positions.const_set( class_name, 
         Class.new( rules.position_class ) )
  
       klass.instance_variable_set( "@inverted_rules", rules )
@@ -239,7 +239,7 @@ class Rules
 
   def position_class
     pkn = "#{class_name}_#{version.gsub( /\./, '_' )}"
-    Positions.const_get( pkn )
+    Vying::Positions.const_get( pkn )
   end
 
   # Returns a list of all Position subclasses used by every available version
@@ -637,13 +637,14 @@ class Rules
 
     def position( &block )
       class_name = "#{@rules.class_name}_#{@rules.version.gsub( /\./, '_' )}"
-      klass = Positions.const_set( class_name, Class.new( Position ) )
+      klass = Vying::Positions.const_set( class_name, 
+                                          Class.new( Vying::Position ) )
 
       # Record the methods added to the Position subclass.
 
       klass.class.class_eval do
         def method_added( name )
-          if Position.method_defined?( name )
+          if Vying::Position.method_defined?( name )
             Rules.overrides << "#{self}##{name}"
           end
         end
