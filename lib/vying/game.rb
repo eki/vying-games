@@ -739,5 +739,5 @@ end
 
 # For convenience make Game a top-level constant
 
-Game = Vying::Game
+Kernel.const_set( "Game", Vying::Game ) unless Kernel.const_defined?( "Game" )
 
