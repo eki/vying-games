@@ -90,7 +90,6 @@ module Vying
         end
 
         unless rules.broken?
-          #Kernel.const_set( class_name, rules )
           Vying.const_set( class_name, rules )
         end
 
