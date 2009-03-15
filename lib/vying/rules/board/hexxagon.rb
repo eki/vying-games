@@ -11,7 +11,7 @@ require 'vying'
 #
 # For detailed rules, etc:  http://vying.org/games/hexxagon
 
-Vying.rules( "Hexxagon" ) do
+Rules.create( "Hexxagon" ) do
   name    "Hexxagon"
   version "1.1.0"
 

@@ -69,11 +69,6 @@ module Vying
       def singleton_method_added( n ); end
     end
   end
-
-  def self.rules( class_name, &block )
-    Rules.create( class_name, &block )
-  end
-
 end
 
 require 'yaml'

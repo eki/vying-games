@@ -9,7 +9,7 @@ require 'vying'
 #
 # For detailed rules see:  http://vying.org/games/amazons
 
-Vying.rules( "Amazons" ) do
+Rules.create( "Amazons" ) do
   name    "Amazons"
   version "1.0.0"
 

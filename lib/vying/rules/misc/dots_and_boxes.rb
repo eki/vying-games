@@ -7,7 +7,7 @@ require 'vying'
 #
 # For detailed rules see:  http://vying.org/games/dots_and_boxes
 
-Vying.rules( "DotsAndBoxes" ) do
+Rules.create( "DotsAndBoxes" ) do
   name    "Dots and Boxes"
   version "1.0.0"
 

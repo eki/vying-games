@@ -3,7 +3,7 @@
 
 require 'vying'
 
-Vying.rules( "Yavalath" ) do
+Rules.create( "Yavalath" ) do
   name    "Yavalath"
   version "0.5.0"
 

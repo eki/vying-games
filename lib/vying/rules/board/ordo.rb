@@ -8,7 +8,7 @@ require 'vying'
 # For detailed rules see:  http://vying.org/games/ordo
 # or the official website http://spielstein.com/games/ordo
 
-Vying.rules( "Ordo" ) do
+Rules.create( "Ordo" ) do
   name    "Ordo"
   version "0.5.0"
 

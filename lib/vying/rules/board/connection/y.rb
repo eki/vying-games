@@ -7,7 +7,7 @@ require 'vying'
 #
 # For detailed rules see:  http://vying.org/games/y
 
-Vying.rules( "Y" ) do
+Rules.create( "Y" ) do
   name    "Y"
   version "1.0.0"
 

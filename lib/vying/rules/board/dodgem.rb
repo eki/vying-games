@@ -7,7 +7,7 @@ require 'vying'
 #
 # For detailed rules, etc:  http://vying.org/games/dodgem
 
-Vying.rules( "Dodgem" ) do
+Rules.create( "Dodgem" ) do
   name    "Dodgem"
   version "0.5.0"
 

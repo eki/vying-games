@@ -737,3 +737,7 @@ module Vying
   end
 end
 
+# For convenience make Game a top-level constant
+
+Game = Vying::Game
+

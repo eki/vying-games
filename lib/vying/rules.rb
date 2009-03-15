@@ -91,6 +91,10 @@ module Vying
 
         unless rules.broken?
           Vying.const_set( class_name, rules )
+
+          unless Kernel.const_defined?( class_name )
+            Kernel.const_set( class_name, rules )
+          end
         end
 
         list_rules( rules )
@@ -751,6 +755,9 @@ module Vying
     end
 
   end
-
 end
+
+# Make Rules a top-level constant
+
+Rules = Vying::Rules
 

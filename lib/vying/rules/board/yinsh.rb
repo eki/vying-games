@@ -7,7 +7,7 @@ require 'vying'
 #
 # For detailed rules see:  http://vying.org/games/yinsh
 
-Vying.rules( "Yinsh" ) do
+Rules.create( "Yinsh" ) do
   name    "YINSH"
   version "1.0.0"
 

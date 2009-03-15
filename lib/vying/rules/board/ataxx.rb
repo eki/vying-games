@@ -9,7 +9,7 @@ require 'vying'
 #
 # For detailed rules, etc:  http://vying.org/games/ataxx
 
-Vying.rules( "Ataxx" ) do
+Rules.create( "Ataxx" ) do
   name    "Ataxx"
   version "2.0.0"
 

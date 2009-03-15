@@ -8,7 +8,7 @@ require 'vying'
 # For detailed rules see:  http://vying.org/games/abande
 # or the official Abande site: http://abande.com
 
-Vying.rules( 'Abande' ) do
+Rules.create( 'Abande' ) do
   name     'Abande'
   version  '1.0.0'
   notation :abande_notation

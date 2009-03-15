@@ -3,7 +3,7 @@
 
 require 'vying'
 
-Vying.rules( "Frames" ) do
+Rules.create( "Frames" ) do
   name    "Frames"
   version "0.4.0"
 

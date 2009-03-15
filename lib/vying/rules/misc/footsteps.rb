@@ -3,7 +3,7 @@
 
 require 'vying'
 
-Vying.rules( "Footsteps" ) do
+Rules.create( "Footsteps" ) do
   name    "Footsteps"
   version "2.5.0"
 

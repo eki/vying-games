@@ -8,7 +8,7 @@ require 'vying'
 #
 # For detailed rules see:  http://vying.org/games/spangles
 
-Vying.rules( "Spangles" ) do
+Rules.create( "Spangles" ) do
   name    "Spangles"
   version "0.5.0"
 

@@ -3,7 +3,7 @@
 
 require 'vying'
 
-Vying.rules( "TicTacToe" ) do
+Rules.create( "TicTacToe" ) do
   name    "Tic Tac Toe"
   version "1.0.0"
 

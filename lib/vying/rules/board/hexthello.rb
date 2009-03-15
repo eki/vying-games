@@ -3,7 +3,7 @@
 
 require 'vying'
 
-Vying.rules( "Hexthello" ) do
+Rules.create( "Hexthello" ) do
   name    "Hexthello"
   version "0.9.0"
   notation :othello_notation

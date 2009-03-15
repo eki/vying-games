@@ -7,7 +7,7 @@ require 'vying'
 #
 # For detailed rules see:  http://vying.org/games/hex
 
-Vying.rules( "Hex" ) do
+Rules.create( "Hex" ) do
   name    "Hex"
   version "0.1.0"
 
