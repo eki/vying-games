@@ -8,7 +8,7 @@ require 'vying'
 #
 # For detailed rules see:  http://vying.org/games/cephalopod
 
-Rules.create( "Cephalopod" ) do
+Vying.rules( "Cephalopod" ) do
   name    "Cephalopod"
   version "1.0.0"
 

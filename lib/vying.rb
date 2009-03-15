@@ -70,6 +70,10 @@ module Vying
     end
   end
 
+  def self.rules( class_name, &block )
+    Rules.create( class_name, &block )
+  end
+
 end
 
 require 'yaml'
@@ -121,7 +125,7 @@ end
 # Load all SpecialMoves, Rules, Notations, and Bots
 
 Vying::SpecialMove.require_all( [File.dirname( __FILE__ )] )
-Rules.require_all( [File.dirname( __FILE__ )] )
+Vying::Rules.require_all( [File.dirname( __FILE__ )] )
 Vying::Notation.require_all( [File.dirname( __FILE__ )] )
 Vying::Format.require_all( [File.dirname( __FILE__ )] )
 Vying::Bot.require_all( [File.dirname( __FILE__ )] )

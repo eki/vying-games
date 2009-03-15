@@ -12,7 +12,7 @@ require 'vying'
 #
 # For detailed rules see:  http://vying.org/games/pah_tum
 
-Rules.create( "PahTum" ) do
+Vying.rules( "PahTum" ) do
   name    "Pah-Tum"
   version "1.0.0"
 

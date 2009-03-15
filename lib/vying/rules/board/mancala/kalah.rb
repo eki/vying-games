@@ -3,7 +3,7 @@
 
 require 'vying'
 
-Rules.create( "Kalah" ) do
+Vying.rules( "Kalah" ) do
   name    "Kalah"
   version "2.0.0"
   notation :mancala_notation

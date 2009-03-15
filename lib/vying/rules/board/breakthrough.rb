@@ -8,7 +8,7 @@ require 'vying'
 #
 # For detailed rules, etc:  http://vying.org/games/breakthrough
 
-Rules.create( "Breakthrough" ) do
+Vying.rules( "Breakthrough" ) do
   name    "Breakthrough"
   version "1.0.0"
 

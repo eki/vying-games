@@ -9,7 +9,7 @@ require 'vying'
 #
 # For detailed rules see:  http://vying.org/games/three_musketeers
 
-Rules.create( "ThreeMusketeers" ) do
+Vying.rules( "ThreeMusketeers" ) do
   name    "Three Musketeers"
   version "1.0.0"
 

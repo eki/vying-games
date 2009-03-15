@@ -3,7 +3,7 @@
 
 require 'vying'
 
-Rules.create( "KeryoPente" ) do
+Vying.rules( "KeryoPente" ) do
   name    "Keryo-Pente"
   version "1.0.0"
 

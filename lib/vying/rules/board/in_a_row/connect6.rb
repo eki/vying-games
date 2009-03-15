@@ -3,7 +3,7 @@
 
 require 'vying'
 
-Rules.create( "Connect6" ) do
+Vying.rules( "Connect6" ) do
   name    "Connect6"
   version "1.0.0"
 

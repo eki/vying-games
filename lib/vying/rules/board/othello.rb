@@ -3,7 +3,7 @@
 
 require 'vying'
 
-Rules.create( "Othello" ) do
+Vying.rules( "Othello" ) do
   name    "Othello"
   version "1.0.0"
   notation :othello_notation

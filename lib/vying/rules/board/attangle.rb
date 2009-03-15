@@ -8,7 +8,7 @@ require 'vying'
 # For detailed rules see:  http://vying.org/games/attangle
 # or the official Attangle site: http://attangle.com
 
-Rules.create( 'Attangle' ) do
+Vying.rules( 'Attangle' ) do
   name     'Attangle'
   version  '1.0.0'
   notation :attangle_notation

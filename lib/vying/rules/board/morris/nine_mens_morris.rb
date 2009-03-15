@@ -3,7 +3,7 @@
 
 require 'vying'
 
-Rules.create( "NineMensMorris" ) do
+Vying.rules( "NineMensMorris" ) do
   name    "Nine Men's Morris"
   version "1.0.0"
 

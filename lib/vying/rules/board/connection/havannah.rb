@@ -7,7 +7,7 @@ require 'vying'
 #
 # For detailed rules see:  http://vying.org/games/havannah
 
-Rules.create( "Havannah" ) do
+Vying.rules( "Havannah" ) do
   name    "Havannah"
   version "0.0.1"
 

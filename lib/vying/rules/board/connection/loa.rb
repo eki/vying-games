@@ -7,7 +7,7 @@ require 'vying'
 #
 # For detailed rules see:  http://vying.org/games/lines_of_action
 
-Rules.create( "LinesOfAction" ) do
+Vying.rules( "LinesOfAction" ) do
   name    "Lines of Action"
   version "0.1.0"
 

@@ -3,7 +3,7 @@
 
 require 'vying'
 
-Rules.create( "Oware" ) do
+Vying.rules( "Oware" ) do
   name    "Oware"
   version "1.0.0"
   notation :mancala_notation

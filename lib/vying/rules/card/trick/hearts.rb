@@ -3,7 +3,7 @@
 
 require 'vying'
 
-Rules.create( "Hearts" ) do
+Vying.rules( "Hearts" ) do
   name    "Hearts"
   version "0.5.0"
 

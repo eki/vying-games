@@ -9,7 +9,7 @@ require 'vying'
 #
 # For more detailed rules, etc:  http://vying.org/games/american_checkers
 
-Rules.create( "AmericanCheckers" ) do
+Vying.rules( "AmericanCheckers" ) do
   name    "American Checkers"
   version "1.0.0"
   notation :checkers_notation

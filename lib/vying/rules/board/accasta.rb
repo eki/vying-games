@@ -8,7 +8,7 @@ require 'vying'
 # For detailed rules see:  http://vying.org/games/accasta
 # or the official Accasta site: http://accasta.com
 
-Rules.create( 'Accasta' ) do
+Vying.rules( 'Accasta' ) do
   name     'Accasta'
   version  '0.1.0'
 # notation :accasta_notation

@@ -7,7 +7,7 @@ require 'vying'
 #
 # For detailed rules, etc:  http://vying.org/games/hexplode
 
-Rules.create( "Hexplode" ) do
+Vying.rules( "Hexplode" ) do
   name    "Hexplode"
   version "0.5.0"
 
