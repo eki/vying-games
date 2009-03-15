@@ -2,15 +2,15 @@
 require 'test/unit'
 require 'vying'
 
-class FirstMoveBot < Bot
-  class TicTacToe < Bot
+class FirstMoveBot < Vying::Bot
+  class TicTacToe < Vying::Bot
     difficulty :easy
     def select( sequence, position, player )
       position.moves.first
     end
   end
 
-  class Connect6 < Bot
+  class Connect6 < Vying::Bot
     difficulty :medium
     def select( sequence, position, player )
       position.moves.first
@@ -19,8 +19,8 @@ class FirstMoveBot < Bot
 end
 
 module NamespaceForTesting
-  class LastMoveBot < Bot
-    class TicTacToe < Bot
+  class LastMoveBot < Vying::Bot
+    class TicTacToe < Vying::Bot
       difficulty :easy
       def select( sequence, position, player )
         position.moves.first

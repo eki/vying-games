@@ -1,10 +1,9 @@
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
-require 'vying/ai/bot'
-require 'vying/rules'
+require 'vying'
 
-class RandomBot < Bot
+class RandomBot < Vying::Bot
   def initialize( username=nil, id=nil )
     id ||= 387
 

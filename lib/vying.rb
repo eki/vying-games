@@ -124,5 +124,5 @@ Vying::SpecialMove.require_all( [File.dirname( __FILE__ )] )
 Rules.require_all( [File.dirname( __FILE__ )] )
 Vying::Notation.require_all( [File.dirname( __FILE__ )] )
 Vying::Format.require_all( [File.dirname( __FILE__ )] )
-Bot.require_all( [File.dirname( __FILE__ )] )
+Vying::Bot.require_all( [File.dirname( __FILE__ )] )
 

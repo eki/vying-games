@@ -2,46 +2,48 @@
 require 'test/unit'
 require 'vying'
 
-module BotTemplate
+module Vying
+  module BotTemplate
 
-  attr_reader :leaf, :nodes, :leaf_list, :nodes_list
-  attr_accessor :depth
+    attr_reader :leaf, :nodes, :leaf_list, :nodes_list
+    attr_accessor :depth
 
-  def initialize
-    super
-    @leaf = 0
-    @nodes = 0
-  end
+    def initialize
+      super
+      @leaf = 0
+      @nodes = 0
+    end
 
-  # select should also take a sequence argument, but we wouldn't have
-  # used it anyway (we're only interested in search results)
+    # select should also take a sequence argument, but we wouldn't have
+    # used it anyway (we're only interested in search results)
 
-  def select( position, player )
-    @leaf, @nodes = 0, 0
-    score, move = best( analyze( position, player ) )
-    [score, move]           #This should just return move in a real Bot
-  end                       #But we're only interested search results
+    def select( position, player )
+      @leaf, @nodes = 0, 0
+      score, move = best( analyze( position, player ) )
+      [score, move]           #This should just return move in a real Bot
+    end                       #But we're only interested search results
   
-  def evaluate( position, player )
-    @leaf += 1
-    return 1  if position.winner? player
-    return 0  if position.draw?
-    return -1
-  end
+    def evaluate( position, player )
+      @leaf += 1
+      return 1  if position.winner? player
+      return 0  if position.draw?
+      return -1
+    end
                                                               
-  def cutoff( position, depth )                               
-    position.final?  # it's very abnormal to search all the way to the bottom
+    def cutoff( position, depth )                               
+      position.final?  # it's very abnormal to search all the way to the bottom
+    end
   end
-end
 
-class MiniMaxBot < Bot
-  include BotTemplate
-  include Minimax
-end
+  class MiniMaxBot < Bot
+    include BotTemplate
+    include Minimax
+  end
 
-class AlphaBetaBot < Bot
-  include BotTemplate
-  include AlphaBeta
+  class AlphaBetaBot < Bot
+    include BotTemplate
+    include AlphaBeta
+  end
 end
 
 class TestSearch < Test::Unit::TestCase
