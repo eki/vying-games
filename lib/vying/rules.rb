@@ -719,7 +719,7 @@ class Rules
 
     def option( name, options )
       opts = @rules.instance_variable_get( "@options" )
-      opts[name] = Option.new( name, options )
+      opts[name] = Vying::Option.new( name, options )
       @rules.instance_variable_set( "@options", opts )
 
       defaults = @rules.instance_variable_get( "@defaults" )
