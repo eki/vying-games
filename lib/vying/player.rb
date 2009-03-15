@@ -3,52 +3,55 @@
 
 require 'vying'
 
-#  Player is only used by Game to represent the combination of a player
-#  (the Symbols used by Rules), and a User.
+module Vying
 
-class Player
-  attr_reader :name, :game
-  attr_accessor :user
+  #  Player is only used by Game to represent the combination of a player
+  #  (the Symbols used by Rules), and a User.
 
-  def initialize( name, game, user=nil )
-    @name, @game, @user = name, game, user
-  end
+  class Player
+    attr_reader :name, :game
+    attr_accessor :user
 
-  def has_moves?
-    game.has_moves?( name )
-  end
+    def initialize( name, game, user=nil )
+      @name, @game, @user = name, game, user
+    end
 
-  def winner?
-    game.winner?( name )
-  end
+    def has_moves?
+      game.has_moves?( name )
+    end
 
-  def loser?
-    game.loser?( name )
-  end
+    def winner?
+      game.winner?( name )
+    end
 
-  def score
-    game.score( name )
-  end
+    def loser?
+      game.loser?( name )
+    end
 
-  def <<( move )
-    game.append( move, name )
-    self
-  end
+    def score
+      game.score( name )
+    end
 
-  def moves
-    game.moves( name )
-  end
+    def <<( move )
+      game.append( move, name )
+      self
+    end
 
-  def move?( move )
-    game.move?( move, name )
-  end
+    def moves
+      game.moves( name )
+    end
 
-  def username
-    user && user.username
-  end
+    def move?( move )
+      game.move?( move, name )
+    end
 
-  def to_s
-    "#{username || '?'} (#{name})"
+    def username
+      user && user.username
+    end
+
+    def to_s
+      "#{username || '?'} (#{name})"
+    end
   end
 end
 
