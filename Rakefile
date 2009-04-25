@@ -59,7 +59,8 @@ end
 
 desc "compile the C extension part of the vying library"
 task :compile do 
-  sh %{cd ext/vying/c/parts/board && ruby ./extconf.rb && make}
+  ruby = ($0 =~ /rake(.+)/) ? "ruby#{$1}" : "ruby"
+  sh %{cd ext/vying/c/parts/board && #{ruby} ./extconf.rb && make}
 end
 
 ###
