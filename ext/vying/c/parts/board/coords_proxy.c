@@ -26,7 +26,7 @@ VALUE coords_proxy_connected( VALUE self, VALUE cs ) {
 
     ns = rb_funcall( self, id_neighbors, 1, c );
 
-    for( i = 0; i < RARRAY(ns)->len; i++ ) {
+    for( i = 0; i < RARRAY_LEN(ns); i++ ) {
       VALUE nc = rb_ary_entry( ns, i );
 
       if( RTEST(rb_ary_includes( coords, nc )) ) {
@@ -37,6 +37,6 @@ VALUE coords_proxy_connected( VALUE self, VALUE cs ) {
     c = rb_ary_pop( check );
   }
 
-  return RARRAY(coords)->len == 0 ? Qtrue : Qfalse;
+  return RARRAY_LEN(coords) == 0 ? Qtrue : Qfalse;
 }
 

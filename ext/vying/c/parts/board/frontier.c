@@ -11,18 +11,15 @@
 
 VALUE frontier_update( VALUE self, VALUE c ) {
   VALUE frontier = rb_iv_get( self, "@frontier" );
-  VALUE cells = rb_iv_get( self, "@cells" );
   VALUE coords = rb_iv_get( self, "@coords" );
   VALUE dir = rb_funcall( self, id_directions, 1, c );
   int x = NUM2INT(rb_funcall( c, id_x, 0 ));
   int y = NUM2INT(rb_funcall( c, id_y, 0 ));
-  int w = NUM2INT(rb_iv_get( self, "@width" ));
-  int h = NUM2INT(rb_iv_get( self, "@height" ));
 
   int i;
-  for( i = 0; i < RARRAY(dir)->len; i++ ) {
+  for( i = 0; i < RARRAY_LEN(dir); i++ ) {
     VALUE d = rb_ary_entry( dir, i );
-    int dx, dy;
+    int dx = 0, dy = 0;
     VALUE nx, ny;
 
     if( d == sym_n ) {

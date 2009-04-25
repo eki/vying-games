@@ -77,3 +77,21 @@ ID id_dup, id_x, id_y, id_subscript, id_subscript_assign, id_new,
 VALUE sym_black, sym_white, 
       sym_n, sym_s, sym_w, sym_e, sym_se, sym_nw, sym_sw, sym_ne;
 
+/* Ruby 1.9 and 1.8 compatibility */
+
+#ifndef RSTRING_PTR
+#define RSTRING_PTR(x) (RSTRING(x)->ptr)
+#endif
+
+#ifndef RSTRING_LEN
+#define RSTRING_LEN(x) (RSTRING(x)->len)
+#endif
+
+#ifndef RARRAY_PTR
+#define RARRAY_PTR(x) (RARRAY(x)->ptr)
+#endif
+
+#ifndef RARRAY_LEN
+#define RARRAY_LEN(x) (RARRAY(x)->len)
+#endif
+

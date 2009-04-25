@@ -21,14 +21,10 @@ VALUE custodial_capture_valid( int argc, VALUE *argv, VALUE self ) {
   VALUE p = argv[1];
 
   VALUE range = Qnil;
-  int first;
-  int last;
+  int first = 0;
+  int last = 0;
 
-  VALUE cells = rb_iv_get( self, "@cells" );
   VALUE dir = rb_iv_get( self, "@directions" );
-
-  int w = NUM2INT(rb_iv_get( self, "@width" ));
-  int h = NUM2INT(rb_iv_get( self, "@height" ));
 
   if( argc > 2 && RTEST(argv[2]) ) {
     range = argv[2];
@@ -37,9 +33,9 @@ VALUE custodial_capture_valid( int argc, VALUE *argv, VALUE self ) {
   }
 
   int i, blen;
-  for( i = 0; i < RARRAY(dir)->len; i++ ) {
+  for( i = 0; i < RARRAY_LEN(dir); i++ ) {
     VALUE d = rb_ary_entry( dir, i );
-    int dx, dy, nx, ny;
+    int dx = 0, dy = 0, nx, ny;
     VALUE np;
 
     blen = 0;
@@ -131,10 +127,9 @@ VALUE custodial( int argc, VALUE *argv, VALUE self ) {
   VALUE replacement = Qnil;
 
   VALUE range = Qnil;
-  int first;
-  int last;
+  int first = 0;
+  int last = 0;
 
-  VALUE cells = rb_iv_get( self, "@cells" );
   VALUE dir = rb_iv_get( self, "@directions" );
 
   VALUE cap = rb_ary_new();
@@ -156,9 +151,9 @@ VALUE custodial( int argc, VALUE *argv, VALUE self ) {
   }
 
   int i;
-  for( i = 0; i < RARRAY(dir)->len; i++ ) {
+  for( i = 0; i < RARRAY_LEN(dir); i++ ) {
     VALUE d = rb_ary_entry( dir, i );
-    int dx, dy, nx, ny;
+    int dx = 0, dy = 0, nx, ny;
     VALUE np;
 
     blen = 0;

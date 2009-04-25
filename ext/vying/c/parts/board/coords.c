@@ -34,13 +34,13 @@ VALUE coords_include( VALUE self, VALUE c ) {
 
   VALUE omitted = rb_iv_get( self, "@omitted" );
 
-  if( RARRAY(omitted)->len == 0 ) {
+  if( RARRAY_LEN(omitted) == 0 ) {
     return Qtrue;
   }
 
   VALUE coords = rb_iv_get( self, "@coords" );
 
-  if( RARRAY(omitted)->len < RARRAY(coords)->len ) {
+  if( RARRAY_LEN(omitted) < RARRAY_LEN(coords) ) {
     return rb_funcall( omitted, id_include, 1, c ) == Qfalse ? Qtrue : Qfalse;
   }
   else {
