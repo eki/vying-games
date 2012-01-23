@@ -531,22 +531,6 @@ module Vying
       Rules.find( class_name, version )
     end
 
-    yaml_as "tag:ruby.yaml.org,2002:object:Rules"
-
-    # Take over YAML deserialization.  Perform a lookup via Rules.find instead
-    # of allocating a new Rules object.
-
-    def Rules.yaml_new( klass, tag, val )
-      Rules.find( val['class_name'], val['version'] )
-    end
-
-    # Dumps this Rules object to YAML.  Only the class_name and 
-    # version are dumped.
-
-    def to_yaml_properties
-      ["@class_name", "@version"]
-    end
-
     @list, @latest_versions = [], []
 
     class << self

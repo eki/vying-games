@@ -113,8 +113,8 @@ class TestYamlFormat < Test::Unit::TestCase
 
     assert( h['players'] )
 
-    assert( g[:x].winner?, h['players']['x']['winner'] )
-    assert( g[:o].loser?,  h['players']['o']['loser'] )
+    assert_equal( g[:x].winner?, h['players']['x']['winner'] )
+    assert_equal( g[:o].loser?,  h['players']['o']['loser'] )
 
     assert( ! h['players']['x']['user'] )
 
@@ -124,8 +124,8 @@ class TestYamlFormat < Test::Unit::TestCase
 
     assert( h['players']['x']['user'] )
 
-    assert( 'john_doe', h['players']['x']['user']['username'] )
-    assert( 1234,       h['players']['x']['user']['id'] )
+    assert_equal( 'john_doe', h['players']['x']['user']['username'] )
+    assert_equal( 1234,       h['players']['x']['user']['id'] )
   end
 
   def test_load_players

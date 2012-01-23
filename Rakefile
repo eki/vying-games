@@ -39,7 +39,7 @@ end
 begin
   require 'hanna/rdoctask'
 rescue LoadError
-  require 'rake/rdoctask'
+  require 'rdoc/task'
 end
 
 Rake::RDocTask.new do |rd|
@@ -106,7 +106,7 @@ end
 
 begin
   require 'rubygems'
-  require 'rake/gempackagetask'
+  require 'rubygems/package_task'
 rescue Exception
   nil
 end

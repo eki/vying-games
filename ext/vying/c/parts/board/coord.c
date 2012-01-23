@@ -21,6 +21,8 @@
  */
 
 VALUE coord_class_subscript( int argc, VALUE *argv, VALUE self ) {
+  VALUE cache, coord, x, y;
+
   if( argc == 2 && FIXNUM_P(argv[0]) && FIXNUM_P(argv[1]) ) {
     return rb_funcall( Coord, id_new, 2, argv[0], argv[1] );
   }
@@ -29,12 +31,12 @@ VALUE coord_class_subscript( int argc, VALUE *argv, VALUE self ) {
       return argv[0];
     }
 
-    VALUE cache = rb_cv_get( self, "@@coords_cache" );
-    VALUE coord = rb_hash_aref( cache, argv[0] );
+    cache = rb_cv_get( self, "@@coords_cache" );
+    coord = rb_hash_aref( cache, argv[0] );
 
     if( coord == Qnil ) {
-      VALUE x = rb_funcall( argv[0], id_x, 0 );
-      VALUE y = rb_funcall( argv[0], id_y, 0 );
+      x = rb_funcall( argv[0], id_x, 0 );
+      y = rb_funcall( argv[0], id_y, 0 );
 
       if( x == Qnil || y == Qnil ) {
         return Qnil;

@@ -100,11 +100,11 @@ class TestHexxagon < Test::Unit::TestCase
 
     map_2p = rules.block_maps[2]
 
-    assert( 61, 6 + map_2p.to_a.flatten.uniq.length )
+    assert_equal( 61, 6 + map_2p.to_a.flatten.uniq.length )
 
     map_3p = rules.block_maps[3]
 
-    assert( 61, 6 + map_3p.to_a.flatten.uniq.length )
+    assert_equal( 61, 6 + map_3p.to_a.flatten.uniq.length )
   end
 
 end

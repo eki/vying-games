@@ -10,7 +10,7 @@ class TestFormat < Test::Unit::TestCase
       assert( n.ancestors.include?( Format ) )
     end
 
-    assert( Format.list.length, Format.list.uniq.length )
+    assert_equal( Format.list.length, Format.list.uniq.length )
   end
 
   def test_find

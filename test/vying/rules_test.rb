@@ -34,19 +34,6 @@ class TestRules < Test::Unit::TestCase
     assert( ! TicTacToe.sealed_moves? )
   end
 
-  def test_yaml
-    assert_equal( TicTacToe, YAML.load( TicTacToe.to_yaml ) )
-
-    rs = [Rules.find( Kalah, "1.0.0" ), Rules.find( Kalah, "2.0.0" )]
-
-    rs.each do |r|
-      r2 = YAML.load( r.to_yaml )
-      assert_equal( r, r2 )
-      assert_equal( r.version, r2.version )
-      assert_equal( r.object_id, r2.object_id )
-    end
-  end
-
   def test_invalid_options
     assert_raise( RuntimeError ) do
       TicTacToe.new( :board_size => 10 )

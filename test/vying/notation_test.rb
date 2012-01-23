@@ -101,7 +101,7 @@ class TestNotation < Test::Unit::TestCase
       assert( n.ancestors.include?( Notation ) )
     end
 
-    assert( Notation.list.length, Notation.list.uniq.length )
+    assert_equal( Notation.list.length, Notation.list.uniq.length )
   end
 
 

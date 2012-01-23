@@ -249,21 +249,6 @@ module Vying
       h
     end
 
-    # Only the rules, seed, options, and moves are written to yaml.  The 
-    # positions are left out because they can be recreated.  Note: this behavior
-    # is different from Marshal dump which simply omits parts of the positions
-    # array.
-
-    def to_yaml_properties
-      ["@rules","@seed", "@options", "@moves", "@created_at", "@last_move_at"]
-    end
-
-    def yaml_initialize( tag, vals )
-      vals.each { |iv,v| instance_variable_set( "@#{iv}", v ) }
-      @positions ||= []
-      first
-    end
-
   end
 end
 

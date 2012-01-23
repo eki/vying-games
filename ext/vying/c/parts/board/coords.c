@@ -28,17 +28,19 @@ VALUE coords_include( VALUE self, VALUE c ) {
   int min_y = NUM2INT(rb_funcall( first, id_y, 0 ));
   int max_y = NUM2INT(rb_funcall( last,  id_y, 0 ));
 
+  VALUE omitted, coords;
+
   if( x < min_x || x > max_x || y < min_y || y > max_y ) {
     return Qnil;
   }
 
-  VALUE omitted = rb_iv_get( self, "@omitted" );
+  omitted = rb_iv_get( self, "@omitted" );
 
   if( RARRAY_LEN(omitted) == 0 ) {
     return Qtrue;
   }
 
-  VALUE coords = rb_iv_get( self, "@coords" );
+  coords = rb_iv_get( self, "@coords" );
 
   if( RARRAY_LEN(omitted) < RARRAY_LEN(coords) ) {
     return rb_funcall( omitted, id_include, 1, c ) == Qfalse ? Qtrue : Qfalse;

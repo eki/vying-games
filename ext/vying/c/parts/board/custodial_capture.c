@@ -26,13 +26,14 @@ VALUE custodial_capture_valid( int argc, VALUE *argv, VALUE self ) {
 
   VALUE dir = rb_iv_get( self, "@directions" );
 
+  int i, blen;
+
   if( argc > 2 && RTEST(argv[2]) ) {
     range = argv[2];
     first = NUM2INT(rb_funcall( range, id_first, 0 ));
     last  = NUM2INT(rb_funcall( range, id_last,  0 ));
   }
 
-  int i, blen;
   for( i = 0; i < RARRAY_LEN(dir); i++ ) {
     VALUE d = rb_ary_entry( dir, i );
     int dx = 0, dy = 0, nx, ny;
@@ -140,6 +141,8 @@ VALUE custodial( int argc, VALUE *argv, VALUE self ) {
   int bt[(w > h) ? w : h][2];
   int blen = 0;
 
+  int i;
+
   if( argc > 2 ) {
     replacement = argv[2];
   }
@@ -150,7 +153,6 @@ VALUE custodial( int argc, VALUE *argv, VALUE self ) {
     last  = NUM2INT(rb_funcall( range, id_last,  0 ));
   }
 
-  int i;
   for( i = 0; i < RARRAY_LEN(dir); i++ ) {
     VALUE d = rb_ary_entry( dir, i );
     int dx = 0, dy = 0, nx, ny;

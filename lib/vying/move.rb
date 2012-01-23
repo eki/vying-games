@@ -55,6 +55,12 @@ module Vying
       eql?( o )
     end
 
+    # Allow sorting moves (by to_s).
+
+    def <=>( o )
+      to_s <=> o.to_s
+    end
+
     # Hash based on the move string and player symbol.
 
     def hash

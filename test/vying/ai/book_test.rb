@@ -38,9 +38,9 @@ class TestOpeningBook < Test::Unit::TestCase
 
     assert( book.lines.all? { |line| line.frequency == 1 } )
 
-    assert( ["b2"], book.moves( "a1" ) )
-    assert( ["a2"], book.moves( "a1,b2" ) )
-    assert( [], book.moves( "a1,b2,a2" ) )
+    assert_equal( ["b2"], book.moves( "a1" ) )
+    assert_equal( ["a2"], book.moves( "a1,b2" ) )
+    assert_equal( [], book.moves( "a1,b2,a2" ) )
   end
 
   def test_add_02
@@ -71,15 +71,15 @@ class TestOpeningBook < Test::Unit::TestCase
 
     assert( book.lines.all? { |line| line.frequency >= 1 } )
 
-    assert( 1, book.line( "a1,b2,a2" ).frequency )
-    assert( 1, book.line( "a1,b2,b3" ).frequency )
+    assert_equal( 1, book.line( "a1,b2,a2" ).frequency )
+    assert_equal( 1, book.line( "a1,b2,b3" ).frequency )
 
-    assert( 2, book.line( "a1,b2" ).frequency )
-    assert( 2, book.line( "a1" ).frequency )
+    assert_equal( 2, book.line( "a1,b2" ).frequency )
+    assert_equal( 2, book.line( "a1" ).frequency )
 
-    assert( ["b2"], book.moves( "a1" ) )
-    assert( ["a2", "b3"], book.moves( "a1,b2" ) )
-    assert( [], book.moves( "a1,b2,a2" ) )
+    assert_equal( ["b2"], book.moves( "a1" ) )
+    assert_equal( ["a2", "b3"], book.moves( "a1,b2" ) )
+    assert_equal( [], book.moves( "a1,b2,a2" ) )
   end
 
   def test_add_03
@@ -109,7 +109,7 @@ class TestOpeningBook < Test::Unit::TestCase
     assert( book.line( ["b2", "c1"] ) )
     assert( book.line( "b2,c1" ) )
 
-    assert( ["b3"], book.moves( "b2,c1" ) )
+    assert_equal( ["b3"], book.moves( "b2,c1" ) )
   end
 
   def test_trim

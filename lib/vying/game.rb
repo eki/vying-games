@@ -220,10 +220,9 @@ module Vying
     # if it responds to the call.
 
     def method_missing( method_id, *args )
-      # These extra checks that history is not nil are required for yaml-ization
-      if history && history.last.respond_to?( method_id )
+      if history.last.respond_to?( method_id )
         history.last.send( method_id, *args )
-      elsif rules && rules.respond_to?( method_id )
+      elsif rules.respond_to?( method_id )
         rules.send( method_id, *args )
       else
         super
@@ -676,12 +675,6 @@ module Vying
  
     def inspect
       "#<Game #{id} rules: '#{rules}' description: '#{description}'>"
-    end
-
-    # This is being defined so that we don't pass through to Rules#to_yaml_type.
-
-    def to_yaml_type
-      "!ruby/object:#{self.class}"
     end
 
     # Save this game to the specified format.  See Format.list for available
