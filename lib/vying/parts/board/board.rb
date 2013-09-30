@@ -248,7 +248,7 @@ class Board
   # Compare boards for equality.
 
   def ==( o )
-    o.respond_to?( :cells ) && o.respond_to?( :width ) &&
+    o.respond_to?( :cells, true ) && o.respond_to?( :width, true ) &&
     o.width == width && cells == o.cells
   end
 
@@ -573,14 +573,19 @@ class Board
 
     # Override respond_to? to match method_missing.
 
-    def respond_to?( m )                      # :nodoc:
-      m != :_dump && (super || @coords.respond_to?( m ))
+    def respond_to?( m, include_all=false )   # :nodoc:
+      # This was updated for ruby 2.0.  Evidently, I wrote this code with the
+      # expectation that protected / private calls would be proxied.  This
+      # strikes me as a bad idea, but this is a quick fix for now.
+      #   (re: passing true to respond_to?)
+
+      m != :_dump && (super || @coords.respond_to?( m, true ))
     end
 
     # This is a proxy, so pass most method calls on to the proxied Coords.
 
     def method_missing( m, *args, &block )    # :nodoc:
-      if m != :_dump && @coords.respond_to?( m ) 
+      if m != :_dump && @coords.respond_to?( m, true ) 
         @coords.send( m, *args, &block )
       else
         super

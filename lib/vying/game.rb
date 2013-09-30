@@ -231,12 +231,13 @@ module Vying
 
     # We respond to any methods provided by the last position in history.
 
-    def respond_to?( method_id )
+    def respond_to?( method_id, include_all=false )
       return false if method_id == :_dump
 
       # double !! to force false instead of nil
-      super || !!(history && history.last.respond_to?( method_id )) ||
-               !!(rules && rules.respond_to?( method_id ))
+      super || 
+        !!(history && history.last.respond_to?( method_id, include_all )) ||
+        !!(rules && rules.respond_to?( method_id, include_all ))
     end
 
     # Append a move to the Game's sequence of moves.  Whatever token is used

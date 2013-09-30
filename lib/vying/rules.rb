@@ -493,7 +493,7 @@ module Vying
 
     # TODO: Clean this up a little more.
 
-    def respond_to?( m )
+    def respond_to?( m, include_all=false )
       super || !! (instance_variable_defined?( "@#{m}" ))
     end
 

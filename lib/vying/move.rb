@@ -115,8 +115,8 @@ module Vying
 
     # Move's respond to any methods the underlying move object responds to.
 
-    def respond_to?( m )
-      super || @move.respond_to?( m )
+    def respond_to?( m, include_all=false )
+      super || @move.respond_to?( m, include_all )
     end
 
     # Forward method calls to the underlying move object.  This is mostly useful
