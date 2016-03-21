@@ -6,13 +6,13 @@
 
 /* Classes and Modules */
 
-VALUE Board;
-VALUE Coord;
-VALUE Coords;
-VALUE CoordsProxy;
-VALUE Plugins;
-VALUE Frontier;
-VALUE CustodialCapture;
+extern VALUE Board;
+extern VALUE Coord;
+extern VALUE Coords;
+extern VALUE CoordsProxy;
+extern VALUE Plugins;
+extern VALUE Frontier;
+extern VALUE CustodialCapture;
 
 
 /* Board prototypes */
@@ -65,7 +65,7 @@ VALUE custodial( int argc, VALUE *argv, VALUE self );
 
 /* IDs */
 
-ID id_dup, id_x, id_y, id_subscript, id_subscript_assign, id_new,
+extern ID id_dup, id_x, id_y, id_subscript, id_subscript_assign, id_new,
    id_hash, id_include, id_n, id_s, id_w, id_e, id_se, id_nw, id_sw, id_ne,
    id_DIRECTIONS, id_directions, id_white, id_black, id_delete, id_uniq_ex,
    id_to_s, id_set, id_before_set, id_after_set, id_first, id_last,
@@ -74,7 +74,7 @@ ID id_dup, id_x, id_y, id_subscript, id_subscript_assign, id_new,
 
 /* SYMs */
 
-VALUE sym_black, sym_white, 
+extern VALUE sym_black, sym_white, 
       sym_n, sym_s, sym_w, sym_e, sym_se, sym_nw, sym_sw, sym_ne;
 
 /* Ruby 1.9 and 1.8 compatibility */

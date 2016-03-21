@@ -5,6 +5,24 @@
 #include "ruby.h"
 #include "board.h"
 
+VALUE Board;
+VALUE Coord;
+VALUE Coords;
+VALUE CoordsProxy;
+VALUE Plugins;
+VALUE Frontier;
+VALUE CustodialCapture;
+
+ID id_dup, id_x, id_y, id_subscript, id_subscript_assign, id_new,
+   id_hash, id_include, id_n, id_s, id_w, id_e, id_se, id_nw, id_sw, id_ne,
+   id_DIRECTIONS, id_directions, id_white, id_black, id_delete, id_uniq_ex,
+   id_to_s, id_set, id_before_set, id_after_set, id_first, id_last,
+   id_resize_q, id_resize, id_neighbors;
+
+
+VALUE sym_black, sym_white, 
+      sym_n, sym_s, sym_w, sym_e, sym_se, sym_nw, sym_sw, sym_ne;
+
 void Init_boardext() {
 
   /* Map Coord */
