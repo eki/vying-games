@@ -17,8 +17,9 @@ CLOBBER.include( 'pkg', 'doc/api', 'doc/coverage', 'lib/vying/version.rb' )
 
 Rake::TestTask.new do |t|
   t.libs << "test" << "ext"
-  t.ruby_opts << "-r rubygems"
+  t.ruby_opts << "-r rubygems -W1"
   t.test_files = FileList['test/**/*_test.rb']
+  t.warning = true
 end
 
 task :"test_sans_ext" => [:clobber, :test, :compile]
