@@ -195,7 +195,7 @@ class TestAmazons < Test::Unit::TestCase
     assert_equal( m_d1.sort, b.mobility[Coord[:d1]].sort )
   end
 
-  def test_mobility_move
+  def test_mobility_move_01
     b = Board.square( 10, :plugins => [:amazons] )
 
     b[:a4, :d1, :g1,:j4] = :white
@@ -225,7 +225,7 @@ class TestAmazons < Test::Unit::TestCase
     assert_equal( m_d10_a.sort, b.mobility[Coord[:d10]].sort )
   end
 
-  def test_mobility_move
+  def test_mobility_move_02
     b = Board.square( 10, :plugins => [:amazons] )
 
     b[:a4, :d1, :g1,:j4] = :white
