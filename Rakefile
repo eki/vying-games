@@ -21,8 +21,7 @@ namespace :ci do
   task check: %w(test rubocop)
 end
 
-CLEAN.include('ext/**/*.o', 'ext/**/*.so', 'ext/**/*.class', 'ext/**/*.jar',
-  'ext/**/*.bundle')
+CLEAN.include('ext/**/*.o', 'ext/**/*.so', 'ext/**/*.bundle')
 CLOBBER.include('pkg', 'doc/api', 'doc/coverage')
 
 task "test_sans_ext": [:clobber, :test, :compile]

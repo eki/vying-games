@@ -27,5 +27,4 @@ require 'vying/parts/board/plugins/amazons'
 # like by reopening the classes.  Vying keeps track of which methods are
 # overridden.  See Vying.defined_in_extension.
 
-Vying.load_extension :java, 'vying_board_ext'
-Vying.load_extension :c,    'vying/c/parts/board/boardext'
+Vying.load_extension :c, 'vying/c/parts/board/boardext'

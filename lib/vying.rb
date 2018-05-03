@@ -15,17 +15,13 @@ module Vying
   end
 
   # Returns a list of methods defined in extensions.
-  #
-  # NOTE: JRuby doesn't seem to like it when method_added is redefined
-  #       for Module (or Class).  As a result, this method will always
-  #       return an empty array in JRuby.  : ((   At least until fixed.
 
   def self.defined_in_extension
     (@defined_in_ext ||= [])
   end
 
   # Returns a list of the types of extensions that have been loaded.
-  # Currently, only the values :c and :java are returned.
+  # Currently, only the value :c is returned.
 
   def self.extension_types
     (@exts || {}).keys
