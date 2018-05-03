@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../../../test_helper'
 
-class TestBoardTriangle < Test::Unit::TestCase
+class TestBoardTriangle < Minitest::Test
   include Vying
 
   def test_initialize
@@ -30,19 +29,19 @@ class TestBoardTriangle < Test::Unit::TestCase
     assert_equal( ["a1", "b4", "c3", "c4", "d1", "d2", "d3", "d4"],
                   b.coords.omitted.map { |c| c.to_s }.sort )
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Board.triangle( 4, :cell_shape => :square )
     end
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Board.triangle( 4, :cell_shape => :triangle )
     end
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Board.triangle( 4, :cell_shape => :nonexistant )
     end
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Board.triangle( 4, :cell_orientation => :nonexistant )
     end
   end

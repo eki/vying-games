@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../test_helper'
 
-class TestOthelloNotation < Test::Unit::TestCase
+class TestOthelloNotation < Minitest::Test
   include Vying
 
   def test_name
@@ -60,8 +59,8 @@ class TestOthelloNotation < Test::Unit::TestCase
     assert_equal( :black, g.turn )
 
     assert_equal( [], n.moves( :white ) )
-    assert_not_equal( [], n.moves )
-    assert_not_equal( [], n.moves( :black ) )
+    refute_equal( [], n.moves )
+    refute_equal( [], n.moves( :black ) )
 
     n.moves.each { |m| assert_equal( m, m.to_s.upcase ) }
     n.moves( :black ).each { |m| assert_equal( m, m.to_s.upcase ) }
@@ -71,8 +70,8 @@ class TestOthelloNotation < Test::Unit::TestCase
     assert_equal( :white, g.turn )
 
     assert_equal( [], n.moves( :black ) )
-    assert_not_equal( [], n.moves )
-    assert_not_equal( [], n.moves( :white ) )
+    refute_equal( [], n.moves )
+    refute_equal( [], n.moves( :white ) )
 
     n.moves.each { |m| assert_equal( m, m.to_s.downcase ) }
     n.moves( :white ).each { |m| assert_equal( m, m.to_s.downcase ) }

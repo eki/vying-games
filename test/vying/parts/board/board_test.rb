@@ -1,12 +1,11 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../../test_helper'
 
-class TestBoard < Test::Unit::TestCase
+class TestBoard < Minitest::Test
   include Vying
 
   def test_initialize
-    assert_raise( NoMethodError ) do
+    assert_raises( NoMethodError ) do
       Board.new
     end
   end
@@ -46,7 +45,7 @@ class TestBoard < Test::Unit::TestCase
     assert_equal( nil, b[0,0] )
     assert_equal( :black, b[1,1] = :black )
     assert_equal( nil, b2[1,1] )
-    assert_not_equal( b, b2 )
+    refute_equal( b, b2 )
 
     assert_equal( :black, b2[1,1] = :black )
     assert_equal( :white, b[0,0] = :white )
@@ -61,7 +60,7 @@ class TestBoard < Test::Unit::TestCase
     assert_equal( nil, b2[0,0] = nil )
     assert_equal( nil, b2[0,1] = nil )
 
-    assert_not_equal( b, b2 )  # Are they sharing key?
+    refute_equal( b, b2 )  # Are they sharing key?
   end
 
   def test_assignment
@@ -102,13 +101,13 @@ class TestBoard < Test::Unit::TestCase
 
     assert_equal( b1, b2 )
 
-    assert_not_equal( b1, b3 )
-    assert_not_equal( b1, b4 )
+    refute_equal( b1, b3 )
+    refute_equal( b1, b4 )
 
     assert_equal( b1, b1.dup )
 
     assert_equal( :white, b2[3,3] = :white )
-    assert_not_equal( b1, b2 )
+    refute_equal( b1, b2 )
 
     assert_equal( :white, b1[3,3] = :white )
     assert_equal( b1, b2 )
@@ -116,7 +115,7 @@ class TestBoard < Test::Unit::TestCase
     assert_equal( :blue, b1[3,4] = :blue )   # :blue added to key
     assert_equal( :red,  b2[3,4] = :red  )   # :red  added to key
 
-    assert_not_equal( b1, b2 )
+    refute_equal( b1, b2 )
   end
 
   def test_hash
@@ -175,7 +174,7 @@ class TestBoard < Test::Unit::TestCase
     assert_equal( 14, b.empty_count )   
     assert( ! b.unoccupied.include?( Coord[:a2] ) )   
 
-    assert_nothing_raised { Marshal.dump( b ) }
+    Marshal.dump( b )
   end
 
   def test_each
@@ -322,10 +321,10 @@ EOF
     b = Board.square( 5, :cell_shape => :triangle )
     assert_equal( :triangle, b.cell_shape )
 
-    assert_raise( RuntimeError ) { b.directions }
-    assert_nothing_raised { b.directions( :a1 ) }
+    assert_raises( RuntimeError ) { b.directions }
+    b.directions( :a1 )
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Board.square( 5, :cell_shape => :triangle, 
                        :directions => [:n,:e,:w,:s] )
     end

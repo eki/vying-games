@@ -1,9 +1,6 @@
-require 'test/unit'
+require_relative '../../../test_helper'
 
-require 'vying'
-require 'vying/rules/rules_test'
-
-class TestAtaxx < Test::Unit::TestCase
+class TestAtaxx < Minitest::Test
   include RulesTests
 
   def rules
@@ -44,7 +41,7 @@ class TestAtaxx < Test::Unit::TestCase
 
     g << g.moves.first until g.final?
 
-    assert_not_equal( g.history.first, g.history.last )
+    refute_equal( g.history.first, g.history.last )
   end
 
   def test_players

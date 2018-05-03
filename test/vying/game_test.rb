@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../test_helper'
 
-class TestGame < Test::Unit::TestCase
+class TestGame < Minitest::Test
   include Vying
 
   def test_initialize
@@ -54,8 +53,8 @@ class TestGame < Test::Unit::TestCase
     g = Game.new Ataxx, 1234
     assert_equal( :hidden, g.censor( :red ).rng )
     assert_equal( :hidden, g.censor( :blue ).rng )
-    assert_not_equal( :hidden, g.censor( :red ).board )
-    assert_not_equal( :hidden, g.censor( :blue ).board )
+    refute_equal( :hidden, g.censor( :red ).board )
+    refute_equal( :hidden, g.censor( :blue ).board )
   end
 
   def test_turn
@@ -685,7 +684,7 @@ class TestGame < Test::Unit::TestCase
 
     assert( ! g.special_move?( "swap" ) )
     assert_equal( 1, g.swapped? )
-    assert_not_equal( g.history[1], g.history.last )
+    refute_equal( g.history[1], g.history.last )
     assert_equal( g.history[1], g.history.last.remove_special_mixin )
     assert_equal( "swap", g.sequence.last )
     assert_equal( Human.new( "jane_doe" ), g[:blue].user )
@@ -721,7 +720,7 @@ class TestGame < Test::Unit::TestCase
     assert( ! g.special_move?( "swap", :one ) )
     assert( ! g.special_move?( "swap", :two ) )
     assert_equal( 2, g.swapped? )
-    assert_not_equal( g.history[2], g.history.last )
+    refute_equal( g.history[2], g.history.last )
     assert_equal( g.history[2], g.history.last.remove_special_mixin )
     assert_equal( "swap", g.sequence.last )
     assert_equal( Human.new( "jane_doe" ), g[:one].user )

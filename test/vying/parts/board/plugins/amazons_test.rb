@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../../../test_helper'
 
-class TestAmazons < Test::Unit::TestCase
+class TestAmazons < Minitest::Test
   include Vying
 
   def test_initialize_01
@@ -26,7 +25,7 @@ class TestAmazons < Test::Unit::TestCase
 
     assert_equal( b, b2 )
     assert_equal( b.territories, b2.territories )
-    assert_not_equal( b.territories.object_id, b2.territories.object_id )
+    refute_equal( b.territories.object_id, b2.territories.object_id )
   end
 
   def test_marshal
@@ -40,11 +39,11 @@ class TestAmazons < Test::Unit::TestCase
 
     assert_equal( b, b2 )
     assert_equal( b.territories, b2.territories )
-    assert_not_equal( b.territories.object_id, b2.territories.object_id )
+    refute_equal( b.territories.object_id, b2.territories.object_id )
   end
 
   def test_yaml
-    omit('Failing: Skip yaml, probably going to remove this support')
+    skip('Failing: Skip yaml, probably going to remove this support')
     b = Board.square( 4, :plugins => [:amazons] )
 
     assert( (class << b; ancestors; end).include?( Board::Plugins::Amazons ) )
@@ -55,7 +54,7 @@ class TestAmazons < Test::Unit::TestCase
 
     assert_equal( b, b2 )
     assert_equal( b.territories, b2.territories )
-    assert_not_equal( b.territories.object_id, b2.territories.object_id )
+    refute_equal( b.territories.object_id, b2.territories.object_id )
   end
 
   def test_initialize_02

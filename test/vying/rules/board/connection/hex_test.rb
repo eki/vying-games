@@ -1,9 +1,6 @@
-require 'test/unit'
+require_relative '../../../../test_helper'
 
-require 'vying'
-require 'vying/rules/rules_test'
-
-class TestHex < Test::Unit::TestCase
+class TestHex < Minitest::Test
   include RulesTests
 
   def rules
@@ -34,8 +31,8 @@ class TestHex < Test::Unit::TestCase
     assert_equal( 14, Hex.new( :board_size => 14 ).board.width )
     assert_equal( 19, Hex.new( :board_size => 19 ).board.width )
 
-    assert_raise( RuntimeError ) { Hex.new( :board_size =>  8 ) }
-    assert_raise( RuntimeError ) { Hex.new( :board_size => 20 ) }
+    assert_raises( RuntimeError ) { Hex.new( :board_size =>  8 ) }
+    assert_raises( RuntimeError ) { Hex.new( :board_size => 20 ) }
   end
 
   def test_has_moves

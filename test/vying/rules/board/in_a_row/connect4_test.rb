@@ -1,9 +1,6 @@
-require 'test/unit'
+require_relative '../../../../test_helper'
 
-require 'vying'
-require 'vying/rules/rules_test'
-
-class TestConnect4 < Test::Unit::TestCase
+class TestConnect4 < Minitest::Test
   include RulesTests
 
   def rules
@@ -38,7 +35,7 @@ class TestConnect4 < Test::Unit::TestCase
 
     g << g.moves.first until g.final?
 
-    assert_not_equal( g.history[0], g.history.last )
+    refute_equal( g.history[0], g.history.last )
 
     assert_equal( 42-19, g.board.empty_count )
     assert_equal( 10, g.board.count( :red ) )

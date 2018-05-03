@@ -1,9 +1,6 @@
-require 'test/unit'
+require_relative '../../../test_helper'
 
-require 'vying'
-require 'vying/rules/rules_test'
-
-class TestAbande < Test::Unit::TestCase
+class TestAbande < Minitest::Test
   include RulesTests
 
   def rules
@@ -48,8 +45,8 @@ class TestAbande < Test::Unit::TestCase
     assert_equal( 0, g.score( :white ) )
     assert_equal( 0, g.score( :black ) )
 
-    assert_raise( RuntimeError ) { g << "d4" }
-    assert_raise( RuntimeError ) { g << "a1" }
+    assert_raises( RuntimeError ) { g << "d4" }
+    assert_raises( RuntimeError ) { g << "a1" }
 
     g << "c3"
     assert_equal( [:white], g.board[:c3] )

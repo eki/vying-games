@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../test_helper'
 
-class TestNotation < Test::Unit::TestCase
+class TestNotation < Minitest::Test
   include Vying
 
   def test_initialize

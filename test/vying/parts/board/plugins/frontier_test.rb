@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../../../test_helper'
 
-class TestFrontier < Test::Unit::TestCase
+class TestFrontier < Minitest::Test
   include Vying
 
   def test_initialize
@@ -95,7 +94,7 @@ class TestFrontier < Test::Unit::TestCase
 
     assert_equal( b, b2 )
     assert_equal( b.frontier, b2.frontier )
-    assert_not_equal( b.frontier.object_id, b2.frontier.object_id )
+    refute_equal( b.frontier.object_id, b2.frontier.object_id )
   end
 
   def test_marshal
@@ -110,11 +109,11 @@ class TestFrontier < Test::Unit::TestCase
 
     assert_equal( b, b2 )
     assert_equal( b.frontier, b2.frontier )
-    assert_not_equal( b.frontier.object_id, b2.frontier.object_id )
+    refute_equal( b.frontier.object_id, b2.frontier.object_id )
   end
 
   def test_yaml
-    omit('Failing: Skip yaml, probably going to remove this support')
+    skip('Failing: Skip yaml, probably going to remove this support')
     b = Board.square( 4, :plugins => [:frontier] )
     b[:a1] = :x
 
@@ -126,7 +125,7 @@ class TestFrontier < Test::Unit::TestCase
 
     assert_equal( b, b2 )
     assert_equal( b.frontier, b2.frontier )
-    assert_not_equal( b.frontier.object_id, b2.frontier.object_id )
+    refute_equal( b.frontier.object_id, b2.frontier.object_id )
   end
 
   def test_set_infinite

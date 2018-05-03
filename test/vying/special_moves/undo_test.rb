@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../test_helper'
 
-class TestUndo < Test::Unit::TestCase
+class TestUndo < Minitest::Test
   include Vying
 
   def sm

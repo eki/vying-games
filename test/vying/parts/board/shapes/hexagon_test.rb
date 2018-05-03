@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../../../test_helper'
 
-class TestBoardHexagon < Test::Unit::TestCase
+class TestBoardHexagon < Minitest::Test
   include Vying
 
   def test_initialize
@@ -23,19 +22,19 @@ class TestBoardHexagon < Test::Unit::TestCase
                    "g2", "g3"],
                   b.coords.omitted.map { |c| c.to_s }.sort )
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Board.hexagon( 4, :cell_shape => :square )
     end
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Board.hexagon( 4, :cell_shape => :triangle )
     end
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Board.hexagon( 4, :cell_shape => :nonexistant )
     end
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Board.hexagon( 4, :cell_orientation => :nonexistant )
     end
   end

@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../test_helper'
 
-class TestTimeout < Test::Unit::TestCase
+class TestTimeout < Minitest::Test
   include Vying
 
   def sm

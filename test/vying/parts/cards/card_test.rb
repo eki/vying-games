@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../../test_helper'
 
-class TestCard < Test::Unit::TestCase
+class TestCard < Minitest::Test
   include Vying
 
   def test_initialize

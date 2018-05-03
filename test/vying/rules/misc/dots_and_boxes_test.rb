@@ -1,9 +1,6 @@
-require 'test/unit'
+require_relative '../../../test_helper'
 
-require 'vying'
-require 'vying/rules/rules_test'
-
-class TestDotsAndBoxes < Test::Unit::TestCase
+class TestDotsAndBoxes < Minitest::Test
   include RulesTests
 
   def rules

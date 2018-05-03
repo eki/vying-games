@@ -1,9 +1,6 @@
-require 'test/unit'
+require_relative '../../../../test_helper'
 
-require 'vying'
-require 'vying/rules/rules_test'
-
-class TestTicTacToe < Test::Unit::TestCase
+class TestTicTacToe < Minitest::Test
   include RulesTests
 
   def rules
@@ -44,7 +41,7 @@ class TestTicTacToe < Test::Unit::TestCase
 
     g << g.moves.first until g.final?
 
-    assert_not_equal( g.history[0], g.history.last )
+    refute_equal( g.history[0], g.history.last )
 
     assert_equal( 2, g.board.empty_count )
     assert_equal( 4, g.board.count( :x ) )

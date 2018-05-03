@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../../../test_helper'
 
-class TestCounter < Test::Unit::TestCase
+class TestCounter < Minitest::Test
   include Vying
 
   def test_initialize
@@ -22,15 +21,15 @@ class TestCounter < Test::Unit::TestCase
 
     assert_equal( :blue, c3.player )
     assert_equal( 1, c3.count )
-    assert_not_equal( c.object_id, c3.object_id )
-    assert_not_equal( c, c3 )
+    refute_equal( c.object_id, c3.object_id )
+    refute_equal( c, c3 )
 
     c4 = Counter[:blue, 3]
 
     assert_equal( :blue, c4.player )
     assert_equal( 3, c4.count )
-    assert_not_equal( c3.object_id, c4.object_id )
-    assert_not_equal( c3, c4 )
+    refute_equal( c3.object_id, c4.object_id )
+    refute_equal( c3, c4 )
   end
 
   def test_add

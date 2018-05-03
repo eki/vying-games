@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../test_helper'
 
-class TestFormat < Test::Unit::TestCase
+class TestFormat < Minitest::Test
   include Vying
 
   def test_list

@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../../../test_helper'
 
-class TestBoardRhombus < Test::Unit::TestCase
+class TestBoardRhombus < Minitest::Test
   include Vying
 
   def test_initialize
@@ -12,19 +11,19 @@ class TestBoardRhombus < Test::Unit::TestCase
     assert_equal( 5, b.height )
     assert_equal( [], b.coords.omitted )
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Board.rhombus( 4, 5, :cell_shape => :square )
     end
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Board.rhombus( 4, 5, :cell_shape => :triangle )
     end
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Board.rhombus( 4, 5, :cell_shape => :nonexistant )
     end
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Board.rhombus( 4, 5, :cell_orientation => :nonexistant )
     end
 

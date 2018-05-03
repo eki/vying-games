@@ -1,6 +1,5 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../../test_helper'
 
 module Vying
   module BotTemplate
@@ -46,7 +45,7 @@ module Vying
   end
 end
 
-class TestSearch < Test::Unit::TestCase
+class TestSearch < Minitest::Test
   include Vying
 
   def test_alphabeta_01

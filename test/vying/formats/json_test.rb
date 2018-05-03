@@ -1,10 +1,9 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../test_helper'
 
 if Vying::Format.find( :json )
 
-  class TestJsonFormat < Test::Unit::TestCase
+  class TestJsonFormat < Minitest::Test
     include Vying
 
     def test_type

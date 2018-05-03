@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../test_helper'
 
-class TestSubset < Test::Unit::TestCase
+class TestSubset < Minitest::Test
   include Vying
 
   def test_count_subsets

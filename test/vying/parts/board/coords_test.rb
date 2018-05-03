@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../../test_helper'
 
-class TestCoords < Test::Unit::TestCase
+class TestCoords < Minitest::Test
   include Vying
 
   def test_initialize

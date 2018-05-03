@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../test_helper'
 
-class TestDie < Test::Unit::TestCase
+class TestDie < Minitest::Test
   include Vying
 
   def test_initialize
@@ -43,7 +42,7 @@ class TestDie < Test::Unit::TestCase
 
 end
 
-class TestDice < Test::Unit::TestCase
+class TestDice < Minitest::Test
   def test_initialize
     dice = Dice.new( [Die.new( 1 ), Die.new( 1 ), Die.new( 3 )] )
 

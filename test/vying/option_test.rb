@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../test_helper'
 
-class TestOption < Test::Unit::TestCase
+class TestOption < Minitest::Test
   include Vying
 
   def test_initialize
@@ -12,15 +11,15 @@ class TestOption < Test::Unit::TestCase
     assert_equal( 42, opt.default )
     assert_equal( [41,42,43], opt.values )
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Option.new( :no_default, :values => [1,2,3] )
     end
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Option.new( :no_values, :default => 4 )
     end
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Option.new( :default_not_in_values, :default => 4, :values => [1,2,3] )
     end
   end

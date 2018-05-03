@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../test_helper'
 
-class TestOfferDraw < Test::Unit::TestCase
+class TestOfferDraw < Minitest::Test
   include Vying
 
   def sm

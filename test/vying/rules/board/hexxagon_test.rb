@@ -1,9 +1,6 @@
-require 'test/unit'
+require_relative '../../../test_helper'
 
-require 'vying'
-require 'vying/rules/rules_test'
-
-class TestHexxagon < Test::Unit::TestCase
+class TestHexxagon < Minitest::Test
   include RulesTests
 
   def rules
@@ -48,11 +45,11 @@ class TestHexxagon < Test::Unit::TestCase
     assert_equal( 2, g.board.count( :white ) )
     assert_equal( :red, g.turn )
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Game.new( rules, 1234, :number_of_players => 1 )
     end
   
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Game.new( rules, 1234, :number_of_players => 4 )
     end
   end
@@ -71,7 +68,7 @@ class TestHexxagon < Test::Unit::TestCase
 
     g << g.moves.first until g.final?
 
-    assert_not_equal( g.history.first, g.history.last )
+    refute_equal( g.history.first, g.history.last )
   end
 
   def test_players

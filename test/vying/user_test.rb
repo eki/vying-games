@@ -1,15 +1,14 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../test_helper'
 
-class TestUser < Test::Unit::TestCase
+class TestUser < Minitest::Test
   include Vying
 
   def test_defaults
     assert( ! User.new.bot? )
     assert( ! User.new.ready? )
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       User.new.select( TicTacToe.new, [], :x )
     end
 
@@ -29,9 +28,9 @@ class TestUser < Test::Unit::TestCase
   def test_eql?
     assert_equal( User.new( "dude" ), Human.new( "dude" ) )
     assert_equal( User.new( "RandomBot" ), RandomBot.new )
-    assert_not_equal( nil, User.new( "dude" ) )
-    assert_not_equal( User.new( "dude" ), nil )
-    assert_not_equal( User.new( "dude" ), User.new( "dudette" ) )
+    refute_equal( nil, User.new( "dude" ) )
+    refute_equal( User.new( "dude" ), nil )
+    refute_equal( User.new( "dude" ), User.new( "dudette" ) )
   end
 
   def test_human

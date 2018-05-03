@@ -1,6 +1,5 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../test_helper'
 
 class FirstMoveBot < Vying::Bot
   class TicTacToe < Vying::Bot
@@ -29,7 +28,7 @@ module NamespaceForTesting
   end
 end
 
-class TestBot < Test::Unit::TestCase
+class TestBot < Minitest::Test
   include Vying
 
   def test_defaults

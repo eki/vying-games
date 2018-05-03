@@ -1,9 +1,6 @@
-require 'test/unit'
+require_relative '../../../test_helper'
 
-require 'vying'
-require 'vying/rules/rules_test'
-
-class TestAccasta < Test::Unit::TestCase
+class TestAccasta < Minitest::Test
   include RulesTests
 
   def rules
@@ -44,9 +41,9 @@ class TestAccasta < Test::Unit::TestCase
 
     assert_equal( 60, g.moves.length )
 
-    assert_raise( RuntimeError ) { g << "1a1b1" }
-    assert_raise( RuntimeError ) { g << "1d7a4" }
-    assert_raise( RuntimeError ) { g << "1c3a3" }
+    assert_raises( RuntimeError ) { g << "1a1b1" }
+    assert_raises( RuntimeError ) { g << "1d7a4" }
+    assert_raises( RuntimeError ) { g << "1c3a3" }
 
     g << "3a1a4"
     assert_equal( [:black], g.has_moves )
@@ -54,7 +51,7 @@ class TestAccasta < Test::Unit::TestCase
     assert_equal( [:black], g.has_moves )
     assert_equal( "d7", g.lastc.to_s )
     assert( g.moves.include?( :pass ) )
-    assert_raise( RuntimeError ) { g << "1d5c5" }
+    assert_raises( RuntimeError ) { g << "1d5c5" }
     g << "1d7b5"
     assert_equal( [:black], g.has_moves )
     assert_equal( "d7", g.lastc.to_s )

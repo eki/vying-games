@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../../../test_helper'
 
-class TestInARow < Test::Unit::TestCase
+class TestInARow < Minitest::Test
   include Vying
 
   def test_initialize
@@ -32,7 +31,7 @@ class TestInARow < Test::Unit::TestCase
     assert_equal( b, b2 )
     assert_equal( b.window_size, b2.window_size )
     assert_equal( b.threats, b2.threats )
-    assert_not_equal( b.threats.object_id, b2.threats.object_id )
+    refute_equal( b.threats.object_id, b2.threats.object_id )
   end
 
   def test_marshal
@@ -48,11 +47,11 @@ class TestInARow < Test::Unit::TestCase
     assert_equal( b, b2 )
     assert_equal( b.window_size, b2.window_size )
     assert_equal( b.threats, b2.threats )
-    assert_not_equal( b.threats.object_id, b2.threats.object_id )
+    refute_equal( b.threats.object_id, b2.threats.object_id )
   end
 
   def test_yaml
-    omit('Failing: Skip yaml, probably going to remove this support')
+    skip('Failing: Skip yaml, probably going to remove this support')
     b = Board.square( 4, :plugins => [:in_a_row] )
     b.window_size = 4
 
@@ -65,7 +64,7 @@ class TestInARow < Test::Unit::TestCase
     assert_equal( b, b2 )
     assert_equal( b.window_size, b2.window_size )
     assert_equal( b.threats, b2.threats )
-    assert_not_equal( b.threats.object_id, b2.threats.object_id )
+    refute_equal( b.threats.object_id, b2.threats.object_id )
   end
 
   def test_clear

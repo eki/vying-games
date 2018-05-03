@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../../test_helper'
 
-class TestCoord < Test::Unit::TestCase
+class TestCoord < Minitest::Test
   include Vying
 
   def test_initialize
@@ -67,9 +66,9 @@ class TestCoord < Test::Unit::TestCase
     c4 = Coord[0,1]
 
     assert_equal( c1, c2 )
-    assert_not_equal( c2, c3 )
-    assert_not_equal( c1, c4 )
-    assert_not_equal( c3, c4 )
+    refute_equal( c2, c3 )
+    refute_equal( c1, c4 )
+    refute_equal( c3, c4 )
 
     assert( c1 == c2 )
     assert( c1.eql?( c2 ) )
@@ -78,7 +77,7 @@ class TestCoord < Test::Unit::TestCase
 
   def test_hash
     assert_equal( Coord[0,0], Coord[0,0] )
-    assert_not_equal( Coord[0,0], Coord[0,1] )
+    refute_equal( Coord[0,0], Coord[0,1] )
   end
 
   def test_comparison

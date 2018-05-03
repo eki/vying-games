@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../test_helper'
 
-class TestResign < Test::Unit::TestCase
+class TestResign < Minitest::Test
   include Vying
 
   def sm

@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../test_helper'
 
-class TestKick < Test::Unit::TestCase
+class TestKick < Minitest::Test
   include Vying
 
   def sm

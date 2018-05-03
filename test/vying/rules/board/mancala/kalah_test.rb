@@ -1,9 +1,6 @@
-require 'test/unit'
+require_relative '../../../../test_helper'
 
-require 'vying'
-require 'vying/rules/rules_test'
-
-class TestKalah < Test::Unit::TestCase
+class TestKalah < Minitest::Test
   include RulesTests
 
   def rules
@@ -63,7 +60,7 @@ class TestKalah < Test::Unit::TestCase
 
     g << g.moves.first until g.final?
 
-    assert_not_equal( g.history.first, g.history.last )
+    refute_equal( g.history.first, g.history.last )
   end
 
   def test_has_score

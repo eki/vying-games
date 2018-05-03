@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../test_helper'
 
-class TestVying < Test::Unit::TestCase
+class TestVying < Minitest::Test
   def test_version
     assert( Vying.version )
   end

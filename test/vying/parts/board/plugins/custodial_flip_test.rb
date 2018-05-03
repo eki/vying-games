@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../../../test_helper'
 
-class TestCustodialFlip < Test::Unit::TestCase
+class TestCustodialFlip < Minitest::Test
   include Vying
 
   def full_ancestors( b )
@@ -44,7 +43,7 @@ class TestCustodialFlip < Test::Unit::TestCase
   end
 
   def test_yaml
-    omit('Failing: Skip yaml, probably going to remove this support')
+    skip('Failing: Skip yaml, probably going to remove this support')
     b = Board.square( 4, :plugins => [:custodial_flip] )
 
     b[:a1] = :x

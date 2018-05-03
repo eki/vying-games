@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../test_helper'
 
-class TestRandomNumberGenerator < Test::Unit::TestCase
+class TestRandomNumberGenerator < Minitest::Test
   include Vying
 
   def test_initialize
@@ -34,10 +33,10 @@ class TestRandomNumberGenerator < Test::Unit::TestCase
     # Note, this is actually a very *bad* test because there's no guarantee
     # the first 4 numbers drawn for two different seeds *can't* be the same
 
-    assert_not_equal( rng.rand( 2000 ), rng2.rand( 2000 ) )
-    assert_not_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
-    assert_not_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
-    assert_not_equal( rng.rand( 7000 ), rng2.rand( 7000 ) )
+    refute_equal( rng.rand( 2000 ), rng2.rand( 2000 ) )
+    refute_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
+    refute_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
+    refute_equal( rng.rand( 7000 ), rng2.rand( 7000 ) )
   end
 
   def test_dup
@@ -207,7 +206,7 @@ class TestRandomNumberGenerator < Test::Unit::TestCase
   end
 
   def test_rand_limit_seed_2_to_the_power_of_32
-    assert_raise( RangeError ) { RandomNumberGenerator.new( 2**32 ) }
+    assert_raises( RangeError ) { RandomNumberGenerator.new( 2**32 ) }
   end
 
   def test_rand

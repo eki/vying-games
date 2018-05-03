@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../../../test_helper'
 
-class TestBoardRect < Test::Unit::TestCase
+class TestBoardRect < Minitest::Test
   include Vying
 
   def test_initialize
@@ -12,15 +11,15 @@ class TestBoardRect < Test::Unit::TestCase
     assert_equal( 6, b.height )
     assert_equal( [], b.coords.omitted )
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Board.rect( 4, 5, :cell_shape => :hexagon )
     end
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Board.rect( 4, 5, :cell_shape => :nonexistant )
     end
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Board.rect( 4, 5, :cell_shape => :triangle, 
                         :directions => [:n, :e, :w, :s])
     end

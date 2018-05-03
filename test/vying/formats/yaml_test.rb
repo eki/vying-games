@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../test_helper'
 
-class TestYamlFormat < Test::Unit::TestCase
+class TestYamlFormat < Minitest::Test
   include Vying
 
   def test_type

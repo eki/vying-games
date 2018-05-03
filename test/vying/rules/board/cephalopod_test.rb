@@ -1,9 +1,6 @@
-require 'test/unit'
+require_relative '../../../test_helper'
 
-require 'vying'
-require 'vying/rules/rules_test'
-
-class TestCephalopod < Test::Unit::TestCase
+class TestCephalopod < Minitest::Test
   include RulesTests
 
   def rules

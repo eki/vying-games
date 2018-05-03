@@ -1,9 +1,6 @@
-require 'test/unit'
+require_relative '../../../test_helper'
 
-require 'vying'
-require 'vying/rules/rules_test'
-
-class TestAttangle < Test::Unit::TestCase
+class TestAttangle < Minitest::Test
   include RulesTests
 
   def rules
@@ -39,8 +36,8 @@ class TestAttangle < Test::Unit::TestCase
     assert_equal( 5, rules.new( :board_size => 5 ).board.length )
     assert_equal( 6, rules.new( :board_size => 6 ).board.length )
 
-    assert_raise( RuntimeError ) { rules.new( :board_size => 2 ) }
-    assert_raise( RuntimeError ) { rules.new( :board_size => 7 ) }
+    assert_raises( RuntimeError ) { rules.new( :board_size => 2 ) }
+    assert_raises( RuntimeError ) { rules.new( :board_size => 7 ) }
   end
 
   def test_has_moves
@@ -54,14 +51,14 @@ class TestAttangle < Test::Unit::TestCase
     g = Game.new( rules )
 
     assert_equal( 36, g.moves.length )
-    assert_raise( RuntimeError ) { g << "d4" }
+    assert_raises( RuntimeError ) { g << "d4" }
 
     g << "a1"
     assert_equal( [:white], g.board[:a1] )
     assert_equal( 17, g.pool[:white] )
     assert_equal( 18, g.pool[:black] )
 
-    assert_raise( RuntimeError ) { g << "a1" }
+    assert_raises( RuntimeError ) { g << "a1" }
     g << "c3"
     assert_equal( [:black], g.board[:c3] )
     assert_equal( 17, g.pool[:white] )
@@ -78,7 +75,7 @@ class TestAttangle < Test::Unit::TestCase
 
     g << "a1" << "d7"
 
-    assert_raise( RuntimeError ) { g << "c3d7g7" }
+    assert_raises( RuntimeError ) { g << "c3d7g7" }
     g << "c1"
 
     g << "c3d7g7"

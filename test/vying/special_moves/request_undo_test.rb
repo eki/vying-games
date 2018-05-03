@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../../test_helper'
 
-class TestRequestUndo < Test::Unit::TestCase
+class TestRequestUndo < Minitest::Test
   include Vying
 
   def sm
@@ -65,7 +64,7 @@ class TestRequestUndo < Test::Unit::TestCase
 
     amazons << amazons.moves.first
 
-    assert_not_equal( t, amazons.turn )
+    refute_equal( t, amazons.turn )
     assert( sm["undo_requested_by_black"].valid_for?( amazons ) )
     assert( sm["undo_requested_by_white"].valid_for?( amazons ) )
 

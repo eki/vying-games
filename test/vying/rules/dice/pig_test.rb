@@ -1,9 +1,6 @@
-require 'test/unit'
+require_relative '../../../test_helper'
 
-require 'vying'
-require 'vying/rules/rules_test'
-
-class TestPig < Test::Unit::TestCase
+class TestPig < Minitest::Test
   include RulesTests
 
   def rules
@@ -44,7 +41,7 @@ class TestPig < Test::Unit::TestCase
 
     g << [:roll, :roll, :roll, :pass] until g.final?
 
-    assert_not_equal( g.history[0], g.history.last )
+    refute_equal( g.history[0], g.history.last )
   end
 
   def test_current_score

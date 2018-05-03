@@ -1,9 +1,6 @@
-require 'test/unit'
+require_relative '../../../test_helper'
 
-require 'vying'
-require 'vying/rules/rules_test'
-
-class TestPhutball < Test::Unit::TestCase
+class TestPhutball < Minitest::Test
   include RulesTests
 
   def rules
@@ -58,7 +55,7 @@ class TestPhutball < Test::Unit::TestCase
 
     g << g.moves.first
 
-    assert_not_equal( g.history[0], g.history.last )
+    refute_equal( g.history[0], g.history.last )
   end
 
   def test_jumping_moves

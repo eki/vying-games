@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../test_helper'
 
-class TestDup < Test::Unit::TestCase
+class TestDup < Minitest::Test
   def test_deep_dup_self
     assert_equal( :a1.object_id,   :a1.deep_dup.object_id )
     assert_equal( 1.object_id,     1.deep_dup.object_id )

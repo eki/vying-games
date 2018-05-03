@@ -1,9 +1,6 @@
-require 'test/unit'
+require_relative '../../../test_helper'
 
-require 'vying'
-require 'vying/rules/rules_test'
-
-class TestAmazons < Test::Unit::TestCase
+class TestAmazons < Minitest::Test
   include RulesTests
 
   def rules
@@ -50,7 +47,7 @@ class TestAmazons < Test::Unit::TestCase
 
     g << g.moves.first until g.final?
 
-    assert_not_equal( g.history[0], g.history.last )
+    refute_equal( g.history[0], g.history.last )
   end
 end
 

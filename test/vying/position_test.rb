@@ -1,16 +1,15 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../test_helper'
 
-class TestPosition < Test::Unit::TestCase
+class TestPosition < Minitest::Test
   include Vying
 
   def test_censor
     p = Ataxx.new 1234
     assert_equal( :hidden, p.censor( :red ).rng )
     assert_equal( :hidden, p.censor( :blue ).rng )
-    assert_not_equal( :hidden, p.censor( :red ).board )
-    assert_not_equal( :hidden, p.censor( :blue ).board )
+    refute_equal( :hidden, p.censor( :red ).board )
+    refute_equal( :hidden, p.censor( :blue ).board )
   end
 
   def test_turn
@@ -99,7 +98,7 @@ class TestPosition < Test::Unit::TestCase
   def test_ambiguous_move
     p = Footsteps.new
 
-    assert_raise( RuntimeError ) { p.apply( 2 ) }
+    assert_raises( RuntimeError ) { p.apply( 2 ) }
   end
 
   def test_dup_with_special_move_mixin
@@ -107,15 +106,15 @@ class TestPosition < Test::Unit::TestCase
 
     p2 = SpecialMove["draw"].apply_to_position( p )
 
-    assert_not_equal( p, p2 )
+    refute_equal( p, p2 )
     assert_equal( p2, p2.dup )
     assert_equal( p2.draw?, p2.dup.draw? )
 
     p3 = p2.remove_special_mixin
 
-    assert_not_equal( p2, p3 )
+    refute_equal( p2, p3 )
     assert_equal( p, p3 )
-    assert_not_equal( p2.draw?, p3.draw? )
+    refute_equal( p2.draw?, p3.draw? )
   end
 
   def test_marshal_with_special_move_mixin
@@ -123,18 +122,18 @@ class TestPosition < Test::Unit::TestCase
 
     p2 = SpecialMove["draw"].apply_to_position( p )
 
-    assert_not_equal( p, p2 )
+    refute_equal( p, p2 )
     assert_equal( p2, Marshal.load( Marshal.dump( p2 ) ) )
     assert_equal( p2.draw?, Marshal.load( Marshal.dump( p2 ) ).draw? )
   end
 
   def test_yaml_with_special_move_mixin
-    omit('Failing: Skip yaml, probably going to remove this support')
+    skip('Failing: Skip yaml, probably going to remove this support')
     p = Connect6.new
 
     p2 = SpecialMove["draw"].apply_to_position( p )
 
-    assert_not_equal( p, p2 )
+    refute_equal( p, p2 )
 
     p3 = YAML.load( p2.to_yaml )
 

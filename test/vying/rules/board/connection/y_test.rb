@@ -1,9 +1,6 @@
-require 'test/unit'
+require_relative '../../../../test_helper'
 
-require 'vying'
-require 'vying/rules/rules_test'
-
-class TestY < Test::Unit::TestCase
+class TestY < Minitest::Test
   include RulesTests
 
   def rules
@@ -32,8 +29,8 @@ class TestY < Test::Unit::TestCase
     assert_equal( 13, Y.new( :board_size => 13 ).board.width )
     assert_equal( 14, Y.new( :board_size => 14 ).board.width )
 
-    assert_raise( RuntimeError ) { Y.new( :board_size => 11 ) }
-    assert_raise( RuntimeError ) { Y.new( :board_size => 15 ) }
+    assert_raises( RuntimeError ) { Y.new( :board_size => 11 ) }
+    assert_raises( RuntimeError ) { Y.new( :board_size => 15 ) }
   end
 
   def test_has_moves

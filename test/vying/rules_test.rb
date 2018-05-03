@@ -1,8 +1,7 @@
 
-require 'test/unit'
-require 'vying'
+require_relative '../test_helper'
 
-class TestRules < Test::Unit::TestCase
+class TestRules < Minitest::Test
   include Vying
 
   def test_find
@@ -35,31 +34,29 @@ class TestRules < Test::Unit::TestCase
   end
 
   def test_invalid_options
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       TicTacToe.new( :board_size => 10 )
     end
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       TicTacToe.new( :width => 10, :height => 10 )
     end
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Ataxx.new( :width => 10, :height => 10 )
     end
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Ataxx.new( 1234, :width => 10, :height => 10 )
     end
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Kalah.new( :seeds_per_cup => 3, :width => 10, :height => 10 )
     end
 
-    assert_nothing_raised do
-      Kalah.new( :seeds_per_cup => 3 )
-    end
+    Kalah.new( :seeds_per_cup => 3 )
 
-    assert_raise( RuntimeError ) do
+    assert_raises( RuntimeError ) do
       Kalah.new( :seeds_per_cup => 1 )
     end
   end

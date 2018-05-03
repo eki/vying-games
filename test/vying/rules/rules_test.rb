@@ -53,7 +53,7 @@ module RulesTests
       break if g.final?
       pn = g.has_moves.first
       g[pn] << g[pn].moves[rand(g[pn].moves.size)] 
-      assert_not_equal( p, g.undo.last )      
+      refute_equal( p, g.undo.last )      
       assert_equal( p, g.history.last )
       break if g.final?
       pn = g.has_moves.first
@@ -127,7 +127,7 @@ module RulesTests
   def test__marshal
     g = new_game
     g2 = nil
-    assert_nothing_raised { g2 = Marshal::load( Marshal::dump( g ) ) }
+    g2 = Marshal::load( Marshal::dump( g ) )
     #assert_equal( g, g2 ) #Game doesn't implement ==
     assert_equal( g.history.last, g2.history.last )
   end
