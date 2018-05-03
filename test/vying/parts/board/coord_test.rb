@@ -46,15 +46,15 @@ class TestCoord < Minitest::Test
     assert_equal( Coord.new( 2, 2 ), cs[2] )
     assert_equal( Coord.new( -1, -2 ), cs[3] )
 
-    assert_equal( nil, Coord[:h11o4] )
-    assert_equal( nil, Coord["blah blah"] )
-    assert_equal( nil, Coord[[1,2,3]] )
-    assert_equal( nil, Coord[[:a, 2]] )
+    assert_nil( Coord[:h11o4] )
+    assert_nil( Coord["blah blah"] )
+    assert_nil( Coord[[1,2,3]] )
+    assert_nil( Coord[[:a, 2]] )
 
     cs = Coord[:a2, :h11o4, "blah", [0,0], 'c3']
     assert_equal( Coord.new( 0, 1 ), cs[0] )
-    assert_equal( nil, cs[1] )
-    assert_equal( nil, cs[2] )
+    assert_nil( cs[1] )
+    assert_nil( cs[2] )
     assert_equal( Coord.new( 0, 0 ), cs[3] )
     assert_equal( Coord.new( 2, 2 ), cs[4] )
   end
@@ -126,10 +126,10 @@ class TestCoord < Minitest::Test
     assert_equal( :se, c.direction_to( Coord[5,5] ) )
     assert_equal( :sw, c.direction_to( Coord[0,6] ) )
 
-    assert_equal( nil, c.direction_to( Coord[4,1] ) )
-    assert_equal( nil, c.direction_to( Coord[2,1] ) )
-    assert_equal( nil, c.direction_to( Coord[5,6] ) )
-    assert_equal( nil, c.direction_to( Coord[1,6] ) )
+    assert_nil( c.direction_to( Coord[4,1] ) )
+    assert_nil( c.direction_to( Coord[2,1] ) )
+    assert_nil( c.direction_to( Coord[5,6] ) )
+    assert_nil( c.direction_to( Coord[1,6] ) )
   end
 
   def test_next
@@ -145,7 +145,7 @@ class TestCoord < Minitest::Test
     assert_equal( Coord[4,4], c.next( :se ) )
     assert_equal( Coord[2,4], c.next( :sw ) )
 
-    assert_equal( nil, c.next( :blah ) )
+    assert_nil( c.next( :blah ) )
   end
 
   def test_to_s

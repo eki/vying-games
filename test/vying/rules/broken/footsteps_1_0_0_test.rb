@@ -48,38 +48,38 @@ class TestFootsteps_1_0_0 < Minitest::Test
   def test_censor
     g = Game.new( rules )
     p = g.censor( :left )
-    assert_equal( nil, p.bids[:left] )
-    assert_equal( nil, p.bids[:right] )
+    assert_nil( p.bids[:left] )
+    assert_nil( p.bids[:right] )
 
     g << "right_10"
 
     p = g.censor( :left )
-    assert_equal( nil, p.bids[:left] )
+    assert_nil( p.bids[:left] )
     assert_equal( :hidden, p.bids[:right] )
 
     p = g.censor( :right )
-    assert_equal( nil, p.bids[:left] )
+    assert_nil( p.bids[:left] )
     assert_equal( 10, p.bids[:right] )
 
     g << "left_5"
 
     p = g.censor( :left )
-    assert_equal( nil, p.bids[:left] )
-    assert_equal( nil, p.bids[:right] )
+    assert_nil( p.bids[:left] )
+    assert_nil( p.bids[:right] )
 
     p = g.censor( :right )
-    assert_equal( nil, p.bids[:left] )
-    assert_equal( nil, p.bids[:right] )
+    assert_nil( p.bids[:left] )
+    assert_nil( p.bids[:right] )
 
     g << "left_4"
 
     p = g.censor( :left )
     assert_equal( 4, p.bids[:left] )
-    assert_equal( nil, p.bids[:right] )
+    assert_nil( p.bids[:right] )
 
     p = g.censor( :right )
     assert_equal( :hidden, p.bids[:left] )
-    assert_equal( nil, p.bids[:right] )
+    assert_nil( p.bids[:right] )
   end
 
   def test_game01

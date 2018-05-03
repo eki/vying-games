@@ -150,7 +150,7 @@ class TestCustodialCapture < Minitest::Test
     assert_equal( [Coord[3,4]].sort, cc.sort )
 
     assert_equal( :black, b[3,3] )
-    assert_equal(    nil, b[3,4] )
+    assert_nil( b[3,4] )
     assert_equal( :black, b[3,5] )
 
     assert_equal( 8*8-2, b.empty_count )
@@ -167,7 +167,7 @@ class TestCustodialCapture < Minitest::Test
     assert_equal( [Coord[3,3]].sort, cc.sort )
 
     assert_equal( :white, b[3,2] )
-    assert_equal(    nil, b[3,3] )
+    assert_nil( b[3,3] )
     assert_equal( :white, b[3,4] )
 
     assert_equal( 8*8-2, b.empty_count )
@@ -187,9 +187,9 @@ class TestCustodialCapture < Minitest::Test
     assert_equal( [Coord[1,3], Coord[2,3], Coord[3,3]].sort, cc.sort )
 
     assert_equal( :white, b[0,3] )
-    assert_equal(    nil, b[1,3] )
-    assert_equal(    nil, b[2,3] )
-    assert_equal(    nil, b[3,3] )
+    assert_nil( b[1,3] )
+    assert_nil( b[2,3] )
+    assert_nil( b[3,3] )
     assert_equal( :white, b[4,3] )
     assert_equal( :white, b[5,3] )
 
@@ -209,8 +209,8 @@ class TestCustodialCapture < Minitest::Test
 
     assert_equal( :black, b[6,3] )
     assert_equal( :black, b[3,3] )
-    assert_equal(    nil, b[4,3] )
-    assert_equal(    nil, b[5,3] )
+    assert_nil( b[4,3] )
+    assert_nil( b[5,3] )
 
     assert_equal( 8*8-2, b.empty_count )
   end
@@ -229,10 +229,10 @@ class TestCustodialCapture < Minitest::Test
     assert_equal( [Coord[1,1], Coord[2,2], Coord[4,4]].sort, cc.sort )
 
     assert_equal( :black, b[0,0] )
-    assert_equal(    nil, b[1,1] )
-    assert_equal(    nil, b[2,2] )
+    assert_nil( b[1,1] )
+    assert_nil( b[2,2] )
     assert_equal( :black, b[3,3] )
-    assert_equal(    nil, b[4,4] )
+    assert_nil( b[4,4] )
     assert_equal( :black, b[5,5] )
 
     assert_equal( 8*8-3, b.empty_count )
@@ -252,10 +252,10 @@ class TestCustodialCapture < Minitest::Test
     assert_equal( [Coord[6,1], Coord[5,2], Coord[3,4]].sort, cc.sort )
 
     assert_equal( :black, b[7,0] )
-    assert_equal(    nil, b[6,1] )
-    assert_equal(    nil, b[5,2] )
+    assert_nil( b[6,1] )
+    assert_nil( b[5,2] )
     assert_equal( :black, b[4,3] )
-    assert_equal(    nil, b[3,4] )
+    assert_nil( b[3,4] )
     assert_equal( :black, b[2,5] )
 
     assert_equal( 8*8-3, b.empty_count )
@@ -337,10 +337,10 @@ class TestCustodialCapture < Minitest::Test
                   cc.sort )
 
     assert_equal( :black, b[0,0] )
-    assert_equal(    nil, b[1,1] )
-    assert_equal(    nil, b[2,2] )
-    assert_equal(    nil, b[3,3] )
-    assert_equal(    nil, b[4,4] )
+    assert_nil( b[1,1] )
+    assert_nil( b[2,2] )
+    assert_nil( b[3,3] )
+    assert_nil( b[4,4] )
     assert_equal( :black, b[5,5] )
 
     assert_equal( 8*8-2, b.empty_count )

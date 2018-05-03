@@ -95,8 +95,8 @@ class TestPhutball < Minitest::Test
 
     g << "h11h9"
 
-    assert_equal( nil, g.board[:h11] )
-    assert_equal( nil, g.board[:h10] )
+    assert_nil( g.board[:h11] )
+    assert_nil( g.board[:h10] )
     assert_equal( :white, g.board[:h9] )
 
     assert( g.moves.include?( "h11" ) )
@@ -114,13 +114,13 @@ class TestPhutball < Minitest::Test
 
     g << "h11o4"
 
-    assert_equal( nil, g.board[:h11] )
-    assert_equal( nil, g.board[:i10] )
-    assert_equal( nil, g.board[:j9] )
-    assert_equal( nil, g.board[:k8] )
-    assert_equal( nil, g.board[:l7] )
-    assert_equal( nil, g.board[:m6] )
-    assert_equal( nil, g.board[:n5] )
+    assert_nil( g.board[:h11] )
+    assert_nil( g.board[:i10] )
+    assert_nil( g.board[:j9] )
+    assert_nil( g.board[:k8] )
+    assert_nil( g.board[:l7] )
+    assert_nil( g.board[:m6] )
+    assert_nil( g.board[:n5] )
     assert_equal( :white, g.board[:o4] )
   end
 
@@ -146,8 +146,8 @@ class TestPhutball < Minitest::Test
 
     g << :h11h9
 
-    assert_equal( nil, g.board[:h11] )
-    assert_equal( nil, g.board[:h10] )
+    assert_nil( g.board[:h11] )
+    assert_nil( g.board[:h10] )
     assert_equal( :white, g.board[:h9] )
 
     assert( g.jumping )
@@ -159,9 +159,9 @@ class TestPhutball < Minitest::Test
 
     g << :h9h6
 
-    assert_equal( nil, g.board[:h9] )
-    assert_equal( nil, g.board[:h8] )
-    assert_equal( nil, g.board[:h7] )
+    assert_nil( g.board[:h9] )
+    assert_nil( g.board[:h8] )
+    assert_nil( g.board[:h7] )
     assert_equal( :white, g.board[:h6] )
     
     assert( g.moves.include?( "h9" ) )
@@ -186,8 +186,8 @@ class TestPhutball < Minitest::Test
 
     g << :h11h9
 
-    assert_equal( nil, g.board[:h11] )
-    assert_equal( nil, g.board[:h10] )
+    assert_nil( g.board[:h11] )
+    assert_nil( g.board[:h10] )
     assert_equal( :white, g.board[:h9] )
 
     assert( g.jumping )

@@ -72,8 +72,8 @@ class TestPente < Minitest::Test
 
     assert_equal( 2, g.score( :black ) )
     assert_equal( 0, g.score( :white ) )
-    assert_equal( nil, g.board[:b2] )
-    assert_equal( nil, g.board[:b3] )
+    assert_nil( g.board[:b2] )
+    assert_nil( g.board[:b3] )
     assert_equal( :black, g.board[:b1] )
     assert_equal( :black, g.board[:b4] )
     assert( g.move?( :b2 ) )
@@ -99,8 +99,8 @@ class TestPente < Minitest::Test
 
     assert_equal( 2, g.score( :black ) )
     assert_equal( 0, g.score( :white ) )
-    assert_equal( nil, g.board[:b2] )
-    assert_equal( nil, g.board[:c3] )
+    assert_nil( g.board[:b2] )
+    assert_nil( g.board[:c3] )
     assert_equal( :black, g.board[:a1] )
     assert_equal( :black, g.board[:d4] )
     assert( g.move?( :b2 ) )

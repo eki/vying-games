@@ -23,7 +23,7 @@ class TestCancelDraw < Minitest::Test
   end
 
   def test_by
-    assert_equal( nil, sm["cancel_draw"].by )
+    assert_nil( sm["cancel_draw"].by )
   end
 
   def test_valid_for

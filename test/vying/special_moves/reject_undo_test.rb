@@ -26,7 +26,7 @@ class TestRejectUndo < Minitest::Test
   end
 
   def test_by
-    assert_equal( nil, sm["reject_undo"].by )
+    assert_nil( sm["reject_undo"].by )
   end
 
   def test_valid_for

@@ -9,7 +9,7 @@ class TestInARow < Minitest::Test
 
     assert( (class << b; ancestors; end).include?( Board::Plugins::InARow ) )
     assert_equal( [], b.threats )
-    assert_equal( nil, b.window_size )
+    assert_nil( b.window_size )
   end
 
   def test_set_window_size

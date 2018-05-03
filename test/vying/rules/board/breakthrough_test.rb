@@ -83,7 +83,7 @@ class TestBreakthrough < Minitest::Test
 
     g << "e4e5"
 
-    assert_equal( nil, g.board[:e4] )
+    assert_nil( g.board[:e4] )
     assert_equal( :black, g.board[:e5] )
    
     g.board[:e4] = :black 
@@ -107,7 +107,7 @@ class TestBreakthrough < Minitest::Test
 
     g << "e5e4"
 
-    assert_equal( nil, g.board[:e5] )
+    assert_nil( g.board[:e5] )
     assert_equal( :white, g.board[:e4] )
   end
 
@@ -134,7 +134,7 @@ class TestBreakthrough < Minitest::Test
 
     g << "b3c2"
 
-    assert_equal( nil, g.board[:b3] )
+    assert_nil( g.board[:b3] )
     assert_equal( :white, g.board[:c2] )
   end
 

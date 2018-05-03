@@ -44,7 +44,7 @@ class TestThreeMusketeers < Minitest::Test
                    "e1d1", "e1e2"].sort, g.moves.sort )
     g << "c3c2"
     assert_equal( :red, g.board[:c2] )
-    assert_equal( nil, g.board[:c3] )
+    assert_nil( g.board[:c3] )
     assert_equal( ["b3c3", "d3c3", "c4c3"].sort, g.moves.sort )
   end
 
@@ -56,7 +56,7 @@ class TestThreeMusketeers < Minitest::Test
     g.rotate_turn
 
     assert_equal( :blue, g.history.last.turn )
-    assert_equal( nil, g.turn )
+    assert_nil( g.turn )
     assert_equal( [], g.moves )
     assert( g.final? )
     assert( g.winner?( :red ) )

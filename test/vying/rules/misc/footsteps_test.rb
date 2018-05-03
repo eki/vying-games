@@ -23,8 +23,8 @@ class TestFootsteps < Minitest::Test
     assert_equal( 3, g.marker )
     assert_equal( 50, g.points[:left] )
     assert_equal( 50, g.points[:right] )
-    assert_equal( nil, g.bids[:left] )
-    assert_equal( nil, g.bids[:right] )
+    assert_nil( g.bids[:left] )
+    assert_nil( g.bids[:right] )
     assert_equal( [], g.rounds )
   end
 
@@ -51,38 +51,38 @@ class TestFootsteps < Minitest::Test
   def test_censor
     g = Game.new( rules )
     p = g.censor( :left )
-    assert_equal( nil, p.bids[:left] )
-    assert_equal( nil, p.bids[:right] )
+    assert_nil( p.bids[:left] )
+    assert_nil( p.bids[:right] )
 
     g.append( 10, :right )
 
     p = g.censor( :left )
-    assert_equal( nil, p.bids[:left] )
+    assert_nil( p.bids[:left] )
     assert_equal( :hidden, p.bids[:right] )
 
     p = g.censor( :right )
-    assert_equal( nil, p.bids[:left] )
+    assert_nil( p.bids[:left] )
     assert_equal( 10, p.bids[:right] )
 
     g.append( 5, :left )
 
     p = g.censor( :left )
-    assert_equal( nil, p.bids[:left] )
-    assert_equal( nil, p.bids[:right] )
+    assert_nil( p.bids[:left] )
+    assert_nil( p.bids[:right] )
 
     p = g.censor( :right )
-    assert_equal( nil, p.bids[:left] )
-    assert_equal( nil, p.bids[:right] )
+    assert_nil( p.bids[:left] )
+    assert_nil( p.bids[:right] )
 
     g.append( 4, :left )
 
     p = g.censor( :left )
     assert_equal( 4, p.bids[:left] )
-    assert_equal( nil, p.bids[:right] )
+    assert_nil( p.bids[:right] )
 
     p = g.censor( :right )
     assert_equal( :hidden, p.bids[:left] )
-    assert_equal( nil, p.bids[:right] )
+    assert_nil( p.bids[:right] )
   end
 
   def test_sealed_moves

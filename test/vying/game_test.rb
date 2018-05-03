@@ -13,7 +13,7 @@ class TestGame < Minitest::Test
     assert_equal( 3, g.board.length )
     assert_equal( 3*3, g.board.unoccupied.length )
     assert_equal( :x, g.turn )
-    assert_equal( nil, g.seed )
+    assert_nil( g.seed )
     assert( ! g.rng )
 
     g = Game.new Ataxx, 1234
@@ -209,7 +209,7 @@ class TestGame < Minitest::Test
     g[:white].user << "accept_draw"
     g.step
     
-    assert_equal( nil, g.history.move_by.last )
+    assert_nil( g.history.move_by.last )
 
     assert( ! g.draw_offered? )
     assert( g.draw_by_agreement? )
@@ -643,7 +643,7 @@ class TestGame < Minitest::Test
     assert_equal( :x, g.who?( :x ) )
     assert_equal( :o, g.who?( :o ) )
 
-    assert_equal( nil, g.who?( nil ) )
+    assert_nil( g.who?( nil ) )
 
     assert_equal( :x, g.who?( g[:x].user ) )
     assert_equal( :o, g.who?( g[:o].user ) )
@@ -689,7 +689,7 @@ class TestGame < Minitest::Test
     assert_equal( "swap", g.sequence.last )
     assert_equal( Human.new( "jane_doe" ), g[:blue].user )
     assert_equal( Human.new( "john_doe" ), g[:red].user )
-    assert_equal( nil, g.history.move_by.last )  # no player recorded for swap?
+    assert_nil( g.history.move_by.last )  # no player recorded for swap?
   end
 
   def test_pie_rule_02
@@ -725,7 +725,7 @@ class TestGame < Minitest::Test
     assert_equal( "swap", g.sequence.last )
     assert_equal( Human.new( "jane_doe" ), g[:one].user )
     assert_equal( Human.new( "john_doe" ), g[:two].user )
-    assert_equal( nil, g.history.move_by.last )  # no player recorded for swap?
+    assert_nil( g.history.move_by.last )  # no player recorded for swap?
   end
 
   def test_pie_rule_03
@@ -784,7 +784,7 @@ class TestGame < Minitest::Test
   
     g << "black_withdraws"
 
-    assert_equal( nil, g[:black].user )
+    assert_nil( g[:black].user )
     assert( ! g.special_moves.include?( "black_withdraws" ) )
     assert( ! g.special_moves( :black ).include?( "black_withdraws" ) )
     assert( g.special_moves.include?( "white_withdraws" ) )
@@ -796,7 +796,7 @@ class TestGame < Minitest::Test
 
     g << "white_withdraws"
   
-    assert_equal( nil, g[:white].user )
+    assert_nil( g[:white].user )
     assert( g.special_moves.include?( "black_withdraws" ) )
     assert( ! g.special_moves.include?( "white_withdraws" ) )
   end
@@ -827,7 +827,7 @@ class TestGame < Minitest::Test
   
     g << "kick_white"
 
-    assert_equal( nil, g[:white].user )
+    assert_nil( g[:white].user )
     assert( ! g.special_moves.include?( "kick_white" ) )
     assert( ! g.special_moves( :black ).include?( "kick_white" ) )
     assert( g.special_moves.include?( "kick_black" ) )
@@ -840,7 +840,7 @@ class TestGame < Minitest::Test
 
     g << "kick_black"
   
-    assert_equal( nil, g[:black].user )
+    assert_nil( g[:black].user )
     assert( g.special_moves.include?( "kick_white" ) )
     assert( ! g.special_moves.include?( "kick_black" ) )
 

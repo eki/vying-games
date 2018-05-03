@@ -33,28 +33,28 @@ class TestRuby < Minitest::Test
     assert_equal( Test::Unit, Module.nested_const_get( "Test::Unit" ) )
     assert_equal( Test::Unit::TestCase, 
                   Module.nested_const_get( "Test::Unit::TestCase" ) )
-    assert_equal( nil, Module.nested_const_get( "Test::Unit::FooBar" ) )
+    assert_nil( Module.nested_const_get( "Test::Unit::FooBar" ) )
 
     assert_equal( Test, Object.nested_const_get( "Test" ) )
     assert_equal( Test::Unit, Object.nested_const_get( "Test::Unit" ) )
     assert_equal( Test::Unit::TestCase, 
                   Object.nested_const_get( "Test::Unit::TestCase" ) )
-    assert_equal( nil, Object.nested_const_get( "Test::Unit::FooBar" ) )
+    assert_nil( Object.nested_const_get( "Test::Unit::FooBar" ) )
 
     assert_equal( Test, Kernel.nested_const_get( "Test" ) )
     assert_equal( Test::Unit, Kernel.nested_const_get( "Test::Unit" ) )
     assert_equal( Test::Unit::TestCase, 
                   Kernel.nested_const_get( "Test::Unit::TestCase" ) )
-    assert_equal( nil, Kernel.nested_const_get( "Test::Unit::FooBar" ) )
+    assert_nil( Kernel.nested_const_get( "Test::Unit::FooBar" ) )
 
     assert_equal( Test::Unit, Test.nested_const_get( "Unit" ) )
     assert_equal( Test::Unit::TestCase, 
                   Test.nested_const_get( "Unit::TestCase" ) )
-    assert_equal( nil, Test.nested_const_get( "String" ) )
+    assert_nil( Test.nested_const_get( "String" ) )
 
     assert_equal( Test::Unit::TestCase, 
                   Test::Unit.nested_const_get( "TestCase" ) )
-    assert_equal( nil, Test::Unit.nested_const_get( "String" ) )
+    assert_nil( Test::Unit.nested_const_get( "String" ) )
   end
 end
 

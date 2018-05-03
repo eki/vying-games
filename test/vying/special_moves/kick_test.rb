@@ -36,8 +36,8 @@ class TestKick < Minitest::Test
   end
 
   def test_by
-    assert_equal( nil, sm["kick_black"].by )
-    assert_equal( nil, sm["kick_x"].by )
+    assert_nil( sm["kick_black"].by )
+    assert_nil( sm["kick_x"].by )
   end
 
   def test_target

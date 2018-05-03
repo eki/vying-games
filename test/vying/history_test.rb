@@ -31,7 +31,7 @@ class TestHistory < Minitest::Test
     p = h[2]
     h.instance_variable_get( "@positions" )[2] = nil
 
-    assert_equal( nil, h.instance_variable_get( "@positions" )[2] )
+    assert_nil( h.instance_variable_get( "@positions" )[2] )
     assert_equal( p, h[2] )
     assert_equal( p, h.instance_variable_get( "@positions" )[2] )
   end
@@ -47,8 +47,8 @@ class TestHistory < Minitest::Test
 
     assert_equal( 4, h.length )
 
-    assert_equal( nil, positions[2] )
-    assert_equal( nil, positions[3] )
+    assert_nil( positions[2] )
+    assert_nil( positions[3] )
     assert_equal( p3, h[3] )
     assert_equal( p2, h[2] )
     assert_equal( p3, positions[3] )
@@ -75,7 +75,7 @@ class TestHistory < Minitest::Test
     h.append( Move.new( "c1", TicTacToe.players.first ) )
     h2 = Marshal::load( Marshal::dump( h ) )
     assert_equal( h, h2 )
-    assert_equal( nil, h2.instance_variable_get( "@positions" )[1] )
+    assert_nil( h2.instance_variable_get( "@positions" )[1] )
     assert_equal( h[1], h2[1] )
   end
 

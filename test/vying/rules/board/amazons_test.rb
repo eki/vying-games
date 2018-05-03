@@ -18,7 +18,7 @@ class TestAmazons < Minitest::Test
   def test_initialize       # Need to be more thorough here
     g = Game.new( rules )
     assert_equal( :white, g.turn )
-    assert_equal( nil, g.lastc )
+    assert_nil( g.lastc )
   end
 
   def test_has_moves

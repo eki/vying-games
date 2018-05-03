@@ -196,21 +196,21 @@ class TestCoords < Minitest::Test
 
     assert_equal( Coord[0,1], coords.next( Coord[0,0], :s ) )
     assert_equal( Coord[1,0], coords.next( Coord[0,0], :e ) )
-    assert_equal( nil,        coords.next( Coord[0,0], :n ) )
-    assert_equal( nil,        coords.next( Coord[0,0], :w ) )
+    assert_nil( coords.next( Coord[0,0], :n ) )
+    assert_nil( coords.next( Coord[0,0], :w ) )
 
     assert_equal( Coord[7,1], coords.next( Coord[7,0], :s ) )
-    assert_equal( nil,        coords.next( Coord[7,0], :e ) )
-    assert_equal( nil,        coords.next( Coord[7,0], :n ) )
+    assert_nil( coords.next( Coord[7,0], :e ) )
+    assert_nil( coords.next( Coord[7,0], :n ) )
     assert_equal( Coord[6,0], coords.next( Coord[7,0], :w ) )
 
-    assert_equal( nil,        coords.next( Coord[0,7], :s ) )
+    assert_nil( coords.next( Coord[0,7], :s ) )
     assert_equal( Coord[1,7], coords.next( Coord[0,7], :e ) )
     assert_equal( Coord[0,6], coords.next( Coord[0,7], :n ) )
-    assert_equal( nil,        coords.next( Coord[0,7], :w ) )
+    assert_nil( coords.next( Coord[0,7], :w ) )
 
-    assert_equal( nil,        coords.next( Coord[7,7], :s ) )
-    assert_equal( nil,        coords.next( Coord[7,7], :e ) )
+    assert_nil( coords.next( Coord[7,7], :s ) )
+    assert_nil( coords.next( Coord[7,7], :e ) )
     assert_equal( Coord[7,6], coords.next( Coord[7,7], :n ) )
     assert_equal( Coord[6,7], coords.next( Coord[7,7], :w ) )
   end

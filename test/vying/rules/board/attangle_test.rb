@@ -67,8 +67,8 @@ class TestAttangle < Minitest::Test
     g << "e3" << "g7"
 
     g << "a1e3c3"
-    assert_equal( nil, g.board[:a1] )
-    assert_equal( nil, g.board[:e3] )
+    assert_nil( g.board[:a1] )
+    assert_nil( g.board[:e3] )
     assert_equal( [:white, :black], g.board[:c3] )
     assert_equal( 17, g.pool[:white] )
     assert_equal( 16, g.pool[:black] )

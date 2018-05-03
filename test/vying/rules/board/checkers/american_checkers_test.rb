@@ -67,19 +67,19 @@ class TestAmericanCheckers < Minitest::Test
     g = Game.new( rules )
 
     assert_equal( :red, g.board[:b3] )
-    assert_equal( nil,  g.board[:c4] )
+    assert_nil( g.board[:c4] )
 
     g << "b3c4"
 
-    assert_equal( nil,  g.board[:b3] )
+    assert_nil( g.board[:b3] )
     assert_equal( :red, g.board[:c4] )
 
     assert_equal( :white, g.board[:g6] )
-    assert_equal( nil,    g.board[:h5] )
+    assert_nil( g.board[:h5] )
 
     g << "g6h5"
     
-    assert_equal( nil,    g.board[:g6] )
+    assert_nil( g.board[:g6] )
     assert_equal( :white, g.board[:h5] )
   end
 
@@ -137,7 +137,7 @@ class TestAmericanCheckers < Minitest::Test
 
     g << "h7f5"
 
-    assert_equal( nil, g.board[:g6] )
+    assert_nil( g.board[:g6] )
   end
 
   def test_move_to_king

@@ -63,7 +63,7 @@ class TestNineMensMorris < Minitest::Test
 
     until g.remaining[:white] == 0
       g.moves.each do |move|
-        assert_equal( nil, g.board[move] )
+        assert_nil( g.board[move] )
         assert_equal( 1, move.to_coords.length )
       end
 
@@ -130,7 +130,7 @@ class TestNineMensMorris < Minitest::Test
     g << "g1g4"
 
     assert_equal( :white, g.turn )
-    assert_equal( nil, g.board[:g1] )
+    assert_nil( g.board[:g1] )
     assert_equal( :black, g.board[:g4] )
 
     g.moves.each do |move|
@@ -140,7 +140,7 @@ class TestNineMensMorris < Minitest::Test
     g << "d3e3"
 
     assert_equal( :white, g.turn )
-    assert_equal( nil, g.board[:d3] )
+    assert_nil( g.board[:d3] )
     assert_equal( :white, g.board[:e3] )
     assert( g.removing )
 
@@ -153,7 +153,7 @@ class TestNineMensMorris < Minitest::Test
     g << "g4"
 
     assert_equal( :black, g.turn )
-    assert_equal( nil, g.board[:g4] )
+    assert_nil( g.board[:g4] )
     assert( ! g.removing )
     
     g.moves.each do |move|
@@ -163,7 +163,7 @@ class TestNineMensMorris < Minitest::Test
     g << "a4b4"
 
     assert_equal( :white, g.turn )
-    assert_equal( nil, g.board[:a4] )
+    assert_nil( g.board[:a4] )
     assert_equal( :black, g.board[:b4] )
     assert( ! g.removing )
 
@@ -174,7 +174,7 @@ class TestNineMensMorris < Minitest::Test
     g << "e3d3"
 
     assert_equal( :white, g.turn )
-    assert_equal( nil, g.board[:e3] )
+    assert_nil( g.board[:e3] )
     assert_equal( :white, g.board[:d3] )
     assert( g.removing )
 
@@ -188,7 +188,7 @@ class TestNineMensMorris < Minitest::Test
     # Now leaving moving phase and entering flying phase for black
 
     assert_equal( :black, g.turn )
-    assert_equal( nil, g.board[:b4] )
+    assert_nil( g.board[:b4] )
     assert( ! g.removing )
 
     assert_equal( 3 * g.board.empty_count, g.moves.uniq.length )
@@ -199,13 +199,13 @@ class TestNineMensMorris < Minitest::Test
       coords = move.to_coords
 
       assert_equal( :black, g.board[coords.first] )
-      assert_equal( nil, g.board[coords.last] )
+      assert_nil( g.board[coords.last] )
     end
 
     g << "g7a4"
 
     assert_equal( :black, g.turn )
-    assert_equal( nil, g.board[:b4] )
+    assert_nil( g.board[:b4] )
     assert_equal( :black, g.board[:a4] )
     assert( g.removing )
 
@@ -219,7 +219,7 @@ class TestNineMensMorris < Minitest::Test
     g << "d6"
 
     assert_equal( :white, g.turn )
-    assert_equal( nil, g.board[:d6] )
+    assert_nil( g.board[:d6] )
     assert( ! g.removing )
     
     g.moves.each do |move|
@@ -229,7 +229,7 @@ class TestNineMensMorris < Minitest::Test
     g << "d3e3"
 
     assert_equal( :white, g.turn )
-    assert_equal( nil, g.board[:d3] )
+    assert_nil( g.board[:d3] )
     assert_equal( :white, g.board[:e3] )
     assert( g.removing )
 
@@ -240,7 +240,7 @@ class TestNineMensMorris < Minitest::Test
     g << "a4"
     
     assert_equal( :black, g.history.last.turn )
-    assert_equal( nil, g.board[:a4] )
+    assert_nil( g.board[:a4] )
     assert( ! g.removing )
 
     assert( g.final? )

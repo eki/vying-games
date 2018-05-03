@@ -43,7 +43,7 @@ class TestBot < Minitest::Test
 
     assert_equal( FirstMoveBot::TicTacToe.new, 
       bot.delegate_for( TicTacToe.new ) )
-    assert_equal( nil, bot.delegate_for( Footsteps.new ) )
+    assert_nil( bot.delegate_for( Footsteps.new ) )
   end
 
   def test_plays
@@ -98,10 +98,10 @@ class TestBot < Minitest::Test
     assert_equal( RandomBot, Bot.find( "RandomBot::TicTacToe" ) )
 
     assert_equal( FirstMoveBot, Bot.find( "FirstMoveBot::TicTacToe" ) )
-    assert_equal( nil, Bot.find( "FirstMoveBot::Footsteps" ) )
-    assert_equal( nil, Bot.find( "FirstMoveBot::Xyzzy" ) )
+    assert_nil( Bot.find( "FirstMoveBot::Footsteps" ) )
+    assert_nil( Bot.find( "FirstMoveBot::Xyzzy" ) )
 
-    assert_equal( nil, Bot.find( "NonexistantBot" ) )
+    assert_nil( Bot.find( "NonexistantBot" ) )
 
     assert_equal( NamespaceForTesting::LastMoveBot, 
                   Bot.find( "NamespaceForTesting::LastMoveBot" ) )

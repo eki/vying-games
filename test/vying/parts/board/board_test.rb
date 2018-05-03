@@ -12,15 +12,15 @@ class TestBoard < Minitest::Test
 
   def test_bad_subscripts
     b = Board.rect( 7, 6 )
-    assert_equal( nil, b[-1,0] )
-    assert_equal( nil, b[0,-1] )
-    assert_equal( nil, b[-1,-1] )
-    assert_equal( nil, b[7,0] )
-    assert_equal( nil, b[7,6] )
-    assert_equal( nil, b[0,6] )
+    assert_nil( b[-1,0] )
+    assert_nil( b[0,-1] )
+    assert_nil( b[-1,-1] )
+    assert_nil( b[7,0] )
+    assert_nil( b[7,6] )
+    assert_nil( b[0,6] )
     assert_equal( :black, b[0,6] = :black )
-    assert_equal( nil, b[0,6] )
-    assert_equal( nil, b[nil] )
+    assert_nil( b[0,6] )
+    assert_nil( b[nil] )
   end
 
   def test_ci
@@ -42,9 +42,9 @@ class TestBoard < Minitest::Test
 
     assert_equal( :black, b2[3,4] )
     assert_equal( :white, b2[0,0] = :white )
-    assert_equal( nil, b[0,0] )
+    assert_nil( b[0,0] )
     assert_equal( :black, b[1,1] = :black )
-    assert_equal( nil, b2[1,1] )
+    assert_nil( b2[1,1] )
     refute_equal( b, b2 )
 
     assert_equal( :black, b2[1,1] = :black )
@@ -57,23 +57,23 @@ class TestBoard < Minitest::Test
     assert_equal( :red, b2[0,0] = :red   )
     assert_equal( :blue, b2[0,1] = :blue )
 
-    assert_equal( nil, b2[0,0] = nil )
-    assert_equal( nil, b2[0,1] = nil )
+    assert_nil( b2[0,0] = nil )
+    assert_nil( b2[0,1] = nil )
 
     refute_equal( b, b2 )  # Are they sharing key?
   end
 
   def test_assignment
     b = Board.rect( 7, 6 )
-    assert_equal( nil, b[3,4] )
+    assert_nil( b[3,4] )
     assert_equal( :black, b[3,4] = :black )
     assert_equal( :black, b[3,4] )
 
-    assert_equal( nil, b[:a1] )
+    assert_nil( b[:a1] )
     assert_equal( :white, b[:a1] = :white )
     assert_equal( :white, b[:a1] )
 
-    assert_equal( nil, b[Coord[2,2]] )
+    assert_nil( b[Coord[2,2]] )
     assert_equal( :white, b[Coord[2,2]] = :white )
     assert_equal( :white, b[Coord[2,2]] )
 
@@ -217,18 +217,18 @@ class TestBoard < Minitest::Test
 
     assert_equal( :x, b[0,0] = :x )
     assert_equal( :o, b[2,2] = :o )
-    assert_equal( nil, b[1,1] )
+    assert_nil( b[1,1] )
 
     assert_equal( b, b.move( [0,0], [1,1] ) )
 
-    assert_equal( nil, b[0,0] )
+    assert_nil( b[0,0] )
     assert_equal( :o, b[2,2] )
     assert_equal( :x, b[1,1] )
 
     assert_equal( b, b.move( [2,2], [1,1] ) )
 
-    assert_equal( nil, b[0,0] )
-    assert_equal( nil, b[2,2] )
+    assert_nil( b[0,0] )
+    assert_nil( b[2,2] )
     assert_equal( :o, b[1,1] )
   end
 
@@ -299,11 +299,11 @@ EOF
     assert_equal( plugin, Board.find_plugin( "custodial_flip" ) )
     assert_equal( plugin, Board.find_plugin( :custodial_flip ) )
 
-    assert_equal( nil, Board.find_plugin( nil ) )
-    assert_equal( nil, Board.find_plugin( "nonexistant_plugin" ) )
-    assert_equal( nil, Board.find_plugin( :nonexistant_plugin ) )
-    assert_equal( nil, Board.find_plugin( "NonexistantPlugin" ) )
-    assert_equal( nil, Board.find_plugin( :NonexistantPlugin ) )
+    assert_nil( Board.find_plugin( nil ) )
+    assert_nil( Board.find_plugin( "nonexistant_plugin" ) )
+    assert_nil( Board.find_plugin( :nonexistant_plugin ) )
+    assert_nil( Board.find_plugin( "NonexistantPlugin" ) )
+    assert_nil( Board.find_plugin( :NonexistantPlugin ) )
   end
 
   def test_init_plugin
@@ -314,7 +314,7 @@ EOF
 
     assert( (class << b; ancestors; end).include?( Board::Plugins::InARow ) )
     assert_equal( [], b.threats )
-    assert_equal( nil, b.window_size )
+    assert_nil( b.window_size )
   end
 
   def test_triangle_cells

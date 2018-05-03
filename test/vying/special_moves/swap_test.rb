@@ -22,8 +22,8 @@ class TestSwap < Minitest::Test
   end
 
   def test_by
-    assert_equal( nil, sm["swap"].by )
-    assert_equal( nil, sm["swap"].by )
+    assert_nil( sm["swap"].by )
+    assert_nil( sm["swap"].by )
   end
 
   def test_valid_for
