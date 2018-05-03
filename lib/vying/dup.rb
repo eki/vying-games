@@ -17,13 +17,7 @@ class NilClass
   end
 end
 
-class Fixnum
-  def deep_dup
-    self
-  end
-end
-
-class Bignum
+class Integer
   def deep_dup
     self
   end

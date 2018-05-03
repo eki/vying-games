@@ -154,8 +154,8 @@ class Board
   #
 
   def []( *args )
-    if args.length == 2 && args.first.class == Fixnum &&
-                           args.last.class  == Fixnum
+    if args.length == 2 && args.first.kind_of?(Integer) &&
+                           args.last.kind_of?(Integer)
       return get( args.first, args.last )
     elsif args.length == 1
       return args.first.nil? ? nil : get( args.first.x, args.first.y )
@@ -180,8 +180,8 @@ class Board
   #
 
   def []=( *args )
-    if args.length == 3 && args[0].class == Fixnum &&
-                           args[1].class == Fixnum
+    if args.length == 3 && args[0].kind_of?(Integer) &&
+                           args[1].kind_of?(Integer)
       return set( args[0], args[1], args[2] )
     elsif args.length == 2
       return args[0].nil? ? nil : set( args[0].x, args[0].y, args[1] )

@@ -12,7 +12,7 @@ class Array
   #
 
   def x
-    self[0] if length == 2 && self[0].class == Fixnum
+    self[0] if length == 2 && self[0].kind_of?(Integer)
   end
 
   # Returns the second element in this Array.  This only really make sense with
@@ -22,7 +22,7 @@ class Array
   #
 
   def y
-    self[1] if length == 2 && self[1].class == Fixnum
+    self[1] if length == 2 && self[1].kind_of?(Integer)
   end
 end
 
@@ -145,8 +145,8 @@ class Coord
   #
 
   def self.[]( *args )
-    if args.length == 2 && args.first.class == Fixnum &&
-                           args.last.class  == Fixnum
+    if args.length == 2 && args.first.kind_of?(Integer) &&
+                           args.last.kind_of?(Integer)
 
       return Coord.new( args.first, args.last )
 
