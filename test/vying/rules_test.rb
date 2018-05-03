@@ -17,6 +17,7 @@ class TestRules < Minitest::Test
   end
 
   def test_find_by_version
+    skip('older "broken" versions have been removed, remove this test, too?')
     r = Rules.find(Kalah, '1.0.0')
     assert_equal('Kalah', r.class_name)
     assert_equal('1.0.0', r.version)
