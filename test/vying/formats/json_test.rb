@@ -133,14 +133,14 @@ if Vying::Format.find( :json )
       g = Game.new( TicTacToe )
       g2 = Vying.load( g.to_format( :json ), :json )
   
-      assert_equal( g[:o].user, g2[:o].user )
-      assert_equal( g[:x].user, g2[:x].user )
+      assert( g[:o].user == g2[:o].user )
+      assert( g[:x].user == g2[:x].user )
 
       g[:o].user = User.new( "john_doe", 1234 )
   
       g2 = Vying.load( g.to_format( :json ), :json )
 
-      assert_equal( g[:o].user, g2[:o].user )
+      assert( g[:o].user == g2[:o].user )
       assert_equal( g[:o].username, g2[:o].username )
       assert_equal( g[:o].user.id, g2[:o].user.id )
     end

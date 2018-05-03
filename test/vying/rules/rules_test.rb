@@ -161,9 +161,12 @@ module RulesTests
 
       if rules.score_determines_outcome?
         assert( misere_rules.score_determines_outcome? )
-        assert_equal( rules.highest_score_determines_winner?,
+        # We may have nils in some cases, but we still want to verify
+        # this flip-flop. Using an assert instead of assert_equal avoids
+        # a minitest warning.
+        assert( rules.highest_score_determines_winner? ==
                       misere_rules.lowest_score_determines_winner? )
-        assert_equal( rules.lowest_score_determines_winner?,
+        assert( rules.lowest_score_determines_winner? ==
                       misere_rules.highest_score_determines_winner? )
       end
 
