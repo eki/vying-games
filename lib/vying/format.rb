@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2007-08, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
@@ -15,14 +17,14 @@ module Vying
     #   <Dir from path>/**/formats/*.rb
     #
 
-    def self.require_all( path=$: )
+    def self.require_all(path=$LOAD_PATH)
       required = []
       path.each do |d|
-        Dir.glob( "#{d}/**/formats/*.rb" ) do |f|
+        Dir.glob("#{d}/**/formats/*.rb") do |f|
           f =~ /(.*)\/formats\/([\w\d]+\.rb)$/
-          if ! required.include?( $2 ) && !f["_test"]
-            required << $2
-            require "#{f}"
+          if !required.include?(Regexp.last_match(2)) && !f['_test']
+            required << Regexp.last_match(2)
+            require f.to_s
           end
         end
       end
@@ -32,7 +34,7 @@ module Vying
 
     # When a subclass extends Format, it is added to @@format_list.
 
-    def self.inherited( child )
+    def self.inherited(child)
       @@format_list << child
     end
 
@@ -44,26 +46,25 @@ module Vying
 
     # Find a specific Format by type
 
-    def self.find( type )
+    def self.find(type)
       list.find { |f| f.type == type }
     end
 
   end
 
-  def self.load( string, type )
-    format = Format.find( type )
+  def self.load(string, type)
+    format = Format.find(type)
 
-    raise "Couldn't find format for type #{type}"  unless format
+    raise "Couldn't find format for type #{type}" unless format
 
-    format.new.load( string )
+    format.new.load(string)
   end
 
-  def self.dump( game, type )
-    format = Format.find( type )
+  def self.dump(game, type)
+    format = Format.find(type)
 
-    raise "Couldn't find format for type #{type}"  unless format
+    raise "Couldn't find format for type #{type}" unless format
 
-    format.new.dump( game )
+    format.new.dump(game)
   end
 end
-

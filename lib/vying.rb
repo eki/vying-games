@@ -1,15 +1,17 @@
+# frozen_string_literal: true
+
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
 # Container for constants related to the vying library
 
 module Vying
-  
+
   # Returns the version of this vying codebase.
 
   def self.version
-    v = const_defined?( :VERSION ) ? VERSION : "git master"
-    "#{v}"
+    v = const_defined?(:VERSION) ? VERSION : 'git master'
+    v.to_s
   end
 
   # Returns a list of methods defined in extensions.
@@ -29,26 +31,26 @@ module Vying
     (@exts || {}).keys
   end
 
-  # Returns a list of the extensions that were loaded for a given type.  
+  # Returns a list of the extensions that were loaded for a given type.
   # Get the extension type from Vying.ext_types.
 
-  def self.extensions( type )
+  def self.extensions(type)
     (@exts || {})[type]
   end
 
   # Load the given extension.
 
-  def self.load_extension( type, path )
+  def self.load_extension(type, path)
     @exts ||= {}
 
     # Track what methods are added by the extension.
 
     Module.class_eval do
-      def singleton_method_added( name )
+      def singleton_method_added(name)
         Vying.defined_in_extension << "#{self}.#{name}"
       end
- 
-      def method_added( name )
+
+      def method_added(name)
         unless name == :method_added
           Vying.defined_in_extension << "#{self}##{name}"
         end
@@ -65,8 +67,11 @@ module Vying
     # Stop tracking.
 
     Module.class_eval do
-      def method_added( n ); end
-      def singleton_method_added( n ); end
+      def method_added(n)
+      end
+
+      def singleton_method_added(n)
+      end
     end
   end
 end
@@ -119,9 +124,8 @@ end
 
 # Load all SpecialMoves, Rules, Notations, and Bots
 
-Vying::SpecialMove.require_all( [File.dirname( __FILE__ )] )
-Vying::Rules.require_all( [File.dirname( __FILE__ )] )
-Vying::Notation.require_all( [File.dirname( __FILE__ )] )
-Vying::Format.require_all( [File.dirname( __FILE__ )] )
-Vying::Bot.require_all( [File.dirname( __FILE__ )] )
-
+Vying::SpecialMove.require_all([File.dirname(__FILE__)])
+Vying::Rules.require_all([File.dirname(__FILE__)])
+Vying::Notation.require_all([File.dirname(__FILE__)])
+Vying::Format.require_all([File.dirname(__FILE__)])
+Vying::Bot.require_all([File.dirname(__FILE__)])

@@ -1,4 +1,6 @@
 
+# frozen_string_literal: true
+
 module Search
 
   module Cache
@@ -8,17 +10,17 @@ module Search
     # out of it.
 
     class FallThrough
-      def include?( position, player, depth )
+      def include?(position, player, depth)
         false
       end
 
-      def get( position, player )
+      def get(position, player)
         nil
       end
 
-      def put( position, player, score, depth )
+      def put(position, player, score, depth)
         [score, depth]
-      end 
+      end
 
       def size
         0
@@ -27,7 +29,7 @@ module Search
 
     # CacheRecord is used by the Memory cache.
 
-    CacheRecord = Struct.new( :score, :distance, :hits )
+    CacheRecord = Struct.new(:score, :distance, :hits)
 
     # Cache search results in memory.
 
@@ -38,16 +40,16 @@ module Search
       # into the cache cause the limit to be exceeded the least often accessed
       # scores will be removed.
 
-      def initialize( limit=1000 )
+      def initialize(limit=1000)
         @cache, @limit = {}, limit
       end
 
       # Is there a score in this cache for the given [position,  player] that
       # meets the given depth requirement.
 
-      def include?( position, player, depth )
+      def include?(position, player, depth)
         args = [position, player]
-        @cache.key?( args ) && @cache[args].distance >= depth
+        @cache.key?(args) && @cache[args].distance >= depth
       end
 
       # How big is the cache right now?
@@ -67,7 +69,7 @@ module Search
       # The cache has no way of calculating the distance, it's given with
       # the score by #put.
 
-      def get( position, player )
+      def get(position, player)
         cr = @cache[[position, player]]
         if cr
           cr.hits += 1
@@ -78,11 +80,11 @@ module Search
       # Cache the given [score, distance] with [position, player] as the
       # key.  For a discussion of distance, see #get.
 
-      def put( position, player, score, distance )
-        old = @cache[[position,player]]
+      def put(position, player, score, distance)
+        old = @cache[[position, player]]
 
-        if ! old || old.distance < distance
-          @cache[[position, player]] = CacheRecord.new( score, distance, 0 )
+        if !old || old.distance < distance
+          @cache[[position, player]] = CacheRecord.new(score, distance, 0)
         end
 
         expire
@@ -99,7 +101,7 @@ module Search
         hit_limit = 1
 
         until size < limit - limit / 10
-          @cache.reject! { |k,cr| cr.hits < hit_limit }
+          @cache.reject! { |k, cr| cr.hits < hit_limit }
           hit_limit += 1
         end
       end
@@ -120,4 +122,3 @@ module Search
   end
 
 end
-

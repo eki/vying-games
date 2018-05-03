@@ -1,9 +1,10 @@
 
+# frozen_string_literal: true
+
 require_relative '../test_helper'
 
 class TestVying < Minitest::Test
   def test_version
-    assert( Vying.version )
+    assert(Vying.version)
   end
 end
-

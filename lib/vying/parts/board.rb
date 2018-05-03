@@ -1,4 +1,6 @@
 
+# frozen_string_literal: true
+
 require 'vying/parts/board/pieces/counter'
 
 require 'vying/parts/board/coord'
@@ -27,4 +29,3 @@ require 'vying/parts/board/plugins/amazons'
 
 Vying.load_extension :java, 'vying_board_ext'
 Vying.load_extension :c,    'vying/c/parts/board/boardext'
-

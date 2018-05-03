@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
@@ -18,13 +20,13 @@ class Board::Rect < Board
   #   :directions  -  Some subset of [:n, :e, :w, :s, :ne, :nw, :se, :sw].
   #                   This value represents cell connectivity, and effects
   #                   the results of methods like Coords#neighbors.  Only valid
-  #                   if :cell_shape is :square.  The default is the full set 
+  #                   if :cell_shape is :square.  The default is the full set
   #                   of 8 directions.  If :cell_shape is :triangle, the
   #                   connectivity directions will vary for each cell.  See
   #                   Board#directions.
   #
 
-  def initialize( width, height, h={} )
+  def initialize(width, height, h={})
     @shape = :rect
 
     @width, @height = width, height
@@ -40,18 +42,17 @@ class Board::Rect < Board
       when :triangle
 
         if @directions
-          raise ":directions is not supported when :cell_shape is :triangle"
+          raise ':directions is not supported when :cell_shape is :triangle'
         end
 
-        @up_directions   = [:w,:e,:s]
-        @down_directions = [:n,:e,:w]
+        @up_directions   = [:w, :e, :s]
+        @down_directions = [:n, :e, :w]
 
       else
         raise "#{@cell_shape} is not a supported cell_shape for a rect Board"
     end
 
-    super( h )   
+    super(h)
   end
 
 end
-

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
@@ -27,26 +29,26 @@ module Board::Plugins::CustodialCapture
   # successfully captured.  It is possible that no pieces will be capture,
   # in which case p is still placed at coord c.
 
-  def custodial_capture( c, p, range=nil )
-    custodial( c, p, nil, range )
+  def custodial_capture(c, p, range=nil)
+    custodial(c, p, nil, range)
   end
 
-  # Will playing piece p at coord c result in a custodial capture?  The 
+  # Will playing piece p at coord c result in a custodial capture?  The
   # optional range can be used to restrict the capture test.
 
-  def custodial_capture?( c, p, range=nil )
-    a = directions.zip( coords.neighbors_nil( c ) )
-    a.each do |d,nc|
-      next if self[nc].nil? || self[nc] == p 
+  def custodial_capture?(c, p, range=nil)
+    a = directions.zip(coords.neighbors_nil(c))
+    a.each do |d, nc|
+      next if self[nc].nil? || self[nc] == p
 
       bt = [nc]
-      while (bt << coords.next( bt.last, d ))
+      while bt << coords.next(bt.last, d)
         break if self[bt.last].nil?
         break if range && bt.length - 1 < range.first && self[bt.last] == p
         next  if range && bt.length - 1 < range.first
         break if range && bt.length - 1 > range.last
 
-        return true if self[bt.last] == p 
+        return true if self[bt.last] == p
       end
     end
 
@@ -57,26 +59,25 @@ module Board::Plugins::CustodialCapture
   # the piece to place, what to replace captured pieces with, and the range
   # to effect.
 
-  def custodial( c, p, replacement=nil, range=nil )
+  def custodial(c, p, replacement=nil, range=nil)
     self[c] = p
 
     cap = []
-    a = directions.zip( coords.neighbors_nil( c ) )
-    a.each do |d,nc|
+    a = directions.zip(coords.neighbors_nil(c))
+    a.each do |d, nc|
       next if self[nc].nil? || self[nc] == p
 
       bt = [nc]
-      while (bt << coords.next( bt.last, d ))
+      while bt << coords.next(bt.last, d)
         break if self[bt.last].nil?
         break if range && bt.length - 1 < range.first && self[bt.last] == p
         next  if range && bt.length - 1 < range.first
         break if range && bt.length - 1 > range.last
 
-        if self[bt.last] == p
-          bt.pop
-          cap += bt
-          break
-        end
+        next unless self[bt.last] == p
+        bt.pop
+        cap += bt
+        break
       end
     end
 
@@ -90,4 +91,3 @@ module Board::Plugins::CustodialCapture
   private :custodial
 
 end
-

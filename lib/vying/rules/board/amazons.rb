@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
@@ -9,9 +11,9 @@ require 'vying'
 #
 # For detailed rules see:  http://vying.org/games/amazons
 
-Rules.create( "Amazons" ) do
-  name    "Amazons"
-  version "1.0.0"
+Rules.create('Amazons') do
+  name    'Amazons'
+  version '1.0.0'
 
   players :white, :black
 
@@ -19,41 +21,41 @@ Rules.create( "Amazons" ) do
     attr_reader :board, :lastc
 
     def init
-      @board = Board.square( 10, :plugins => [:amazons] )
+      @board = Board.square(10, plugins: [:amazons])
 
-      @board[:a4, :d1, :g1,:j4] = :white
-      @board[:a7,:g10,:d10,:j7] = :black
+      @board[:a4, :d1, :g1, :j4] = :white
+      @board[:a7, :g10, :d10, :j7] = :black
 
       @lastc = nil
     end
 
-    def move?( move )
+    def move?(move)
       cs = move.to_coords
       return false unless cs.length == 2
 
-      queens = board.occupied( turn )
+      queens = board.occupied(turn)
 
-      return false unless queens.include?( cs.first )
-      return false unless d = cs.first.direction_to( cs.last )
+      return false unless queens.include?(cs.first)
+      return false unless d = cs.first.direction_to(cs.last)
 
       ic = cs.first
-      while (ic = board.coords.next( ic, d ))
-        return false if !board[ic].nil?
+      while (ic = board.coords.next(ic, d))
+        return false unless board[ic].nil?
         break        if ic == cs.last
       end
 
-      return true
+      true
     end
 
     def has_moves
-      queens = board.occupied( turn )
-      queens.any? { |q| ! board.mobility[q].empty? } ? [turn] : []
+      queens = board.occupied(turn)
+      queens.any? { |q| !board.mobility[q].empty? } ? [turn] : []
     end
 
     def moves
       a = []
 
-      queens = board.occupied( turn )
+      queens = board.occupied(turn)
 
       if lastc.nil? || board[lastc] == :arrow
         queens.each do |q|
@@ -66,17 +68,17 @@ Rules.create( "Amazons" ) do
       a
     end
 
-    def apply!( move )
+    def apply!(move)
       coords = move.to_coords
 
       if lastc.nil? || board[lastc] == :arrow
-        board.move( coords.first, coords.last )
+        board.move(coords.first, coords.last)
       else
-        board.arrow( coords.last )
+        board.arrow(coords.last)
         rotate_turn
       end
 
-      @lastc = coords.last 
+      @lastc = coords.last
 
       self
     end
@@ -85,14 +87,12 @@ Rules.create( "Amazons" ) do
       has_moves.empty?
     end
 
-    def winner?( player )
+    def winner?(player)
       player != turn
     end
 
-    def score( player )
-      board.territory( player ).length
+    def score(player)
+      board.territory(player).length
     end
   end
-
 end
-

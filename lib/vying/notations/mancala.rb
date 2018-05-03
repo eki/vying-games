@@ -1,4 +1,6 @@
 
+# frozen_string_literal: true
+
 module Vying
   class MancalaNotation < Notation
 
@@ -18,19 +20,18 @@ module Vying
            'C' => 'd1',
            'D' => 'c1',
            'E' => 'b1',
-           'F' => 'a1' }
+           'F' => 'a1' }.freeze
 
-    def to_move( s )
+    def to_move(s)
       TO[s] ? TO[s] : s
     end
 
-    FROM = [ ['F', 'E', 'D', 'C', 'B', 'A'],
-             ['a', 'b', 'c', 'd', 'e', 'f'] ]
+    FROM = [%w(F E D C B A),
+             %w(a b c d e f)].freeze
 
-    def translate( move, player )
+    def translate(move, _player)
       Coord[move] ? FROM[move.y][move.x] : move
     end
 
   end
 end
-

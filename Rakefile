@@ -1,4 +1,6 @@
 
+# frozen_string_literal: true
+
 require 'bundler/gem_tasks'
 require 'rake/testtask'
 require 'rubocop/rake_task'
@@ -19,14 +21,14 @@ namespace :ci do
   task check: %w(test rubocop)
 end
 
-CLEAN.include( 'ext/**/*.o', 'ext/**/*.so', 'ext/**/*.class', 'ext/**/*.jar',
-  'ext/**/*.bundle' )
-CLOBBER.include( 'pkg', 'doc/api', 'doc/coverage' )
+CLEAN.include('ext/**/*.o', 'ext/**/*.so', 'ext/**/*.class', 'ext/**/*.jar',
+  'ext/**/*.bundle')
+CLOBBER.include('pkg', 'doc/api', 'doc/coverage')
 
-task :"test_sans_ext" => [:clobber, :test, :compile]
+task "test_sans_ext": [:clobber, :test, :compile]
 
-desc "compile the C extension part of the vying library"
-task :compile do 
-  ruby = ($0 =~ /rake(.+)/) ? "ruby#{$1}" : "ruby"
-  sh %{cd ext/vying/c/parts/board && #{ruby} ./extconf.rb && make}
+desc 'compile the C extension part of the vying library'
+task :compile do
+  ruby = $PROGRAM_NAME =~ /rake(.+)/ ? "ruby#{Regexp.last_match(1)}" : 'ruby'
+  sh "cd ext/vying/c/parts/board && #{ruby} ./extconf.rb && make"
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
@@ -20,30 +22,30 @@ module Vying
 
     attr_accessor :time_limit
 
-    alias_method :game_id, :id
+    alias game_id id
 
     # Create a game from the given Rules subclass, and an optional seed.  If
-    # the game has random elements and a seed is not provided, one will be 
+    # the game has random elements and a seed is not provided, one will be
     # created.  If you'd like to replay a game with random elements you must
     # provide the original seed.
 
-    def initialize( rules, seed=nil, options={} )
+    def initialize(rules, seed=nil, options={})
       if seed.class == Hash
         seed, options = nil, seed
       end
 
-      @rules = Rules.find( rules )
+      @rules = Rules.find(rules)
 
       raise "#{rules} not supported!" if rules.nil?
 
-      @history = History.new( rules, seed, options )
+      @history = History.new(rules, seed, options)
       @options = history.options.dup.freeze
-      @players = history.first.players.map { |p| Player.new( p, self ) }
+      @players = history.first.players.map { |p| Player.new(p, self) }
 
       if rules.notation
-        @notation = Notation.find( self.rules.notation ).new( self )
+        @notation = Notation.find(self.rules.notation).new(self)
       else
-        @notation = Notation.new( self )
+        @notation = Notation.new(self)
       end
 
       yield self if block_given?
@@ -54,20 +56,20 @@ module Vying
     # though.  Be careful to dup the history if it's already in use by another
     # Game.  This happens automatically if you pass a Game to Game.replay.
 
-    def Game.adopt_history( history )
+    def self.adopt_history(history)
       g = allocate
-      g.instance_variable_set( "@history", history )
-      g.instance_variable_set( "@rules", history.rules )
-      g.instance_variable_set( "@seed", history.seed )
-      g.instance_variable_set( "@options", history.options.dup.freeze )
-      g.instance_variable_set( "@players", 
-        history.first.players.map { |p| Player.new( p, g ) } )
+      g.instance_variable_set('@history', history)
+      g.instance_variable_set('@rules', history.rules)
+      g.instance_variable_set('@seed', history.seed)
+      g.instance_variable_set('@options', history.options.dup.freeze)
+      g.instance_variable_set('@players',
+        history.first.players.map { |p| Player.new(p, g) })
 
       if history.rules.notation
-        g.instance_variable_set( "@notation", 
-          Notation.find( history.rules.notation ).new( g ) )
+        g.instance_variable_set('@notation',
+          Notation.find(history.rules.notation).new(g))
       else
-        g.instance_variable_set( "@notation", Notation.new( g ) )
+        g.instance_variable_set('@notation', Notation.new(g))
       end
 
       g
@@ -85,21 +87,21 @@ module Vying
     # #history, Game.adopt_history will be used to setup the game.  Instead
     # of #rules, #seed, and #sequence.  This is the preferred method of
     # replaying a game.  The other methods (#user, #id, #time_limit) are still
-    # used.  The #last_move_at method is only used when a history is 
+    # used.  The #last_move_at method is only used when a history is
     # unavailable.
 
-    def Game.replay( results )
-      if results.respond_to?( :history ) && results.history
+    def self.replay(results)
+      if results.respond_to?(:history) && results.history
         h = results.class == Game ? results.history.dup : results.history
-        g = Game.adopt_history( h )
+        g = Game.adopt_history(h)
 
       else
 
-        if results.respond_to?( :options )
-          g = Game.new( results.rules, results.seed, 
-                        (results.options || {}).dup )
+        if results.respond_to?(:options)
+          g = Game.new(results.rules, results.seed,
+                        (results.options || {}).dup)
         else
-          g = Game.new( results.rules, results.seed )
+          g = Game.new(results.rules, results.seed)
         end
 
         g.history.no_timestamps = true
@@ -109,36 +111,36 @@ module Vying
       end
 
       results.rules.players.each do |p|
-        if results.respond_to?( :user )
-          u = results.user( p )
+        if results.respond_to?(:user)
+          u = results.user(p)
           g[p].user = u.to_user if u
         end
       end
 
-      if results.respond_to?( :id )
-        g.instance_variable_set( "@id", results.id )
+      if results.respond_to?(:id)
+        g.instance_variable_set('@id', results.id)
       end
 
-      if results.respond_to?( :unrated )
-        g.instance_variable_set( "@unrated", results.unrated? )
+      if results.respond_to?(:unrated)
+        g.instance_variable_set('@unrated', results.unrated?)
       end
 
-      if results.respond_to?( :time_limit )
+      if results.respond_to?(:time_limit)
         g.time_limit = results.time_limit
       end
-    
-      if results.respond_to?( :created_at )
-        g.history.instance_variable_set( "@created_at", results.created_at )
+
+      if results.respond_to?(:created_at)
+        g.history.instance_variable_set('@created_at', results.created_at)
       end
-    
-      if results.respond_to?( :last_move_at )
+
+      if results.respond_to?(:last_move_at)
         m = g.history.moves.last
         if m && m.at.nil?
-          g.history.moves[-1] = m.stamp( results.last_move_at )
+          g.history.moves[-1] = m.stamp(results.last_move_at)
         end
-        g.history.instance_variable_set( "@last_move_at", results.last_move_at )
+        g.history.instance_variable_set('@last_move_at', results.last_move_at)
       end
-    
+
       g
     end
 
@@ -149,10 +151,10 @@ module Vying
       history.sequence
     end
 
-    # Note, this is different from history.moves.last.at in this sense: 
-    # sometimes a move will not leave an entry in history (for example, undo 
-    # which actually *removes* entries).  When this happens 
-    # history.last_move_at will be out of sync with the timestamp of the 
+    # Note, this is different from history.moves.last.at in this sense:
+    # sometimes a move will not leave an entry in history (for example, undo
+    # which actually *removes* entries).  When this happens
+    # history.last_move_at will be out of sync with the timestamp of the
     # last move in history.
 
     def last_move_at
@@ -170,10 +172,10 @@ module Vying
     # #expiration, #time_up?, and #timeout all return nil if timed? is false.
 
     def timed?
-      !! time_limit
+      !!time_limit
     end
 
-    # How much time is remaining in this game?  This returns a float 
+    # How much time is remaining in this game?  This returns a float
     # representing the seconds remaining in the game.
 
     def time_remaining
@@ -184,7 +186,7 @@ module Vying
     # as moves are made (or if the time_limit were to be changed.
 
     def expiration
-      Time.at( last_move_at + time_limit ) if timed?
+      Time.at(last_move_at + time_limit) if timed?
     end
 
     # Has a player run out of time?  That is to say, the game is timed and
@@ -203,7 +205,7 @@ module Vying
     end
 
     # This method will end the game if it is timed and a player has run out
-    # of time (according to #time_up?). 
+    # of time (according to #time_up?).
     #
     # This method is not called automatically.  That is, if a timed game is
     # started, #append will continue to accepted moves, even if a player has
@@ -219,11 +221,11 @@ module Vying
     # Missing method calls are passed on to the last position in the history,
     # if it responds to the call.
 
-    def method_missing( method_id, *args )
-      if history.last.respond_to?( method_id )
-        history.last.send( method_id, *args )
-      elsif rules.respond_to?( method_id )
-        rules.send( method_id, *args )
+    def method_missing(method_id, *args)
+      if history.last.respond_to?(method_id)
+        history.last.send(method_id, *args)
+      elsif rules.respond_to?(method_id)
+        rules.send(method_id, *args)
       else
         super
       end
@@ -231,13 +233,13 @@ module Vying
 
     # We respond to any methods provided by the last position in history.
 
-    def respond_to?( method_id, include_all=false )
+    def respond_to?(method_id, include_all=false)
       return false if method_id == :_dump
 
       # double !! to force false instead of nil
-      super || 
-        !!(history && history.last.respond_to?( method_id, include_all )) ||
-        !!(rules && rules.respond_to?( method_id, include_all ))
+      super ||
+        !!(history && history.last.respond_to?(method_id, include_all)) ||
+        !!(rules && rules.respond_to?(method_id, include_all))
     end
 
     # Append a move to the Game's sequence of moves.  Whatever token is used
@@ -245,14 +247,14 @@ module Vying
     # common to use the more versatile Game#<< method.  However, append must
     # be used if the player argument cannot be inferred.  (Or, use Player#<<)
 
-    def append( move, player=nil )
-      m = wrap_move( move, player )
+    def append(move, player=nil)
+      m = wrap_move(move, player)
 
-      if m && m.valid_for?( self, player )
-        m.apply_to( self )
+      if m && m.valid_for?(self, player)
+        m.apply_to(self)
 
-        if check_cycles? && ! m.special?
-          (0...(history.length-1)).each do |i|
+        if check_cycles? && !m.special?
+          (0...(history.length - 1)).each do |i|
             history.last.cycle_found if history[i] == history.last
           end
         end
@@ -266,10 +268,10 @@ module Vying
     # Append a list of moves to this game.  Calls Game#append for each move
     # in the given list.
 
-    def append_list( moves )
+    def append_list(moves)
       i = 0
       begin
-        moves.each { |move| append( move ); i += 1 }
+        moves.each { |move| append(move); i += 1 }
       rescue
         i.times { undo }
         raise
@@ -280,11 +282,11 @@ module Vying
     # The most versatile way of applying moves to this Game.  It will accept
     # an Enumerable list of moves, or a single move.
 
-    def <<( moves )
+    def <<(moves)
       if moves.kind_of? Enumerable
-        return append_list( moves )
+        append_list(moves)
       else
-        return append( moves )
+        append(moves)
       end
     end
 
@@ -292,22 +294,22 @@ module Vying
     # to validate the given move, though it may have to in order to determine
     # the player if it's nil.
 
-    def wrap_move( move, player=nil )
-      return move                     if move.kind_of?( Move )
+    def wrap_move(move, player=nil)
+      return move                     if move.kind_of?(Move)
       return SpecialMove[move]        if SpecialMove[move]
-      return Move.new( move, player ) if player
-    
-      hm = has_moves
-   
-      return Move.new( move, hm.first ) if hm.length == 1 
+      return Move.new(move, player) if player
 
-      ps = hm.select { |p| move?( move, p ) }
+      hm = has_moves
+
+      return Move.new(move, hm.first) if hm.length == 1
+
+      ps = hm.select { |p| move?(move, p) }
 
       if ps.length > 1
         raise "'#{move}' is ambiguous (available to #{ps.inspect})"
       end
 
-      Move.new( move, ps.first ) if ps.length == 1
+      Move.new(move, ps.first) if ps.length == 1
     end
 
     # Undo a single move.  This returns [position, move, move_by] that have been
@@ -335,13 +337,13 @@ module Vying
     #   g[:right] << 20
     #
 
-    def []( p )
+    def [](p)
       players.find { |player| player.name == p }
     end
 
     # Assign a user via Player#user=.  This is deprecated.  Don't use it.
 
-    def []=( p, u )
+    def []=(p, u)
       puts "Warning: Don't use Game#[]=  !!!"
       self[p].user = u
     end
@@ -353,7 +355,7 @@ module Vying
     #   g[:black].user
     #
 
-    def user( p )
+    def user(p)
       self[p].user
     end
 
@@ -396,87 +398,80 @@ module Vying
     # game or no players are #ready?.
 
     def step
-
       # Accept or reject offered draw
       if allow_draws_by_agreement? && draw_offered?
-        players.each do |p| 
-          if p.user && p.user.ready? && p.has_moves?
-          
-            position = history.last.censor( p.name )
-            if p.user.accept_draw?( sequence, position, p.name )
-              move = "draw_accepted_by_#{p.name}"
-            else
-              move = "reject_draw"
-            end
+        players.each do |p|
+          next unless p.user && p.user.ready? && p.has_moves?
 
-            append( move, p.name )
-            return [move, p.name]
+          position = history.last.censor(p.name)
+          if p.user.accept_draw?(sequence, position, p.name)
+            move = "draw_accepted_by_#{p.name}"
+          else
+            move = 'reject_draw'
           end
+
+          append(move, p.name)
+          return [move, p.name]
         end
       end
 
-      # Accept or reject undo request 
+      # Accept or reject undo request
       if undo_requested?
-        players.each do |p| 
-          if p.user && p.user.ready? && p.has_moves?
-          
-            position = history.last.censor( p.name )
-            if p.user.accept_undo?( sequence, position, p.name )
-              move = "undo_accepted_by_#{p.name}"
-            else
-              move = "reject_undo"
-            end
+        players.each do |p|
+          next unless p.user && p.user.ready? && p.has_moves?
 
-            append( move, p.name )
-            return [move, p.name]
+          position = history.last.censor(p.name)
+          if p.user.accept_undo?(sequence, position, p.name)
+            move = "undo_accepted_by_#{p.name}"
+          else
+            move = 'reject_undo'
           end
+
+          append(move, p.name)
+          return [move, p.name]
         end
 
         return self
       end
 
-
       player_names.each do |p|
-        if self[p].user && self[p].user.ready?
-          position, move = history.last.censor( p ), nil
+        next unless self[p].user && self[p].user.ready?
+        position, move = history.last.censor(p), nil
 
-          # Handle draw offers
-          if allow_draws_by_agreement? && 
-             self[p].user.offer_draw?( sequence, position, p )
-            move = "draw_offered_by_#{p}"
-          end
+        # Handle draw offers
+        if allow_draws_by_agreement? &&
+           self[p].user.offer_draw?(sequence, position, p)
+          move = "draw_offered_by_#{p}"
+        end
 
-          # Handle undo requests 
-          if self[p].user.request_undo?( sequence, position, p )
-            move = "undo_requested_by_#{p}"
-          end
+        # Handle undo requests
+        if self[p].user.request_undo?(sequence, position, p)
+          move = "undo_requested_by_#{p}"
+        end
 
-          # Ask for resignation
-          if self[p].user.resign?( sequence, position, p )
-            move = "#{p}_resigns"
-          end
+        # Ask for resignation
+        if self[p].user.resign?(sequence, position, p)
+          move = "#{p}_resigns"
+        end
 
-          unless move.nil?
-            append( move, p )
-            return [move, p]
-          end
+        unless move.nil?
+          append(move, p)
+          return [move, p]
         end
       end
 
       has_moves.each do |p|
-        if player_names.include?( p )
-          if self[p].user && self[p].user.ready?
-            position = history.last.censor( p )
+        next unless player_names.include?(p)
+        next unless self[p].user && self[p].user.ready?
+        position = history.last.censor(p)
 
-            # Ask for an move
-            move = self[p].user.select( sequence, position, p )
-            if move?( move, p )
-              append( move, p )
-              return [move, p]
-            else
-              raise "#{self[p].username} attempted invalid move: #{move}"
-            end
-          end
+        # Ask for an move
+        move = self[p].user.select(sequence, position, p)
+        if move?(move, p)
+          append(move, p)
+          return [move, p]
+        else
+          raise "#{self[p].username} attempted invalid move: #{move}"
         end
       end
 
@@ -494,24 +489,24 @@ module Vying
     # may be meaningless if Game#final? is not true.  This method accepts either
     # a player or a User.
 
-    def winner?( player )
-      history.last.winner?( who?( player ) )
+    def winner?(player)
+      history.last.winner?(who?(player))
     end
 
     # Is the given player the loser of this game?  The results of this method
     # may be meaningless if Game#final? is not true.  This method accepts either
     # a player or a User.
 
-    def loser?( player )
-      history.last.loser?( who?( player ) )
+    def loser?(player)
+      history.last.loser?(who?(player))
     end
 
     # Returns the score for the given player or user.  Shouldn't be used
     # without first checking #has_score?.  This method accepts either a
     # player or a User.
 
-    def score( player )
-      history.last.score( who?( player ) )
+    def score(player)
+      history.last.score(who?(player))
     end
 
     # Is the given move valid for the position this Game is currently in?  If
@@ -519,22 +514,22 @@ module Vying
     # player.  This method passes through to the last position in the game's
     # history, but accepts either or a player or a User.
 
-    def move?( move, player=nil )
-      history.last.move?( move, who?( player ) )
+    def move?(move, player=nil)
+      history.last.move?(move, who?(player))
     end
 
     # Does the given player have any moves?  If no player is given all valid
     # moves are returned.  If given value is passed through #who?, so this
     # method accepts either a player or a User.
 
-    def moves( player=nil )
-      history.last.moves( who?( player ) )
+    def moves(player=nil)
+      history.last.moves(who?(player))
     end
 
     # Returns true if the given player has any valid moves.
 
-    def has_moves?( player )
-      has_moves.include?( who?( player ) )
+    def has_moves?(player)
+      has_moves.include?(who?(player))
     end
 
     # You shouldn't rely on turn.  Use #has_moves instead.  Game#turn provides
@@ -548,44 +543,44 @@ module Vying
 
     # Who can play the given move?
 
-    def who_can_play?( move )
-      has_moves.select { |p| move?( move, p ) }
+    def who_can_play?(move)
+      has_moves.select { |p| move?(move, p) }
     end
 
     # Returns a list of valid special moves (resign, offer draw, and the like).
 
-    def special_moves( player=nil )
-      SpecialMove.generate_for( self, player )
+    def special_moves(player=nil)
+      SpecialMove.generate_for(self, player)
     end
 
     # Is the given move a valid special move?
 
-    def special_move?( move, player=nil )
-      if move.kind_of?( Move ) && move.special?
-        move.valid_for?( self, player )
+    def special_move?(move, player=nil)
+      if move.kind_of?(Move) && move.special?
+        move.valid_for?(self, player)
       elsif move = SpecialMove[move]
-        move.valid_for?( self, player )
+        move.valid_for?(self, player)
       end
     end
 
     # Who can make special moves?
 
     def has_special_moves
-      player_names.select { |p| ! special_moves( p ).empty? }    
+      player_names.reject { |p| special_moves(p).empty? }
     end
 
     # Can the given player make a special move?
 
-    def has_special_moves?( player )
-      ! special_moves( player ).empty?
+    def has_special_moves?(player)
+      !special_moves(player).empty?
     end
 
     # Have the players swap sides.  This is a special move is available if
     # the game supports the pie_rule.
 
     def swap
-      if special_move?( "swap" )
-        self[player_names.first].user, self[player_names.last].user = 
+      if special_move?('swap')
+        self[player_names.first].user, self[player_names.last].user =
           self[player_names.last].user, self[player_names.first].user
       end
     end
@@ -597,7 +592,7 @@ module Vying
     def swapped?
       i = 0
       until i >= sequence.length
-        return i     if history.sequence[i] == "swap"
+        return i     if history.sequence[i] == 'swap'
         return false if history.move_by[i]  != player_names.first
         i += 1
       end
@@ -608,7 +603,7 @@ module Vying
     def accept_draw
       if draw_accepted?
         undo while draw_offered?
-        history.append( SpecialMove["draw"] )
+        history.append(SpecialMove['draw'])
       end
     end
 
@@ -616,7 +611,7 @@ module Vying
       undo while history.last.draw_offered?
     end
 
-    alias_method :cancel_draw, :reject_draw
+    alias cancel_draw reject_draw
 
     def accept_undo
       if undo_accepted?
@@ -629,26 +624,26 @@ module Vying
       undo while history.last.undo_requested?
     end
 
-    alias_method :cancel_undo, :reject_undo
+    alias cancel_undo reject_undo
 
     # The user for the given player withdraws the game.  This is the method
     # that's executed for special moves like <player>_withdraws.
 
-    def withdraw( player )
+    def withdraw(player)
       self[player.to_sym].user = nil
     end
 
     # The user for the given player is kicked from the game.  This is the
     # method that's executed for special moves like kick_<player>.
 
-    def kick( player )
+    def kick(player)
       self[player.to_sym].user = nil
     end
 
     # Takes a User and returns which player he/she is.  If given a player
     # returns that player.
 
-    def who?( user )
+    def who?(user)
       return nil if user.nil?
 
       return user if user.class == Symbol
@@ -673,7 +668,7 @@ module Vying
     end
 
     # Abbreviated inspect string for this game.
- 
+
     def inspect
       "#<Game #{id} rules: '#{rules}' description: '#{description}'>"
     end
@@ -681,48 +676,48 @@ module Vying
     # Save this game to the specified format.  See Format.list for available
     # formats.
 
-    def to_format( type )
-      Vying.dump( self, type )
+    def to_format(type)
+      Vying.dump(self, type)
     end
 
     # Provides a string describing the matchup.  For example:
     #
     #   eki (black) defeated SiriusBot (white), 34-30
     #
-    # This depends on the user object's to_s method returning something 
+    # This depends on the user object's to_s method returning something
     # reasonable like a username.
 
     def description
       if final?
         if draw?
-          s = players.join( " and " )
-          s += " played to a draw"
-          s += " (by agreement)" if draw_by_agreement?
+          s = players.join(' and ')
+          s += ' played to a draw'
+          s += ' (by agreement)' if draw_by_agreement?
           s
         else
 
-          winners = players.select { |p| p.winner? }
-          losers  = players.select { |p| p.loser? }
+          winners = players.select(&:winner?)
+          losers  = players.select(&:loser?)
 
-          ws = winners.join( " and " )
-          ls = losers.join( " and " )
+          ws = winners.join(' and ')
+          ls = losers.join(' and ')
 
           s = "#{ws} defeated #{ls}"
 
           if has_score?
-            ss = (winners+losers).map { |p| "#{p.score}" }.join( "-" )
+            ss = (winners + losers).map { |p| p.score.to_s }.join('-')
             s = "#{s}, #{ss}"
           end
 
           s += " (#{self[resigned_by].user} resigns)"   if resigned?
-          s += " (time exceeded)"                       if time_exceeded?
+          s += ' (time exceeded)'                       if time_exceeded?
           s
         end
       else
-        s = players.join( " vs " )
+        s = players.join(' vs ')
 
         if has_score?
-          s = "#{s} (#{players.map { |p| p.score }.join( '-' )})"
+          s = "#{s} (#{players.map(&:score).join('-')})"
         end
 
         s
@@ -733,5 +728,4 @@ end
 
 # For convenience make Game a top-level constant
 
-Kernel.const_set( "Game", Vying::Game ) unless Kernel.const_defined?( "Game" )
-
+Kernel.const_set('Game', Vying::Game) unless Kernel.const_defined?('Game')

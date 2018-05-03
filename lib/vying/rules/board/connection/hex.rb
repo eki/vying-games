@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2007-08, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
@@ -7,13 +9,13 @@ require 'vying'
 #
 # For detailed rules see:  http://vying.org/games/hex
 
-Rules.create( "Hex" ) do
-  name    "Hex"
-  version "0.1.0"
+Rules.create('Hex') do
+  name    'Hex'
+  version '0.1.0'
 
   players :red, :blue
 
-  option :board_size, :default => 11, :values => (9..19).to_a
+  option :board_size, default: 11, values: (9..19).to_a
 
   pie_rule
 
@@ -24,26 +26,26 @@ Rules.create( "Hex" ) do
 
     def init
       length = @options[:board_size]
-      @board = Board.rhombus( length, length, :plugins => [:connection] )
+      @board = Board.rhombus(length, length, plugins: [:connection])
     end
 
     def moves
-      return []  if final?
+      return [] if final?
 
       board.unoccupied
     end
 
-    def apply!( move )
+    def apply!(move)
       board[move] = turn
       rotate_turn
       self
     end
 
     def final?
-      players.any? { |p| winner?( p ) }
+      players.any? { |p| winner?(p) }
     end
 
-    def winner?( player )
+    def winner?(player)
       case player
         when :red
           board.groups[player].any? do |group|
@@ -58,6 +60,4 @@ Rules.create( "Hex" ) do
       end
     end
   end
-
 end
-

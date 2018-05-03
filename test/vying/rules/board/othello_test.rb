@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../../test_helper'
 
 class TestOthello < Minitest::Test
@@ -8,44 +10,43 @@ class TestOthello < Minitest::Test
   end
 
   def test_info
-    assert_equal( "Othello", rules.name )
+    assert_equal('Othello', rules.name)
   end
 
   def test_players
-    assert_equal( [:black,:white], rules.new.players )
+    assert_equal([:black, :white], rules.new.players)
   end
 
   def test_initialize
-    g = Game.new( rules )
+    g = Game.new(rules)
 
-    b = Board.square( 8, :plugins => [:custodial_flip] )
+    b = Board.square(8, plugins: [:custodial_flip])
 
-    b[3,3] = b[4,4] = :white
-    b[3,4] = b[4,3] = :black
+    b[3, 3] = b[4, 4] = :white
+    b[3, 4] = b[4, 3] = :black
 
-    assert_equal( b, g.board )
-    assert_equal( :black, g.turn )
+    assert_equal(b, g.board)
+    assert_equal(:black, g.turn)
   end
 
   def test_moves
-    g = Game.new( rules )
+    g = Game.new(rules)
     moves = g.moves
 
-    assert_equal( ['d3','c4','f5','e6'].sort, moves.map { |m| m.to_s }.sort )
+    assert_equal(%w(d3 c4 f5 e6).sort, moves.map(&:to_s).sort)
 
     g << g.moves.first until g.final?
 
-    refute_equal( g.history[0], g.history.last )
+    refute_equal(g.history[0], g.history.last)
   end
 
   def test_has_score
-    g = Game.new( rules )
+    g = Game.new(rules)
     g << g.moves.first
 
-    assert( g.has_score? )
-    assert_equal( 4, g.score( :black ) )
-    assert_equal( 1, g.score( :white ) )
+    assert(g.has_score?)
+    assert_equal(4, g.score(:black))
+    assert_equal(1, g.score(:white))
   end
 
 end
-

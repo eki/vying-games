@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
@@ -6,30 +8,30 @@ require 'vying/memoize'
 class Card
   include Comparable
 
-  SUITS = [:clubs,:spades,:diamonds,:hearts]
-  RANKS = [2,3,4,5,6,7,8,9,:ten,:jack,:queen,:king,:ace]
+  SUITS = [:clubs, :spades, :diamonds, :hearts].freeze
+  RANKS = [2, 3, 4, 5, 6, 7, 8, 9, :ten, :jack, :queen, :king, :ace].freeze
 
-  SUIT_COLORS = { :clubs => :black, :spades => :black,
-                  :diamonds => :red, :hearts => :red }
+  SUIT_COLORS = { clubs: :black, spades: :black,
+                  diamonds: :red, hearts: :red }.freeze
 
   RANK_PIPS = { 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7,
-                8 => 8, 9 => 9, :ten => 10, :ace => 1 }
+                8 => 8, 9 => 9, :ten => 10, :ace => 1 }.freeze
 
-  FACE_RANKS = [:jack,:queen,:king]
+  FACE_RANKS = [:jack, :queen, :king].freeze
 
   attr_reader :suit, :rank, :color, :pips
 
-  def initialize( s, r, c=nil, p=nil )
+  def initialize(s, r, c=nil, p=nil)
     @suit, @rank = s, r
     @color = c || SUIT_COLORS[s]
-    @pips  = p ||   RANK_PIPS[r] || 0
+    @pips  = p || RANK_PIPS[r] || 0
   end
 
-  def Card.[]( s )
+  def self.[](s)
     s.to_s =~ /(.)(.)/
-    suit = SUITS.select { |s| s.to_s[0..0].upcase == $1 }
-    rank = RANKS.select { |r| r.to_s[0..0].upcase == $2 }
-    Card.new( suit.first, rank.first )
+    suit = SUITS.select { |s| s.to_s[0..0].upcase == Regexp.last_match(1) }
+    rank = RANKS.select { |r| r.to_s[0..0].upcase == Regexp.last_match(2) }
+    Card.new(suit.first, rank.first)
   end
 
   class << self
@@ -38,19 +40,19 @@ class Card
     memoize :[]
   end
 
-  ALL = SUITS.map { |s| RANKS.map { |r| Card.new( s, r ) } }.flatten!
+  ALL = SUITS.map { |s| RANKS.map { |r| Card.new(s, r) } }.flatten!
 
   def value?
     case rank
       when :king  then 13
       when :queen then 12
       when :jack  then 11
-      when :ace   then 14  # or should we make this 1?
+      when :ace   then 14 # or should we make this 1?
       else pips
     end
   end
 
-  def <=>( card )
+  def <=>(card)
     tc = (color.to_s <=> card.color.to_s)
     return tc if tc != 0
 
@@ -60,7 +62,7 @@ class Card
     card.value? - value?
   end
 
-  def eql?( card )
+  def eql?(card)
     self == card
   end
 
@@ -81,7 +83,7 @@ end
 class Deck
   attr_reader :cards, :rng
 
-  def initialize( cards=Card::ALL.dup, rng=Random::MersenneTwister.new )
+  def initialize(cards=Card::ALL.dup, rng=Random::MersenneTwister.new)
     @cards = cards
     @rng = rng
   end
@@ -91,14 +93,13 @@ class Deck
     self
   end
 
-  def deal( hands, num=:all )
+  def deal(hands, num=:all)
     num = cards.size / hands if num == :all
-    tmp = cards.slice!(0, num*hands)
+    tmp = cards.slice!(0, num * hands)
     (0...hands).map do |i|
-      last, a = num*hands, []
-      (i...last).step( hands ) { |j| a << tmp[j] }
+      last, a = num * hands, []
+      (i...last).step(hands) { |j| a << tmp[j] }
       a
     end
   end
 end
-

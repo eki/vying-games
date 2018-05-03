@@ -1,4 +1,6 @@
 
+# frozen_string_literal: true
+
 module Vying
   class Position
 
@@ -12,7 +14,7 @@ module Vying
 
     attr_reader :players, :seed, :rng, :options
 
-    # Creates the starting position in a game.  
+    # Creates the starting position in a game.
 
     # The seed parameter provides repeatability of positions that involve
     # random elements.  If Rules#random? is true, @seed and @rng will be
@@ -21,7 +23,7 @@ module Vying
     # The options hash should already be validated as being correct.  Further,
     # defaults should already be merged in (ie, no options should be missing).
     #
-    # Rules provides the definition of the options, and Rules#start will 
+    # Rules provides the definition of the options, and Rules#start will
     # handle validation.
     #
     # If the :number_of_players option is specified, @players is adjusted to
@@ -29,14 +31,14 @@ module Vying
     #
     # @turn is also set automatically to a copy of the @players array.
 
-    def initialize( seed=nil, opts={} )
+    def initialize(seed=nil, opts={})
       if seed.class == Hash
         seed, options = nil, seed
       end
 
-      if rules.random? 
-        @seed = seed.nil? ? Kernel.rand( 10000 ) : seed
-        @rng = RandomNumberGenerator.new( @seed )
+      if rules.random?
+        @seed = seed.nil? ? Kernel.rand(10_000) : seed
+        @rng = RandomNumberGenerator.new(@seed)
       end
 
       @options = opts
@@ -54,36 +56,35 @@ module Vying
     # default this does nothing.
 
     def init
-
     end
 
     # All positions should provide a deep copy via #dup.  This initialize_copy
     # attempts to provide such a deep copy by scanning a position's instance
     # variables and copying them.
 
-    def initialize_copy( original )
+    def initialize_copy(original)
       instance_variables.each do |iv|
-        if iv.to_s =~ /^@__.*_cache$/
-          instance_variable_set( iv, nil )
+        if /^@__.*_cache$/.match?(iv.to_s)
+          instance_variable_set(iv, nil)
         else
-          v = instance_variable_get( iv )
-          instance_variable_set( iv, v.deep_dup )
+          v = instance_variable_get(iv)
+          instance_variable_set(iv, v.deep_dup)
         end
       end
     end
 
-    # __dup will make a deep copy, but will *not* extend the copy with 
+    # __dup will make a deep copy, but will *not* extend the copy with
     # any mixins
 
-    alias_method :__dup, :dup
+    alias __dup dup
 
     # Replaces the original #dup with one that will extend the copy with any
     # special mixins.  (See #extend_special_mixin)
 
     def dup
       p = __dup
-      v = p.instance_variable_get( "@includes" )
-      p.extend Kernel.nested_const_get( v ) unless v.nil?
+      v = p.instance_variable_get('@includes')
+      p.extend Kernel.nested_const_get(v) unless v.nil?
       p
     end
 
@@ -91,11 +92,11 @@ module Vying
     # variables.  If an instance variable has no weight in the equality of
     # two positions, use Rules#ignore to omit it from this check.
 
-    def eql?( o )
+    def eql?(o)
       ivs = instance_variables | o.instance_variables
       ivs.each do |iv|
         if instance_variable_get(iv) != o.instance_variable_get(iv) &&
-           ! self.class.ignored?( iv )
+           !self.class.ignored?(iv)
           return false
         end
       end
@@ -104,19 +105,19 @@ module Vying
 
     # See Position#eql?
 
-    def ==( o )
-      eql?( o )
+    def ==(o)
+      eql?(o)
     end
 
     # Automatically guess at a "good" hash value for this position.  This
-    # involves hashing on #rules and any instance variables that are not 
+    # involves hashing on #rules and any instance variables that are not
     # ignored.
 
     def hash
       a = [rules]
 
       instance_variables. each do |iv|
-        a << instance_variable_get( iv ) unless self.class.ignored?( iv )
+        a << instance_variable_get(iv) unless self.class.ignored?(iv)
       end
 
       a.hash
@@ -131,15 +132,15 @@ module Vying
     #   end
     #
 
-    def self.ignore( *ivs )
-      @ignore ||= ["@ignore"]
+    def self.ignore(*ivs)
+      @ignore ||= ['@ignore']
       @ignore += ivs.map { |iv| "@#{iv}" }
     end
 
     # Tests whether or not an instance variable has been ignored.
 
-    def self.ignored?( iv )
-      !! ((@ignore && @ignore.include?( iv.to_s )) || iv.to_s =~ /^@__/)
+    def self.ignored?(iv)
+      !!((@ignore && @ignore.include?(iv.to_s)) || iv.to_s =~ /^@__/)
     end
 
     # Clear any caching done by Rules.cache.  This will set any cache
@@ -147,15 +148,15 @@ module Vying
 
     def clear_cache
       instance_variables.each do |iv|
-        instance_variable_set( iv, nil ) if iv.to_s =~ /^@__.*_cache$/
+        instance_variable_set(iv, nil) if iv.to_s =~ /^@__.*_cache$/
       end
     end
 
     # This rand provides the same interface as Kernel.rand but is backed by
     # the @rng.  Raises an exception if rules.random? is not true.
 
-    def rand( n=nil )
-      rng ? rng.rand( n ) : raise( "rand not backed by rng" )
+    def rand(n=nil)
+      rng ? rng.rand(n) : raise('rand not backed by rng')
     end
 
     # Hide sensitive position data from the given player.  This creates a
@@ -164,12 +165,12 @@ module Vying
     #
     # If rules.random? is true seed and rng instance variables will be censored.
 
-    def censor( player )
-      p = self.dup
+    def censor(player)
+      p = dup
 
       if rules.random?
-        p.instance_variable_set( "@seed", :hidden )
-        p.instance_variable_set( "@rng",  :hidden )
+        p.instance_variable_set('@seed', :hidden)
+        p.instance_variable_set('@rng',  :hidden)
       end
 
       p
@@ -180,7 +181,7 @@ module Vying
     #
     # This feeds History#censored_sequence.
 
-    def sealed_moves( player )
+    def sealed_moves(player)
       []
     end
 
@@ -215,9 +216,9 @@ module Vying
     # makes the most sense), the player name of the opponent is returned.  In
     # a game of more than 2 players, an array of all opponents is returned.
 
-    def opponent( player )
+    def opponent(player)
       if players.length == 2
-        return players.first == player ? players.last : players.first
+        players.first == player ? players.last : players.first
       else
         players.dup - [player]
       end
@@ -231,10 +232,10 @@ module Vying
     # on how time consuming it is for #moves to generate the full list of
     # all possible moves.
 
-    def move?( move, player=nil )
-      player = move.by  if player.nil? && move.respond_to?( :by )
+    def move?(move, player=nil)
+      player = move.by if player.nil? && move.respond_to?(:by)
 
-      moves( player ).any? { |m| m.to_s == move.to_s }
+      moves(player).any? { |m| m.to_s == move.to_s }
     end
 
     # If the position is final?, is the given player a winner?  Note, that
@@ -243,15 +244,15 @@ module Vying
     # If rules.highest_score_determines_winner? or
     # rules.lowest_score_determines_winner? is true and the given player has the
     # highest / lowest score, true is return.
-    # 
-    # Otherwise, false is returned and the Position subclass should override 
+    #
+    # Otherwise, false is returned and the Position subclass should override
     # this method.
 
-    def winner?( player )
+    def winner?(player)
       if rules.highest_score_determines_winner?
-        ! draw? && highest_scorers.include?( player )
+        !draw? && highest_scorers.include?(player)
       elsif rules.lowest_score_determines_winner?
-        ! draw? && lowest_scorers.include?( player )
+        !draw? && lowest_scorers.include?(player)
       end
     end
 
@@ -259,21 +260,21 @@ module Vying
     # more than one player may be considered losers.
     #
     # If rules.highest_score_determines_winner? or
-    # rules.lowest_score_determines_winner? is true and the given player 
+    # rules.lowest_score_determines_winner? is true and the given player
     # does NOT have the highest / lowest score, true is return.
-    # 
+    #
     # Otherwise, loser? is defined in terms of winner?.  If the opponent of the
     # player is the winner? then this player must be the loser?.  If this is
     # not the case (such as with 3+ player games where more than one player
     # may be the winner), then this method should be overridden.
 
-    def loser?( player )
+    def loser?(player)
       if rules.highest_score_determines_winner?
-        ! draw? && ! highest_scorers.include?( player )
+        !draw? && !highest_scorers.include?(player)
       elsif rules.lowest_score_determines_winner?
-        ! draw? && ! lowest_scorers.include?( player )
+        !draw? && !lowest_scorers.include?(player)
       else
-        winner?( opponent( player ) )
+        winner?(opponent(player))
       end
     end
 
@@ -282,7 +283,7 @@ module Vying
     # If rules.score_determines_outcome? is true, this method returns true only
     # if all players have the same score.
     #
-    # If the rules do not define a score, then false is returned everytime.  
+    # If the rules do not define a score, then false is returned everytime.
     # Great for games that forbid draws.
 
     def draw?
@@ -293,36 +294,36 @@ module Vying
       false
     end
 
-    # Returns a list of the highest scoring players in the game.  This is 
-    # usually a list of a single player unless there is a tie among the 
+    # Returns a list of the highest scoring players in the game.  This is
+    # usually a list of a single player unless there is a tie among the
     # players for the highest score.
 
     def highest_scorers
-      return []  unless rules.has_score?
+      return [] unless rules.has_score?
 
       h = {}
 
-      players.each { |p| (h[score( p )] ||= []) << p }
+      players.each { |p| (h[score(p)] ||= []) << p }
 
       h[h.keys.max]
     end
 
-    # Returns a list of the lowest scoring players in the game.  This is 
+    # Returns a list of the lowest scoring players in the game.  This is
     # usually a list of a single player unless there is a tie among the players
     # for the lowest score.
 
     def lowest_scorers
-      return []  unless rules.has_score?
+      return [] unless rules.has_score?
 
       h = {}
 
-      players.each { |p| (h[score( p )] ||= []) << p }
+      players.each { |p| (h[score(p)] ||= []) << p }
 
       h[h.keys.min]
     end
 
-    # Returns a list of all the players who have moves from this position. 
-    # This default implementation returns an empty array if the position is 
+    # Returns a list of all the players who have moves from this position.
+    # This default implementation returns an empty array if the position is
     # final? or an array containing the results of a call to #turn.  Games with
     # simultaneous moves should override this method.
 
@@ -332,24 +333,24 @@ module Vying
 
     # Does the given player have moves?  See #has_moves.
 
-    def has_moves?( player )
-      has_moves.include?( player )
+    def has_moves?(player)
+      has_moves.include?(player)
     end
 
     # Apply a move to this position.  The move is applied to a dup of this
-    # position, returning the resulting position.  Implementing subclasses 
-    # should provide an implementation of #apply!, which should do the same 
+    # position, returning the resulting position.  Implementing subclasses
+    # should provide an implementation of #apply!, which should do the same
     # thing without making a dup first.
 
-    def apply( move, player=nil )
-      dup.apply!( move, player )
+    def apply(move, player=nil)
+      dup.apply!(move, player)
     end
 
     # Return the successors to this position (that is, map the results of
     # #moves to the positions created by those moves).
 
-    def successors( player=nil )
-      moves( player ).map { |move| apply( move, player ) }
+    def successors(player=nil)
+      moves(player).map { |move| apply(move, player) }
     end
 
     # Return a short sentence describing what the player is to do in this
@@ -357,7 +358,7 @@ module Vying
     # When overriding, be sure to return an empty string for final? positions.
 
     def instructions
-      ""
+      ''
     end
 
     # Extend this Position with a special move mixin.  The mixin changes the
@@ -369,9 +370,9 @@ module Vying
     # Note: This returns the extended position, this position remains
     # unchanged.
 
-    def extend_special_mixin( mixin )
+    def extend_special_mixin(mixin)
       p = __dup
-      p.instance_variable_set( "@includes", mixin.to_s )
+      p.instance_variable_set('@includes', mixin.to_s)
       p.extend mixin
       p
     end
@@ -381,30 +382,30 @@ module Vying
 
     def remove_special_mixin
       p = __dup
-      p.instance_variable_set( "@includes", nil )
+      p.instance_variable_set('@includes', nil)
       p
     end
 
     # Marshal this position.  Don't dump any cache instance variables.
 
-    def _dump( depth=-1 )
+    def _dump(depth=-1)
       ivs = {}
 
       instance_variables.each do |iv|
-        ivs[iv] = instance_variable_get( iv ) if iv !~ /^@__.*_cache$/
+        ivs[iv] = instance_variable_get(iv) if iv !~ /^@__.*_cache$/
       end
 
-      Marshal.dump( ivs )
+      Marshal.dump(ivs)
     end
 
     # Load a marshalled position.  See Position#_dump.  Also, reconstitutes
     # any methods that have been mixed in via #extend_special_mixin.
 
-    def self._load( s )
-      p, ivs = self.allocate, Marshal.load( s )
-      ivs.each do |iv, v| 
-        p.instance_variable_set( iv, v )
-        p.extend Kernel.nested_const_get( v ) if iv.to_s == "@includes"
+    def self._load(s)
+      p, ivs = allocate, Marshal.load(s)
+      ivs.each do |iv, v|
+        p.instance_variable_set(iv, v)
+        p.extend Kernel.nested_const_get(v) if iv.to_s == '@includes'
       end
       p
     end
@@ -421,10 +422,10 @@ module Vying
     # When loading a YAML-ized Position, be sure to re-extend any special
     # move mixins.
 
-    def yaml_initialize( tag, vals )
-      vals.each do |iv,v| 
-        instance_variable_set( "@#{iv}", v )
-        extend Kernel.nested_const_get( v ) if iv == "includes"
+    def yaml_initialize(tag, vals)
+      vals.each do |iv, v|
+        instance_variable_set("@#{iv}", v)
+        extend Kernel.nested_const_get(v) if iv == 'includes'
       end
     end
 
@@ -436,8 +437,8 @@ module Vying
       instance_variables.sort.each do |iv|
         next if self.class.ignored? iv
 
-        v = instance_variable_get( iv )
-        iv = iv.to_s.sub( /@/, '' )
+        v = instance_variable_get(iv)
+        iv = iv.to_s.sub(/@/, '')
         case v
           when Hash  then s += "#{iv}:".ljust(fs) + "#{v.inspect}\n"
           when Array then s += "#{iv}:".ljust(fs) + "#{v.inspect}\n"
@@ -455,21 +456,65 @@ module Vying
       "#<Position rules: #{rules.class_name}>"
     end
 
-    def resigned?;                     false;                           end
-    def resigned_by;                   nil;                             end
-    def resigned_by?( player )         false;                           end
-    def time_exceeded?;                false                            end
-    def time_exceeded_by;              nil;                             end
-    def time_exceeded_by?( player );   false;                           end
-    def draw_by_agreement?;            false;                           end
-    def draw_offered?;                 false;                           end
-    def draw_offered_by;               nil;                             end
-    def draw_offered_by?( player );    false;                           end
-    def draw_accepted_by?( player );   false;                           end
-    def undo_requested?;               false;                           end
-    def undo_requested_by;             nil;                             end
-    def undo_requested_by?( player );  false;                           end
-    def undo_accepted_by?( player );   false;                           end
+    def resigned?
+      false
+    end
+
+    def resigned_by
+      nil
+    end
+
+    def resigned_by?(player)
+      false
+    end
+
+    def time_exceeded?
+      false
+    end
+
+    def time_exceeded_by
+      nil
+    end
+
+    def time_exceeded_by?(player)
+      false
+    end
+
+    def draw_by_agreement?
+      false
+    end
+
+    def draw_offered?
+      false
+    end
+
+    def draw_offered_by
+      nil
+    end
+
+    def draw_offered_by?(player)
+      false
+    end
+
+    def draw_accepted_by?(player)
+      false
+    end
+
+    def undo_requested?
+      false
+    end
+
+    def undo_requested_by
+      nil
+    end
+
+    def undo_requested_by?(player)
+      false
+    end
+
+    def undo_accepted_by?(player)
+      false
+    end
 
     def draw_accepted?
       draw_offered? && has_moves.empty?
@@ -481,35 +526,35 @@ module Vying
 
     private
 
-    def __move?( move, player=nil )
+    def __move?(move, player=nil)
       return false if move.nil?
 
       hm = has_moves
 
-      player = move.by  if player.nil? && move.respond_to?( :by )
+      player = move.by if player.nil? && move.respond_to?(:by)
 
-      return false unless player.nil? || hm.include?( player )
+      return false unless player.nil? || hm.include?(player)
 
-      if method( :__original_move? ).arity == 2
+      if method(:__original_move?).arity == 2
         ps = player ? [player] : hm
 
-        ps.any? { |p| __original_move?( move, p ) }
+        ps.any? { |p| __original_move?(move, p) }
       else
-        __original_move?( move )
+        __original_move?(move)
       end
     end
 
-    def __moves( player=nil )
+    def __moves(player=nil)
       hm = has_moves
 
-      return [] unless player.nil? || hm.include?( player )
+      return [] unless player.nil? || hm.include?(player)
 
-      if method( :__original_moves ).arity == 1
+      if method(:__original_moves).arity == 1
 
         ps = player ? [player] : hm
 
         ps.map do |p|
-          __original_moves( p )
+          __original_moves(p)
         end.flatten
 
       else
@@ -517,24 +562,24 @@ module Vying
       end
     end
 
-    def __apply!( move, player=nil )
+    def __apply!(move, player=nil)
       if player.nil?
-        if move.respond_to?( :by ) && has_moves.include?( move.by )
+        if move.respond_to?(:by) && has_moves.include?(move.by)
           player = move.by
         end
       end
 
-      if method( :__original_apply! ).arity == 2
+      if method(:__original_apply!).arity == 2
         if player.nil?
           raise "player for #{move} is required"
         end
 
         clear_cache
 
-        __original_apply!( move, player )
+        __original_apply!(move, player)
       else
         clear_cache
-        __original_apply!( move )
+        __original_apply!(move)
       end
 
       self
@@ -548,4 +593,3 @@ module Vying
   end
 
 end
-

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2008, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
@@ -8,9 +10,9 @@ require 'vying'
 #
 # For detailed rules see:  http://vying.org/games/spangles
 
-Rules.create( "Spangles" ) do
-  name    "Spangles"
-  version "0.5.0"
+Rules.create('Spangles') do
+  name    'Spangles'
+  version '0.5.0'
 
   players :black, :white
 
@@ -21,19 +23,19 @@ Rules.create( "Spangles" ) do
     ignore :last
 
     def init
-      @board = Board.infinite( :plugins => [:frontier], 
-                               :cell_shape => :triangle )
-      @board[0,0] = :white
-      @last = Coord[0,0]
+      @board = Board.infinite(plugins: [:frontier],
+                               cell_shape: :triangle)
+      @board[0, 0] = :white
+      @last = Coord[0, 0]
     end
 
     def moves
       return []  if final?
 
-      board.frontier.map { |c| c.to_s( false ) }
+      board.frontier.map { |c| c.to_s(false) }
     end
 
-    def apply!( move )
+    def apply!(move)
       @last = Coord[move]
 
       board[@last] = turn
@@ -43,16 +45,16 @@ Rules.create( "Spangles" ) do
     end
 
     def final?
-      players.any? { |p| winner?( p ) }
+      players.any? { |p| winner?(p) }
     end
 
-    def winner?( player )
-      ns = board.coords.neighbors( @last )
+    def winner?(player)
+      ns = board.coords.neighbors(@last)
 
-      first  = surrounded?( @last )
-      second = ns.map { |nc| surrounded?( nc ) }.find { |np| np }
+      first  = surrounded?(@last)
+      second = ns.map { |nc| surrounded?(nc) }.find { |np| np }
 
-      return player != turn    if first && second 
+      return player != turn    if first && second
       return player == first   if first
       return player == second  if second
 
@@ -63,14 +65,12 @@ Rules.create( "Spangles" ) do
     # Otherwise, returns nil.  Note:  Expects the given coord to be occupied,
     # if it isn't, nil is returned.
 
-    def surrounded?( c )
-      return nil  if board[c].nil?
+    def surrounded?(c)
+      return nil if board[c].nil?
 
-      nps = board.coords.neighbors( c ).map { |nc| board[nc] }.compact
-      
+      nps = board.coords.neighbors(c).map { |nc| board[nc] }.compact
+
       nps.length == 3 && nps.uniq.length == 1 ? nps.first : nil
     end
   end
-
 end
-

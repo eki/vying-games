@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
@@ -9,9 +11,9 @@ require 'vying'
 #
 # For detailed rules, etc:  http://vying.org/games/ataxx
 
-Rules.create( "Ataxx" ) do
-  name    "Ataxx"
-  version "2.0.0"
+Rules.create('Ataxx') do
+  name    'Ataxx'
+  version '2.0.0'
 
   players :red, :blue
 
@@ -26,27 +28,26 @@ Rules.create( "Ataxx" ) do
     attr_reader :board, :block_pattern
 
     def init
-      @board = Board.square( 7 )
-      @board[:a1,:g7] = :red
-      @board[:a7,:g1] = :blue
+      @board = Board.square(7)
+      @board[:a1, :g7] = :red
+      @board[:a7, :g1] = :blue
 
       @block_pattern = set_rand_blocks
     end
 
     def moves
-      return [] if players.any? { |p| board.count( p ) == 0 }
+      return [] if players.any? { |p| board.count(p) == 0 }
 
       found = []
 
-      board.occupied( turn ).each do |c|
-
+      board.occupied(turn).each do |c|
         # Adjacent moves
-        board.coords.ring( c, 1 ).each do |c1|
+        board.coords.ring(c, 1).each do |c1|
           found << "#{c}#{c1}" if board[c1].nil? && !c1.nil?
         end
 
         # Jump moves
-        board.coords.ring( c, 2 ).each do |c2|
+        board.coords.ring(c, 2).each do |c2|
           found << "#{c}#{c2}" if board[c2].nil? && !c2.nil?
         end
       end
@@ -54,7 +55,7 @@ Rules.create( "Ataxx" ) do
       found
     end
 
-    def apply!( move )
+    def apply!(move)
       coords, p = move.to_coords, turn
 
       dx = (coords.first.x - coords.last.x).abs
@@ -63,11 +64,11 @@ Rules.create( "Ataxx" ) do
       if dx <= 1 && dy <= 1 && (dx == 1 || dy == 1)
         board[coords.last] = turn
       else
-        board.move( coords.first, coords.last )
+        board.move(coords.first, coords.last)
       end
 
-      board.coords.neighbors( coords.last ).each do |c|
-        board[c] = turn if board[c] == opponent( turn )
+      board.coords.neighbors(coords.last).each do |c|
+        board[c] = turn if board[c] == opponent(turn)
       end
 
       rotate_turn
@@ -81,27 +82,27 @@ Rules.create( "Ataxx" ) do
     end
 
     def final?
-      board.unoccupied.empty? || players.any? { |p| board.count( p ) == 0 }
+      board.unoccupied.empty? || players.any? { |p| board.count(p) == 0 }
     end
 
-    def score( player )
-      board.count( player )
+    def score(player)
+      board.count(player)
     end
 
-    def set_blocks( p )
-      p.scan( /./m ) do |c|
+    def set_blocks(p)
+      p.scan(/./m) do |c|
         board[*rules.block_coords[c]] = :x
       end
       p
     end
 
     def set_rand_blocks
-      set_blocks( rules.blocks[rand( rules.blocks.length )] )
+      set_blocks(rules.blocks[rand(rules.blocks.length)])
     end
 
     def clear_blocks
-      board[*board.occupied( :x )] = nil
-      @block_pattern = ""
+      board[*board.occupied(:x)] = nil
+      @block_pattern = ''
     end
   end
 
@@ -185,9 +186,9 @@ Rules.create( "Ataxx" ) do
                2cgx 2chx 2ghx 2dgx 2dhx 2ghx
                3abx 3acx 3adx 3aex 3afx 3agx 3ahx 3bcx 3bex 3bfx 3bgx 3bhx 3cfx
                3cgx 3chx 3ghx 3dgx 3dhx 3ghx
-               4abx 5abx 6abx 4acx 5acx 6acx 4bcx 5bcx 6bcx 12345x 12346x 
-               12356x ) + 
-               [""]  # 0 blocks
+               4abx 5abx 6abx 4acx 5acx 6acx 4bcx 5bcx 6bcx 12345x 12346x
+               12356x ) +
+               [''] # 0 blocks
 
   block_coords  '1' => [:a4, :g4],
                 '2' => [:b4, :f4],
@@ -205,4 +206,3 @@ Rules.create( "Ataxx" ) do
                 'h' => [:c3, :c5, :e3, :e5],
                 'x' => [:d4]
 end
-

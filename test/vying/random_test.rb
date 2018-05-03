@@ -1,4 +1,6 @@
 
+# frozen_string_literal: true
+
 require_relative '../test_helper'
 
 class TestRandomNumberGenerator < Minitest::Test
@@ -9,23 +11,23 @@ class TestRandomNumberGenerator < Minitest::Test
     rng2 = RandomNumberGenerator.new 1234
     rng3 = RandomNumberGenerator.new 5678
 
-    assert_equal( 1234, rng.seed )
-    assert_equal( 1234, rng2.seed )
-    assert_equal( 5678, rng3.seed )
+    assert_equal(1234, rng.seed)
+    assert_equal(1234, rng2.seed)
+    assert_equal(5678, rng3.seed)
 
-    assert_equal( 0, rng.count )
-    assert_equal( 0, rng2.count )
-    assert_equal( 0, rng3.count )
+    assert_equal(0, rng.count)
+    assert_equal(0, rng2.count)
+    assert_equal(0, rng3.count)
   end
 
   def test_repeatability
     rng = RandomNumberGenerator.new 1234
     rng2 = RandomNumberGenerator.new 1234
 
-    assert_equal( rng.rand( 2000 ), rng2.rand( 2000 ) )
-    assert_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
-    assert_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
-    assert_equal( rng.rand( 7000 ), rng2.rand( 7000 ) )
+    assert_equal(rng.rand(2000), rng2.rand(2000))
+    assert_equal(rng.rand(1000), rng2.rand(1000))
+    assert_equal(rng.rand(1000), rng2.rand(1000))
+    assert_equal(rng.rand(7000), rng2.rand(7000))
 
     rng = RandomNumberGenerator.new 1234
     rng3 = RandomNumberGenerator.new 5678
@@ -33,10 +35,10 @@ class TestRandomNumberGenerator < Minitest::Test
     # Note, this is actually a very *bad* test because there's no guarantee
     # the first 4 numbers drawn for two different seeds *can't* be the same
 
-    refute_equal( rng.rand( 2000 ), rng2.rand( 2000 ) )
-    refute_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
-    refute_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
-    refute_equal( rng.rand( 7000 ), rng2.rand( 7000 ) )
+    refute_equal(rng.rand(2000), rng2.rand(2000))
+    refute_equal(rng.rand(1000), rng2.rand(1000))
+    refute_equal(rng.rand(1000), rng2.rand(1000))
+    refute_equal(rng.rand(7000), rng2.rand(7000))
   end
 
   def test_dup
@@ -46,10 +48,10 @@ class TestRandomNumberGenerator < Minitest::Test
 
     rng2 = rng.dup
 
-    assert_equal( rng.count, rng2.count )
-    assert_equal( rng.seed, rng2.seed )
-    assert_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
-    assert_equal( rng2.rand( 1000 ), rng.rand( 1000 ) )
+    assert_equal(rng.count, rng2.count)
+    assert_equal(rng.seed, rng2.seed)
+    assert_equal(rng.rand(1000), rng2.rand(1000))
+    assert_equal(rng2.rand(1000), rng.rand(1000))
   end
 
   def test_marshal
@@ -57,12 +59,12 @@ class TestRandomNumberGenerator < Minitest::Test
 
     rng.rand
 
-    rng2 = Marshal.load( Marshal.dump( rng ) )
+    rng2 = Marshal.load(Marshal.dump(rng))
 
-    assert_equal( rng.count, rng2.count )
-    assert_equal( rng.seed, rng2.seed )
-    assert_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
-    assert_equal( rng2.rand( 1000 ), rng.rand( 1000 ) )
+    assert_equal(rng.count, rng2.count)
+    assert_equal(rng.seed, rng2.seed)
+    assert_equal(rng.rand(1000), rng2.rand(1000))
+    assert_equal(rng2.rand(1000), rng.rand(1000))
   end
 
   def test_yaml
@@ -70,17 +72,17 @@ class TestRandomNumberGenerator < Minitest::Test
 
     rng.rand
 
-    rng2 = YAML::load( rng.to_yaml )
+    rng2 = YAML.load(rng.to_yaml)
 
-    assert_equal( rng.count, rng2.count )
-    assert_equal( rng.seed, rng2.seed )
-    assert_equal( rng.rand( 1000 ), rng2.rand( 1000 ) )
-    assert_equal( rng2.rand( 1000 ), rng.rand( 1000 ) )
+    assert_equal(rng.count, rng2.count)
+    assert_equal(rng.seed, rng2.seed)
+    assert_equal(rng.rand(1000), rng2.rand(1000))
+    assert_equal(rng2.rand(1000), rng.rand(1000))
   end
 
   def test_inspect
-    assert_equal( "#<RNG seed: 1234, count: 0>",
-                  RandomNumberGenerator.new( 1234 ).inspect )
+    assert_equal('#<RNG seed: 1234, count: 0>',
+                  RandomNumberGenerator.new(1234).inspect)
   end
 
   def test_rand_limit_seed_0
@@ -136,12 +138,11 @@ class TestRandomNumberGenerator < Minitest::Test
 7, 3, 7, 3, 1, 0, 1, 0, 8, 8, 5, 3, 3, 1, 0, 6, 1, 6, 9, 5, 7, 0, 1, 4, 9, 5,
 1, 6, 5]
 
-    rng = RandomNumberGenerator.new( 0 )
+    rng = RandomNumberGenerator.new(0)
 
-    a.each_with_index do |n,i|
-      assert_equal( n, rng.rand( 10 ) )
+    a.each_with_index do |n, i|
+      assert_equal(n, rng.rand(10))
     end
-
   end
 
   def test_rand_limit_seed_987654321
@@ -197,16 +198,15 @@ class TestRandomNumberGenerator < Minitest::Test
 3, 9, 7, 4, 0, 7, 7, 8, 2, 2, 9, 4, 5, 4, 8, 4, 5, 7, 6, 6, 1, 4, 3, 3, 2, 5,
 5, 0, 5]
 
-    rng = RandomNumberGenerator.new( 987654321 )
+    rng = RandomNumberGenerator.new(987_654_321)
 
-    a.each_with_index do |n,i|
-      assert_equal( n, rng.rand( 10 ) )
+    a.each_with_index do |n, i|
+      assert_equal(n, rng.rand(10))
     end
-
   end
 
   def test_rand_limit_seed_2_to_the_power_of_32
-    assert_raises( RangeError ) { RandomNumberGenerator.new( 2**32 ) }
+    assert_raises(RangeError) { RandomNumberGenerator.new(2**32) }
   end
 
   def test_rand
@@ -237,13 +237,11 @@ class TestRandomNumberGenerator < Minitest::Test
 0.501451671123505, 0.668048097984865, 0.288915685378015, 0.0922150632832199,
 0.834192704409361]
 
-    rng = RandomNumberGenerator.new( 4278 )
+    rng = RandomNumberGenerator.new(4278)
 
     a.each do |n|
-      assert( (n - rng.rand).abs < 0.0001 )
+      assert((n - rng.rand).abs < 0.0001)
     end
-
   end
 
 end
-

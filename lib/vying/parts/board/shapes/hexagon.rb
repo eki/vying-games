@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
@@ -23,7 +25,7 @@ class Board::Hexagon < Board
   #                       :hexagon cells.  The default is :horizontal.
   #
 
-  def initialize( length, h={} )
+  def initialize(length, h={})
     @shape = :hexagon
 
     @length = length
@@ -49,20 +51,19 @@ class Board::Hexagon < Board
             raise "#{@cell_orientation} is not a valid cell_orientation"
         end
       else
-        raise "#{@cell_shape} is not a supported cell_shape for a " +
-              "triangle Board"
+        raise "#{@cell_shape} is not a supported cell_shape for a " \
+              'triangle Board'
     end
 
     h[:omit] ||= []
 
     @width.times do |x|
       @height.times do |y|
-        h[:omit] << Coord[x,y] if (x - y).abs >= @length
+        h[:omit] << Coord[x, y] if (x - y).abs >= @length
       end
     end
 
-    super( h )   
+    super(h)
   end
 
 end
-

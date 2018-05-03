@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
@@ -7,9 +9,9 @@ require 'vying'
 #
 # For detailed rules, etc:  http://vying.org/games/hexplode
 
-Rules.create( "Hexplode" ) do
-  name    "Hexplode"
-  version "0.5.0"
+Rules.create('Hexplode') do
+  name    'Hexplode'
+  version '0.5.0'
 
   players :red, :blue
 
@@ -19,7 +21,7 @@ Rules.create( "Hexplode" ) do
     attr_reader :board
 
     def init
-      @board = Board.rhombus( 5, 5 )
+      @board = Board.rhombus(5, 5)
     end
 
     def moves
@@ -28,7 +30,7 @@ Rules.create( "Hexplode" ) do
       board.coords.select { |c| board[c].nil? || board[c].player == turn }
     end
 
-    def apply!( move )
+    def apply!(move)
       c = Coord[move]
 
       if board[c].nil?
@@ -37,7 +39,7 @@ Rules.create( "Hexplode" ) do
         board[c] += 1
       end
 
-      explode( c )  # has no effect if the cell isn't at capacity
+      explode(c) # has no effect if the cell isn't at capacity
 
       rotate_turn
 
@@ -45,18 +47,18 @@ Rules.create( "Hexplode" ) do
     end
 
     def final?
-      players.any? { |p| winner?( p ) }
+      players.any? { |p| winner?(p) }
     end
 
-    def winner?( player )
-      opp = opponent( player )
+    def winner?(player)
+      opp = opponent(player)
 
       opp == turn && board.count > 1 &&
-      ! board.coords.any? { |c| board[c] && board[c].player == opp }
+      board.coords.none? { |c| board[c] && board[c].player == opp }
     end
 
-    def score( player )
-      board.coords.inject( 0 ) do |s,c| 
+    def score(player)
+      board.coords.inject(0) do |s, c|
         s + (board[c] && board[c].player == player ? board[c].count : 0)
       end
     end
@@ -66,29 +68,27 @@ Rules.create( "Hexplode" ) do
     # in an undefined state, but the game will be final because touching every
     # cell will force a wipe out.
 
-    def explode( c, touched=[c] )
+    def explode(c, touched=[c])
       return          if touched.length == board.coords.length
-      touched << c    unless touched.include?( c )
+      touched << c    unless touched.include?(c)
 
-      ns = board.coords.neighbors( c )
+      ns = board.coords.neighbors(c)
 
-      return          if board[c].nil? || board[c].count < ns.length
+      return if board[c].nil? || board[c].count < ns.length
 
       board[c] -= ns.length
 
-      ns.each do |nc| 
+      ns.each do |nc|
         if board[nc]
-          board[nc] = Counter[board[c].player, board[nc].count+1] 
+          board[nc] = Counter[board[c].player, board[nc].count + 1]
         else
           board[nc] = Counter[board[c].player, 1]
         end
       end
 
-      ns.each { |nc| explode( nc, touched ) } 
+      ns.each { |nc| explode(nc, touched) }
 
-      board[c] = nil  if board[c] && board[c].count == 0
+      board[c] = nil if board[c] && board[c].count == 0
     end
   end
-
 end
-

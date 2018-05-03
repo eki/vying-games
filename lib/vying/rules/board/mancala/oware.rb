@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
 require 'vying'
 
-Rules.create( "Oware" ) do
-  name    "Oware"
-  version "1.0.0"
+Rules.create('Oware') do
+  name    'Oware'
+  version '1.0.0'
   notation :mancala_notation
 
   players :one, :two
@@ -16,18 +18,18 @@ Rules.create( "Oware" ) do
 
   cache :init
 
-  position do 
+  position do
     attr_reader :board, :scoring_pits, :sides, :annotation
     ignore :sides, :annotation
 
     def init
-      @board = Board.rect( 6, 2, :fill => 4 )
+      @board = Board.rect(6, 2, fill: 4)
 
-      @annotation = Board.rect( 6, 2, :fill => "0" )
+      @annotation = Board.rect(6, 2, fill: '0')
 
-      @scoring_pits = { :one => 0, :two => 0 }
-      @sides= { :one => ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'],
-                :two => ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }
+      @scoring_pits = { one: 0, two: 0 }
+      @sides = { one: %w(a1 b1 c1 d1 e1 f1),
+                 two: %w(a2 b2 c2 d2 e2 f2) }
     end
 
     def has_moves
@@ -38,10 +40,10 @@ Rules.create( "Oware" ) do
       valid = sides[turn].select { |c| board[c] > 0 }
 
       # Check starvation rule
-      if sides[opponent( turn )].all? { |c| board[c] == 0 }
+      if sides[opponent(turn)].all? { |c| board[c] == 0 }
         still_valid = []
         valid.each do |c|
-          still_valid << c unless dup.apply!( c ).final?
+          still_valid << c unless dup.apply!(c).final?
         end
         valid = still_valid unless still_valid.empty?
       end
@@ -49,9 +51,9 @@ Rules.create( "Oware" ) do
       valid
     end
 
-    def apply!( move )
+    def apply!(move)
       # Reset annotation
-      annotation.fill( "0" )
+      annotation.fill('0')
       h = move.x
       r = move.y
 
@@ -60,9 +62,9 @@ Rules.create( "Oware" ) do
       seeds, board[move] = board[move], 0
       last = nil
 
-      annotation[move] = "e"
+      annotation[move] = 'e'
 
-      while seeds > 0 
+      while seeds > 0
         if r == 0 && h == 0
           r = 1
           h = -1
@@ -77,12 +79,12 @@ Rules.create( "Oware" ) do
         h += 1 if r == 1 && h < 6
 
         next if h == move.x && r == move.y
-    
-        seeds -= 1  
-        board[h,r] += 1
-        annotation[h,r] = (annotation[h,r].to_i + 1).to_s
 
-        last = Coord[h,r]
+        seeds -= 1
+        board[h, r] += 1
+        annotation[h, r] = (annotation[h, r].to_i + 1).to_s
+
+        last = Coord[h, r]
       end
 
       # Capturing
@@ -91,8 +93,8 @@ Rules.create( "Oware" ) do
       opp_rank = turn == :one ? 1 : 0
       cap = []
 
-      while r == opp_rank && (board[h,r] == 3 || board[h,r] == 2)
-        cap << Coord[h,r]
+      while r == opp_rank && (board[h, r] == 3 || board[h, r] == 2)
+        cap << Coord[h, r]
 
         break if (h == 0 && r == 1) || (h == 5 && r == 0)
 
@@ -100,14 +102,14 @@ Rules.create( "Oware" ) do
         h -= 1 if r == 1 && h > 0
       end
 
-      opp_empties = sides[opponent( turn )].select { |c| board[c] == 0 }
+      opp_empties = sides[opponent(turn)].select { |c| board[c] == 0 }
 
-      cap = [] if cap.length + opp_empties.length == 6   # Grand slam forfeit
+      cap = [] if cap.length + opp_empties.length == 6 # Grand slam forfeit
 
       cap.each do |c|
         scoring_pits[turn] += board[c]
         board[c] = 0
-        annotation[c] = "C"
+        annotation[c] = 'C'
       end
 
       rotate_turn
@@ -126,7 +128,7 @@ Rules.create( "Oware" ) do
       has_moves.empty?
     end
 
-    def score( player )
+    def score(player)
       scoring_pits[player]
     end
 
@@ -137,12 +139,10 @@ Rules.create( "Oware" ) do
         sides[p].each do |c|
           scoring_pits[p] += board[c]
           board[c] = 0
-          annotation[c] = "c" if annotation[c] == "0"
-          annotation[c] = "C" if annotation[c] =~ /\d+/
+          annotation[c] = 'c' if annotation[c] == '0'
+          annotation[c] = 'C' if annotation[c] =~ /\d+/
         end
       end
     end
   end
-
 end
-

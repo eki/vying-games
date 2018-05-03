@@ -1,4 +1,6 @@
 
+# frozen_string_literal: true
+
 # Counter is a simple piece composed of a player and count.  It's immutable
 # making it safe for use with Board.  The count can only be "changed" by using
 # the plus and minus operators which return new Counter instances.
@@ -19,7 +21,7 @@ class Counter
 
   # Create a new Counter instance.
 
-  def initialize( player, count )
+  def initialize(player, count)
     @player, @count = player, count
   end
 
@@ -28,23 +30,23 @@ class Counter
   # Fetch a new Counter from the cache or instantiate and cache a Counter if
   # the cache doesn't already contain the given counter.
 
-  def self.[]( *args )
-    return @@counter_cache[args]  if @@counter_cache.key?( args )
+  def self.[](*args)
+    return @@counter_cache[args] if @@counter_cache.key?(args)
 
-    @@counter_cache[args] = new( *args )
+    @@counter_cache[args] = new(*args)
   end
 
   # Add 'n' to the count of this Counter, returning a new Counter instance.
   # The argument can be anything that responds to to_i.
 
-  def +( n )
+  def +(n)
     Counter[@player, @count + n.to_i]
   end
 
-  # Subtract 'n' to the count of this Counter, returning a new Counter 
+  # Subtract 'n' to the count of this Counter, returning a new Counter
   # instance.  The argument can be anything that responds to to_i.
 
-  def -( n )
+  def -(n)
     Counter[@player, @count - n.to_i]
   end
 
@@ -60,4 +62,3 @@ class Counter
     "#{count}_#{player}"
   end
 end
-

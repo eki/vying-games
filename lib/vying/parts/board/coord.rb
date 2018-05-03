@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
@@ -40,9 +42,9 @@ class String
 
   def x
     if self =~ /^\((-{0,1}\d+),-{0,1}\d+\)$/
-      $1.to_i
+      Regexp.last_match(1).to_i
     elsif self =~ /^(\w)\d+$/
-      $1.ord - 97
+      Regexp.last_match(1).ord - 97
     end
   end
 
@@ -58,9 +60,9 @@ class String
 
   def y
     if self =~ /^\(-{0,1}\d+,(-{0,1}\d+)\)$/
-      $1.to_i
+      Regexp.last_match(1).to_i
     elsif self =~ /^\w(\d+)$/
-      $1.to_i-1
+      Regexp.last_match(1).to_i - 1
     end
   end
 
@@ -74,7 +76,7 @@ class String
   #
 
   def to_coords
-    scan( /(?:[a-z]\d+)|(?:\(-{0,1}\d+,-{0,1}\d+\))/ ).map { |s| Coord[s] }
+    scan(/(?:[a-z]\d+)|(?:\(-{0,1}\d+,-{0,1}\d+\))/).map { |s| Coord[s] }
   end
 end
 
@@ -98,7 +100,7 @@ class Symbol
   # a String and then calling String#to_coords.
 
   def to_coords
-    to_s.scan( /[a-z]\d+/ ).map { |s| Coord[s] }
+    to_s.scan(/[a-z]\d+/).map { |s| Coord[s] }
   end
 end
 
@@ -119,18 +121,18 @@ class Coord
 
   # Create a new Coord with the given (x,y) coordinates.
 
-  def initialize( x, y )
+  def initialize(x, y)
     @x, @y = x, y
-    @s_chess = to_s( true  )
-    @s       = to_s( false )
+    @s_chess = to_s(true)
+    @s       = to_s(false)
   end
 
   @@coords_cache = {}
 
   # Create a new Coord from the given argument.  If given x and y, it is
-  # the equivalent to calling new.  If given a symbol the Symbol will be 
-  # converted to a String and parsed.  If given a +string+ the first value is 
-  # expected to be a letter and the second a number.  For example, Coord[:a1] 
+  # the equivalent to calling new.  If given a symbol the Symbol will be
+  # converted to a String and parsed.  If given a +string+ the first value is
+  # expected to be a letter and the second a number.  For example, Coord[:a1]
   # would be the equivalent of Coord[0,0].
   #
   # Technically, any object that responds to #x and #y can be passed in.
@@ -144,11 +146,11 @@ class Coord
   #  Coord[string]
   #
 
-  def self.[]( *args )
+  def self.[](*args)
     if args.length == 2 && args.first.kind_of?(Integer) &&
                            args.last.kind_of?(Integer)
 
-      return Coord.new( args.first, args.last )
+      return Coord.new(args.first, args.last)
 
     elsif args.length == 1
       return args.first if args.first.class == Coord
@@ -160,10 +162,10 @@ class Coord
 
         return nil if x.nil? || y.nil?
 
-        c = new( x, y )
+        c = new(x, y)
         @@coords_cache[args.first] = c
       end
- 
+
       return c
 
     else
@@ -176,34 +178,34 @@ class Coord
           unless c
             x, y = arg.x, arg.y
 
-            c = !x || !y  ? nil : new( x, y )
+            c = !x || !y ? nil : new(x, y)
             @@coords_cache[arg] = c
           end
 
           c
         end
-      end     
+      end
     end
 
-    return nil
+    nil
   end
 
   # Coords are immutable so dup just returns self.
 
-  def dup                                     # :nodoc:
+  def dup # :nodoc:
     self
   end
 
   # Dumps the coord.
 
-  def _dump( depth=-1 )                       # :nodoc:
+  def _dump(depth=-1) # :nodoc:
     to_s
   end
 
   # Loads the coord from marshal data.  This actually does a cache lookup, it
   # does *not* result in loading another instance of a given Coord.
 
-  def self._load( str )                       # :nodoc:
+  def self._load(str) # :nodoc:
     Coord[str]
   end
 
@@ -214,17 +216,17 @@ class Coord
   #   Coord[1,2] + Coord[3,4]   # => Coord[4,6]
   #
 
-  def +( o )
-    Coord.new( x + o.x, y + o.y )
+  def +(o)
+    Coord.new(x + o.x, y + o.y)
   end
 
   # Define an ordering for Coord's.  They are sorted first by y, then x.
 
-  def <=>( c )
+  def <=>(c)
     (t = y <=> c.y) != 0 ? t : x <=> c.x
   end
 
-  # Return a string representation of this Coord.  There are two possible 
+  # Return a string representation of this Coord.  There are two possible
   # representations:
   #
   #   Coord[0,0].to_s            # => "a1"
@@ -234,12 +236,12 @@ class Coord
   # with negative coordinates or more than 26 columns, it can be useful to
   # use the mathematical notation.
 
-  def to_s( chess=true )
+  def to_s(chess=true)
     return @s_chess if chess && @s_chess
     return @s       if chess && @s
 
     if chess && x >= 0 && x < 26 && y >= 0
-      "#{(97+x).chr}#{y+1}"
+      "#{(97 + x).chr}#{y + 1}"
     else
       "(#{x},#{y})"
     end
@@ -273,21 +275,21 @@ class Coord
   #
   #   Coord[0,0].next( :n )  # => Coord[0,1]
 
-  def next( d )
-    return Coord[x+1,y] if d == :e
-    return Coord[x-1,y] if d == :w
-    return Coord[x,y-1] if d == :n
-    return Coord[x,y+1] if d == :s
-    return Coord[x+1,y-1] if d == :ne
-    return Coord[x+1,y+1] if d == :se
-    return Coord[x-1,y-1] if d == :nw
-    return Coord[x-1,y+1] if d == :sw
+  def next(d)
+    return Coord[x + 1, y] if d == :e
+    return Coord[x - 1, y] if d == :w
+    return Coord[x, y - 1] if d == :n
+    return Coord[x, y + 1] if d == :s
+    return Coord[x + 1, y - 1] if d == :ne
+    return Coord[x + 1, y + 1] if d == :se
+    return Coord[x - 1, y - 1] if d == :nw
+    return Coord[x - 1, y + 1] if d == :sw
     nil
   end
 
-  # Calculates and returns the direction from self to the given Coord.  
-  # Directions are only found if there is a straight line between the two 
-  # Coord's.  
+  # Calculates and returns the direction from self to the given Coord.
+  # Directions are only found if there is a straight line between the two
+  # Coord's.
   #
   # Returns nil if there isn't a straight line between the Coord's.
   #
@@ -299,7 +301,7 @@ class Coord
   #   Coord[0,0].direction_to( Coord[3,3] )   # => :s3
   #
 
-  def direction_to( o )
+  def direction_to(o)
     dx, dy = x - o.x, y - o.y
 
     if dx == 0
@@ -330,7 +332,7 @@ class Coord
 
     nil
   end
-   
+
   # Hash on the Coord's #x and #y values.
 
   def hash
@@ -341,14 +343,14 @@ class Coord
   # uses duck typing such that a Coord can be compared to any object that
   # responds to #x and #y methods.  (Such as String, Symbol, and Array).
 
-  def ==( o )
-    o.respond_to?( :x ) && o.respond_to?( :y ) &&
+  def ==(o)
+    o.respond_to?(:x) && o.respond_to?(:y) &&
     x == o.x && y == o.y
   end
 
   # See Coord#==.
 
-  def eql?( o )
+  def eql?(o)
     self == o
   end
 
@@ -361,15 +363,15 @@ class Coord
   #     # => [Coord[0,0], Coord[1,1], Coord[2,2], Coord[3,3], Coord[4,4]]
   #
 
-  def self.expand( coords )
-    d = coords.first.direction_to( coords.last )
+  def self.expand(coords)
+    d = coords.first.direction_to(coords.last)
     return coords unless d
 
     expanded = [coords.first]
-    c1 = coords.first.next( d )
+    c1 = coords.first.next(d)
     until c1 == coords.last
       expanded << c1
-      c1 = c1.next( d )
+      c1 = c1.next(d)
     end
 
     expanded << coords.last
@@ -377,4 +379,3 @@ class Coord
     expanded
   end
 end
-

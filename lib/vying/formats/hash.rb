@@ -1,4 +1,6 @@
 
+# frozen_string_literal: true
+
 module Vying
   class HashFormat < Format
 
@@ -6,45 +8,45 @@ module Vying
       :hash
     end
 
-    def load( h )
-      rules = Rules.find( h['rules']['id'], h['rules']['version'] )
+    def load(h)
+      rules = Rules.find(h['rules']['id'], h['rules']['version'])
 
       options = {}
       if h['options']
-        h['options'].each { |k,v| options[k.intern] = v }
+        h['options'].each { |k, v| options[k.intern] = v }
       end
 
       if h['random']
-        g = Game.new( rules, h['random']['seed'], options )
+        g = Game.new(rules, h['random']['seed'], options)
       else
-        g = Game.new( rules, options )
+        g = Game.new(rules, options)
       end
 
       h['history'].each do |mh|
-        move = Move.new( mh['move'], mh['by'].intern )
-        move = move.stamp( mh['at'] )
+        move = Move.new(mh['move'], mh['by'].intern)
+        move = move.stamp(mh['at'])
 
-        g.append( move )
+        g.append(move)
       end
 
-      h['players'].each do |k,v|
+      h['players'].each do |k, v|
         if v['user']
-          g[k.intern].user = User.new( v['user']['username'], v['user']['id'] )
+          g[k.intern].user = User.new(v['user']['username'], v['user']['id'])
         end
       end
 
-      ['id', 'unrated', 'time_limit'].each do |k|
-        g.instance_variable_set( "@#{k}", h[k] )  if h.key?( k )
+      %w(id unrated time_limit).each do |k|
+        g.instance_variable_set("@#{k}", h[k]) if h.key?(k)
       end
 
-      ['created_at', 'last_move_at'].each do |k|
-        g.history.instance_variable_set( "@#{k}", h[k] )  if h.key?( k )
+      %w(created_at last_move_at).each do |k|
+        g.history.instance_variable_set("@#{k}", h[k]) if h.key?(k)
       end
 
       g
     end
 
-    def dump( game )
+    def dump(game)
       h = { 'rules' => { 'name'    => game.rules.name,
                          'id'      => game.rules.to_sc,
                          'version' => game.rules.version } }
@@ -65,7 +67,7 @@ module Vying
           ph['loser']  = true  if player.loser?
         end
 
-        ph['score'] = player.score  if game.has_score?
+        ph['score'] = player.score if game.has_score?
 
         h['players'][player.name.to_s] = ph
       end
@@ -95,4 +97,3 @@ module Vying
 
   end
 end
-

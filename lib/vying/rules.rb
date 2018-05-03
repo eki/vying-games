@@ -1,14 +1,16 @@
 
+# frozen_string_literal: true
+
 module Vying
 
-  # Rules is the core of the Vying library.  To add a game to the library 
+  # Rules is the core of the Vying library.  To add a game to the library
   # Rules.create should be used like so:
   #
   #   Rules.create( "TicTacToe" ) do
   #
   #     name "Tic Tac Toe"     # Properties of the Rules
   #     version "1.0.0"
-  #     
+  #
   #     position do            # Define the Position (see the Position class)
   #       attr_reader :board
   #
@@ -22,9 +24,9 @@ module Vying
   #   end
   #
   # The first section is used to declare properties of the Rules for the game.
-  # See Rules::Builder to get an idea of what properties are available.  
+  # See Rules::Builder to get an idea of what properties are available.
   #
-  # The second section is the position definition.  This creates a Position 
+  # The second section is the position definition.  This creates a Position
   # subclass.  A Position is composed of data, for example a board, that will
   # vary greatly from game to game.  It also provides methods to perform
   # state transitions and determine when a game is finished.  These methods
@@ -41,26 +43,26 @@ module Vying
   #   #winner?    - defines the winner of a final position
   #   #loser?     - defines the loser of a final position
   #   #draw?      - defines whether or not the final position represents a draw
-  #   #score      - if the game has a score, what is the score for this 
+  #   #score      - if the game has a score, what is the score for this
   #                 position?
   #   #hash       - hash the position
   #
-  
+
   class Rules
-  # private :new   # TODO
+    # private :new   # TODO
 
     attr_reader :class_name, :name, :version, :players, :options, :defaults,
                 :misere_rules
 
-    def initialize( class_name )
+    def initialize(class_name)
       @class_name, @options, @defaults, @cached = class_name, {}, {}, []
     end
 
     class << self
 
-      # Create a new Rules instance.  This takes a class name and block.  
+      # Create a new Rules instance.  This takes a class name and block.
       # Example:
-      # 
+      #
       #   Rules.create( "TicTacToe" ) do
       #     # ...
       #   end
@@ -80,33 +82,33 @@ module Vying
       #
       # The block is executed in the context of a Rules::Builder.
 
-      def create( class_name, &block )
-        rules = new( class_name )
-        builder = Builder.new( rules )
-        builder.instance_eval( &block )
+      def create(class_name, &block)
+        rules = new(class_name)
+        builder = Builder.new(rules)
+        builder.instance_eval(&block)
 
         rules.instance_variables.each do |iv|
-          rules.instance_variable_get( iv ).freeze
+          rules.instance_variable_get(iv).freeze
         end
 
         unless rules.broken?
-          Vying.const_set( class_name, rules )
+          Vying.const_set(class_name, rules)
 
-          unless Kernel.const_defined?( class_name )
-            Kernel.const_set( class_name, rules )
+          unless Kernel.const_defined?(class_name)
+            Kernel.const_set(class_name, rules)
           end
         end
 
-        list_rules( rules )
+        list_rules(rules)
 
         rules
       end
 
-      # Creates rules and position classes for the misere variation of the 
-      # given rules.  Under misere rules the winner? and loser? methods are 
+      # Creates rules and position classes for the misere variation of the
+      # given rules.  Under misere rules the winner? and loser? methods are
       # inverted, but the rules are otherwise unchanged.  If, for example, the
-      # rules are DotsAndBoxes, the misere rules will be put in 
-      # MisereDotsAndBoxes.  The name will also be prefixed so, 
+      # rules are DotsAndBoxes, the misere rules will be put in
+      # MisereDotsAndBoxes.  The name will also be prefixed so,
       # "Dots and Boxes" becomes "Misere Dots and Boxes".  In DotsAndBoxes the
       # player with the highest score will be the winner, in MisereDotsAndBoxes
       # the player with the lowest score will be the winner.
@@ -119,45 +121,45 @@ module Vying
       #
       #   end
       #
-      # Alternately, you can call this on an existing Rules object that does 
+      # Alternately, you can call this on an existing Rules object that does
       # not already have misere rules:
       #
       #  >> Rules.create_misere( Othello )
       #  => #<Rules name: 'Misere Othello', version: 1.0.0>
       #
 
-      def create_misere( rules )
+      def create_misere(rules)
         return rules.misere_rules    if rules.misere_rules
         return rules.inverted_rules  if rules.misere?
 
         mrs = rules.dup
 
-        mrs.instance_variable_set( "@class_name", "Misere#{rules.class_name}" )
-        mrs.instance_variable_set( "@name", "Misere #{rules.name}" )
-        mrs.instance_variable_set( "@inverted_rules", rules )
+        mrs.instance_variable_set('@class_name', "Misere#{rules.class_name}")
+        mrs.instance_variable_set('@name', "Misere #{rules.name}")
+        mrs.instance_variable_set('@inverted_rules', rules)
 
         unless mrs.broken?
-          Kernel.const_set( mrs.class_name, mrs )
+          Kernel.const_set(mrs.class_name, mrs)
         end
- 
-        list_rules( mrs )
- 
-        class_name = "#{mrs.class_name}_#{mrs.version.gsub( /\./, '_' )}"
-        klass = Positions.const_set( class_name, 
-          Class.new( rules.position_class ) )
- 
-        klass.instance_variable_set( "@inverted_rules", rules )
-        klass.instance_variable_set( "@rules", mrs )
+
+        list_rules(mrs)
+
+        class_name = "#{mrs.class_name}_#{mrs.version.tr('.', '_')}"
+        klass = Positions.const_set(class_name,
+          Class.new(rules.position_class))
+
+        klass.instance_variable_set('@inverted_rules', rules)
+        klass.instance_variable_set('@rules', mrs)
 
         if rules.highest_score_determines_winner?
 
-          mrs.instance_variable_set( "@highest_score_determines_winner", nil )
-          mrs.instance_variable_set( "@lowest_score_determines_winner", true )
+          mrs.instance_variable_set('@highest_score_determines_winner', nil)
+          mrs.instance_variable_set('@lowest_score_determines_winner', true)
 
         elsif rules.lowest_score_determines_winner?
 
-          mrs.instance_variable_set( "@highest_score_determines_winner", true )
-          mrs.instance_variable_set( "@lowest_score_determines_winner", nil )
+          mrs.instance_variable_set('@highest_score_determines_winner', true)
+          mrs.instance_variable_set('@lowest_score_determines_winner', nil)
 
         else
 
@@ -165,28 +167,28 @@ module Vying
             alias_method :__original_winner?, :winner?
             alias_method :__original_loser?,  :loser?
 
-            if ! Rules.overrides.include?( "#{rules.position_class}#loser?" )
+            if !Rules.overrides.include?("#{rules.position_class}#loser?")
 
-              def winner?( player )
-                loser?( opponent( player ) )
+              def winner?(player)
+                loser?(opponent(player))
               end
 
             else
 
-              def winner?( player )
-                __original_loser?( player )
+              def winner?(player)
+                __original_loser?(player)
               end
 
             end
 
-            def loser?( player )
-              __original_winner?( player )
+            def loser?(player)
+              __original_winner?(player)
             end
           end
 
         end
 
-        rules.instance_variable_set( "@misere_rules", mrs )
+        rules.instance_variable_set('@misere_rules', mrs)
 
         mrs
       end
@@ -194,20 +196,19 @@ module Vying
       def overrides
         @overrides ||= []
       end
-  
+
       # Add the given Rules object to Rules.list.
- 
-      def list_rules( rules )
+
+      def list_rules(rules)
         list << rules
- 
+
         in_list = false
         latest_versions.length.times do |i|
-          if latest_versions[i].class_name == rules.class_name
-            if rules.version > latest_versions[i].version
-              latest_versions[i] = rules
-            end
-            in_list = true
+          next unless latest_versions[i].class_name == rules.class_name
+          if rules.version > latest_versions[i].version
+            latest_versions[i] = rules
           end
+          in_list = true
         end
 
         latest_versions << rules unless in_list
@@ -219,59 +220,59 @@ module Vying
     # Returns a starting position for these rules.  The given options are
     # validated against #options.
 
-    def new( seed=nil, opts={} )
+    def new(seed=nil, opts={})
       if seed.class == Hash
         seed, opts = nil, seed
       end
 
-      opts = defaults.dup.merge!( opts )
-      if validate( opts )
+      opts = defaults.dup.merge!(opts)
+      if validate(opts)
         opts.each do |name, value|
-          opts[name] = options[name].coerce( value )
+          opts[name] = options[name].coerce(value)
         end
       end
 
-      position_class.new( seed, opts )
+      position_class.new(seed, opts)
     end
 
     # Return a list of all available versions of these rules.
 
     def versions
       Rules.list.select { |r| r.class_name == class_name }.
-                 map { |r| r.version }.
-                 sort
+        map(&:version).
+        sort
     end
 
     # Returns the Position subclass used by these rules.
 
     def position_class
-      pkn = "#{class_name}_#{version.gsub( /\./, '_' )}"
-      Positions.const_get( pkn )
+      pkn = "#{class_name}_#{version.tr('.', '_')}"
+      Positions.const_get(pkn)
     end
 
     # Returns a list of all Position subclasses used by every available version
     # of these rules.
 
     def position_classes
-      versions.map { |v| Rules.find( class_name, v ) }.
-               map { |r| r.position_class }
+      versions.map { |v| Rules.find(class_name, v) }.
+        map(&:position_class)
     end
 
     # Validate options that can be passed to Rules#new.  Checks that all
     # options are present, and then passes the value onto Option#validate.
     # Will raise an exception if anything is invalid.
 
-    def validate( opts )
+    def validate(opts)
       diff = opts.keys - options.keys
 
       if diff.length == 1
-        raise "#{diff.first} is not a valid option for #{name}" 
-      elsif ! diff.empty?
+        raise "#{diff.first} is not a valid option for #{name}"
+      elsif !diff.empty?
         raise "#{diff.inspect} are not valid options for #{name}"
       end
 
-      opts.all? do |name,value|
-        options[name].validate( value )
+      opts.all? do |name, value|
+        options[name].validate(value)
       end
     end
 
@@ -304,8 +305,8 @@ module Vying
     #   players.include?( p )
     #
 
-    def player?( p )
-      players.include?( p )
+    def player?(p)
+      players.include?(p)
     end
 
     # Does the game defined by these rules have random elements?
@@ -324,7 +325,7 @@ module Vying
     # Is the game defined by these rules deterministic?  That is, the outcome is
     # determined solely by the players -- chance does not play a role.  It is
     # possible for a game to have a random opening but otherwise be
-    # deterministic.  For example, Ataxx starts with a random (but fair) board, 
+    # deterministic.  For example, Ataxx starts with a random (but fair) board,
     # but the game play is itself deterministic.  A game like Pig which is
     # strongly influenced by the roll of dice is nondeterministic and should
     # return false.
@@ -341,7 +342,7 @@ module Vying
     # deterministic.
 
     def deterministic?
-      !! (! random? || @deterministic)
+      !!(!random? || @deterministic)
     end
 
     # Should caching be applied to the given method?
@@ -355,8 +356,8 @@ module Vying
     #   > AmericanCheckers.cached?( :init )
     #   => true
 
-    def cached?( m )
-      @cached.include?( m )
+    def cached?(m)
+      @cached.include?(m)
     end
 
     # Does the game defined by these rules allow the players to call a draw
@@ -415,7 +416,7 @@ module Vying
     # Do these rules define a score?
 
     def has_score?
-      position_class.instance_method_defined?( 'score' ) 
+      position_class.instance_method_defined?('score')
     end
 
     # Does the game defined by these rules allow use of the pie rule?  The
@@ -430,7 +431,7 @@ module Vying
     def pie_rule?
       @pie_rule
     end
- 
+
     # Do the rules require that we check for cycles?  A cycle is a repeated
     # position during the course of a game.  If this is set, Game will call
     # Position#found_cycle if a cycle occurs.
@@ -448,35 +449,33 @@ module Vying
     # rules created with the Rules.create_misere method?
 
     def misere?
-      !! @inverted_rules
+      !!@inverted_rules
     end
 
     # Do these rules use sealed moves (aka simultaneous moves)?  More than one
     # player can move at a time, the moves are sealed until all (or some subset
     # of more than one player) have moved.  This result is based on the arity
-    # of the Position subclass' #moves and #apply! methods (if they take a 
+    # of the Position subclass' #moves and #apply! methods (if they take a
     # player parameter it's assumed the rules allow for sealed moves).
 
     def sealed_moves?
       return @sealed_moves if @sealed_moves
 
-      if position_class.private_instance_method_defined?( '__original_moves' )
-        original_moves = position_class.instance_method( :__original_moves )
+      if position_class.private_instance_method_defined?('__original_moves')
+        original_moves = position_class.instance_method(:__original_moves)
       end
 
-      if position_class.private_instance_method_defined?( '__original_apply!' )
-        original_apply = position_class.instance_method( :__original_apply! )
+      if position_class.private_instance_method_defined?('__original_apply!')
+        original_apply = position_class.instance_method(:__original_apply!)
       end
 
-      @sealed_moves = (! original_moves || original_moves.arity == 1) &&
-                      (! original_apply || original_apply.arity == 2)
+      @sealed_moves = (!original_moves || original_moves.arity == 1) &&
+                      (!original_apply || original_apply.arity == 2)
     end
 
     # The prefered notation for this game.
 
-    def notation
-      @notation
-    end
+    attr_reader :notation
 
     # Terse inspect string for a Rules instance.
 
@@ -486,15 +485,15 @@ module Vying
 
     # TODO: Clean this up a little more.
 
-    def method_missing( m, *args )
-      iv = instance_variable_get( "@#{m}" )
+    def method_missing(m, *args)
+      iv = instance_variable_get("@#{m}")
       iv || super
     end
 
     # TODO: Clean this up a little more.
 
-    def respond_to?( m, include_all=false )
-      super || !! (instance_variable_defined?( "@#{m}" ))
+    def respond_to?(m, include_all=false)
+      super || !!instance_variable_defined?("@#{m}")
     end
 
     # Returns the name attribute of these Rules.  If name hasn't been set, the
@@ -509,26 +508,26 @@ module Vying
     def to_snake_case
       s = class_name.dup
       unless s =~ /^[A-Z\d]+$/
-        s.gsub!( /(.)([A-Z])/ ) { "#{$1}_#{$2.downcase}" }
+        s.gsub!(/(.)([A-Z])/) { "#{Regexp.last_match(1)}_#{Regexp.last_match(2).downcase}" }
       end
       s.downcase
     end
 
     # Shorter alias for Rules#to_snake_case
 
-    alias_method :to_sc, :to_snake_case
+    alias to_sc to_snake_case
 
     # Only need to dump the name, version.
 
-    def _dump( depth=-1 )
-      Marshal.dump( [class_name, version] )
+    def _dump(depth=-1)
+      Marshal.dump([class_name, version])
     end
 
     # Load mashalled data.
 
-    def self._load( s )
-      class_name, version = Marshal.load( s )
-      Rules.find( class_name, version )
+    def self._load(s)
+      class_name, version = Marshal.load(s)
+      Rules.find(class_name, version)
     end
 
     @list, @latest_versions = [], []
@@ -542,14 +541,14 @@ module Vying
       #   <Dir from path>/**/rules/**/*.rb
       #
 
-      def require_all( path=$: )
+      def require_all(path=$LOAD_PATH)
         required = []
         path.each do |d|
-          Dir.glob( "#{d}/**/rules/**/*.rb" ) do |f|
+          Dir.glob("#{d}/**/rules/**/*.rb") do |f|
             f =~ /(.*)\/rules\/(.*\/[\w\d]+\.rb)$/
-            if ! required.include?( $2 ) && !f["_test"]
-              required << $2
-              require "#{f}"
+            if !required.include?(Regexp.last_match(2)) && !f['_test']
+              required << Regexp.last_match(2)
+              require f.to_s
             end
           end
         end
@@ -557,29 +556,29 @@ module Vying
 
       # Find a Rules instance.  Takes a string and returns the subclass.  This
       # method will try a couple transformations on the string to find a match
-      # in Rules.latest_versions.  For example, "keryo_pente" will find 
-      # KeryoPente.  If a version is given, Rules.list is searched for an 
+      # in Rules.latest_versions.  For example, "keryo_pente" will find
+      # KeryoPente.  If a version is given, Rules.list is searched for an
       # exact match.
 
-      def Rules.find( name, version=nil )
-        return name if name.kind_of?( Rules ) && version.nil?
+      def Rules.find(name, version=nil)
+        return name if name.kind_of?(Rules) && version.nil?
 
         if version.nil?
           Rules.latest_versions.each do |r|
             return r if name == r ||
-                        name.to_s.downcase == r.class_name.downcase ||
+                        name.to_s.casecmp(r.class_name).zero? ||
                         name.to_s.downcase == r.to_snake_case
           end
         else
           Rules.list.each do |r|
             return r if (name == r ||
-                         name.to_s.downcase == r.class_name.downcase ||
+                         name.to_s.casecmp(r.class_name).zero? ||
                          name.to_s.downcase == r.to_snake_case) &&
                         version == r.version
           end
 
-          return Rules.find( name ) # couldn't find the exact version
-                                    # try the most recent version
+          return Rules.find(name) # couldn't find the exact version
+          # try the most recent version
         end
         nil
       end
@@ -590,7 +589,7 @@ module Vying
     # context of a Builder object.
 
     class Builder
-      def initialize( rules )
+      def initialize(rules)
         @rules = rules
       end
 
@@ -602,12 +601,12 @@ module Vying
       #   players :black, :white    <=   @players = [:black, :white]
       #
 
-      def method_missing( m, *args )
-        v = true       if args.length == 0
+      def method_missing(m, *args)
+        v = true       if args.empty?
         v = args.first if args.length == 1
         v ||= args
 
-        @rules.instance_variable_set( "@#{m}", v )
+        @rules.instance_variable_set("@#{m}", v)
       end
 
       # The code in the given block is used to create a subclass of Position.
@@ -622,19 +621,19 @@ module Vying
       #     # ...
       #   end
       #
-      # Yes, the position subclass is anonymous.  A new instance of the 
-      # subclass can be had by calling Rules#new.  If you must get access to 
+      # Yes, the position subclass is anonymous.  A new instance of the
+      # subclass can be had by calling Rules#new.  If you must get access to
       # the position class itself, try Rules#position_class.
 
-      def position( &block )
-        class_name = "#{@rules.class_name}_#{@rules.version.gsub( /\./, '_' )}"
-        klass = Positions.const_set( class_name, Class.new( Position ) )
+      def position(&block)
+        class_name = "#{@rules.class_name}_#{@rules.version.tr('.', '_')}"
+        klass = Positions.const_set(class_name, Class.new(Position))
 
         # Record the methods added to the Position subclass.
 
         klass.class.class_eval do
-          def method_added( name )
-            if Position.method_defined?( name )
+          def method_added(name)
+            if Position.method_defined?(name)
               Rules.overrides << "#{self}##{name}"
             end
           end
@@ -642,28 +641,28 @@ module Vying
 
         # Execute the position block
 
-        klass.class_eval( &block )
+        klass.class_eval(&block)
 
-        klass.instance_variable_set( "@rules", @rules )
+        klass.instance_variable_set('@rules', @rules)
 
         # Wrap (replace) #move?, #moves, and #apply!
 
         klass.class_eval do
-          if instance_method( :move? ).arity != -2
+          if instance_method(:move?).arity != -2
             alias_method :__original_move?, :move?
             alias_method :move?, :__move?
             public :move?
             private :__original_move?
           end
 
-          if instance_method( :moves ).arity != -1
+          if instance_method(:moves).arity != -1
             alias_method :__original_moves, :moves
             alias_method :moves, :__moves
             public :moves
             private :__original_moves
           end
 
-          if instance_method( :apply! ).arity != -2
+          if instance_method(:apply!).arity != -2
             alias_method :__original_apply!, :apply!
             alias_method :apply!, :__apply!
             public :apply!
@@ -674,7 +673,8 @@ module Vying
         # Stop recording added methods.
 
         klass.class.class_eval do
-          def method_added( name ); end
+          def method_added(name)
+          end
         end
 
         # caching
@@ -688,7 +688,7 @@ module Vying
           end
         end
 
-        misere_rules = Rules.create_misere( @rules )  if @misere
+        misere_rules = Rules.create_misere(@rules) if @misere
 
         klass
       end
@@ -707,14 +707,14 @@ module Vying
       #
       # See Option.
 
-      def option( name, options )
-        opts = @rules.instance_variable_get( "@options" )
-        opts[name] = Option.new( name, options )
-        @rules.instance_variable_set( "@options", opts )
+      def option(name, options)
+        opts = @rules.instance_variable_get('@options')
+        opts[name] = Option.new(name, options)
+        @rules.instance_variable_set('@options', opts)
 
-        defaults = @rules.instance_variable_get( "@defaults" )
+        defaults = @rules.instance_variable_get('@defaults')
         defaults[name] = opts[name].default
-        @rules.instance_variable_set( "@defaults", defaults )
+        @rules.instance_variable_set('@defaults', defaults)
       end
 
       # Specify which methods should be cached.
@@ -726,9 +726,9 @@ module Vying
       #   end
       #
 
-      def cache( *args )
-        args.delete( :init ) if @rules.random?
-        @rules.instance_variable_set( "@cached", args )
+      def cache(*args)
+        args.delete(:init) if @rules.random?
+        @rules.instance_variable_set('@cached', args)
       end
 
       # Automatically create the misere version of these rules.
@@ -744,4 +744,3 @@ end
 # Make Rules a top-level constant
 
 Rules = Vying::Rules
-

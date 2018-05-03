@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
@@ -12,7 +14,7 @@ module TrickTaking
   def suits
     unless @suits
       @suits = {}
-      rules.suits.each { |s,cs| @suits[s] = cs.map { |c| Card[c] } }
+      rules.suits.each { |s, cs| @suits[s] = cs.map { |c| Card[c] } }
     end
 
     @suits
@@ -27,7 +29,7 @@ module TrickTaking
   end
 
   def pass_before_deal?
-    rules.respond_to?( :pass_before_deal )
+    rules.respond_to?(:pass_before_deal)
   end
 
   def pass_before_deal
@@ -38,8 +40,8 @@ module TrickTaking
 
   def rotate_pass_before_deal
     if pass_before_deal?
-      pass_before_deal[:directions] << 
-        pass_before_deal[:directions].delete_at( 0 )
+      pass_before_deal[:directions] <<
+        pass_before_deal[:directions].delete_at(0)
     end
   end
 
@@ -65,44 +67,44 @@ module TrickTaking
 
   def has_moves
     if final?
-      return []
+      []
     elsif post_deal && pass?
       can_pass = []
-      selected.each do |k,v|
+      selected.each do |k, v|
         can_pass << k if v.length < pass_before_deal[:number]
       end
 
-      return can_pass
+      can_pass
     else
-      return [turn]
+      [turn]
     end
   end
 
-  def moves( player )
-    return [] unless player.nil? || has_moves.include?( player )
+  def moves(player)
+    return [] unless player.nil? || has_moves.include?(player)
     return [] if final?
 
     if post_deal && pass?
       passable = {}
-      hands.each do |k,v|
-        passable[k] = v - selected[k] if has_moves.include?( k )
+      hands.each do |k, v|
+        passable[k] = v - selected[k] if has_moves.include?(k)
       end
 
       a = player ? passable[player] : passable.values.flatten
-      return a.map { |c| c.to_s }
+      return a.map(&:to_s)
     end
 
     hand = hands[turn]
 
     if trick.empty?
       rules.lead.each do |rule|
-        if rule.kind_of?( Card )
-          return [rule.to_s] if hand.include?( rule )
+        if rule.kind_of?(Card)
+          return [rule.to_s] if hand.include?(rule)
         elsif rule == :any
-          return hand.map { |c| c.to_s } if broken
+          return hand.map(&:to_s) if broken
 
           diff = hand - wait_until_broken
-          return (diff.empty? ? hand : diff).map { |c| c.to_s }
+          return (diff.empty? ? hand : diff).map(&:to_s)
         end
       end
     else
@@ -112,23 +114,23 @@ module TrickTaking
         case rule
           when :must_follow_suit
             on_suit = hand.select { |c| c.suit == led }
-            return on_suit.map { |c| c.to_s } unless on_suit.empty?
+            return on_suit.map(&:to_s) unless on_suit.empty?
           when :must_trump
             in_trump = hand & rules.trump
-            return in_trump.map { |c| c.to_s } unless in_trump.empty?
+            return in_trump.map(&:to_s) unless in_trump.empty?
         end
       end
     end
 
-    hand.map { |c| c.to_s }
+    hand.map(&:to_s)
   end
 
-  def apply!( move, player )
+  def apply!(move, _player)
     move = Card[move]
 
     if post_deal && pass?
-      hands.each { |k,v| selected[k] << move if v.include?( move ) }
-      if selected.all? { |k,v| v.length == pass_before_deal[:number] }
+      hands.each { |k, v| selected[k] << move if v.include?(move) }
+      if selected.all? { |k, v| v.length == pass_before_deal[:number] }
         if pass_left?
           hands[:n] += selected[:w]
           hands[:w] += selected[:s]
@@ -146,16 +148,16 @@ module TrickTaking
           hands[:e] += selected[:w]
         end
 
-        hands.each { |k,v| hands[k] -= selected[k] }
+        hands.each { |k, v| hands[k] -= selected[k] }
 
         @post_deal = false
         rotate_pass_before_deal
-        @selected = { :n => [], :e => [], :w => [], :s => [] }
-        rotate_turn until hands[turn].include?( Card[:C2] )
-        hands.each { |k,v| v.sort! }
+        @selected = { n: [], e: [], w: [], s: [] }
+        rotate_turn until hands[turn].include?(Card[:C2])
+        hands.each { |k, v| v.sort! }
       end
 
-      rotate_turn until has_moves.include?( turn )
+      rotate_turn until has_moves.include?(turn)
 
       return self
     end
@@ -163,9 +165,9 @@ module TrickTaking
     hand = hands[turn]
     card = Card[move]
 
-    trick << [turn, hand.delete( card )]
+    trick << [turn, hand.delete(card)]
 
-    @broken = true if wait_until_broken.include?( card )
+    @broken = true if wait_until_broken.include?(card)
 
     if trick.size == players.size
 
@@ -173,20 +175,20 @@ module TrickTaking
       capture_card = trick.first[1]
 
       led = capture_card.suit
-      capture_index = suits[led].index( capture_card )
+      capture_index = suits[led].index(capture_card)
 
       trumped = false
 
-      trick.each do |p,c|
+      trick.each do |p, c|
         if c.suit == led
-          i = suits[led].index( c )
+          i = suits[led].index(c)
           if i < capture_index
             capture_index = i
             capture_card = c
             capture_by = p
           end
-        elsif trump.include?( c )
-          i = trump.index( c )
+        elsif trump.include?(c)
+          i = trump.index(c)
           if i < capture_index || !trumped
             capture_index = i
             capture_card = c
@@ -208,26 +210,25 @@ module TrickTaking
 
         return self if final?
 
-        d = Deck.new( deck, rng ).shuffle.deal( players.size, rules.deal_out )
-        d.zip( players ) { |h,p| hands[p] = h }
-        hands.each { |k,v| v.sort! }
+        d = Deck.new(deck, rng).shuffle.deal(players.size, rules.deal_out)
+        d.zip(players) { |h, p| hands[p] = h }
+        hands.each { |k, v| v.sort! }
 
         @post_deal = true
 
         if no_pass?
           rotate_pass_before_deal
           @post_deal = false
-          rotate_turn until hands[turn].include?( Card[:C2] )
+          rotate_turn until hands[turn].include?(Card[:C2])
         end
       end
     else
       rotate_turn
     end
 
-    rotate_turn until has_moves.include?( turn )
+    rotate_turn until has_moves.include?(turn)
 
     self
   end
 
 end
-

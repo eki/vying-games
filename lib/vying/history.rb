@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2007-08, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
@@ -20,9 +22,9 @@ module Vying
     # Takes the ingredients for the first position (rules, seed, options) and
     # initializes a history.
 
-    def initialize( rules, seed, options )
+    def initialize(rules, seed, options)
       @rules = rules
-      @moves, @positions = [], [rules.new( seed, options )]
+      @moves, @positions = [], [rules.new(seed, options)]
 
       @seed    = @positions.last.seed
       @options = @positions.last.options.dup.freeze
@@ -32,7 +34,7 @@ module Vying
 
     # Initialize as a deep copy of the given history.
 
-    def initialize_copy( o )
+    def initialize_copy(o)
       @rules, @seed, @options = o.rules, o.seed, o.options.dup
       @moves = o.moves.dup
     end
@@ -40,22 +42,20 @@ module Vying
     # Fetch a position from history.  This recreates / caches positions as
     # necessary.
 
-    def []( i )
+    def [](i)
       return nil           if i >= length
       return @positions[i] if @positions[i]
 
       if i == 0
-        return @positions[i] = rules.new( seed, options )
+        return @positions[i] = rules.new(seed, options)
       end
 
       # Need to recreate a missing position
       j = i
-      until @positions[j]
-        j -= 1
-      end
+      j -= 1 until @positions[j]
 
       until j == i
-        @positions[j+1] = moves[j].apply_to( @positions[j] )
+        @positions[j + 1] = moves[j].apply_to(@positions[j])
         j += 1
       end
 
@@ -71,7 +71,7 @@ module Vying
     # Fetch the last position from history.
 
     def last
-      self[length-1] # Use [] -- positions could be missing
+      self[length - 1] # Use [] -- positions could be missing
     end
 
     # How many positions are in this history?  This is based on #moves, and
@@ -87,7 +87,7 @@ module Vying
     # used instead.
 
     def sequence
-      moves.map { |m| m.to_s }
+      moves.map(&:to_s)
     end
 
     # The censored sequence of moves.  Any sealed moves are replaced with the
@@ -104,14 +104,14 @@ module Vying
     # TODO:  This should be deprecated in favor of a, yet unwritten,
     #        censored_moves method.
 
-    def censored_sequence( player )
+    def censored_sequence(player)
       seq = sequence
-      sealed = last.sealed_moves( player ).map { |m| m.to_s }
+      sealed = last.sealed_moves(player).map(&:to_s)
 
       i = seq.length - 1
 
       until i < 0 || sealed.empty?
-        seq[i] = :hidden if sealed.delete( seq[i] )
+        seq[i] = :hidden if sealed.delete(seq[i])
         i -= 1
       end
 
@@ -122,7 +122,7 @@ module Vying
     # be used instead.
 
     def move_by
-      moves.map { |m| m.by }
+      moves.map(&:by)
     end
 
     # Add a new position to history.  The given move is applied to the last
@@ -134,12 +134,12 @@ module Vying
     # History#moves list, but the position is not created until it's accessed
     # through History#[] (or History#last).
 
-    def append( move )
+    def append(move)
       unless no_timestamps || move.at
         move = move.stamp
       end
 
-      moves << move    # this is tricky, the move is applied lazily
+      moves << move # this is tricky, the move is applied lazily
 
       @last_move_at = move.at
 
@@ -150,7 +150,7 @@ module Vying
     # [deleted_move, deleted_position].
 
     def undo
-      last  # make sure the last position is available
+      last # make sure the last position is available
       [moves.pop, @positions.pop]
     end
 
@@ -164,11 +164,11 @@ module Vying
     # History#moves).  Note, because this is based on Move#at, there isn't
     # a timestamp for when the first position was created (TODO).
 
-    def since( time )
+    def since(time)
       ps, i = [], moves.length - 1
       time += 0.00001
       while i >= 0 && (m = moves[i]) && m.at && m.at > time
-        ps.unshift self[i+1]
+        ps.unshift self[i + 1]
         i -= 1
       end
       ps
@@ -182,11 +182,11 @@ module Vying
     # a player has already made two moves, and it's still his or her turn.  The
     # first two moves will be returned even though the turn is not complete.
 
-    def last_turn( i=moves.length-1, special=false )
+    def last_turn(i=moves.length - 1, special=false)
       ms = []
 
       while i >= 0 && (m = moves[i])
-        break if ! special && m.special?
+        break if !special && m.special?
 
         if ms.empty?
           ms << m
@@ -206,7 +206,7 @@ module Vying
     # seed, options and moves list are equal, the histories are considered
     # equal.
 
-    def eql?( o )
+    def eql?(o)
       rules == o.rules &&
       seed == o.seed &&
       options == o.options &&
@@ -215,40 +215,39 @@ module Vying
 
     # Compare History objects.
 
-    def ==( o )
+    def ==(o)
       eql? o
     end
 
     # For efficiency's sake don't dump the entire positions array
 
-    def _dump( depth=-1 )
+    def _dump(depth=-1)
       ps = @positions
 
       if length > 6
         ps = [nil] * length
         ps[0] = @positions.first
-        r = ( (ps.length - 6)..(ps.length - 1) )
+        r = ((ps.length - 6)..(ps.length - 1))
         ps[r] = @positions[r]
       end
 
-      Marshal.dump [rules, seed, options, moves, last_move_at, created_at, ps] 
+      Marshal.dump [rules, seed, options, moves, last_move_at, created_at, ps]
     end
 
     # Load mashalled data.
 
-    def self._load( s )
-      r, s, o, m, lma, ca, p = Marshal.load( s )
-      h = self.allocate
-      h.instance_variable_set( "@rules", r )
-      h.instance_variable_set( "@seed", s )
-      h.instance_variable_set( "@options", o )
-      h.instance_variable_set( "@moves", m )
-      h.instance_variable_set( "@last_move_at", lma )
-      h.instance_variable_set( "@created_at", ca )
-      h.instance_variable_set( "@positions", p )
+    def self._load(s)
+      r, s, o, m, lma, ca, p = Marshal.load(s)
+      h = allocate
+      h.instance_variable_set('@rules', r)
+      h.instance_variable_set('@seed', s)
+      h.instance_variable_set('@options', o)
+      h.instance_variable_set('@moves', m)
+      h.instance_variable_set('@last_move_at', lma)
+      h.instance_variable_set('@created_at', ca)
+      h.instance_variable_set('@positions', p)
       h
     end
 
   end
 end
-

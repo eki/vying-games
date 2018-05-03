@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
@@ -12,7 +14,7 @@ class Board::Square < Board
   # NOTE:  You don't have to call Board::Square.new directly, you can use
   #        the convenience method Board.square.
   #
-  # Requires a length for each side of the board.  In addition to the 
+  # Requires a length for each side of the board.  In addition to the
   # options provided by Board, you may provide:
   #
   #   :cell_shape  -  Valid values include [:square, :triangle].  In the
@@ -20,13 +22,13 @@ class Board::Square < Board
   #   :directions  -  Some subset of [:n, :e, :w, :s, :ne, :nw, :se, :sw].
   #                   This value represents cell connectivity, and effects
   #                   the results of methods like Coords#neighbors.  Only valid
-  #                   if :cell_shape is :square.  The default is the full set 
+  #                   if :cell_shape is :square.  The default is the full set
   #                   of 8 directions.  If :cell_shape is :triangle, the
   #                   connectivity directions will vary for each cell.  See
   #                   Board#directions.
   #
 
-  def initialize( length, h={} )
+  def initialize(length, h={})
     @shape = :square
 
     @width = @height = @length = length
@@ -42,18 +44,17 @@ class Board::Square < Board
       when :triangle
 
         if @directions
-          raise ":directions is not supported when :cell_shape is :triangle"
+          raise ':directions is not supported when :cell_shape is :triangle'
         end
 
-        @up_directions   = [:w,:e,:s]
-        @down_directions = [:n,:e,:w]
+        @up_directions   = [:w, :e, :s]
+        @down_directions = [:n, :e, :w]
 
       else
         raise "#{@cell_shape} is not a supported cell_shape for a square Board"
     end
 
-    super( h )   
+    super(h)
   end
 
 end
-

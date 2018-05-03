@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2007-08, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
@@ -6,15 +8,15 @@ require 'vying'
 module Vying
   class Move::Undo < SpecialMove
 
-    def self.[]( s )
+    def self.[](s)
       new if s =~ /^undo$/
     end
 
     def initialize
-      @move = "undo"
+      @move = 'undo'
     end
 
-    def valid_for?( game, player=nil )
+    def valid_for?(game, player=nil)
       last = game.history.moves.last
 
       unless last.nil? || last.special?
@@ -25,15 +27,14 @@ module Vying
       end
     end
 
-    def self.generate_for( game, player=nil )
+    def self.generate_for(game, player=nil)
       m = new
-      m.valid_for?( game, player ) ? [m] : []
+      m.valid_for?(game, player) ? [m] : []
     end
 
-    def before_apply( game )
+    def before_apply(game)
       game.undo
     end
 
   end
 end
-

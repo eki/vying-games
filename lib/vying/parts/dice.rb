@@ -1,22 +1,24 @@
 
+# frozen_string_literal: true
+
 class Die
 
   attr_reader :up, :color, :faces
 
-  def initialize( up, color=:white, faces=[1,2,3,4,5,6] )
+  def initialize(up, color=:white, faces=[1, 2, 3, 4, 5, 6])
     @up, @color, @faces = up, color, faces
   end
 
-  def roll( rng=Kernel )
-    @up = faces[rng.rand( faces.length )]
+  def roll(rng=Kernel)
+    @up = faces[rng.rand(faces.length)]
   end
 
-  def eql?( o )
-    o && o.respond_to?( :up ) && up == o.up && 
-         o.respond_to?( :color ) && color == o.color
+  def eql?(o)
+    o && o.respond_to?(:up) && up == o.up &&
+         o.respond_to?(:color) && color == o.color
   end
 
-  def ==( o )
+  def ==(o)
     eql? o
   end
 
@@ -31,11 +33,11 @@ end
 
 class Dice
 
-  def initialize( dice=[] )
+  def initialize(dice=[])
     @dice = dice
   end
 
-  def []( i )
+  def [](i)
     @dice[i]
   end
 
@@ -47,16 +49,16 @@ class Dice
     @dice.each { |die| yield die }
   end
 
-  def roll( rng=Kernel )
-    @dice.each { |die| die.roll( rng ) }
+  def roll(rng=Kernel)
+    @dice.each { |die| die.roll(rng) }
   end
 
-  def include?( array )
-    sorted = @dice.map { |die| die.up }.sort
+  def include?(array)
+    sorted = @dice.map(&:up).sort
     array = array.sort
 
     i, j = 0, 0
-    
+
     while j < array.length
       return false if sorted[i].nil? || sorted[i] > array[j]
 
@@ -71,12 +73,12 @@ class Dice
     @dice.dup
   end
 
-  def eql?( o )
+  def eql?(o)
     length == o.length && to_a == o.to_a
   end
 
-  def ==( o )
-    eql?( o )
+  def ==(o)
+    eql?(o)
   end
 
   def hash
@@ -84,4 +86,3 @@ class Dice
   end
 
 end
-

@@ -1,4 +1,6 @@
 
+# frozen_string_literal: true
+
 class Object
   def deep_dup
     dup
@@ -40,7 +42,7 @@ class Array
   # Get a deep copy of this Array (and deep copies of all its elements).
 
   def deep_dup
-    self.dup.map! { |o| o.deep_dup }
+    dup.map!(&:deep_dup)
   end
 end
 
@@ -61,8 +63,7 @@ class Hash
 
   # Define eql? in terms of == which seems to behave in a nicer manner
 
-  def eql?( o )
+  def eql?(o)
     self == o
   end
 end
-

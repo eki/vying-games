@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 #
@@ -10,56 +12,55 @@
 #
 
 module Memoizable
-  def memoize( name, cache = Hash.new )
+  def memoize(name, cache={})
     original = "__unmemoized_#{name}__"
 
     ([Class, Module].include?(self.class) ? self : self.class).class_eval do
       alias_method original, name
       private      original
-      define_method(name) do |*args| 
-        cache[[self,args]] ||= send(original, *args).deep_dup.freeze
+      define_method(name) do |*args|
+        cache[[self, args]] ||= send(original, *args).deep_dup.freeze
       end
     end
   end
 
-  def immutable_memoize( name )
+  def immutable_memoize(name)
     original = "__unmemoized_#{name}__"
 
     ([Class, Module].include?(self.class) ? self : self.class).class_eval do
       alias_method original, name
       private      original
 
-      if instance_method( original ).arity == 0
+      if instance_method(original).arity == 0
 
-        define_method( name ) do ||   # empty pipes needed to get right arity
-
-          n = name.to_s.gsub( /[?!]/, '_' )
+        define_method(name) do || # empty pipes needed to get right arity
+          n = name.to_s.gsub(/[?!]/, '_')
           iv = "@__#{n}_cache"
-          v = instance_variable_get( iv )
+          v = instance_variable_get(iv)
 
           return v unless v.nil?
 
-          v = send( original ).deep_dup.freeze
-          instance_variable_set( iv, v )
+          v = send(original).deep_dup.freeze
+          instance_variable_set(iv, v)
 
           v
         end
 
       else
 
-        define_method( name ) do |*args| 
+        define_method(name) do |*args|
           # Remove trailing nils from args (but keep placeholder nils)
-          args.pop while args.last == nil && ! args.empty?
+          args.pop while args.last.nil? && !args.empty?
 
-          n = name.to_s.gsub( /[?!]/, '_' )
+          n = name.to_s.gsub(/[?!]/, '_')
           iv = "@__#{n}_cache"
-          h = instance_variable_get( iv ) || {}
+          h = instance_variable_get(iv) || {}
           v = h[args]
 
           return v unless v.nil?
 
-          h[args] = v = send( original, *args ).deep_dup.freeze
-          instance_variable_set( iv, h )
+          h[args] = v = send(original, *args).deep_dup.freeze
+          instance_variable_set(iv, h)
 
           v
         end
@@ -71,6 +72,7 @@ end
 
 class Class
   private
+
   def prototype
     class_eval do
       class << self
@@ -78,12 +80,11 @@ class Class
 
         private :old_new
 
-        define_method( :new ) do |*args|
+        define_method(:new) do |*args|
           @prototype_cache ||= {}
-          (@prototype_cache[args] ||= old_new( *args ).freeze).deep_dup
+          (@prototype_cache[args] ||= old_new(*args).freeze).deep_dup
         end
       end
     end
   end
 end
-

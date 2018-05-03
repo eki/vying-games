@@ -1,4 +1,6 @@
 
+# frozen_string_literal: true
+
 module Vying
   class CheckersNotation < Notation
 
@@ -6,9 +8,9 @@ module Vying
       :checkers_notation
     end
 
-    def to_move( s )
+    def to_move(s)
       if s =~ /(\d+)-(\d+)/
-        n1, n2 = $1.to_i, $2.to_i
+        n1, n2 = Regexp.last_match(1).to_i, Regexp.last_match(2).to_i
 
         b = game.board
 
@@ -25,7 +27,7 @@ module Vying
       end
     end
 
-    def translate( move, player )
+    def translate(move, _player)
       cs = move.to_coords
 
       if cs.length == 2
@@ -43,5 +45,3 @@ module Vying
 
   end
 end
-
-

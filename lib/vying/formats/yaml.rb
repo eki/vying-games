@@ -1,4 +1,6 @@
 
+# frozen_string_literal: true
+
 module Vying
   class YamlFormat < Format
 
@@ -6,14 +8,13 @@ module Vying
       :yaml
     end
 
-    def load( string )
-      Vying.load( YAML.load( string ), :hash )
+    def load(string)
+      Vying.load(YAML.load(string), :hash)
     end
 
-    def dump( game )
-      game.to_format( :hash ).to_yaml
+    def dump(game)
+      game.to_format(:hash).to_yaml
     end
 
   end
 end
-

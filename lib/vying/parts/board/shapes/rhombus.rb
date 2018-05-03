@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
@@ -23,7 +25,7 @@ class Board::Rhombus < Board
   #                       :hexagon cells.  The default is :vertical.
   #
 
-  def initialize( width, height, h={} )
+  def initialize(width, height, h={})
     @shape = :rhombus
 
     @width, @height = width, height
@@ -49,8 +51,7 @@ class Board::Rhombus < Board
         raise "#{@cell_shape} is not a supported cell_shape for a rhombus Board"
     end
 
-    super( h )   
+    super(h)
   end
 
 end
-

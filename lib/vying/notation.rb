@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2007-08, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
@@ -10,7 +12,7 @@ module Vying
   #  strings for moves because they work well with Board.  So, to move a piece
   #  from (0,0) to (1,0) we would commonly encode the move as "a1b1".  However,
   #  this Chess-like notation is sometimes not prefered for a game.  In checkers
-  #  games, the squares are usually numbered.  So, we'd prefer to present 
+  #  games, the squares are usually numbered.  So, we'd prefer to present
   #  moves as "9-14", for example.  Notation provides a convenient mapping.
   #
   #  To use a notation, declare it in the Rules definition:
@@ -47,19 +49,19 @@ module Vying
 
     # The Game to provide notation translations for.
 
-    def initialize( game )
+    def initialize(game)
       @game = game
     end
 
     # Translate the given String from this notation into an underlying move.
 
-    def to_move( s )
+    def to_move(s)
       s
     end
 
     # Translate the underlying move into this notation.
 
-    def translate( move, player )
+    def translate(move, _player)
       move
     end
 
@@ -68,7 +70,7 @@ module Vying
     def sequence
       s = []
       game.history.moves.each do |move|
-        s << translate( move, move.by ).to_s
+        s << translate(move, move.by).to_s
       end
 
       s
@@ -76,35 +78,35 @@ module Vying
 
     # Translate Game#moves
 
-    def moves( player=nil )
+    def moves(player=nil)
       ps = player ? [player] : game.has_moves
       ms = []
 
-      ps.each { |p| game.moves( p ).each { |m| ms << translate( m, p ) } }
+      ps.each { |p| game.moves(p).each { |m| ms << translate(m, p) } }
 
       ms
     end
 
     # Translate the given move from this notation and play it via Game#append.
 
-    def append( move, player=nil )
-      game.append( to_move( move ), player )
+    def append(move, player=nil)
+      game.append(to_move(move), player)
     end
 
-    # Translate the given moves from this notation and play them via 
+    # Translate the given moves from this notation and play them via
     # Game#append_list.
 
-    def append_list( moves )
-      game.append_list( moves.map { |m| to_move( m ) } )
+    def append_list(moves)
+      game.append_list(moves.map { |m| to_move(m) })
     end
 
     # Translate the given move(s) from this notation and play them via Game#<<.
 
-    def <<( moves )
+    def <<(moves)
       if moves.kind_of? Enumerable
-        return append_list( moves )
+        append_list(moves)
       else
-        return append( moves )
+        append(moves)
       end
     end
 
@@ -114,14 +116,14 @@ module Vying
     #   <Dir from path>/**/notations/*.rb
     #
 
-    def self.require_all( path=$: )
+    def self.require_all(path=$LOAD_PATH)
       required = []
       path.each do |d|
-        Dir.glob( "#{d}/**/notations/*.rb" ) do |f|
+        Dir.glob("#{d}/**/notations/*.rb") do |f|
           f =~ /(.*)\/notations\/([\w\d]+\.rb)$/
-          if ! required.include?( $2 ) && !f["_test"]
-            required << $2
-            require "#{f}"
+          if !required.include?(Regexp.last_match(2)) && !f['_test']
+            required << Regexp.last_match(2)
+            require f.to_s
           end
         end
       end
@@ -131,7 +133,7 @@ module Vying
 
     # When a subclass extends Notation, it is added to @@notation_list.
 
-    def self.inherited( child )
+    def self.inherited(child)
       @@notation_list << child
     end
 
@@ -143,10 +145,9 @@ module Vying
 
     # Find a specific Notation by name
 
-    def self.find( name )
+    def self.find(name)
       list.find { |n| n.notation_name == name }
     end
 
   end
 end
-

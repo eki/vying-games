@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
 require 'vying'
 
-Rules.create( "Pig" ) do
-  name    "Pig"
-  version "1.0.0"
+Rules.create('Pig') do
+  name    'Pig'
+  version '1.0.0'
 
   players :a, :b
 
@@ -17,15 +19,15 @@ Rules.create( "Pig" ) do
     attr_reader :total, :current_score, :roll_history
 
     def init
-      @total, @current_score = Hash.new( 0 ), 0
-      @roll_history = { :a => [], :b => [] }
+      @total, @current_score = Hash.new(0), 0
+      @roll_history = { a: [], b: [] }
     end
 
     def moves
       final? ? [] : %w(pass roll)
     end
 
-    def apply!( move )
+    def apply!(move)
       move = move.to_s
 
       if move == 'pass'
@@ -36,7 +38,7 @@ Rules.create( "Pig" ) do
       elsif move == 'roll'
         @roll_history[turn] << [] if @current_score == 0
 
-        r = [1, 2, 3, 4, 5, 6][rand( 6 )]
+        r = [1, 2, 3, 4, 5, 6][rand(6)]
 
         @roll_history[turn].last << r
 
@@ -52,13 +54,11 @@ Rules.create( "Pig" ) do
     end
 
     def final?
-      total.select { |k,v| v >= 100 }.size > 0
+      !total.select { |k, v| v >= 100 }.empty?
     end
 
-    def score( player )
-      total[player] 
+    def score(player)
+      total[player]
     end
   end
-
 end
-

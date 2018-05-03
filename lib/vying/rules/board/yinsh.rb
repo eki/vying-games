@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
@@ -7,14 +9,14 @@ require 'vying'
 #
 # For detailed rules see:  http://vying.org/games/yinsh
 
-Rules.create( "Yinsh" ) do
-  name    "YINSH"
-  version "1.0.0"
+Rules.create('Yinsh') do
+  name    'YINSH'
+  version '1.0.0'
 
   players :white, :black
 
-  ring :white => :WHITE_RING,
-       :black => :BLACK_RING
+  ring white: :WHITE_RING,
+       black: :BLACK_RING
 
   highest_score_determines_winner
 
@@ -24,9 +26,9 @@ Rules.create( "Yinsh" ) do
     attr_reader :board, :removed, :rows, :removed_markers, :completed_row
 
     def init
-      @board = Board.hexagon( 6, :omit => [:a1, :a6, :f1, :f11, :k6, :k11] )
+      @board = Board.hexagon(6, omit: [:a1, :a6, :f1, :f11, :k6, :k11])
 
-      @removed = { :WHITE_RING => 0, :BLACK_RING => 0 }
+      @removed = { WHITE_RING: 0, BLACK_RING: 0 }
       @rows = []
       @removed_markers = []
       @completed_row = nil
@@ -37,7 +39,7 @@ Rules.create( "Yinsh" ) do
 
       a = []
 
-      rings = board.occupied( rules.ring[turn] )
+      rings = board.occupied(rules.ring[turn])
 
       if rings.length < 5 && removed[rules.ring[turn]] == 0
         a = board.unoccupied
@@ -45,11 +47,11 @@ Rules.create( "Yinsh" ) do
       elsif removed_markers.length == 5
         a = rings
 
-      elsif ! rows.empty?
+      elsif !rows.empty?
         if removed_markers.empty?
           prows = rows.select { |row| board[row.first] == turn }
         else
-          prows = rows.select { |row| row.include?( removed_markers.first ) }
+          prows = rows.select { |row| row.include?(removed_markers.first) }
         end
 
         a = prows.flatten - removed_markers
@@ -58,7 +60,7 @@ Rules.create( "Yinsh" ) do
         rings.each do |r|
           [:n, :s, :e, :w, :nw, :se].each do |d|
             c, over_marker = r, false
-            while c = board.coords.next( c, d )
+            while c = board.coords.next(c, d)
               p = board[c]
 
               if p.nil?
@@ -71,7 +73,6 @@ Rules.create( "Yinsh" ) do
               end
             end
           end
-
         end
 
       end
@@ -79,19 +80,19 @@ Rules.create( "Yinsh" ) do
       a
     end
 
-    def apply!( move )
+    def apply!(move)
       coords = move.to_coords
 
       if coords.length == 2
         # move the ring and put down a marker
-        board.move( coords.first, coords.last )
+        board.move(coords.first, coords.last)
         board[coords.first] = turn
 
         # flip markers
         all = [coords.first]
-        d = coords.first.direction_to( coords.last )
+        d = coords.first.direction_to(coords.last)
         c = coords.first
-        until (c = board.coords.next( c, d )) == coords.last
+        until (c = board.coords.next(c, d)) == coords.last
           all << c
           p = board[c]
           if p == :white || p == :black
@@ -105,70 +106,65 @@ Rules.create( "Yinsh" ) do
         all.each do |c|
           p = board[c]
 
-          if p == :white || p == :black
-            [[:n,:s], [:e,:w], [:nw,:se]].each do |ds|
-              row = [c]
-              ds.each do |rd|
-                c2 = c
-                while c2 = board.coords.next( c2, rd )
-                  p2 = board[c2]
-                  break if p2 != p
-                  row << c2
-                end
+          next unless p == :white || p == :black
+          [[:n, :s], [:e, :w], [:nw, :se]].each do |ds|
+            row = [c]
+            ds.each do |rd|
+              c2 = c
+              while c2 = board.coords.next(c2, rd)
+                p2 = board[c2]
+                break if p2 != p
+                row << c2
               end
-              rows << row if row.length >= 5
             end
-
+            rows << row if row.length >= 5
           end
         end
 
         # handle butted overlines
         if rows.length > 1
           rows.each do |row|
-            if row.length > 5   # overline
-              row.sort!
+            next unless row.length > 5 # overline
+            row.sort!
 
-              extra, i = row.length - 5, 0 
-              until i == extra
-                c = row[i]
-                if rows.any? { |r2| r2.length == 5 && r2.include?( c ) }
-                  row.slice!( 0, i+1 )
-                  break
-                end
-
-                c = row[-i]
-                if rows.any? { |r2| r2.length == 5 && r2.include?( c ) }
-                  row.slice!( row.length - 1 - i, i+1 )
-                  break
-                end
-
-                i += 1
+            extra, i = row.length - 5, 0
+            until i == extra
+              c = row[i]
+              if rows.any? { |r2| r2.length == 5 && r2.include?(c) }
+                row.slice!(0, i + 1)
+                break
               end
 
+              c = row[-i]
+              if rows.any? { |r2| r2.length == 5 && r2.include?(c) }
+                row.slice!(row.length - 1 - i, i + 1)
+                break
+              end
+
+              i += 1
             end
           end
         end
 
         # separate overlines
         rows.each do |row|
-          if row.length > 5
-            row.sort!
-            extra, i = row.length - 5, 0
-            until i == extra
-              rows << row[i,5]
-              i += 1
-            end
-            row.slice!( 0, extra )
+          next unless row.length > 5
+          row.sort!
+          extra, i = row.length - 5, 0
+          until i == extra
+            rows << row[i, 5]
+            i += 1
           end
+          row.slice!(0, extra)
         end
 
         @completed_row = turn unless rows.empty?
 
-        rotate_turn  unless rows.any? { |row| board[row.first] == turn }
+        rotate_turn unless rows.any? { |row| board[row.first] == turn }
 
       elsif coords.length == 1
-        rings = board.occupied( rules.ring[turn] )
-  
+        rings = board.occupied(rules.ring[turn])
+
         # add a ring to the board
         if rings.length < 5 && removed[rules.ring[turn]] == 0
           board[coords.first] = rules.ring[turn]
@@ -188,18 +184,18 @@ Rules.create( "Yinsh" ) do
           end
 
         # remove a marker
-        elsif ! rows.empty?
+        elsif !rows.empty?
           board[coords.first] = nil
           removed_markers << coords.first
 
           # reject entire rows that can no longer complete a 5-in-a-row
           rows.reject! do |row|
-              removed_markers.any? { |c| row.include?( c ) } &&
-            ! removed_markers.all? { |c| row.include?( c ) }
+            removed_markers.any? { |c| row.include?(c) } &&
+          !removed_markers.all? { |c| row.include?(c) }
           end
 
           # reject empty rows
-          rows.reject! { |row| row.empty? }
+          rows.reject!(&:empty?)
 
         end
 
@@ -209,35 +205,33 @@ Rules.create( "Yinsh" ) do
     end
 
     def final?
-      players.any? { |p| score( p ) == 3 } || markers_remaining == 0
+      players.any? { |p| score(p) == 3 } || markers_remaining == 0
     end
 
-    def score( player )
+    def score(player)
       removed[rules.ring[player]]
     end
 
     def markers_remaining
-      51 - board.count( :white ) - board.count( :black )
+      51 - board.count(:white) - board.count(:black)
     end
 
     def instructions
-      return ""  if final?
+      return '' if final?
 
-      rings = board.occupied( rules.ring[turn] )
+      rings = board.occupied(rules.ring[turn])
 
       if rings.length < 5 && removed[rules.ring[turn]] == 0
-        "Place a ring on any empty intersection."
+        'Place a ring on any empty intersection.'
       elsif removed_markers.length == 5
-        "Remove one of your rings from the board."
-      elsif ! rows.empty?
-        "Remove a 5-in-a-row from the board."
+        'Remove one of your rings from the board.'
+      elsif !rows.empty?
+        'Remove a 5-in-a-row from the board.'
       elsif markers_remaining <= 10
         "Be careful, only #{markers_remaining} markers remaining.  Move a ring."
       else
-        "Move a ring."
+        'Move a ring.'
       end
     end
   end
-
 end
-

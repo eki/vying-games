@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2007, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
@@ -7,13 +9,13 @@ require 'vying'
 #
 # For detailed rules see:  http://vying.org/games/y
 
-Rules.create( "Y" ) do
-  name    "Y"
-  version "1.0.0"
+Rules.create('Y') do
+  name    'Y'
+  version '1.0.0'
 
   players :blue, :red
 
-  option :board_size, :default => 12, :values => [12, 13, 14]
+  option :board_size, default: 12, values: [12, 13, 14]
 
   pie_rule
 
@@ -24,33 +26,31 @@ Rules.create( "Y" ) do
     ignore :groups
 
     def init
-      @board = Board.triangle @options[:board_size], :plugins => [:connection]
+      @board = Board.triangle @options[:board_size], plugins: [:connection]
     end
 
     def moves
-      return []  if final?
+      return [] if final?
 
       board.unoccupied
     end
 
-    def apply!( move )
+    def apply!(move)
       board[move] = turn
       rotate_turn
       self
     end
 
     def final?
-      players.any? { |p| winner?( p ) }
+      players.any? { |p| winner?(p) }
     end
 
-    def winner?( player )
+    def winner?(player)
       board.groups[player].any? do |group|
         group.coords.any? { |c| c.x == 0 } &&
         group.coords.any? { |c| c.y == 0 } &&
-        group.coords.any? { |c| c.x + c.y == board.length - 1 } 
+        group.coords.any? { |c| c.x + c.y == board.length - 1 }
       end
     end
   end
-
 end
-

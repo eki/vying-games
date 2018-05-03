@@ -1,11 +1,13 @@
 
+# frozen_string_literal: true
+
 module Vying
   class User
     attr_reader :id, :username
 
-    alias_method :user_id, :id
+    alias user_id id
 
-    def initialize( username=nil, id=nil )
+    def initialize(username=nil, id=nil)
       @username, @id = username, id
     end
 
@@ -17,35 +19,35 @@ module Vying
       false
     end
 
-    def select( sequence, position, player )
+    def select(sequence, position, player)
       raise "User doesn't implement #select"
     end
 
-    def resign?( sequence, position, player )
+    def resign?(sequence, position, player)
       false
     end
 
-    def offer_draw?( sequence, position, player )
+    def offer_draw?(sequence, position, player)
       false
     end
 
-    def accept_draw?( sequence, position, player )
+    def accept_draw?(sequence, position, player)
       false
     end
 
-    def request_undo?( sequence, position, player )
+    def request_undo?(sequence, position, player)
       false
     end
 
-    def accept_undo?( sequence, position, player )
+    def accept_undo?(sequence, position, player)
       false
     end
 
-    def eql?( u )
+    def eql?(u)
       u && username == u.username
     end
 
-    def ==( u )
+    def ==(u)
       eql? u
     end
 
@@ -62,7 +64,7 @@ module Vying
     end
   end
 
-  # This is just a simple dummy Human bot class.  It accepts moves into a 
+  # This is just a simple dummy Human bot class.  It accepts moves into a
   # queue via #<< and then plays them when asked for a move by Game#step and
   # Game#play.
   #
@@ -70,48 +72,47 @@ module Vying
   class Human < User
     attr_reader :queue
 
-    def initialize( *args )
+    def initialize(*args)
       super
       @queue = []
     end
 
-    def <<( move )
-      queue << move 
+    def <<(move)
+      queue << move
     end
 
-    def select( sequence, position, player )
+    def select(sequence, position, player)
       queue.shift
     end
 
-    def resign?( sequence, position, player )
-      queue.shift if queue.first == "resign"
+    def resign?(sequence, position, player)
+      queue.shift if queue.first == 'resign'
     end
 
-    def offer_draw?( sequence, position, player )
-      queue.shift if queue.first == "offer_draw"
+    def offer_draw?(sequence, position, player)
+      queue.shift if queue.first == 'offer_draw'
     end
 
-    def accept_draw?( sequence, position, player )
-      return   queue.shift if queue.first == "accept_draw"
-      return ! queue.shift if queue.first == "reject_draw"
+    def accept_draw?(sequence, position, player)
+      return queue.shift if queue.first == 'accept_draw'
+      return !queue.shift if queue.first == 'reject_draw'
     end
 
-    def request_undo?( sequence, position, player )
-      queue.shift if queue.first == "request_undo"
+    def request_undo?(sequence, position, player)
+      queue.shift if queue.first == 'request_undo'
     end
 
-    def accept_undo?( sequence, position, player )
-      return   queue.shift if queue.first == "accept_undo"
-      return ! queue.shift if queue.first == "reject_undo"
+    def accept_undo?(sequence, position, player)
+      return queue.shift if queue.first == 'accept_undo'
+      return !queue.shift if queue.first == 'reject_undo'
     end
 
     def ready?
-      ! @queue.empty?
+      !@queue.empty?
     end
 
-    def to_yaml( opts={} )
-      User.new( username, id ).to_yaml( opts )
+    def to_yaml(opts={})
+      User.new(username, id).to_yaml(opts)
     end
   end
 end
-

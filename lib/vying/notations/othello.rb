@@ -1,4 +1,6 @@
 
+# frozen_string_literal: true
+
 module Vying
   class OthelloNotation < Notation
 
@@ -6,11 +8,11 @@ module Vying
       :othello_notation
     end
 
-    def to_move( s )
+    def to_move(s)
       s.to_s.downcase
     end
 
-    def translate( move, player )
+    def translate(move, player)
       if Coord[move]
         player == game.player_names.first ? move.to_s.upcase : move
       else
@@ -20,4 +22,3 @@ module Vying
 
   end
 end
-

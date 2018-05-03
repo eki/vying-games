@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Copyright 2007-08, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
@@ -5,8 +7,8 @@ require 'vying'
 
 module Vying
 
-  # Move is used solely by history.  It should be compatible with Game / 
-  # Position but as a rule, you want to use Strings to represent moves.  
+  # Move is used solely by history.  It should be compatible with Game /
+  # Position but as a rule, you want to use Strings to represent moves.
   # However, be aware that the values in History#moves will be Move objects.
   #
   # Move#to_s will give you the String representation of the move.
@@ -21,7 +23,7 @@ module Vying
     # Initialize a Move with the String representation, the player who made the
     # move, and the time the move was made.
 
-    def initialize( m, by=nil )
+    def initialize(m, by=nil)
       @move, @by = m, by
       @move.deep_dup.freeze
     end
@@ -29,13 +31,13 @@ module Vying
     # Returns a timestamped copy of this Move.  (Sets #at to the given time or
     # Time.now)
 
-    def stamp( t=Time.now )
-      (m = dup).instance_variable_set( "@at", t )
+    def stamp(t=Time.now)
+      (m = dup).instance_variable_set('@at', t)
       m
     end
 
     # Moves are considered to be equal if they share the same #to_s and #by.
-    # Note:  For convenience sake, if compared to an object that is *not* a 
+    # Note:  For convenience sake, if compared to an object that is *not* a
     # Move, the values of #to_s are compared.  So:
     #
     #   > Move.new( "a1", :black ) == Move.new( "a1", :white )
@@ -45,19 +47,19 @@ module Vying
     #   => true
     #
 
-    def eql?( o )
-      o.kind_of?( Move ) ? to_s == o.to_s && by == o.by : to_s == o.to_s
+    def eql?(o)
+      o.kind_of?(Move) ? to_s == o.to_s && by == o.by : to_s == o.to_s
     end
 
     # See #eql?
 
-    def ==( o )
-      eql?( o )
+    def ==(o)
+      eql?(o)
     end
 
     # Allow sorting moves (by to_s).
 
-    def <=>( o )
+    def <=>(o)
       to_s <=> o.to_s
     end
 
@@ -79,7 +81,7 @@ module Vying
     # More detailed inspect string.
 
     def inspect
-      by ? "#{@move}:#{by}" : "#{@move}"
+      by ? "#{@move}:#{by}" : @move.to_s
     end
 
     # Is this a special move?
@@ -94,29 +96,29 @@ module Vying
     # is mixed in (a normal move) then Position#apply is called.  The resulting
     # position is returned.
 
-    def apply_to_position( p )
-      p.apply( @move, by )
+    def apply_to_position(p)
+      p.apply(@move, by)
     end
 
-    def apply_to_game( g )
-      g.history.append( self )
+    def apply_to_game(g)
+      g.history.append(self)
     end
 
-    def apply_to( o )
+    def apply_to(o)
       case o
-        when Position  then apply_to_position( o )
-        when Game      then apply_to_game( o )
+        when Position  then apply_to_position(o)
+        when Game      then apply_to_game(o)
       end
     end
 
-    def valid_for?( game, player=nil )
-      (player.nil? || player == by) && game.move?( @move, by )
+    def valid_for?(game, player=nil)
+      (player.nil? || player == by) && game.move?(@move, by)
     end
 
     # Move's respond to any methods the underlying move object responds to.
 
-    def respond_to?( m, include_all=false )
-      super || @move.respond_to?( m, include_all )
+    def respond_to?(m, include_all=false)
+      super || @move.respond_to?(m, include_all)
     end
 
     # Forward method calls to the underlying move object.  This is mostly useful
@@ -134,23 +136,23 @@ module Vying
     #   => 0
     #
 
-    def method_missing( m, *args )
-      @move.respond_to?( m ) ? @move.send( m, *args ) : super
+    def method_missing(m, *args)
+      @move.respond_to?(m) ? @move.send(m, *args) : super
     end
 
-    # Can't fall back on method_missing to forward calls to #y because it's 
+    # Can't fall back on method_missing to forward calls to #y because it's
     # (stupidly) defined by Kernel.
 
     def y
-      method_missing( :y )
+      method_missing(:y)
     end
 
-    def _dump( depth=-1 )
-      Marshal.dump( [@move, by] )
+    def _dump(depth=-1)
+      Marshal.dump([@move, by])
     end
 
-    def self._load( str )
-      new( * Marshal.load( str ) )
+    def self._load(str)
+      new(* Marshal.load(str))
     end
 
     class << self
@@ -159,4 +161,3 @@ module Vying
     end
   end
 end
-
