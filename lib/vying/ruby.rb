@@ -20,55 +20,6 @@ end
 # Add ruby 1.8 and 1.9 compatibility to Module.  Also, add helper methods.
 
 class Module
-
-  # Like Module#const_get with the exception that this handles nested
-  # constants.  For example, Move::Draw::PositionMixin can be found
-  # via nested_const_get.
-
-  def nested_const_get(s)
-    o = [Object, Module, Kernel].include?(self) ? Object : self
-
-    s.to_s.split(/::/).inject(o) do |n, m|
-      n && n.w_const_defined?(m) ? n.w_const_get(m) : nil
-    end
-  end
-
-  # Like Module#const_get with the exception that this handles nested
-  # constants.  For example, Move::Draw::PositionMixin can be found
-  # via nested_const_get.
-
-  def nested_const_defined?(s)
-    o = [Object, Module, Kernel].include?(self) ? Object : self
-
-    !!s.to_s.split(/::/).inject(o) do |n, m|
-      n && n.w_const_defined?(m) ? n.w_const_get(m) : false
-    end
-  end
-
-  # Add a wrapper around const_get that deals with compatibility between
-  # ruby 1.8 and ruby 1.9.  The original const_get is left untouched so
-  # as not to effect any outside code that depends on its 1.8 or 1.9 behavior.
-
-  if method(:const_get).arity == -1
-    def w_const_get(k)
-      const_get(k, false)
-    end
-  else
-    alias w_const_get const_get
-  end
-
-  # Add a wrapper around const_defined? that deals with compatibility between
-  # ruby 1.8 and ruby 1.9.  The original const_defined? is left untouched so
-  # as not to effect any outside code that depends on its 1.8 or 1.9 behavior.
-
-  if method(:const_defined?).arity == -1
-    def w_const_defined?(k)
-      const_defined?(k, false)
-    end
-  else
-    alias w_const_defined? const_defined?
-  end
-
   # Add instance_variable_defined? for ruby 1.8.  This is used in place of
   # instance_variables.include? because instance_variables has different
   # return values under ruby 1.8 and 1.9 (String vs Symbol).
