@@ -9,6 +9,7 @@ require 'vying'
 # methods can be used for implementing Othello and like games.
 
 module Board::Plugins::CustodialFlip
+  include Board::Plugins
 
   def self.dependencies
     [:custodial_capture]

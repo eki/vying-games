@@ -6,6 +6,7 @@
 require 'vying'
 
 module Board::Plugins::Connection
+  include Board::Plugins
 
   class Group
     attr_reader :coords

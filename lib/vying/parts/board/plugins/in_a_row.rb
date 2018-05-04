@@ -6,6 +6,7 @@
 require 'vying'
 
 module Board::Plugins::InARow
+  include Board::Plugins
 
   class Threat
     attr_reader :degree, :player, :empty_coords, :occupied

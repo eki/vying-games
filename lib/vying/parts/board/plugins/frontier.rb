@@ -11,6 +11,7 @@ require 'vying'
 # a game's valid moves are found on the frontier.
 
 module Board::Plugins::Frontier
+  include Board::Plugins
 
   attr_reader :frontier
 

@@ -9,6 +9,7 @@ require 'vying'
 # for implementing Othello and like games.
 
 module Board::Plugins::CustodialCapture
+  include Board::Plugins
 
   # Place the given piece p at Coord c and make any valid custodial captures
   # as a side effect.  To limit the captures to a certain number of pieces,

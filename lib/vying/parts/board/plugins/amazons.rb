@@ -28,6 +28,7 @@ require 'vying'
 # The original AmazonsBoard comments have been left in place.
 
 module Board::Plugins::Amazons
+  include Board::Plugins
 
   # An AmazonsBoard Territory is block of connected (8-way) empty squares on an
   # AmazonsBoard.  The properties white and black represent the queens that are

@@ -604,6 +604,13 @@ class Board
   # Namespace for plugins.
 
   module Plugins
+    def self.all
+      @all ||= {}
+    end
+
+    def self.included(base)
+      all[base.name.split(/::/).last.downcase.to_sym] = base
+    end
   end
 
   # Find Board plugins (Modules).  Given a string like
@@ -615,22 +622,7 @@ class Board
   def self.find_plugin(s)
     return s  if s.nil? || s.kind_of?(Module)
 
-    # Assume strings that look like constants are defined rooted under Object.
-
-    if s.to_s =~ /^[A-Z]/
-
-      if Object.nested_const_defined?(s.to_s)
-        Object.nested_const_get(s.to_s)
-      end
-
-    else # Otherwise, assume we're looking under Board::Plugins
-
-      m = s.to_s.gsub(/_(.)/) { Regexp.last_match(1).upcase }.gsub(/^(.)/) { Regexp.last_match(1).upcase }
-
-      if Board::Plugins.nested_const_defined?(m)
-        Board::Plugins.nested_const_get(m)
-      end
-    end
+    Plugins.all[s.to_sym]
   end
 
   # When loading a YAML-ized Board, be sure to re-extend plugins.
