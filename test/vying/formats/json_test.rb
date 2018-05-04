@@ -19,7 +19,7 @@ if Vying::Format.find(:json)
     def test_dump_rules
       g = Game.new TicTacToe
 
-      h = JSON.parse(g.to_format(:json))
+      h = Oj.load(g.to_format(:json))
 
       assert(h['rules'])
 
@@ -37,20 +37,20 @@ if Vying::Format.find(:json)
     def test_dump_history
       g = Game.new TicTacToe
 
-      h = JSON.parse(g.to_format(:json))
+      h = Oj.load(g.to_format(:json))
 
       assert_equal([], h['history'])
 
       g << g.moves.first until g.final?
 
-      h = JSON.parse(g.to_format(:json))
+      h = Oj.load(g.to_format(:json))
 
       assert(h['history'])
 
       g.history.moves.each_with_index do |m, i|
         assert_equal(m.to_s, h['history'][i]['move'])
         assert_equal(m.by.to_s, h['history'][i]['by'])
-        assert_equal(m.at.to_s, h['history'][i]['at'])
+        assert_equal(m.at, h['history'][i]['at'])
       end
     end
 
@@ -77,13 +77,13 @@ if Vying::Format.find(:json)
     def test_dump_options
       g = Game.new TicTacToe
 
-      h = JSON.parse(g.to_format(:json))
+      h = Oj.load(g.to_format(:json))
 
       assert(!h['options'])
 
       g = Game.new Hex, board_size: 9
 
-      h = JSON.parse(g.to_format(:json))
+      h = Oj.load(g.to_format(:json))
 
       assert(h['options'])
       assert_equal(g.options[:board_size], h['options']['board_size'])
@@ -103,7 +103,7 @@ if Vying::Format.find(:json)
     def test_dump_players
       g = Game.new TicTacToe
 
-      h = JSON.parse(g.to_format(:json))
+      h = Oj.load(g.to_format(:json))
 
       assert(h['players'])
       assert_equal({}, h['players']['x'])
@@ -111,7 +111,7 @@ if Vying::Format.find(:json)
 
       g << g.moves.first until g.final?
 
-      h = JSON.parse(g.to_format(:json))
+      h = Oj.load(g.to_format(:json))
 
       assert(h['players'])
 
@@ -122,7 +122,7 @@ if Vying::Format.find(:json)
 
       g[:x].user = User.new('john_doe', 1234)
 
-      h = JSON.parse(g.to_format(:json))
+      h = Oj.load(g.to_format(:json))
 
       assert(h['players']['x']['user'])
 
@@ -149,14 +149,14 @@ if Vying::Format.find(:json)
     def test_dump_final
       g = Game.new TicTacToe
 
-      h = JSON.parse(g.to_format(:json))
+      h = Oj.load(g.to_format(:json))
 
       assert(!h['final'])
       assert(!h['draw'])
 
       g << g.moves.first until g.final?
 
-      h = JSON.parse(g.to_format(:json))
+      h = Oj.load(g.to_format(:json))
 
       assert(h['final'])
       assert(h.key?('draw'))
@@ -165,13 +165,13 @@ if Vying::Format.find(:json)
     def test_dump_random
       g = Game.new TicTacToe
 
-      h = JSON.parse(g.to_format(:json))
+      h = Oj.load(g.to_format(:json))
 
       assert(!h['random'])
 
       g = Game.new Ataxx
 
-      h = JSON.parse(g.to_format(:json))
+      h = Oj.load(g.to_format(:json))
 
       assert(h['random'])
       assert_equal(g.seed, h['random']['seed'])
@@ -180,20 +180,20 @@ if Vying::Format.find(:json)
     def test_dump_annotations
       g = Game.new TicTacToe
 
-      h = JSON.parse(g.to_format(:json))
+      h = Oj.load(g.to_format(:json))
 
       assert(!h.key?('id'))
       assert(!h.key?('unrated'))
       assert(!h.key?('time_limit'))
 
-      assert_equal(g.created_at.to_s, h['created_at'])
-      assert_equal(g.last_move_at.to_s, h['last_move_at'])
+      assert_equal(g.created_at, h['created_at'])
+      assert_equal(g.last_move_at, h['last_move_at'])
 
       g.instance_variable_set('@id', 1234)
       g.instance_variable_set('@unrated', true)
       g.instance_variable_set('@time_limit', 4321)
 
-      h = JSON.parse(g.to_format(:json))
+      h = Oj.load(g.to_format(:json))
 
       assert_equal(g.id, h['id'])
       assert_equal(g.unrated?, h['unrated'])

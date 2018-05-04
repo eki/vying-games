@@ -26,6 +26,7 @@ module CLI
     opts.on('-n', '--number NUMBER') { |n| h[:n] = n.to_i }
     opts.on('-g', '--game') { benchmark = :game }
     opts.on('-b', '--board') { benchmark = :board }
+    opts.on('-f', '--formats') { benchmark = :formats }
     opts.on('-p', '--profile') { require 'profile' }
     opts.on('-c', '--clear-cache') { h[:clear_cache] = true }
 
@@ -40,6 +41,62 @@ module CLI
   end
 
   module Bench
+
+    def self.formats(h)
+      n = h[:n]
+      g = Game.new(Othello)
+      20.times { g << g.moves.sample }
+
+      Benchmark.bm(30) do |x|
+        x.report('marshal') do
+          n.times { Marshal.load(Marshal.dump(g)) }
+        end
+
+        x.report('yaml') do
+          n.times { Vying.load(Vying.dump(g, :yaml), :yaml) }
+        end
+
+        x.report('json') do
+          n.times { Vying.load(Vying.dump(g, :json), :json) }
+        end
+
+        x.report('to_format(:hash)') do
+          n.times { g.to_format(:hash) }
+        end
+
+        game_hash = g.to_format(:hash)
+
+        x.report('yaml dump') do
+          n.times { game_hash.to_yaml }
+        end
+
+        x.report('json dump') do
+          n.times { Oj.dump(game_hash) }
+        end
+
+        game_hash_yaml = Vying.dump(g, :yaml)
+        game_hash_json = Vying.dump(g, :json)
+
+        x.report('yaml load') do
+          n.times { YAML.load(game_hash_yaml) }
+        end
+
+        x.report('json load') do
+          n.times { Oj.load(game_hash_json) }
+        end
+
+        x.report('load hash') do
+          n.times { Vying.load(game_hash, :hash) }
+        end
+
+        x.report('create game with 20 moves') do
+          n.times do
+            g = Game.new(Othello)
+            20.times { g << g.moves.sample }
+          end
+        end
+      end
+    end
 
     def self.position(h)
       n = h[:n]
