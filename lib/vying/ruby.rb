@@ -3,20 +3,6 @@
 # Copyright 2007-08, Eric Idema except where otherwise noted.
 # You may redistribute / modify this file under the same terms as Ruby.
 
-# Add ruby 1.8 and 1.9 compatibility to String.  (Not complete, only where
-# needed by vying).
-
-class String
-
-  # Compatibility with Ruby 1.9
-
-  unless method_defined?(:ord)
-    def ord
-      self[0]
-    end
-  end
-end
-
 # Add ruby 1.8 and 1.9 compatibility to Module.  Also, add helper methods.
 
 class Module
