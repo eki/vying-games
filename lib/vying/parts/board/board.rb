@@ -609,7 +609,13 @@ class Board
     end
 
     def self.included(base)
-      all[base.name.split(/::/).last.downcase.to_sym] = base
+      plugin_name = base.name.split(/::/).last.
+        gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
+        gsub(/([a-z\d])([A-Z])/,'\1_\2').downcase.to_sym
+
+      all[plugin_name] = base
+
+      base.class_eval { define_singleton_method(:plugin_name) { plugin_name } }
     end
   end
 
@@ -655,11 +661,9 @@ class Board
 
   def plugin(p)
     if p = self.class.find_plugin(p)
-      ps = p.to_s
+      return if @plugins.include?(p.plugin_name)
 
-      return if @plugins.include?(ps)
-
-      @plugins << ps
+      @plugins << p.plugin_name
       extend p
 
       if p.respond_to?(:dependencies)
