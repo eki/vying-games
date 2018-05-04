@@ -28,36 +28,15 @@ module Vying
     end
 
     def self.plays?(rules)
-      Object.nested_const_defined? "#{self}::#{Rules.find(rules).class_name}"
+      false
     end
 
     def plays?(rules)
       self.class.plays?(rules)
     end
 
-    def delegate_for(position)
-      k = position.rules.class_name.intern
-
-      return @delegates[k] if @delegates.key?(k)
-
-      if plays?(k)
-        d = self.class.nested_const_get(k)
-
-        if d
-          @delegates[k] = d.new
-          @delegates[k].cache = cache
-          @delegates[k]
-        end
-      end
-    end
-
     def select(sequence, position, player)
       return position.moves.first if position.moves.length == 1
-
-      delegate = delegate_for(position)
-      if delegate && delegate.respond_to?(:select)
-        return delegate.select(sequence, position, player)
-      end
 
       score, move = best(analyze(position, player))
 
@@ -65,59 +44,29 @@ module Vying
     end
 
     def resign?(sequence, position, player)
-      delegate = delegate_for(position)
-      if delegate && delegate.respond_to?(:resign?)
-        return delegate.resign?(sequence, position, player)
-      end
-
       false
     end
 
     def offer_draw?(sequence, position, player)
-      delegate = delegate_for(position)
-      if delegate && delegate.respond_to?(:offer_draw?)
-        return delegate.offer_draw?(sequence, position, player)
-      end
-
       false
     end
 
     def accept_draw?(sequence, position, player)
-      delegate = delegate_for(position)
-      if delegate && delegate.respond_to?(:accept_draw?)
-        return delegate.accept_draw?(sequence, position, player)
-      end
-
       false
     end
 
     def request_undo?(sequence, position, player)
-      delegate = delegate_for(position)
-      if delegate && delegate.respond_to?(:request_undo?)
-        return delegate.request_undo?(sequence, position, player)
-      end
-
       false
     end
 
     def accept_undo?(sequence, position, player)
-      delegate = delegate_for(position)
-      if delegate && delegate.respond_to?(:accept_undo?)
-        return delegate.accept_undo?(sequence, position, player)
-      end
-
       false
     end
 
     def analyze(position, player)
       h = {}
       position.moves.each do |move|
-        delegate = delegate_for(position)
-        if delegate && delegate.respond_to?(:evaluate)
-          h[move] = delegate.evaluate(position.apply(move), player)
-        else
-          h[move] = evaluate(position.apply(move), player)
-        end
+        h[move] = evaluate(position.apply(move), player)
       end
       h
     end
@@ -206,37 +155,6 @@ module Vying
       end
 
       nil
-    end
-
-    DIFFICULTY_LEVELS = { easy: 0,
-                          medium: 1,
-                          hard: 2 }.freeze
-
-    def self.difficulty(d=nil)
-      @difficulty = DIFFICULTY_LEVELS[d]
-      class << self
-        def difficulty_name
-          DIFFICULTY_LEVELS[@difficulty]
-        end
-
-        attr_reader :difficulty
-      end
-      d
-    end
-
-    def self.difficulty_for(rules)
-      if plays?(rules)
-        k = nested_const_get(Rules.find(rules).class_name)
-        if k
-          d = k.difficulty
-          return DIFFICULTY_LEVELS.invert[d] if d && DIFFICULTY_LEVELS.invert[d]
-        end
-      end
-      :unknown
-    end
-
-    def difficulty_for(rules)
-      self.class.difficulty_for(rules)
     end
   end
 end
