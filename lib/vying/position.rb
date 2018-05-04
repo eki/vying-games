@@ -84,7 +84,7 @@ module Vying
     def dup
       p = __dup
       v = p.instance_variable_get('@includes')
-      p.extend Kernel.nested_const_get(v) unless v.nil?
+      p.extend Module.const_get(v) unless v.nil?
       p
     end
 
@@ -405,7 +405,7 @@ module Vying
       p, ivs = allocate, Marshal.load(s)
       ivs.each do |iv, v|
         p.instance_variable_set(iv, v)
-        p.extend Kernel.nested_const_get(v) if iv.to_s == '@includes'
+        p.extend Module.const_get(v) if iv.to_s == '@includes'
       end
       p
     end
