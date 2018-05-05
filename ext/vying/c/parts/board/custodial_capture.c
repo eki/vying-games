@@ -24,7 +24,8 @@ VALUE custodial_capture_valid( int argc, VALUE *argv, VALUE self ) {
   int first = 0;
   int last = 0;
 
-  VALUE dir = rb_iv_get( self, "@directions" );
+  VALUE coords = rb_funcall( self, id_coords, 0 );
+  VALUE dir = rb_funcall( coords, id_directions, 0 );
 
   int i, blen;
 
@@ -131,7 +132,8 @@ VALUE custodial( int argc, VALUE *argv, VALUE self ) {
   int first = 0;
   int last = 0;
 
-  VALUE dir = rb_iv_get( self, "@directions" );
+  VALUE coords = rb_funcall( self, id_coords, 0 );
+  VALUE dir = rb_funcall( coords, id_directions, 0 );
 
   VALUE cap = rb_ary_new();
 

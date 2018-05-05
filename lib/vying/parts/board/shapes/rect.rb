@@ -33,20 +33,15 @@ class Board::Rect < Board
 
     @cell_shape = h[:cell_shape] || :square
 
-    @directions = h[:directions]
-
     case @cell_shape
       when :square
-        @directions ||= [:n, :e, :w, :s, :ne, :nw, :se, :sw]
+        h[:directions] ||= [:n, :e, :w, :s, :ne, :nw, :se, :sw]
 
       when :triangle
 
-        if @directions
+        if h[:directions]
           raise ':directions is not supported when :cell_shape is :triangle'
         end
-
-        @up_directions   = [:w, :e, :s]
-        @down_directions = [:n, :e, :w]
 
       else
         raise "#{@cell_shape} is not a supported cell_shape for a rect Board"

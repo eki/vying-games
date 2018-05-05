@@ -41,7 +41,7 @@ class TestCoords < Minitest::Test
     assert(!coords.include?(Coord[100, 100]))
 
     coords = Coords.new(Coords.bounds_for(2, 3),
-                         [Coord[0, 0], Coord[1, 0], Coord[0, 2]])
+      omit: [Coord[0, 0], Coord[1, 0], Coord[0, 2]])
 
     assert(!coords.include?(Coord[0, 0]))
     assert(!coords.include?(Coord[1, 0]))
@@ -50,7 +50,7 @@ class TestCoords < Minitest::Test
     assert(coords.include?(Coord[1, 1]))
 
     coords = Coords.new(Coords.bounds_for(2, 3),
-                         [Coord[0, 0], Coord[1, 0]])
+      omit: [Coord[0, 0], Coord[1, 0]])
 
     assert(!coords.include?(Coord[0, 0]))
     assert(!coords.include?(Coord[1, 0]))
@@ -231,10 +231,24 @@ class TestCoords < Minitest::Test
     assert_equal(coords.object_id, coords.dup.object_id)
   end
 
+  def test_memoized
+    coords1 = Coords.new(Coords.bounds_for(3, 5))
+    coords2 = Coords.new(Coords.bounds_for(3, 5))
+    assert_equal(coords1.object_id, coords2.object_id)
+
+    coords1 = Coords.new(Coords.bounds_for(3, 5), omit: [Coord[0, 0]])
+    coords2 = Coords.new(Coords.bounds_for(3, 5), omit: [Coord[0, 0]])
+    assert_equal(coords1.object_id, coords2.object_id)
+
+    coords1 = Coords.new(Coords.bounds_for(3, 5), directions: [:n, :s])
+    coords2 = Coords.new(Coords.bounds_for(3, 5), directions: [:n, :s])
+    assert_equal(coords1.object_id, coords2.object_id)
+  end
+
   def test_marshal
     coords = Coords.new(Coords.bounds_for(3, 5))
-    assert_equal(coords, Marshal.load(Marshal.dump(coords)))
     assert_equal(coords.object_id,
-                  Marshal.load(Marshal.dump(coords)).object_id)
+      Marshal.load(Marshal.dump(coords)).object_id)
+    assert_equal(coords, Marshal.load(Marshal.dump(coords)))
   end
 end

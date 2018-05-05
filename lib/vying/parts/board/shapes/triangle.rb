@@ -41,9 +41,9 @@ class Board::Triangle < Board
 
         case @cell_orientation
           when :horizontal
-            @directions = [:n, :s, :e, :w, :nw, :se]
+            h[:directions] = [:n, :s, :e, :w, :nw, :se]
           when :vertical
-            @directions = [:n, :s, :e, :w, :ne, :sw]
+            h[:directions] = [:n, :s, :e, :w, :ne, :sw]
           else
             raise "#{@cell_orientation} is not a valid cell_orientation"
         end

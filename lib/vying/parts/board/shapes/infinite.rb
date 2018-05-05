@@ -85,20 +85,15 @@ class Board::Infinite < Board
 
     @cell_shape = h[:cell_shape] || :square
 
-    @directions = h[:directions]
-
     case @cell_shape
       when :square
-        @directions ||= [:n, :e, :w, :s, :ne, :nw, :se, :sw]
+        h[:directions] ||= [:n, :e, :w, :s, :ne, :nw, :se, :sw]
 
       when :triangle
 
-        if @directions
+        if h[:directions]
           raise ':directions is not supported when :cell_shape is :triangle'
         end
-
-        @up_directions   = [:w, :e, :s]
-        @down_directions = [:n, :e, :w]
 
       when :hexagon
 
@@ -106,9 +101,9 @@ class Board::Infinite < Board
 
         case @cell_orientation
           when :horizontal
-            @directions = [:n, :e, :w, :s, :nw, :se]
+            h[:directions] = [:n, :e, :w, :s, :nw, :se]
           when :vertical
-            @directions = [:n, :e, :w, :s, :ne, :sw]
+            h[:directions] = [:n, :e, :w, :s, :ne, :sw]
           else
             raise "#{@cell_orientation} is not a valid cell_orientation"
         end
@@ -154,7 +149,7 @@ class Board::Infinite < Board
     new_bounds = [Coord[@min_x, @min_y], Coord[@max_x, @max_y]]
 
     cells = Array.new(w * h, nil)
-    coords = CoordsProxy.new(self, Coords.new(new_bounds, []))
+    coords = Coords.new(new_bounds, @coords.opts)
 
     occupied = @occupied.deep_dup
     occupied[nil] = []

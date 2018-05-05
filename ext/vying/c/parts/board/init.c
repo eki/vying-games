@@ -8,7 +8,6 @@
 VALUE Board;
 VALUE Coord;
 VALUE Coords;
-VALUE CoordsProxy;
 VALUE Plugins;
 VALUE Frontier;
 VALUE CustodialCapture;
@@ -17,7 +16,7 @@ ID id_dup, id_x, id_y, id_subscript, id_subscript_assign, id_new,
    id_hash, id_include, id_n, id_s, id_w, id_e, id_se, id_nw, id_sw, id_ne,
    id_DIRECTIONS, id_directions, id_white, id_black, id_delete, id_uniq_ex,
    id_to_s, id_set, id_before_set, id_after_set, id_first, id_last,
-   id_resize_q, id_resize, id_neighbors;
+   id_resize_q, id_resize, id_neighbors, id_coords;
 
 
 VALUE sym_black, sym_white, 
@@ -41,6 +40,8 @@ void Init_boardext() {
 
   rb_define_method( Coords, "include?", coords_include, 1 ); /* in coords.c */
   rb_define_method( Coords, "next", coords_next, 2 );        /* in coords.c */
+  rb_define_method( Coords, "connected?", coords_connected, 1 );
+                                                       /* in coords.c */
 
 
   /* Map Board */
@@ -56,14 +57,6 @@ void Init_boardext() {
   rb_define_method( Board, "set", board_set, 3 );             /* in board.c */
 
   rb_define_private_method( Board, "ci", board_ci, 2 );       /* in board.c */
-
-
-  /* Map CoordsProxy */
-
-  CoordsProxy = rb_define_class_under( Board, "CoordsProxy", rb_cObject );
-
-  rb_define_method( CoordsProxy, "connected?", coords_proxy_connected, 1 ); 
-                                                       /* in coords_proxy.c */
 
 
   /* Plugins namespace. */
@@ -121,6 +114,7 @@ void Init_boardext() {
   id_resize_q = rb_intern( "resize?" );
   id_resize = rb_intern( "resize" );
   id_neighbors = rb_intern( "neighbors" );
+  id_coords = rb_intern( "coords" );
 
   /* Look up all our symbols */
 

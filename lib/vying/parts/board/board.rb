@@ -53,7 +53,8 @@ class Board
     @origin ||= Coord[0, 0]
 
     @cells = Array.new(@width * @height, nil)
-    @coords = CoordsProxy.new(self, Coords.new(bounds, omit))
+    @coords = Coords.new(bounds, omit: omit, directions: h[:directions],
+      cell_shape: cell_shape)
 
     @occupied = Hash.new([])
     @occupied[nil] = @coords.to_a.dup
@@ -296,7 +297,7 @@ class Board
     if p
       @occupied[p]
     else
-      coords.coords - unoccupied
+      coords.to_a - unoccupied
     end
   end
 
@@ -317,19 +318,11 @@ class Board
   # boards this is a constant list so you don't have to provide a Coord.
   # However, if the cells are :triangle shaped, you *must* provide a Coord
   # or an exception will be raised.
+  #
+  # TODO Does it make sense to delete directions (from Board) entirely?
 
   def directions(coord=nil)
-    return @directions unless cell_shape == :triangle
-
-    if coord.nil?
-      raise 'Board#directions requires a Coord when cell_shape is :triangle'
-    end
-
-    if coord.y.even?
-      coord.x.even? ? @up_directions : @down_directions
-    else
-      coord.x.even? ? @down_directions : @up_directions
-    end
+    coords.directions(coord)
   end
 
   # Iterate over pieces from the start coord in the given directions.  The
@@ -496,109 +489,6 @@ class Board
       s += format("%*d\n", -off, y + 1)
     end
     s + letters
-  end
-
-  # When you ask for Board#coords you actually get a CoordsProxy object.  The
-  # CoordsProxy simplifies some of the Coords method calls.  For example,
-  # Coords#neighbors takes an optional directions array, CoordsProxy
-  # automatically sets directions to the Board default.
-
-  class CoordsProxy
-
-    # CoordsProxy matches a Board with a Coords object.
-
-    def initialize(board, coords) # :nodoc:
-      @board, @coords = board, coords
-    end
-
-    # Calls Coords#ring but defaults the shape and directions correctly.
-
-    def ring(coord, d)
-      @coords.ring(coord, d, @board.cell_shape, @board.directions(coord))
-    end
-
-    # Calls Coords#neighbors but defaults directions correctly.
-
-    def neighbors(coord, directions=nil)
-      directions ||= @board.directions(coord)
-      @coords.neighbors(coord, directions)
-    end
-
-    # Calls Coords#neighbors_nil but defaults directions correctly.
-
-    def neighbors_nil(coord, directions=nil)
-      directions ||= @board.directions(coord)
-      @coords.neighbors_nil(coord, directions)
-    end
-
-    # Are the given coords all connected?  This checks that the list of coords
-    # are connected (in terms of Board#directions and Coords#include?).
-    #
-    # Note:  This method is kind of difficult to place.  It's very intimate
-    # with both Board (because it needs #directions) and, yet, it's really
-    # more of a Coords method (because it needs Coords#include? and doesn't
-    # depend on anything else from Board).
-
-    def connected?(cs)
-      cs = cs.dup
-      check = [cs.first]
-
-      while c = check.pop
-        cs.delete(c)
-
-        neighbors(c).each do |nc|
-          check << nc  if cs.include?(nc)
-        end
-      end
-
-      cs.empty?
-    end
-
-    # Can't be passed through with method_missing.
-
-    def to_a # :nodoc:
-      @coords.to_a
-    end
-
-    # Can't be passed through with method_missing.
-
-    def to_s # :nodoc:
-      @coords.to_s
-    end
-
-    # Can't be passed through with method_missing.
-
-    def inspect # :nodoc:
-      @coords.inspect
-    end
-
-    # Override respond_to? to match method_missing.
-
-    def respond_to?(m, include_all=false) # :nodoc:
-      # This was updated for ruby 2.0.  Evidently, I wrote this code with the
-      # expectation that protected / private calls would be proxied.  This
-      # strikes me as a bad idea, but this is a quick fix for now.
-      #   (re: passing true to respond_to?)
-
-      m != :_dump && (super || @coords.respond_to?(m, true))
-    end
-
-    # This is a proxy, so pass most method calls on to the proxied Coords.
-
-    def method_missing(m, *args, &block) # :nodoc:
-      if m != :_dump && @coords.respond_to?(m, true)
-        @coords.send(m, *args, &block)
-      else
-        super
-      end
-    end
-
-    # No need to save the board itself.  Board#yaml_initialize will reset
-    # itself.
-
-    def to_yaml_properties # :nodoc:
-      ['@coords']
-    end
   end
 
   # Namespace for plugins.
