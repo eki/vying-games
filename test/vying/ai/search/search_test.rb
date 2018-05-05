@@ -21,8 +21,11 @@ module Vying
     def select(position, player)
       @leaf, @nodes = 0, 0
       score, move = best(analyze(position, player))
-      [score, move]           # This should just return move in a real Bot
-    end                       # But we're only interested search results
+
+      # This should just return move in a real Bot
+      # But we're only interested search results
+      [score, move]
+    end
 
     def evaluate(position, player)
       @leaf += 1

@@ -116,7 +116,7 @@ class TestOware < Minitest::Test
     assert_equal(0, g.score(:two))
   end
 
-  def test_no_grand_slam_01    # Capture all 6 cups
+  def test_no_grand_slam_capture_all_6_cups
     g = Game.new(rules)
     g.board[:a2, :b2, :c2, :d2, :e2, :f2] = 2
     g.board[:a1] = 6
@@ -138,7 +138,7 @@ class TestOware < Minitest::Test
     assert_equal(0, g.score(:two))
   end
 
-  def test_no_grand_slam_02    # Capture 5 cups, 1 cup already empty
+  def test_no_grand_slam_capture_5_cups_1_cup_already_empty
     g = Game.new(rules)
     g.board[:a2, :b2, :c2, :d2, :e2] = 2
     g.board[:f2] = 0

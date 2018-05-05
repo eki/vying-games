@@ -17,7 +17,8 @@ class TestThreeMusketeers < Minitest::Test
     assert_equal([:red, :blue], rules.new.players)
   end
 
-  def test_initialize # Need to be more thorough here
+  # Need to be more thorough here
+  def test_initialize
     g = Game.new(rules)
     assert_equal(:red, g.turn)
     assert_equal([:red, :red, :red], g.board[:a5, :c3, :e1])

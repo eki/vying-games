@@ -17,7 +17,8 @@ class TestLinesOfAction < Minitest::Test
     assert_equal([:black, :white], rules.new.players)
   end
 
-  def test_initialize # Need to be more thorough here
+  # Need to be more thorough here
+  def test_initialize
     g = Game.new(rules)
     assert_equal(:black, g.turn)
     assert_equal(12, g.board.count(:white))

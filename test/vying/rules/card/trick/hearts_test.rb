@@ -19,7 +19,8 @@ class TestHearts < Minitest::Test
     assert_equal([:n, :e, :s, :w], rules.new.players)
   end
 
-  def test_initialize # Need to be more thorough here
+   # Need to be more thorough here
+  def test_initialize
     skip('randomly failing, fix this later')
     g = Game.new(rules)
 

@@ -187,7 +187,7 @@ class TestBoardInfinite < Minitest::Test
     assert_equal(69, b.unoccupied.length)
   end
 
-  def test_resize_02 # Based on a bug report
+  def test_resize_02
     b = Board.infinite(11, 11)
 
     b[-1, -1] = :fixed

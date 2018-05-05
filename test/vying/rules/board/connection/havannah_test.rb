@@ -17,7 +17,8 @@ class TestHavannah < Minitest::Test
     assert_equal([:blue, :red], rules.new.players)
   end
 
-  def test_initialize # Need to be more thorough here
+  # Need to be more thorough here
+  def test_initialize
     g = Game.new(rules)
     assert_equal(:blue, g.turn)
   end
