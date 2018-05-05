@@ -45,7 +45,7 @@ Rules.create('Attangle') do
     def moves
       all = []
       all += board.unoccupied - [@center] if pool[turn] > 0
-      all += capture_moves
+      all + capture_moves
     end
 
     def apply!(move)

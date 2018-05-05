@@ -24,6 +24,6 @@ module Minimax
       search(position.apply(move), player, depth + 1)
     end
 
-    score = position.turn == player ? scores.max : scores.min
+    position.turn == player ? scores.max : scores.min
   end
 end

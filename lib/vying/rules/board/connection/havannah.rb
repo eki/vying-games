@@ -138,7 +138,7 @@ Rules.create('Havannah') do
       #
       # This doesn't find blob patterns, hence the previous check.
 
-      s1, s12 = board.length - 1, (board.length - 1) * 2
+      s12 = (board.length - 1) * 2
 
       es = ns - ms
 

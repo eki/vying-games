@@ -43,7 +43,6 @@ module CLI
     def self.show_position_curses(game)
       position = game.history.last
 
-      w = $scr.maxx
       h = $scr.maxy
 
       $scr.clear
@@ -90,7 +89,6 @@ module CLI
     def self.get_human_move_curses(game, player)
       position = game.history.last
 
-      w = $scr.maxx
       h = $scr.maxy
 
       $scr.setpos(h - 1, 0)

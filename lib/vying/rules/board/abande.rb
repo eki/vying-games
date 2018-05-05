@@ -41,7 +41,7 @@ Rules.create('Abande') do
     def moves
       all = []
       all += pool[turn] > 0 ? placement_moves : [:pass]
-      all += capture_moves
+      all + capture_moves
     end
 
     def apply!(move)
