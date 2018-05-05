@@ -34,8 +34,6 @@ Rules.create('Breakthrough') do
     def moves
       return [] if final?
 
-      opp = turn == :black ? :white : :black
-
       found = []
 
       cds = { white: [:ne, :nw], black: [:se, :sw] }

@@ -57,7 +57,7 @@ Rules.create('PahTum') do
     end
 
     def score(player)
-      in_a_row, score = 0, 0
+      score = 0
 
       board.height.times do |y|
         c = Coord[0, y]

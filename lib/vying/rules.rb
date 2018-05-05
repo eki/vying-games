@@ -688,7 +688,7 @@ module Vying
           end
         end
 
-        misere_rules = Rules.create_misere(@rules) if @misere
+        Rules.create_misere(@rules) if @misere
 
         klass
       end

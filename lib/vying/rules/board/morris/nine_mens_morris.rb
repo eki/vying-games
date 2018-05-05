@@ -132,7 +132,6 @@ Rules.create('NineMensMorris') do
     private
 
     def can_move?(c)
-      p = rules.can_move_to[board[c]]
       [:n, :e, :s, :w].any? do |d|
         p1 = board[c1 = board.coords.next(c, d)]
         p1 = board[c1 = board.coords.next(c1, d)] until p1 != :x
@@ -142,7 +141,7 @@ Rules.create('NineMensMorris') do
     end
 
     def moves_for(c)
-      p, ms = rules.can_move_to[board[c]], []
+      ms = []
 
       [:n, :e, :s, :w].each do |d|
         p1 = board[c1 = board.coords.next(c, d)]
