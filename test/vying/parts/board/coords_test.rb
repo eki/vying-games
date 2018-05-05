@@ -17,7 +17,10 @@ class TestCoords < Minitest::Test
     a = [Coord[0, 0], Coord[1, 0], Coord[0, 1],
          Coord[1, 1], Coord[0, 2], Coord[1, 2]]
     i = 0
-    coords.each { |c| assert_equal(a[i], c); i += 1 }
+    coords.each do |c|
+      assert_equal(a[i], c)
+      i += 1
+    end
   end
 
   def test_include

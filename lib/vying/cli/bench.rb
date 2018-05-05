@@ -207,15 +207,24 @@ module CLI
         end
 
         x.report('Array#x,y') do
-          n.times { a.x; a.y }
+          n.times do
+            a.x
+            a.y
+          end
         end
 
         x.report('String#x,y') do
-          n.times { str.x; str.y }
+          n.times do
+            str.x
+            str.y
+          end
         end
 
         x.report('Symbol#x,y') do
-          n.times { sym.x; sym.y }
+          n.times do
+            sym.x
+            sym.y
+          end
         end
 
         x.report('Coord#+') do

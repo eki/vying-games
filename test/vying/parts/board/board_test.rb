@@ -189,7 +189,10 @@ class TestBoard < Minitest::Test
     a = [:b00, :b10, :b01, :b11]
     i = 0
 
-    b.each { |p| assert_equal(a[i], p); i += 1 }
+    b.each do |p|
+      assert_equal(a[i], p)
+      i += 1
+    end
   end
 
   def test_each_from

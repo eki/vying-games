@@ -271,7 +271,10 @@ module Vying
     def append_list(moves)
       i = 0
       begin
-        moves.each { |move| append(move); i += 1 }
+        moves.each do |move|
+          append(move)
+          i += 1
+        end
       rescue
         i.times { undo }
         raise

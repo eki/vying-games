@@ -85,7 +85,12 @@ module Vying
         return s                    if s.kind_of?(SpecialMove)
         return @@instance_cache[s]  if @@instance_cache[s]
 
-        list.each { |sm| m = sm[s]; return @@instance_cache[s] = m if m }; nil
+        list.each do |sm|
+          m = sm[s]
+          return @@instance_cache[s] = m if m
+        end
+
+        nil
       end
 
       def generate_for(game, player=nil)
