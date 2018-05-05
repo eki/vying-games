@@ -76,7 +76,6 @@ require 'yaml'
 require 'time'
 require 'oj'
 
-require 'vying/ruby'
 require 'vying/dup'
 require 'vying/memoize'
 

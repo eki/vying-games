@@ -416,7 +416,7 @@ module Vying
     # Do these rules define a score?
 
     def has_score?
-      position_class.instance_method_defined?('score')
+      position_class.instance_methods.include?(:score)
     end
 
     # Does the game defined by these rules allow use of the pie rule?  The
@@ -461,11 +461,11 @@ module Vying
     def sealed_moves?
       return @sealed_moves if @sealed_moves
 
-      if position_class.private_instance_method_defined?('__original_moves')
+      if position_class.private_instance_methods.include?(:__original_moves)
         original_moves = position_class.instance_method(:__original_moves)
       end
 
-      if position_class.private_instance_method_defined?('__original_apply!')
+      if position_class.private_instance_methods.include?(:__original_apply!)
         original_apply = position_class.instance_method(:__original_apply!)
       end
 
