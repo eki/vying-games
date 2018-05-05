@@ -27,8 +27,8 @@ class Card
     @pips  = p || RANK_PIPS[r] || 0
   end
 
-  def self.[](s)
-    s.to_s =~ /(.)(.)/
+  def self.[](str)
+    str.to_s =~ /(.)(.)/
     suit = SUITS.select { |s| s.to_s[0..0].upcase == Regexp.last_match(1) }
     rank = RANKS.select { |r| r.to_s[0..0].upcase == Regexp.last_match(2) }
     Card.new(suit.first, rank.first)

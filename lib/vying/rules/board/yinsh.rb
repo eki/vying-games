@@ -103,14 +103,14 @@ Rules.create('Yinsh') do
         all << coords.last
 
         # check for five-in-a-row
-        all.each do |c|
-          p = board[c]
+        all.each do |c1|
+          p = board[c1]
 
           next unless p == :white || p == :black
           [[:n, :s], [:e, :w], [:nw, :se]].each do |ds|
-            row = [c]
+            row = [c1]
             ds.each do |rd|
-              c2 = c
+              c2 = c1
               while c2 = board.coords.next(c2, rd)
                 p2 = board[c2]
                 break if p2 != p
@@ -190,8 +190,8 @@ Rules.create('Yinsh') do
 
           # reject entire rows that can no longer complete a 5-in-a-row
           rows.reject! do |row|
-            removed_markers.any? { |c| row.include?(c) } &&
-          !removed_markers.all? { |c| row.include?(c) }
+            removed_markers.any? { |coord| row.include?(coord) } &&
+            !removed_markers.all? { |coord| row.include?(coord) }
           end
 
           # reject empty rows
