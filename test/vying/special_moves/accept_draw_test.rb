@@ -43,7 +43,6 @@ class TestAcceptDraw < Minitest::Test
   def test_valid_for
     american_checkers = Game.new(AmericanCheckers)
     connect6 = Game.new(Connect6)
-    othello = Game.new(Othello)
 
     assert(!sm['draw_accepted_by_red'].valid_for?(american_checkers))
     assert(!sm['draw_accepted_by_black'].valid_for?(connect6))

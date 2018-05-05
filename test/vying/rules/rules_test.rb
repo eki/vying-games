@@ -127,7 +127,6 @@ module RulesTests
 
   def test__marshal
     g = new_game
-    g2 = nil
     g2 = Marshal.load(Marshal.dump(g))
     # assert_equal( g, g2 ) #Game doesn't implement ==
     assert_equal(g.history.last, g2.history.last)

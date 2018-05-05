@@ -36,7 +36,7 @@ class TestOrdo < Minitest::Test
   end
 
   def test_play
-    g = Game.new(rules)
+    skip('implement this or delete Ordo completely')
   end
 
 end

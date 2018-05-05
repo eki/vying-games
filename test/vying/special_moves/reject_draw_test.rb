@@ -37,7 +37,6 @@ class TestRejectDraw < Minitest::Test
   def test_valid_for
     american_checkers = Game.new(AmericanCheckers)
     connect6 = Game.new(Connect6)
-    othello = Game.new(Othello)
 
     assert(!sm['reject_draw'].valid_for?(american_checkers))
     assert(!sm['reject_draw'].valid_for?(connect6))

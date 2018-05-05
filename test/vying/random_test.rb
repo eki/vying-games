@@ -30,7 +30,7 @@ class TestRandomNumberGenerator < Minitest::Test
     assert_equal(rng.rand(7000), rng2.rand(7000))
 
     rng = RandomNumberGenerator.new 1234
-    rng3 = RandomNumberGenerator.new 5678
+    rng2 = RandomNumberGenerator.new 5678
 
     # Note, this is actually a very *bad* test because there's no guarantee
     # the first 4 numbers drawn for two different seeds *can't* be the same
