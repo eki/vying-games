@@ -9,7 +9,7 @@ class TestConnection < Minitest::Test
   def test_initialize
     b = Board.square(4, plugins: [:connection])
 
-    assert (class << b; ancestors; end).include?(Board::Plugins::Connection)
+    assert((class << b; ancestors; end).include?(Board::Plugins::Connection))
     assert_equal({}, b.groups)
     assert_equal([], b.groups[:x])
   end
@@ -18,11 +18,11 @@ class TestConnection < Minitest::Test
     b = Board.square(4, plugins: [:connection])
     b[:a1] = :x
 
-    assert (class << b; ancestors; end).include?(Board::Plugins::Connection)
+    assert((class << b; ancestors; end).include?(Board::Plugins::Connection))
 
     b2 = b.dup
 
-    assert (class << b2; ancestors; end).include?(Board::Plugins::Connection)
+    assert((class << b2; ancestors; end).include?(Board::Plugins::Connection))
 
     assert_equal(b, b2)
     assert_equal(b.groups, b2.groups)
@@ -45,11 +45,11 @@ class TestConnection < Minitest::Test
     b = Board.square(4, plugins: [:connection])
     b[:a1] = :x
 
-    assert (class << b; ancestors; end).include?(Board::Plugins::Connection)
+    assert((class << b; ancestors; end).include?(Board::Plugins::Connection))
 
     b2 = Marshal.load(Marshal.dump(b))
 
-    assert (class << b2; ancestors; end).include?(Board::Plugins::Connection)
+    assert((class << b2; ancestors; end).include?(Board::Plugins::Connection))
 
     assert_equal(b, b2)
     assert_equal(b.groups, b2.groups)
@@ -73,11 +73,11 @@ class TestConnection < Minitest::Test
     b = Board.square(4, plugins: [:connection])
     b[:a1] = :x
 
-    assert (class << b; ancestors; end).include?(Board::Plugins::Connection)
+    assert((class << b; ancestors; end).include?(Board::Plugins::Connection))
 
     b2 = YAML.safe_load(b.to_yaml)
 
-    assert (class << b2; ancestors; end).include?(Board::Plugins::Connection)
+    assert((class << b2; ancestors; end).include?(Board::Plugins::Connection))
 
     assert_equal(b, b2)
     assert_equal(b.groups, b2.groups)
