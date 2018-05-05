@@ -33,7 +33,7 @@ module Vying
 
     def initialize(seed=nil, opts={})
       if seed.class == Hash
-        seed, options = nil, seed
+        seed, opts = nil, seed
       end
 
       if rules.random?
