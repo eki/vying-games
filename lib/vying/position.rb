@@ -92,10 +92,10 @@ module Vying
     # variables.  If an instance variable has no weight in the equality of
     # two positions, use Rules#ignore to omit it from this check.
 
-    def eql?(o)
-      ivs = instance_variables | o.instance_variables
+    def eql?(other)
+      ivs = instance_variables | other.instance_variables
       ivs.each do |iv|
-        if instance_variable_get(iv) != o.instance_variable_get(iv) &&
+        if instance_variable_get(iv) != other.instance_variable_get(iv) &&
            !self.class.ignored?(iv)
           return false
         end
@@ -105,8 +105,8 @@ module Vying
 
     # See Position#eql?
 
-    def ==(o)
-      eql?(o)
+    def ==(other)
+      eql?(other)
     end
 
     # Automatically guess at a "good" hash value for this position.  This

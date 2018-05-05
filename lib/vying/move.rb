@@ -47,20 +47,24 @@ module Vying
     #   => true
     #
 
-    def eql?(o)
-      o.kind_of?(Move) ? to_s == o.to_s && by == o.by : to_s == o.to_s
+    def eql?(other)
+      if other.kind_of?(Move)
+        to_s == other.to_s && by == other.by
+      else
+        to_s == other.to_s
+      end
     end
 
     # See #eql?
 
-    def ==(o)
-      eql?(o)
+    def ==(other)
+      eql?(other)
     end
 
     # Allow sorting moves (by to_s).
 
-    def <=>(o)
-      to_s <=> o.to_s
+    def <=>(other)
+      to_s <=> other.to_s
     end
 
     # Hash based on the move string and player symbol.

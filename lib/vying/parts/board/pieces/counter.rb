@@ -39,15 +39,15 @@ class Counter
   # Add 'n' to the count of this Counter, returning a new Counter instance.
   # The argument can be anything that responds to to_i.
 
-  def +(n)
-    Counter[@player, @count + n.to_i]
+  def +(other)
+    Counter[@player, @count + other.to_i]
   end
 
   # Subtract 'n' to the count of this Counter, returning a new Counter
   # instance.  The argument can be anything that responds to to_i.
 
-  def -(n)
-    Counter[@player, @count - n.to_i]
+  def -(other)
+    Counter[@player, @count - other.to_i]
   end
 
   # Returns Counter#count.  This allows counters to be added / subtracted.

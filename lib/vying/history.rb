@@ -206,17 +206,17 @@ module Vying
     # seed, options and moves list are equal, the histories are considered
     # equal.
 
-    def eql?(o)
-      rules == o.rules &&
-      seed == o.seed &&
-      options == o.options &&
-      moves == o.moves
+    def eql?(other)
+      rules == other.rules &&
+      seed == other.seed &&
+      options == other.options &&
+      moves == other.moves
     end
 
     # Compare History objects.
 
-    def ==(o)
-      eql? o
+    def ==(other)
+      eql?(other)
     end
 
     # For efficiency's sake don't dump the entire positions array

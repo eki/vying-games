@@ -84,14 +84,15 @@ module Vying
 
     # Compare this rng against another.
 
-    def eql?(o)
-      seed == o.seed && count == o.count
+    def eql?(other)
+      other.kind_of?(RandomNumberGenerator) && seed == other.seed &&
+      count == other.count
     end
 
     # Compare this rng against another.
 
-    def ==(o)
-      eql? o
+    def ==(other)
+      eql?(other)
     end
 
     def hash

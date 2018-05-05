@@ -216,14 +216,14 @@ class Coord
   #   Coord[1,2] + Coord[3,4]   # => Coord[4,6]
   #
 
-  def +(o)
-    Coord.new(x + o.x, y + o.y)
+  def +(other)
+    Coord.new(x + other.x, y + other.y)
   end
 
   # Define an ordering for Coord's.  They are sorted first by y, then x.
 
-  def <=>(c)
-    (t = y <=> c.y) != 0 ? t : x <=> c.x
+  def <=>(other)
+    (t = y <=> other.y) != 0 ? t : x <=> other.x
   end
 
   # Return a string representation of this Coord.  There are two possible
@@ -343,15 +343,15 @@ class Coord
   # uses duck typing such that a Coord can be compared to any object that
   # responds to #x and #y methods.  (Such as String, Symbol, and Array).
 
-  def ==(o)
-    o.respond_to?(:x) && o.respond_to?(:y) &&
-    x == o.x && y == o.y
+  def ==(other)
+    other.respond_to?(:x) && other.respond_to?(:y) &&
+    x == other.x && y == other.y
   end
 
   # See Coord#==.
 
-  def eql?(o)
-    self == o
+  def eql?(other)
+    self == other
   end
 
   # Expand the given list of Coord's.  It's expected that the given list is

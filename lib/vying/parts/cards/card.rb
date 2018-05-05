@@ -52,18 +52,18 @@ class Card
     end
   end
 
-  def <=>(card)
-    tc = (color.to_s <=> card.color.to_s)
+  def <=>(other)
+    tc = (color.to_s <=> other.color.to_s)
     return tc if tc != 0
 
-    ts = (suit.to_s <=> card.suit.to_s)
+    ts = (suit.to_s <=> other.suit.to_s)
     return ts if ts != 0
 
-    card.value? - value?
+    other.value? - value?
   end
 
-  def eql?(card)
-    self == card
+  def eql?(other)
+    self == other
   end
 
   def hash

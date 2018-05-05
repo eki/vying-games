@@ -13,13 +13,13 @@ class Die
     @up = faces[rng.rand(faces.length)]
   end
 
-  def eql?(o)
-    o && o.respond_to?(:up) && up == o.up &&
-         o.respond_to?(:color) && color == o.color
+  def eql?(other)
+    other && other.respond_to?(:up) && up == other.up &&
+    other.respond_to?(:color) && color == other.color
   end
 
-  def ==(o)
-    eql? o
+  def ==(other)
+    eql?(other)
   end
 
   def hash
@@ -73,12 +73,13 @@ class Dice
     @dice.dup
   end
 
-  def eql?(o)
-    length == o.length && to_a == o.to_a
+  def eql?(other)
+    other.respond_to?(:length) && other.respond_to?(:to_a) &&
+    length == other.length && to_a == other.to_a
   end
 
-  def ==(o)
-    eql?(o)
+  def ==(other)
+    eql?(other)
   end
 
   def hash

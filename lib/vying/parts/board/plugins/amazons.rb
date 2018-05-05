@@ -134,22 +134,22 @@ module Board::Plugins::Amazons
       coords.empty?
     end
 
-    def eql?(o)
-      return false if o.nil?
+    def eql?(other)
+      return false if other.nil?
 
-      if white.length != o.white.length ||
-         black.length != o.black.length ||
-         coords.length != o.coords.length
+      if white.length != other.white.length ||
+         black.length != other.black.length ||
+         coords.length != other.coords.length
         return false
       end
 
-      white.sort == o.white.sort &&
-      black.sort == o.black.sort &&
-      coords.sort == o.coords.sort
+      white.sort == other.white.sort &&
+      black.sort == other.black.sort &&
+      coords.sort == other.coords.sort
     end
 
-    def ==(o)
-      eql? o
+    def ==(other)
+      eql?(other)
     end
 
     def hash

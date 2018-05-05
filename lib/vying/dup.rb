@@ -63,7 +63,7 @@ class Hash
 
   # Define eql? in terms of == which seems to behave in a nicer manner
 
-  def eql?(o)
-    self == o
+  def eql?(other)
+    self == other
   end
 end

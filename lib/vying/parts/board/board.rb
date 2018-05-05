@@ -248,9 +248,9 @@ class Board
 
   # Compare boards for equality.
 
-  def ==(o)
-    o.respond_to?(:cells, true) && o.respond_to?(:width, true) &&
-    o.width == width && cells == o.cells
+  def ==(other)
+    other.respond_to?(:cells, true) && other.respond_to?(:width, true) &&
+    other.width == width && cells == other.cells
   end
 
   # Return a hash code for this board.

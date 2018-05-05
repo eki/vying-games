@@ -124,15 +124,15 @@ class Grid
     [dots, lines, boxes].hash
   end
 
-  def eql?(o)
-    o.class == Grid &&
-    dots.length == o.dots.length &&
-    lines == o.lines &&
-    boxes == o.boxes
+  def eql?(other)
+    other.class == Grid &&
+    dots.length == other.dots.length &&
+    lines == other.lines &&
+    boxes == other.boxes
   end
 
-  def ==(o)
-    eql? o
+  def ==(other)
+    eql?(other)
   end
 
 end

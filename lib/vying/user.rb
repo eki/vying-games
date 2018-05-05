@@ -43,12 +43,12 @@ module Vying
       false
     end
 
-    def eql?(u)
-      u && username == u.username
+    def eql?(other)
+      other.respond_to?(:username) && username == other.username
     end
 
-    def ==(u)
-      eql? u
+    def ==(other)
+      eql?(other)
     end
 
     def hash

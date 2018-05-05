@@ -15,8 +15,8 @@ module Board::Plugins::Connection
       @board, @coords = board, coords
     end
 
-    def |(group)
-      Group.new(@board, coords | group.coords)
+    def |(other)
+      Group.new(@board, coords | other.coords)
     end
 
     def <<(c)
@@ -27,8 +27,8 @@ module Board::Plugins::Connection
       coords.include?(c)
     end
 
-    def ==(o)
-      o && coords == o.coords
+    def ==(other)
+      other.respond_to?(:coords) && coords == other.coords
     end
 
     def inspect
