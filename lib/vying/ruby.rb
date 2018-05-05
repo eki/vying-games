@@ -6,29 +6,6 @@
 # Add ruby 1.8 and 1.9 compatibility to Module.  Also, add helper methods.
 
 class Module
-  # Add instance_variable_defined? for ruby 1.8.  This is used in place of
-  # instance_variables.include? because instance_variables has different
-  # return values under ruby 1.8 and 1.9 (String vs Symbol).
-
-  unless defined?(:instance_variable_defined?)
-    o = Object.new
-    o.instance_variable_set('@instance_variable', true)
-    case o.instance_variables.first
-      when Symbol
-
-        def instance_variable_defined?(iv)
-          instance_variables.include?(iv.to_sym)
-        end
-
-      when String
-
-        def instance_variable_defined?(iv)
-          instance_variables.include?(iv.to_s)
-        end
-
-    end
-  end
-
   # Add instance_method_defined? because instance_methods has different
   # return values under ruby 1.8 and ruby 1.9 (String vs Symbol).  This
   # makes the usual means of checking whether an instance method is defined
