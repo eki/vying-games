@@ -56,7 +56,7 @@ Rules.create('Ataxx') do
     end
 
     def apply!(move)
-      coords, p = move.to_coords, turn
+      coords = move.to_coords
 
       dx = (coords.first.x - coords.last.x).abs
       dy = (coords.first.y - coords.last.y).abs

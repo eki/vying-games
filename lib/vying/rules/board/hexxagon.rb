@@ -66,7 +66,7 @@ Rules.create('Hexxagon') do
     end
 
     def apply!(move)
-      coords, p = move.to_coords, turn
+      coords = move.to_coords
 
       if board.coords.ring(coords.first, 1).include?(coords.last)
         board[coords.last] = turn
