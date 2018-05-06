@@ -23,7 +23,7 @@ namespace :ci do
 end
 
 CLEAN.include('ext/**/*.o', 'ext/**/*.so', 'ext/**/*.bundle')
-CLOBBER.include('pkg', 'doc/api', 'doc/coverage')
+CLOBBER.include('pkg', 'coverage/', 'test/coverage/')
 
 task "test_sans_ext": [:clobber, :test, :compile]
 
