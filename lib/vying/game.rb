@@ -14,7 +14,7 @@ module Vying
 
     # Core attributes
 
-    attr_reader :rules, :options, :players, :history, :notation
+    attr_reader :rules, :options, :players, :history
 
     # Extended (unnecessary) attributes
 
@@ -42,12 +42,6 @@ module Vying
       @options = history.options.dup.freeze
       @players = history.first.players.map { |p| Player.new(p, self) }
 
-      if rules.notation
-        @notation = Notation.find(self.rules.notation).new(self)
-      else
-        @notation = Notation.new(self)
-      end
-
       yield self if block_given?
     end
 
@@ -64,14 +58,6 @@ module Vying
       g.instance_variable_set('@options', history.options.dup.freeze)
       g.instance_variable_set('@players',
         history.first.players.map { |p| Player.new(p, g) })
-
-      if history.rules.notation
-        g.instance_variable_set('@notation',
-          Notation.find(history.rules.notation).new(g))
-      else
-        g.instance_variable_set('@notation', Notation.new(g))
-      end
-
       g
     end
 
@@ -142,6 +128,16 @@ module Vying
       end
 
       g
+    end
+
+    def notation
+      # This is lazy loaded and not-cached to avoid creating a circular
+      # reference between Game and Notation.
+      if rules.notation
+        Notation.find(self.rules.notation).new(self)
+      else
+        Notation.new(self)
+      end
     end
 
     # Deprecated.  This is the equivalent of history.sequence, which is
