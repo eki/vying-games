@@ -42,21 +42,6 @@ class TestCheckersNotation < Minitest::Test
     assert_equal('undo', n.translate('undo', :white))
   end
 
-  def test_sequence
-    g = Game.new AmericanCheckers
-    n = CheckersNotation.new(g)
-
-    g << 'f3e4' << 'e6f5' << 'e2f3' << 'd7e6' << 'd1e2' << 'g6h5' << 'e4g6'
-
-    s = ['11-15', '23-19', '7-11', '26-23', '2-7', '24-20', '15-24']
-
-    # 15-24 is a capture, if we change the notation it should be 15x24
-
-    assert(g.sequence.first.kind_of?(String))
-    assert(n.sequence.first.kind_of?(String))
-    assert_equal(s, n.sequence)
-  end
-
   def test_moves
     g = Game.new AmericanCheckers
     n = CheckersNotation.new(g)

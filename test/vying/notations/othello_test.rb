@@ -41,19 +41,6 @@ class TestOthelloNotation < Minitest::Test
     assert_equal('undo', n.translate('undo', :white))
   end
 
-  def test_sequence
-    g = Game.new Othello
-    n = OthelloNotation.new(g)
-
-    g << %w(e6 f6 f5 f4 d3 d6 f3 c5)
-
-    s = %w(E6 f6 F5 f4 D3 d6 F3 c5)
-
-    assert(g.sequence.first.kind_of?(String))
-    assert(n.sequence.first.kind_of?(String))
-    assert_equal(s, n.sequence)
-  end
-
   def test_moves
     g = Game.new Othello
     n = OthelloNotation.new(g)

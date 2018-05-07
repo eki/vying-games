@@ -42,19 +42,6 @@ class TestMancalaNotation < Minitest::Test
     assert_equal('undo', n.translate('undo', :two))
   end
 
-  def test_sequence
-    g = Game.new Kalah
-    n = MancalaNotation.new(g)
-
-    g << %w(f1 a1 a2 b1 a2 a1 c1 a2)
-
-    s = %w(A F a E a F D a)
-
-    assert(g.sequence.first.kind_of?(String))
-    assert(n.sequence.first.kind_of?(String))
-    assert_equal(s, n.sequence)
-  end
-
   def test_moves
     g = Game.new Kalah
     n = MancalaNotation.new(g)

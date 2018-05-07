@@ -35,13 +35,6 @@ module Vying
   #    >> g.history.moves.last
   #    => b3c4:red
   #
-  #  You can also have the sequence of moves played translated:
-  #
-  #    >> g.sequence
-  #    => ["b3c4"]
-  #    >> g.notation.sequence
-  #    => ["9-14"]
-  #
 
   class Notation
 
@@ -63,17 +56,6 @@ module Vying
 
     def translate(move, _player)
       move
-    end
-
-    # Translate Game#sequence.
-
-    def sequence
-      s = []
-      game.history.moves.each do |move|
-        s << translate(move, move.by).to_s
-      end
-
-      s
     end
 
     # Translate Game#moves

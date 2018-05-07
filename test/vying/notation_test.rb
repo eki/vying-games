@@ -34,23 +34,6 @@ class TestNotation < Minitest::Test
     assert_equal('anything really', n.translate('anything really', :white))
   end
 
-  def test_sequence
-    g = Game.new TicTacToe
-    n = Notation.new(g)
-
-    g << g.moves.first << g.moves.first << g.moves.first
-
-    assert(g.sequence.first.kind_of?(String))
-    assert(n.sequence.first.kind_of?(String))
-    assert_equal(g.sequence, n.sequence)
-
-    g << g.moves.first until g.final?
-
-    assert(g.sequence.first.kind_of?(String))
-    assert(n.sequence.first.kind_of?(String))
-    assert_equal(g.sequence, n.sequence)
-  end
-
   def test_moves
     g = Game.new TicTacToe
     n = Notation.new(g)
