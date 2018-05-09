@@ -1,2 +1,6 @@
 inherit_from:
   - https://gist.githubusercontent.com/eki/b7081085e7a447bb6c1e354bde0631d8/raw
+
+Naming/PredicateName:
+  NameWhitelist:
+    - has_moves
