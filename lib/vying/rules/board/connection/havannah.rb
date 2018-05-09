@@ -108,7 +108,7 @@ Rules.create('Havannah') do
       # group is the last added, also assumes all
       # other coords in the group have been checked!
 
-      c = group.coords.last 
+      c = group.coords.last
 
       ns = board.coords.neighbors(c)
       ms = ns.select { |nc| group.coords.include?(nc) }
