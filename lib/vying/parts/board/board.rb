@@ -486,7 +486,6 @@ class Board
       s += row.inject('') do |rs, p|
         rs + (p.nil? ? ' ' : p.to_s[0..0])
       end
-    # s += format("%*d\n", -off, y + 1)
       s += "#{y + 1}\n"
     end
     s + letters
