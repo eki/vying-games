@@ -476,7 +476,7 @@ class Board
     off = height >= 10 ? 2 : 1
     w = width
 
-    letters = ' ' * off + 'abcdefghijklmnopqrstuvwxyz'[0..(w - 1)] + ' ' * off + "\n"
+    letters = ' ' * off + 'abcdefghijklmnopqrstuvwxyz'[0..(w - 1)] + "\n"
 
     s = letters
     height.times do |y|
@@ -486,7 +486,8 @@ class Board
       s += row.inject('') do |rs, p|
         rs + (p.nil? ? ' ' : p.to_s[0..0])
       end
-      s += format("%*d\n", -off, y + 1)
+    # s += format("%*d\n", -off, y + 1)
+      s += "#{y + 1}\n"
     end
     s + letters
   end

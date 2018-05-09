@@ -265,24 +265,24 @@ class TestBoard < Minitest::Test
     b[0, 1] = '2'
     b[1, 1] = '3'
 
-    assert_equal(" ab \n1011\n2232\n ab \n", b.to_s)
+    assert_equal(" ab\n1011\n2232\n ab\n", b.to_s)
 
     b = Board.rect(2, 10)
     b[0, 0], b[1, 0], b[0, 9], b[1, 9] = 'a', 'b', 'c', 'd'
     s = <<~EOF
-        ab  
-       1ab1 
-       2  2 
-       3  3 
-       4  4 
-       5  5 
-       6  6 
-       7  7 
-       8  8 
-       9  9 
+        ab
+       1ab1
+       2  2
+       3  3
+       4  4
+       5  5
+       6  6
+       7  7
+       8  8
+       9  9
       10cd10
-        ab  
-EOF
+        ab
+    EOF
 
     assert_equal(s, b.to_s)
   end
