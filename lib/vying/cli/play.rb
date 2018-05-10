@@ -7,14 +7,6 @@ require 'optparse'
 require 'vying'
 Vying::Bot.require_all
 
-begin
-  require 'curses'
-  Vying::CursesAvailable = true
-rescue LoadError
-  # No curses!  That's okay, we'll disable the option later...
-  Vying::CursesAvailable = false
-end
-
 module CLI
 
   module Play
@@ -38,25 +30,6 @@ module CLI
       position.has_moves.each do |p|
         puts "#{p}'s moves: #{position.moves(p).inspect}"
       end
-    end
-
-    def self.show_position_curses(game)
-      position = game.history.last
-
-      h = $scr.maxy
-
-      $scr.clear
-
-      $scr.setpos(0, 0)
-      $scr.addstr(position.to_s)
-
-      i = position.has_moves.length - 1
-      position.has_moves.each do |p|
-        $scr.setpos(h - 2 - i, 0)
-        i -= 1
-        $scr.addstr("#{p}'s moves: #{position.moves(p).inspect}")
-      end
-      $scr.refresh
     end
 
     def self.get_human_move(game, player)
@@ -85,27 +58,6 @@ module CLI
       end
       game[player] << move
     end
-
-    def self.get_human_move_curses(game, player)
-      position = game.history.last
-
-      h = $scr.maxy
-
-      $scr.setpos(h - 1, 0)
-      $scr.addstr('Select: ')
-      $scr.refresh
-      move = $scr.getstr
-      exit if move == ''
-      until position.move?(move)
-        $scr.setpos(h - 1, 0)
-        $scr.addstr('Select: ')
-        $scr.refresh
-        move = $scr.getstr
-        exit if move == ''
-      end
-      game[player] << move
-    end
-
   end
 
   def self.play
@@ -115,14 +67,12 @@ module CLI
 
     p2b = {}
     number = 1
-    curses = false
 
     opts = OptionParser.new
 
     opts.banner = 'Usage: vying play [options]'
     opts.on('-r', '--rules RULES') { |r| rules = Rules.find(r) }
     opts.on('-n', '--number NUMBER') { |num| number = Integer(num) }
-    opts.on('-c', '--curses') { curses = true }
     opts.on('-s', '--seed NUMBER') { |s| seed = s.to_i }
 
     opts.on('-p', '--player PLAYER=BOT') do |s|
@@ -139,16 +89,6 @@ module CLI
 
     opts.parse(ARGV)
 
-    if curses
-      if Vying::CursesAvailable
-        $scr = Curses.init_screen
-        Curses.cbreak
-      else
-        puts "WARNING: curses unavailable... pretending you didn't ask for it."
-        curses = false
-      end
-    end
-
     games = []
     number.times do |n|
       g = Game.new(rules, seed, options)
@@ -156,13 +96,8 @@ module CLI
 
       until g.final?
         if g[g.turn].user.class == Vying::Human
-          if curses
-            CLI::Play.show_position_curses(g)
-            CLI::Play.get_human_move_curses(g, g.turn)
-          else
-            CLI::Play.show_position(g)
-            CLI::Play.get_human_move(g, g.turn)
-          end
+          CLI::Play.show_position(g)
+          CLI::Play.get_human_move(g, g.turn)
         end
 
         g.step
@@ -172,8 +107,6 @@ module CLI
 
       puts "completed game #{n}"
     end
-
-    Curses.close_screen if curses
 
     CLI::Play.summarize(games)
   end
