@@ -521,16 +521,6 @@ class Board
     Plugins.all[s.to_sym]
   end
 
-  # When loading a YAML-ized Board, be sure to re-extend plugins.
-
-  def yaml_initialize(tag, vals) # :nodoc:
-    vals.each do |iv, v|
-      instance_variable_set("@#{iv}", v)
-      v.each { |p| extend Board.find_plugin(p) } if iv == 'plugins'
-      v.instance_variable_set('@board', self) if iv == 'coords'
-    end
-  end
-
   # Board.new pretends to be private.  In an earlier revision it was
   # private, but that was causing odd errors with Class#prototype's use of
   # alias (stemming from the fact that Board has subclasses who's new methods

@@ -128,19 +128,4 @@ class TestPosition < Minitest::Test
     assert_equal(p2, Marshal.load(Marshal.dump(p2)))
     assert_equal(p2.draw?, Marshal.load(Marshal.dump(p2)).draw?)
   end
-
-  def test_yaml_with_special_move_mixin
-    skip('Failing: Skip yaml, probably going to remove this support')
-    p = Connect6.new
-
-    p2 = SpecialMove['draw'].apply_to_position(p)
-
-    refute_equal(p, p2)
-
-    p3 = YAML.safe_load(p2.to_yaml)
-
-    assert_equal(p2, p3)
-    assert_equal(p2.draw?, p3.draw?)
-    assert_equal(p2.rules, p3.rules)
-  end
 end

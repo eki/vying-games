@@ -67,19 +67,6 @@ class TestRandomNumberGenerator < Minitest::Test
     assert_equal(rng2.rand(1000), rng.rand(1000))
   end
 
-  def test_yaml
-    rng = RandomNumberGenerator.new 1234
-
-    rng.rand
-
-    rng2 = YAML.load(rng.to_yaml)
-
-    assert_equal(rng.count, rng2.count)
-    assert_equal(rng.seed, rng2.seed)
-    assert_equal(rng.rand(1000), rng2.rand(1000))
-    assert_equal(rng2.rand(1000), rng.rand(1000))
-  end
-
   def test_inspect
     assert_equal('#<RNG seed: 1234, count: 0>',
                   RandomNumberGenerator.new(1234).inspect)

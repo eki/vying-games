@@ -285,23 +285,4 @@ module Board::Plugins::Amazons
     end
     a
   end
-
-  def to_yaml_properties
-    super
-
-    props = instance_variables
-    props.delete('@mobility')
-    props.delete('@blocked')
-    props
-  end
-
-  def yaml_initialize(tag, vals)
-    super
-
-    @mobility = {}
-    @blocked = {}
-    update_mobility(occupied(:black))
-    update_mobility(occupied(:white))
-  end
-
 end

@@ -44,21 +44,6 @@ class TestCustodialCapture < Minitest::Test
     assert_equal(b, b2)
   end
 
-  def test_yaml
-    skip('Failing: Skip yaml, probably going to remove this support')
-    b = Board.square(4, plugins: [:custodial_capture])
-
-    b[:a1] = :x
-
-    assert(full_ancestors(b).include?(Board::Plugins::CustodialCapture))
-
-    b2 = YAML.safe_load(b.to_yaml)
-
-    assert(full_ancestors(b2).include?(Board::Plugins::CustodialCapture))
-
-    assert_equal(b, b2)
-  end
-
   def test_will_capture_ns
     b = Board.square(8, plugins: [:custodial_capture])
 

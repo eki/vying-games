@@ -52,23 +52,6 @@ class TestInARow < Minitest::Test
     refute_equal(b.threats.object_id, b2.threats.object_id)
   end
 
-  def test_yaml
-    skip('Failing: Skip yaml, probably going to remove this support')
-    b = Board.square(4, plugins: [:in_a_row])
-    b.window_size = 4
-
-    assert((class << b; ancestors; end).include?(Board::Plugins::InARow))
-
-    b2 = YAML.safe_load(b.to_yaml)
-
-    assert((class << b2; ancestors; end).include?(Board::Plugins::InARow))
-
-    assert_equal(b, b2)
-    assert_equal(b.window_size, b2.window_size)
-    assert_equal(b.threats, b2.threats)
-    refute_equal(b.threats.object_id, b2.threats.object_id)
-  end
-
   def test_clear
     b = Board.square(4, plugins: [:in_a_row])
     b.window_size = 4

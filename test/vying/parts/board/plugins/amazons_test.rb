@@ -44,21 +44,6 @@ class TestAmazons < Minitest::Test
     refute_equal(b.territories.object_id, b2.territories.object_id)
   end
 
-  def test_yaml
-    skip('Failing: Skip yaml, probably going to remove this support')
-    b = Board.square(4, plugins: [:amazons])
-
-    assert((class << b; ancestors; end).include?(Board::Plugins::Amazons))
-
-    b2 = YAML.safe_load(b.to_yaml)
-
-    assert((class << b2; ancestors; end).include?(Board::Plugins::Amazons))
-
-    assert_equal(b, b2)
-    assert_equal(b.territories, b2.territories)
-    refute_equal(b.territories.object_id, b2.territories.object_id)
-  end
-
   def test_initialize_02
     b = Board.square(10, plugins: [:amazons])
 

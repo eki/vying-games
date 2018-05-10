@@ -52,10 +52,6 @@ module CLI
           n.times { Marshal.load(Marshal.dump(g)) }
         end
 
-        x.report('yaml') do
-          n.times { Vying.load(Vying.dump(g, :yaml), :yaml) }
-        end
-
         x.report('json') do
           n.times { Vying.load(Vying.dump(g, :json), :json) }
         end
@@ -66,20 +62,11 @@ module CLI
 
         game_hash = g.to_format(:hash)
 
-        x.report('yaml dump') do
-          n.times { game_hash.to_yaml }
-        end
-
         x.report('json dump') do
           n.times { Oj.dump(game_hash) }
         end
 
-        game_hash_yaml = Vying.dump(g, :yaml)
         game_hash_json = Vying.dump(g, :json)
-
-        x.report('yaml load') do
-          n.times { YAML.load(game_hash_yaml) }
-        end
 
         x.report('json load') do
           n.times { Oj.load(game_hash_json) }

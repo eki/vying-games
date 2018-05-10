@@ -68,34 +68,6 @@ class TestConnection < Minitest::Test
                       b2g.instance_variable_get('@board').object_id)
   end
 
-  def test_yaml
-    skip('Failing: Skip yaml, probably going to remove this support')
-    b = Board.square(4, plugins: [:connection])
-    b[:a1] = :x
-
-    assert((class << b; ancestors; end).include?(Board::Plugins::Connection))
-
-    b2 = YAML.safe_load(b.to_yaml)
-
-    assert((class << b2; ancestors; end).include?(Board::Plugins::Connection))
-
-    assert_equal(b, b2)
-    assert_equal(b.groups, b2.groups)
-    refute_equal(b.groups.object_id, b2.groups.object_id)
-    refute_equal(b.groups[:x].object_id, b2.groups[:x].object_id)
-
-    bg = b.groups[:x].first
-    b2g = b2.groups[:x].first
-
-    assert_equal(bg, b2g)
-    assert_equal(bg.coords, b2g.coords)
-
-    refute_equal(bg.object_id, b2g.object_id)
-    refute_equal(bg.coords.object_id, b2g.coords.object_id)
-    refute_equal(bg.instance_variable_get('@board').object_id,
-                      b2g.instance_variable_get('@board').object_id)
-  end
-
   def test_clear
     b = Board.square(4, plugins: [:connection])
 

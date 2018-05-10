@@ -410,25 +410,6 @@ module Vying
       p
     end
 
-    # When serializing to YAML, don't serialize instance variables used for
-    # caching (/^@__.*_cache$/).
-
-    def to_yaml_properties
-      props = instance_variables
-      props.reject! { |iv| iv =~ /^@__.*_cache$/ }
-      props
-    end
-
-    # When loading a YAML-ized Position, be sure to re-extend any special
-    # move mixins.
-
-    def yaml_initialize(tag, vals)
-      vals.each do |iv, v|
-        instance_variable_set("@#{iv}", v)
-        extend Module.const_get(v) if iv == 'includes'
-      end
-    end
-
     # Returns a very basic string representation of this position.
 
     def to_s

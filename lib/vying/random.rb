@@ -122,13 +122,6 @@ module Vying
       rng
     end
 
-    # Only the seed and count are written out to YAML.  Deserializing from YAML
-    # is also lazy in the same way that .dup is lazy.
-
-    def to_yaml_properties
-      ['@seed', '@count']
-    end
-
     private
 
     # Copied from the hiBit macro in the random gem.

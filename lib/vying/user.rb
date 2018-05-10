@@ -110,9 +110,5 @@ module Vying
     def ready?
       !@queue.empty?
     end
-
-    def to_yaml(opts={})
-      User.new(username, id).to_yaml(opts)
-    end
   end
 end

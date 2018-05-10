@@ -114,22 +114,6 @@ class TestFrontier < Minitest::Test
     refute_equal(b.frontier.object_id, b2.frontier.object_id)
   end
 
-  def test_yaml
-    skip('Failing: Skip yaml, probably going to remove this support')
-    b = Board.square(4, plugins: [:frontier])
-    b[:a1] = :x
-
-    assert((class << b; ancestors; end).include?(Board::Plugins::Frontier))
-
-    b2 = YAML.safe_load(b.to_yaml)
-
-    assert((class << b2; ancestors; end).include?(Board::Plugins::Frontier))
-
-    assert_equal(b, b2)
-    assert_equal(b.frontier, b2.frontier)
-    refute_equal(b.frontier.object_id, b2.frontier.object_id)
-  end
-
   def test_set_infinite
     b = Board.infinite(4, plugins: [:frontier])
     b[:a1] = :x
