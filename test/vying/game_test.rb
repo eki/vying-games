@@ -389,7 +389,7 @@ class TestGame < Minitest::Test
     assert_equal(move, g.sequence.last)
     assert_equal(:x, g.history.move_by.last)
 
-    m, p = g.undo
+    m = g.undo.first
 
     assert_equal(0, g.sequence.length)
     assert_equal(1, g.history.length)
@@ -404,7 +404,7 @@ class TestGame < Minitest::Test
     assert_equal(move, g.sequence.last)
     assert_equal(:x, g.history.move_by.last)
 
-    m, p = g.undo
+    m = g.undo.first
 
     assert_equal(0, g.sequence.length)
     assert_equal(1, g.history.length)
