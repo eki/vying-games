@@ -31,7 +31,7 @@ VALUE coord_class_subscript( int argc, VALUE *argv, VALUE self ) {
       return argv[0];
     }
 
-    cache = rb_cv_get( self, "@@coords_cache" );
+    cache = rb_funcall( Coord, id_cache, 0);
     coord = rb_hash_aref( cache, argv[0] );
 
     if( coord == Qnil ) {
@@ -50,7 +50,8 @@ VALUE coord_class_subscript( int argc, VALUE *argv, VALUE self ) {
     return coord;
   }
   else {
-    VALUE cache = rb_cv_get( self, "@@coords_cache" );
+    cache = rb_funcall( Coord, id_cache, 0);
+
     VALUE ary = rb_ary_new2( argc );
     int i;
     for( i = 0; i < argc; i++ ) {

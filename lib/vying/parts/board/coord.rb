@@ -127,7 +127,9 @@ class Coord
     @s       = to_s(false)
   end
 
-  @@coords_cache = {}
+  def self.cache
+    @cache ||= {}
+  end
 
   # Create a new Coord from the given argument.  If given x and y, it is
   # the equivalent to calling new.  If given a symbol the Symbol will be
@@ -155,7 +157,7 @@ class Coord
     elsif args.length == 1
       return args.first if args.first.class == Coord
 
-      c = @@coords_cache[args.first]
+      c = cache[args.first]
 
       unless c
         x, y = args.first.x, args.first.y
@@ -163,7 +165,7 @@ class Coord
         return nil if x.nil? || y.nil?
 
         c = new(x, y)
-        @@coords_cache[args.first] = c
+        cache[args.first] = c
       end
 
       c
@@ -173,13 +175,13 @@ class Coord
         if arg.class == Coord
           arg
         else
-          c = @@coords_cache[arg]
+          c = cache[arg]
 
           unless c
             x, y = arg.x, arg.y
 
             c = !x || !y ? nil : new(x, y)
-            @@coords_cache[arg] = c
+            cache[arg] = c
           end
 
           c
