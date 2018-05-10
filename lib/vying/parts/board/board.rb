@@ -158,16 +158,14 @@ class Board
   def [](*args)
     if args.length == 2 && args.first.kind_of?(Integer) &&
                            args.last.kind_of?(Integer)
-      return get(args.first, args.last)
+      get(args.first, args.last)
     elsif args.length == 1
-      return args.first.nil? ? nil : get(args.first.x, args.first.y)
+      args.first.nil? ? nil : get(args.first.x, args.first.y)
     else
-      return args.map do |arg|
+      args.map do |arg|
         get(arg.x, arg.y)
       end
     end
-
-    nil
   end
 
   # Assign to a cell on a board.  Takes an (x,y) pair, or any number of
