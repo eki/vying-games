@@ -38,9 +38,8 @@ module Vying
     def select(sequence, position, player)
       return position.moves.first if position.moves.length == 1
 
-      score, move = best(analyze(position, player))
-
-      move
+      # Returns [score, move] of which we want to return the move
+      best(analyze(position, player)).last
     end
 
     def resign?(sequence, position, player)

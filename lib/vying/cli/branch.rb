@@ -37,7 +37,7 @@ module CLI
 
           begin
             g << moves[rand(moves.length)]
-          rescue Exception => e
+          rescue e
             puts g
             puts "moves: #{g.moves}"
             puts "squence: #{g.sequence.inspect}"
