@@ -67,10 +67,10 @@ module Vying
     # Stop tracking.
 
     Module.class_eval do
-      def method_added(n)
+      def method_added(n) # rubocop:disable Lint/DuplicateMethods
       end
 
-      def singleton_method_added(n)
+      def singleton_method_added(n) # rubocop:disable Lint/DuplicateMethods
       end
     end
   end
