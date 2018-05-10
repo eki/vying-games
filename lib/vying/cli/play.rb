@@ -5,7 +5,7 @@
 
 require 'optparse'
 require 'vying'
-Bot.require_all
+Vying::Bot.require_all
 
 begin
   require 'curses'
@@ -127,8 +127,8 @@ module CLI
 
     opts.on('-p', '--player PLAYER=BOT') do |s|
       s =~ /(\w*)=([\w:]*)/
-      b = Bot.find(Regexp.last_match(2))
-      p2b[Regexp.last_match(1).downcase.intern] = (b ? b.new : Human.new(Regexp.last_match(2)))
+      b = Vying::Bot.find(Regexp.last_match(2))
+      p2b[Regexp.last_match(1).downcase.intern] = (b ? b.new : Vying::Human.new(Regexp.last_match(2)))
     end
 
     opts.on('-o', '--option OPTION=VALUE') do |s|
@@ -155,7 +155,7 @@ module CLI
       p2b.each { |p, b| g[p].user = b }
 
       until g.final?
-        if g[g.turn].user.class == Human
+        if g[g.turn].user.class == Vying::Human
           if curses
             CLI::Play.show_position_curses(g)
             CLI::Play.get_human_move_curses(g, g.turn)
