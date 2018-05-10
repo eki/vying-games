@@ -156,7 +156,7 @@ module Vying
     end
 
     def self._load(str)
-      new(* Marshal.load(str))
+      new(* Marshal.load(str)) # rubocop:disable Security/MarshalLoad
     end
 
     class << self

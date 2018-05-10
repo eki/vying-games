@@ -115,7 +115,7 @@ module Vying
     # Load mashalled data.  This is lazy in the same way that .dup is lazy.
 
     def self._load(s)
-      s, c = Marshal.load(s)
+      s, c = Marshal.load(s) # rubocop:disable Security/MarshalLoad
       rng = allocate
       rng.instance_variable_set('@seed', s)
       rng.instance_variable_set('@count', c)

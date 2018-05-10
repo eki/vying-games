@@ -402,7 +402,7 @@ module Vying
     # any methods that have been mixed in via #extend_special_mixin.
 
     def self._load(s)
-      p, ivs = allocate, Marshal.load(s)
+      p, ivs = allocate, Marshal.load(s) # rubocop:disable Security/MarshalLoad
       ivs.each do |iv, v|
         p.instance_variable_set(iv, v)
         p.extend Module.const_get(v) if iv.to_s == '@includes'

@@ -49,7 +49,9 @@ module CLI
 
       Benchmark.bm(30) do |x|
         x.report('marshal') do
-          n.times { Marshal.load(Marshal.dump(g)) }
+          n.times do
+            Marshal.load(Marshal.dump(g))
+          end
         end
 
         x.report('json') do
@@ -255,7 +257,9 @@ module CLI
         end
 
         x.report('Coord._load') do
-          n.times { Marshal.load(marshalled) }
+          n.times do
+            Marshal.load(marshalled) # rubocop:disable Security/MarshalLoad
+          end
         end
 
         # Coords benchmarks

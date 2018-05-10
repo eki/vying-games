@@ -526,7 +526,8 @@ module Vying
     # Load mashalled data.
 
     def self._load(s)
-      class_name, version = Marshal.load(s)
+      class_name, version =
+        Marshal.load(s) # rubocop:disable Security/MarshalLoad
       Rules.find(class_name, version)
     end
 

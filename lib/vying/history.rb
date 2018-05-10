@@ -237,7 +237,8 @@ module Vying
     # Load mashalled data.
 
     def self._load(s)
-      r, s, o, m, lma, ca, p = Marshal.load(s)
+      r, s, o, m, lma, ca, p =
+        Marshal.load(s) # rubocop:disable Security/MarshalLoad
       h = allocate
       h.instance_variable_set('@rules', r)
       h.instance_variable_set('@seed', s)

@@ -131,7 +131,7 @@ class Coords
   # will not create a dup object.
 
   def self._load(str) # :nodoc:
-    bounds, opts = *Marshal.load(str)
+    bounds, opts = *Marshal.load(str) # rubocop:disable Security/MarshalLoad
     opts.empty? ? new(bounds) : new(bounds, opts)
   end
 
