@@ -68,14 +68,14 @@ class OpeningBook
   end
 
   def save(filename)
-    open(filename, 'w') do |f|
+    open(filename, 'w') do |f| # rubocop:disable Security/Open
       f.write(to_yaml)
     end
   end
 
   def self.load(filename)
     book = nil
-    open(filename, 'r') do |f|
+    open(filename, 'r') do |f| # rubocop:disable Security/Open
       book = YAML.safe_load(f.read)
     end
     book
