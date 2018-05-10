@@ -150,7 +150,7 @@ class Coord
     if args.length == 2 && args.first.kind_of?(Integer) &&
                            args.last.kind_of?(Integer)
 
-      return Coord.new(args.first, args.last)
+      Coord.new(args.first, args.last)
 
     elsif args.length == 1
       return args.first if args.first.class == Coord
@@ -166,10 +166,10 @@ class Coord
         @@coords_cache[args.first] = c
       end
 
-      return c
+      c
 
     else
-      return args.map do |arg|
+      args.map do |arg|
         if arg.class == Coord
           arg
         else
