@@ -184,15 +184,13 @@ class Board
   def []=(*args)
     if args.length == 3 && args[0].kind_of?(Integer) &&
                            args[1].kind_of?(Integer)
-      return set(args[0], args[1], args[2])
+      set(args[0], args[1], args[2])
     elsif args.length == 2
-      return args[0].nil? ? nil : set(args[0].x, args[0].y, args[1])
+      args[0].nil? ? nil : set(args[0].x, args[0].y, args[1])
     else
       args.each { |arg| set(arg.x, arg.y, args.last) unless arg == args.last }
-      return args.last
+      args.last
     end
-
-    nil
   end
 
   # Returns the value at the given (x,y) coordinate.
