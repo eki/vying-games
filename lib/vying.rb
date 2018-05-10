@@ -61,7 +61,7 @@ module Vying
       require path
       (@exts[type] ||= []) << path
     rescue LoadError, SyntaxError
-      # Well, we tried.  What more can you ask?
+      puts 'Warning: failed to load extensions'
     end
 
     # Stop tracking.
