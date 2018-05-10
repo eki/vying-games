@@ -57,25 +57,25 @@ module Vying
         end
       end
 
-      @@special_moves_list, @@instance_cache = [], {}
+      def list
+        @list ||= []
+      end
 
       # When a subclass extends SpecialMove it's added to @@special_move_list.
 
       def inherited(child)
-        @@special_moves_list << child
-      end
-
-      def list
-        @@special_moves_list
+        list << child
       end
 
       def [](s)
-        return s                    if s.kind_of?(SpecialMove)
-        return @@instance_cache[s]  if @@instance_cache[s]
+        @instance_cache ||= {}
+
+        return s                   if s.kind_of?(SpecialMove)
+        return @instance_cache[s]  if @instance_cache[s]
 
         list.each do |sm|
           m = sm[s]
-          return @@instance_cache[s] = m if m
+          return @instance_cache[s] = m if m
         end
 
         nil
