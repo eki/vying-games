@@ -106,28 +106,12 @@ module Vying
       end
     end
 
-    @@bots_list = []
-    @@bots_play = {}
-
-    def self.inherited(child)
-      a = child.to_s.split(/::/)
-      if a.length > 1
-        bc = a[0, a.length - 1].join('::')
-        if @@bots_list.any? { |b| b.to_s == bc }
-          b = Bot.find(bc)
-          r = Rules.find(a.last)
-          (@@bots_play[r] ||= []) << b if b && r
-        else
-          @@bots_list << child
-        end
-      else
-        @@bots_list << child
-      end
+    def self.list
+      @list ||= []
     end
 
-    def self.list(rules=nil)
-      return @@bots_list.select { |b| b.plays?(rules) } if rules
-      @@bots_list
+    def self.inherited(child)
+      list << child
     end
 
     def self.play(rules)
