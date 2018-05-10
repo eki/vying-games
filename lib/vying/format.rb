@@ -30,18 +30,16 @@ module Vying
       end
     end
 
-    @@format_list = []
-
-    # When a subclass extends Format, it is added to @@format_list.
+    # When a subclass extends Format, it is added to Format.list.
 
     def self.inherited(child)
-      @@format_list << child
+      list << child
     end
 
     # Get a list of all Format subclasses.
 
     def self.list
-      @@format_list
+      @list ||= []
     end
 
     # Find a specific Format by type
