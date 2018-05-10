@@ -92,22 +92,10 @@ module Vying
       end
     end
 
-    # Scans the RUBYLIB (unless overridden via path), for notation subclasses
-    # and requires them.  Looks for files that match:
-    #
-    #   <Dir from path>/**/notations/*.rb
-    #
-
-    def self.require_all(path=$LOAD_PATH)
-      required = []
-      path.each do |d|
-        Dir.glob("#{d}/**/notations/*.rb") do |f|
-          f =~ /(.*)\/notations\/([\w\d]+\.rb)$/
-          if !required.include?(Regexp.last_match(2)) && !f['_test']
-            required << Regexp.last_match(2)
-            require f.to_s
-          end
-        end
+    # Require all the notations.
+    def self.require_all
+      Dir.glob("#{Vying.root}/lib/vying/notations/**/*.rb") do |f|
+        require f.to_s
       end
     end
 

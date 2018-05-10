@@ -118,8 +118,8 @@ end
 
 # Load all SpecialMoves, Rules, Notations, and Bots
 
-Vying::SpecialMove.require_all([File.dirname(__FILE__)])
-Vying::Rules.require_all([File.dirname(__FILE__)])
-Vying::Notation.require_all([File.dirname(__FILE__)])
+Vying::SpecialMove.require_all
+Vying::Rules.require_all
+Vying::Notation.require_all
 Vying::Format.require_all
-Vying::Bot.require_all([File.dirname(__FILE__)])
+Vying::Bot.require_all

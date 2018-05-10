@@ -535,22 +535,10 @@ module Vying
     class << self
       attr_reader :list, :latest_versions
 
-      # Scans the RUBYLIB (unless overridden via path), for rules subclasses and
-      # requires them.  Looks for files that match:
-      #
-      #   <Dir from path>/**/rules/**/*.rb
-      #
-
-      def require_all(path=$LOAD_PATH)
-        required = []
-        path.each do |d|
-          Dir.glob("#{d}/**/rules/**/*.rb") do |f|
-            f =~ /(.*)\/rules\/(.*\/[\w\d]+\.rb)$/
-            if !required.include?(Regexp.last_match(2)) && !f['_test']
-              required << Regexp.last_match(2)
-              require f.to_s
-            end
-          end
+      # Require all the rules.
+      def require_all
+        Dir.glob("#{Vying.root}/lib/vying/rules/**/*.rb") do |f|
+          require f.to_s
         end
       end
 

@@ -100,16 +100,9 @@ module Vying
       "#<Bot #{name}>"
     end
 
-    def self.require_all(path=$LOAD_PATH)
-      required = []
-      path.each do |d|
-        Dir.glob("#{d}/**/bots/**/*.rb") do |f|
-          f =~ /(.*)\/bots\/(.*\.rb)$/
-          if !required.include?(Regexp.last_match(2)) && !f['_test']
-            required << Regexp.last_match(2)
-            require f.to_s
-          end
-        end
+    def self.require_all
+      Dir.glob("#{Vying.root}/lib/vying/ai/bots/**/*.rb") do |f|
+        require f.to_s
       end
     end
 
