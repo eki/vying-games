@@ -134,7 +134,7 @@ module Vying
       # This is lazy loaded and not-cached to avoid creating a circular
       # reference between Game and Notation.
       if rules.notation
-        Notation.find(self.rules.notation).new(self)
+        Notation.find(rules.notation).new(self)
       else
         Notation.new(self)
       end
