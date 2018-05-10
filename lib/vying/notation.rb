@@ -99,18 +99,16 @@ module Vying
       end
     end
 
-    @@notation_list = []
-
     # When a subclass extends Notation, it is added to @@notation_list.
 
     def self.inherited(child)
-      @@notation_list << child
+      list << child
     end
 
     # Get a list of all Notation subclasses.
 
     def self.list
-      @@notation_list
+      @list ||= []
     end
 
     # Find a specific Notation by name
