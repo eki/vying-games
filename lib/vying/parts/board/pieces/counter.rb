@@ -25,15 +25,15 @@ class Counter
     @player, @count = player, count
   end
 
-  @@counter_cache = {}
-
   # Fetch a new Counter from the cache or instantiate and cache a Counter if
   # the cache doesn't already contain the given counter.
 
   def self.[](*args)
-    return @@counter_cache[args] if @@counter_cache.key?(args)
+    @counter_cache ||= {}
 
-    @@counter_cache[args] = new(*args)
+    return @counter_cache[args] if @counter_cache.key?(args)
+
+    @counter_cache[args] = new(*args)
   end
 
   # Add 'n' to the count of this Counter, returning a new Counter instance.
