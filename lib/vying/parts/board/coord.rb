@@ -186,8 +186,6 @@ class Coord
         end
       end
     end
-
-    nil
   end
 
   # Coords are immutable so dup just returns self.
