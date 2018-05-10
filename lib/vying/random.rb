@@ -190,8 +190,7 @@ module Vying
         @state[i] = twist(
           @state[i < N - M ? i + M : i + M - N],
           @state[i],
-          @state[i < N - 1 ? i + 1 : 0]
-        )
+          @state[i < N - 1 ? i + 1 : 0])
       end
 
       @left = N
