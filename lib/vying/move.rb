@@ -121,7 +121,7 @@ module Vying
 
     # Move's respond to any methods the underlying move object responds to.
 
-    def respond_to?(m, include_all=false)
+    def respond_to_missing?(m, include_all)
       super || @move.respond_to?(m, include_all)
     end
 

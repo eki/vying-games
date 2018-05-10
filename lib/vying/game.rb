@@ -229,7 +229,7 @@ module Vying
 
     # We respond to any methods provided by the last position in history.
 
-    def respond_to?(method_id, include_all=false)
+    def respond_to_missing?(method_id, include_all)
       return false if method_id == :_dump
 
       # double !! to force false instead of nil

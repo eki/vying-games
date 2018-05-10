@@ -492,7 +492,7 @@ module Vying
 
     # TODO: Clean this up a little more.
 
-    def respond_to?(m, include_all=false)
+    def respond_to_missing?(m, include_all)
       super || !!instance_variable_defined?("@#{m}")
     end
 
@@ -595,6 +595,10 @@ module Vying
         v ||= args
 
         @rules.instance_variable_set("@#{m}", v)
+      end
+
+      def respond_to_missing?(m, include_all)
+        true # Wow, really? This is what we're doing?
       end
 
       # The code in the given block is used to create a subclass of Position.
