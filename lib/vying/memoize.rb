@@ -33,7 +33,7 @@ module Memoizable
 
       if instance_method(original).arity == 0
 
-        define_method(name) do || # empty pipes needed to get right arity
+        define_method(name) do
           n = name.to_s.gsub(/[?!]/, '_')
           iv = "@__#{n}_cache"
           v = instance_variable_get(iv)
