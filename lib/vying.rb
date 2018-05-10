@@ -7,6 +7,10 @@
 
 module Vying
 
+  def self.root
+    Pathname.new(File.expand_path('..', __dir__))
+  end
+
   # Returns the version of this vying codebase.
 
   def self.version
@@ -17,7 +21,7 @@ module Vying
   # Returns a list of methods defined in extensions.
 
   def self.defined_in_extension
-    (@defined_in_ext ||= [])
+    @defined_in_extension ||= []
   end
 
   # Returns a list of the types of extensions that have been loaded.
@@ -117,5 +121,5 @@ end
 Vying::SpecialMove.require_all([File.dirname(__FILE__)])
 Vying::Rules.require_all([File.dirname(__FILE__)])
 Vying::Notation.require_all([File.dirname(__FILE__)])
-Vying::Format.require_all([File.dirname(__FILE__)])
+Vying::Format.require_all
 Vying::Bot.require_all([File.dirname(__FILE__)])

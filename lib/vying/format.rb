@@ -11,22 +11,11 @@ module Vying
 
   class Format
 
-    # Scans the RUBYLIB (unless overridden via path), for format subclasses and
-    # requires them.  Looks for files that match:
-    #
-    #   <Dir from path>/**/formats/*.rb
-    #
+    # Requires all format files.
 
-    def self.require_all(path=$LOAD_PATH)
-      required = []
-      path.each do |d|
-        Dir.glob("#{d}/**/formats/*.rb") do |f|
-          f =~ /(.*)\/formats\/([\w\d]+\.rb)$/
-          if !required.include?(Regexp.last_match(2)) && !f['_test']
-            required << Regexp.last_match(2)
-            require f.to_s
-          end
-        end
+    def self.require_all
+      Dir.glob("#{Vying.root}/lib/vying/formats/**/*.rb") do |f|
+        require f.to_s
       end
     end
 
