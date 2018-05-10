@@ -687,40 +687,35 @@ module Vying
     # reasonable like a username.
 
     def description
+      s = +''
       if final?
         if draw?
-          s = players.join(' and ')
-          s += ' played to a draw'
-          s += ' (by agreement)' if draw_by_agreement?
-          s
+          s << players.join(' and ')
+          s << ' played to a draw'
+          s << ' (by agreement)' if draw_by_agreement?
         else
-
           winners = players.select(&:winner?)
           losers  = players.select(&:loser?)
 
           ws = winners.join(' and ')
           ls = losers.join(' and ')
 
-          s = "#{ws} defeated #{ls}"
+          s << "#{ws} defeated #{ls}"
 
           if has_score?
             ss = (winners + losers).map { |p| p.score.to_s }.join('-')
-            s = "#{s}, #{ss}"
+            s << ", #{ss}"
           end
 
-          s += " (#{self[resigned_by].user} resigns)"   if resigned?
-          s += ' (time exceeded)'                       if time_exceeded?
-          s
+          s << " (#{self[resigned_by].user} resigns)"   if resigned?
+          s << ' (time exceeded)'                       if time_exceeded?
         end
       else
-        s = players.join(' vs ')
-
-        if has_score?
-          s = "#{s} (#{players.map(&:score).join('-')})"
-        end
-
-        s
+        s << players.join(' vs ')
+        s << " (#{players.map(&:score).join('-')})" if has_score?
       end
+
+      s
     end
   end
 end
