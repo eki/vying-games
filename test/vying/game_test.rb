@@ -232,8 +232,7 @@ class TestGame < Minitest::Test
     assert_equal('draw', g.sequence.last)
     assert_equal(
       'john_doe (red) and jane_doe (white) played to a draw (by agreement)',
-      g.description
-    )
+      g.description)
   end
 
   def test_draw_by_agreement_reject
