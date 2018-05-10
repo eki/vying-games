@@ -37,8 +37,8 @@ class Coords
                  nw: Coord.new(-1, -1), ne: Coord.new(1, -1),
                  sw: Coord.new(-1, 1),  se: Coord.new(1, 1) }.freeze
 
-  UP_DIRECTIONS   = [:w, :e, :s]
-  DOWN_DIRECTIONS = [:n, :e, :w]
+  UP_DIRECTIONS   = [:w, :e, :s].freeze
+  DOWN_DIRECTIONS = [:n, :e, :w].freeze
 
   # Creates a new Coords collection.  You shouldn't need to use this method,
   # Coords get created automatically when Board's are instantiated.  This
