@@ -321,7 +321,7 @@ class Coords
       cs.delete(c)
 
       neighbors(c).each do |nc|
-        check << nc  if cs.include?(nc)
+        check << nc if cs.include?(nc)
       end
     end
 

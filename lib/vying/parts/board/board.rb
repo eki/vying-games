@@ -441,7 +441,7 @@ class Board
         group << c
 
         coords.neighbors(c).each do |nc|
-          check << nc  if cs.include?(nc) && self[nc] == p
+          check << nc if cs.include?(nc) && self[nc] == p
         end
       end
 
@@ -500,8 +500,8 @@ class Board
 
     def self.included(base)
       plugin_name = base.name.split(/::/).last.
-        gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
-        gsub(/([a-z\d])([A-Z])/,'\1_\2').downcase.to_sym
+        gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2').
+        gsub(/([a-z\d])([A-Z])/, '\1_\2').downcase.to_sym
 
       all[plugin_name] = base
 
@@ -516,7 +516,7 @@ class Board
   # underscores it would be translated from snake case to camel case.
 
   def self.find_plugin(s)
-    return s  if s.nil? || s.kind_of?(Module)
+    return s if s.nil? || s.kind_of?(Module)
 
     Plugins.all[s.to_sym]
   end
