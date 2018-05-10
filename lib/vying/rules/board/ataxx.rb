@@ -89,7 +89,7 @@ Rules.create('Ataxx') do
       board.count(player)
     end
 
-    def set_blocks(p)
+    def set_blocks(p) # rubocop:disable Naming/AccessorMethodName
       p.scan(/./m) do |c|
         board[*rules.block_coords[c]] = :x
       end

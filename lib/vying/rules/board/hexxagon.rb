@@ -105,7 +105,7 @@ Rules.create('Hexxagon') do
       board.count(player)
     end
 
-    def set_rand_blocks(np)
+    def set_rand_blocks(np) # rubocop:disable Naming/AccessorMethodName
       n = rand_number_of_blocks(np)
       m = rules.block_maps[np]
 
