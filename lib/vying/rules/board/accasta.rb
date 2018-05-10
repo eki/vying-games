@@ -48,7 +48,7 @@ Rules.create('Accasta') do
         board[:d7, :e7, :f7, :g7] = [:chariot, :horse, :shield]
         @ranges = { shield: 1, horse: 2, chariot: 3 }
       end
-   end
+    end
 
     def has_moves
       return [turn] if score(opponent(turn)) < 3
