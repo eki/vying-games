@@ -141,7 +141,11 @@ Rules.create('Ordo') do
       2.times do |d1|
         if d1 == 0
           # horizontal ordos move forwards (or backwards for rejoins)
-          d2 = connected ? (turn == :white ? [:s] : [:n]) : [:n, :s]
+          if connected
+            d2 = turn == :white ? [:s] : [:n]
+          else
+            d2 = [:n, :s]
+          end
           dd = :e
 
         else
