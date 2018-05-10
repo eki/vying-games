@@ -589,7 +589,7 @@ module Vying
       #   players :black, :white    <=   @players = [:black, :white]
       #
 
-      def method_missing(m, *args)
+      def method_missing(m, *args) # rubocop:disable Style/MethodMissing
         v = true       if args.empty?
         v = args.first if args.length == 1
         v ||= args
