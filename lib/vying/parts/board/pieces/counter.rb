@@ -1,4 +1,3 @@
-
 # frozen_string_literal: true
 
 # Counter is a simple piece composed of a player and count.  It's immutable
