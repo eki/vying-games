@@ -262,6 +262,7 @@ class Board
 
   def count(p=nil)
     return occupied(p).length if p
+
     @occupied.inject(0) { |m, v| m + (v[0] ? v[1].length : 0) }
   end
 

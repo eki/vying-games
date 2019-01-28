@@ -101,6 +101,7 @@ class Grid
       s << format('%*d', 2, d)
       s << divider
       next unless d % width == 0
+
       s << "\n "
       (d - width + 1).upto(d) do |d2|
         d3 = self.next(d2, :s)

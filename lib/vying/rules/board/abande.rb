@@ -70,6 +70,7 @@ Rules.create('Abande') do
       count = 0
       board.occupied.each do |c|
         next if board[c].nil?
+
         count += board[c].length if board[c].first == player && !sleeping?(c)
       end
       count
@@ -95,6 +96,7 @@ Rules.create('Abande') do
       unless turn == :black && pool[:black] == 17
         board.pieces.each do |p|
           next unless p && p.first == turn
+
           board.occupied(p).each do |c|
             board.coords.neighbors(c).each do |n|
               if board[n] && board[n].first == opponent(turn) && board[c].length + board[n].length <= 3

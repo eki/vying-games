@@ -284,6 +284,7 @@ class Coord
     return Coord[x + 1, y + 1] if d == :se
     return Coord[x - 1, y - 1] if d == :nw
     return Coord[x - 1, y + 1] if d == :sw
+
     nil
   end
 

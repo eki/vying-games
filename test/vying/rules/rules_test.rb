@@ -52,11 +52,13 @@ module RulesTests
     30.times do                          # Take two steps forward,
       p = g.history.last.dup             # one step back, check for corruption
       break if g.final?
+
       pn = g.has_moves.first
       g[pn] << g[pn].moves[rand(g[pn].moves.size)]
       refute_equal(p, g.undo.last)
       assert_equal(p, g.history.last)
       break if g.final?
+
       pn = g.has_moves.first
       g[pn] << g[pn].moves[rand(g[pn].moves.size)]
     end

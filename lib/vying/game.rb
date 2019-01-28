@@ -435,6 +435,7 @@ module Vying
 
       player_names.each do |p|
         next unless self[p].user && self[p].user.ready?
+
         position, move = history.last.censor(p), nil
 
         # Handle draw offers
@@ -462,6 +463,7 @@ module Vying
       has_moves.each do |p|
         next unless player_names.include?(p)
         next unless self[p].user && self[p].user.ready?
+
         position = history.last.censor(p)
 
         # Ask for an move
@@ -593,6 +595,7 @@ module Vying
       until i >= sequence.length
         return i     if history.sequence[i] == 'swap'
         return false if history.move_by[i]  != player_names.first
+
         i += 1
       end
 

@@ -107,6 +107,7 @@ Rules.create('Yinsh') do
           p = board[c1]
 
           next unless p == :white || p == :black
+
           [[:n, :s], [:e, :w], [:nw, :se]].each do |ds|
             row = [c1]
             ds.each do |rd|
@@ -114,6 +115,7 @@ Rules.create('Yinsh') do
               while c2 = board.coords.next(c2, rd)
                 p2 = board[c2]
                 break if p2 != p
+
                 row << c2
               end
             end
@@ -125,6 +127,7 @@ Rules.create('Yinsh') do
         if rows.length > 1
           rows.each do |row|
             next unless row.length > 5 # overline
+
             row.sort!
 
             extra, i = row.length - 5, 0
@@ -149,6 +152,7 @@ Rules.create('Yinsh') do
         # separate overlines
         rows.each do |row|
           next unless row.length > 5
+
           row.sort!
           extra, i = row.length - 5, 0
           until i == extra

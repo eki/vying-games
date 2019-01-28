@@ -76,6 +76,7 @@ module Board::Plugins::CustodialCapture
         break if range && bt.length - 1 > range.last
 
         next unless self[bt.last] == p
+
         bt.pop
         cap += bt
         break

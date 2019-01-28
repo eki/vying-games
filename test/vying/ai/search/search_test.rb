@@ -30,6 +30,7 @@ module Vying
       @leaf += 1
       return 1  if position.winner? player
       return 0  if position.draw?
+
       -1
     end
 

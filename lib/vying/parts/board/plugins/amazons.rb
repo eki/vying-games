@@ -100,6 +100,7 @@ module Board::Plugins::Amazons
       while (c = todo.pop)
         board.coords.neighbors(c).each do |nc|
           next if all[nc]
+
           all[nc] = nc
 
           if board[nc].nil?
@@ -193,6 +194,7 @@ module Board::Plugins::Amazons
 
       @territories.each do |t|
         next unless t.coords.include?(c)
+
         t.coords.delete(c)
         t.black << c if p == :black
         t.white << c if p == :white

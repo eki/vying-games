@@ -27,6 +27,7 @@ Rules.create('Connect4') do
 
     def moves
       return [] if final?
+
       unused_moves.map(&:last)
     end
 

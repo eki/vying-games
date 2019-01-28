@@ -128,6 +128,7 @@ Rules.create('Hexxagon') do
       (0..14).to_a.each do |n|
         p = Vying::Subset.count_subsets(n, m)
         return n if r < p
+
         r -= p
       end
 

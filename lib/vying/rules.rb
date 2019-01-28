@@ -204,6 +204,7 @@ module Vying
         in_list = false
         latest_versions.length.times do |i|
           next unless latest_versions[i].class_name == rules.class_name
+
           if rules.version > latest_versions[i].version
             latest_versions[i] = rules
           end

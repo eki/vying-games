@@ -70,6 +70,7 @@ Rules.create('Hexplode') do
 
     def explode(c, touched=[c])
       return          if touched.length == board.coords.length
+
       touched << c    unless touched.include?(c)
 
       ns = board.coords.neighbors(c)

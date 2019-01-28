@@ -77,6 +77,7 @@ Rules.create('Attangle') do
         cs = board.occupied(p)
 
         next if cs.nil?
+
         count += cs.length if p.first == player && p.length == 3
       end
       count

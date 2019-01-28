@@ -124,6 +124,7 @@ module Vying
 
         a = name.to_s.split('::')
         next unless a.length > 1
+
         bc = a[0, a.length - 1].join('::')
         b = Bot.find(bc)
         r = Rules.find(a.last)

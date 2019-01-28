@@ -162,6 +162,7 @@ Rules.create('Ordo') do
             neighbors = 0
             while nc = board.coords.next(nc, dd)
               break  if board[nc] != turn
+
               neighbors += 1
             end
 
