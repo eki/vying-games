@@ -79,10 +79,12 @@ class TestConnect4 < Minitest::Test
 
   def test_game04
     # This game is going to be a draw
-    g = play_sequence [:a6, :a5, :a4, :a3, :a2, :a1, :b6, :b5, :b4, :b3, :b2, :b1, :d6,
-                       :c6, :c5, :c4, :c3, :c2, :c1, :d5, :d4, :d3, :d2, :d1, :e6, :e5,
-                       :e4, :e3, :e2, :e1, :g6, :f6, :f5, :f4, :f3, :f2, :f1, :g5, :g4,
-                       :g3, :g2, :g1]
+    g = play_sequence [
+      :a6, :a5, :a4, :a3, :a2, :a1, :b6, :b5, :b4, :b3, :b2, :b1, :d6,
+      :c6, :c5, :c4, :c3, :c2, :c1, :d5, :d4, :d3, :d2, :d1, :e6, :e5,
+      :e4, :e3, :e2, :e1, :g6, :f6, :f5, :f4, :f3, :f2, :f1, :g5, :g4,
+      :g3, :g2, :g1
+    ]
 
     assert(g.draw?)
     assert(!g.winner?(:red))

@@ -30,7 +30,7 @@ class Coords
 
   attr_reader :bounds, :width, :height, :coords, :omitted, :cell_shape,
     :opts
-  protected :coords
+  protected :coords # rubocop:disable Style/AccessModifierDeclarations
 
   DIRECTIONS = { n: Coord.new(0, -1),  s: Coord.new(0, 1),
                  w: Coord.new(-1, 0),  e: Coord.new(1, 0),

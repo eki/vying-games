@@ -76,9 +76,10 @@ module CLI
     opts.on('-s', '--seed NUMBER') { |s| seed = s.to_i }
 
     opts.on('-p', '--player PLAYER=BOT') do |s|
-      s =~ /(\w*)=([\w:]*)/
-      b = Vying::Bot.find(Regexp.last_match(2))
-      p2b[Regexp.last_match(1).downcase.intern] = (b ? b.new : Vying::Human.new(Regexp.last_match(2)))
+      if md = s.match(/(\w*)=([\w:]*)/)
+        b = Vying::Bot.find(md[2])
+        p2b[md[1].downcase.intern] = (b ? b.new : Vying::Human.new(md[2]))
+      end
     end
 
     opts.on('-o', '--option OPTION=VALUE') do |s|

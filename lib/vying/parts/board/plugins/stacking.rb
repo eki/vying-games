@@ -16,7 +16,10 @@ module Board::Plugins::Stacking
     off = height >= 10 ? 2 : 1
     sp = @cells.compact.max_by(&:length)
     sp = sp ? sp.length : 1
-    letters = "#{' ' * off}#{('a'...(97 + width).chr).collect { |l| ' ' + l + ' ' * sp }}#{' ' * off}\n"
+    letters = [' ' * off,
+      ('a'...(97 + width).chr).collect { |l| ' ' + l + ' ' * sp },
+      ' ' * off,
+      "\n"].join
 
     s = letters
     height.times do |y|

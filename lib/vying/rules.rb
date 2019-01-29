@@ -196,6 +196,8 @@ module Vying
         @overrides ||= []
       end
 
+      private
+
       # Add the given Rules object to Rules.list.
 
       def list_rules(rules)
@@ -213,8 +215,6 @@ module Vying
 
         latest_versions << rules unless in_list
       end
-
-      private :list_rules
     end
 
     # Returns a starting position for these rules.  The given options are
@@ -508,7 +508,9 @@ module Vying
     def to_snake_case
       s = class_name.dup
       unless s =~ /^[A-Z\d]+$/
-        s.gsub!(/(.)([A-Z])/) { "#{Regexp.last_match(1)}_#{Regexp.last_match(2).downcase}" }
+        s.gsub!(/(.)([A-Z])/) do
+          "#{Regexp.last_match(1)}_#{Regexp.last_match(2).downcase}"
+        end
       end
       s.downcase
     end
@@ -590,7 +592,7 @@ module Vying
       #   players :black, :white    <=   @players = [:black, :white]
       #
 
-      def method_missing(m, *args) # rubocop:disable Style/MethodMissing
+      def method_missing(m, *args) # rubocop:disable Style/MethodMissingSuper
         v = true       if args.empty?
         v = args.first if args.length == 1
         v ||= args

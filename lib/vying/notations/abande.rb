@@ -35,7 +35,12 @@ module Vying
           s += c.to_s
         end
       end
-      s =~ /(\w\d)(\w\d)/ ? "#{Regexp.last_match(1)}-#{Regexp.last_match(2)}" : s
+
+      if md = s.match(/(\w\d)(\w\d)/)
+        "#{md[1]}-#{md[2]}"
+      else
+        s
+      end
     end
 
     private

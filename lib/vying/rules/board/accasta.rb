@@ -77,7 +77,8 @@ Rules.create('Accasta') do
         rotate_turn
       else
         length, coords = move[0..0].to_i, move[1..-1].to_coords
-        board[coords.last] = board[coords.first][0...length] + board[coords.last].to_a
+        board[coords.last] = board[coords.first][0...length] +
+          board[coords.last].to_a
         board[coords.first] = board[coords.first][length..-1]
         board[coords.first] = nil if board[coords.first].empty?
         @lastc = coords.first
@@ -115,7 +116,8 @@ Rules.create('Accasta') do
 
     def valid_stack?(stack)
       if @options[:variant] == :pari
-        ((stack - [turn]).length <= 3) && ((stack - [opponent(turn)]).length <= 3)
+        ((stack - [turn]).length <= 3) &&
+        ((stack - [opponent(turn)]).length <= 3)
       else
         ((stack - [:Chariot] - [:Horse] - [:Shield]).length <= 3) &&
         ((stack - [:chariot] - [:horse] - [:shield]).length <= 3)
@@ -138,7 +140,10 @@ Rules.create('Accasta') do
         # Take one from the top, then two pieces, etc...
         board[coord].length.times do |p|
           # Cannot release an opponent piece in home area.
-          next if belongs_to?(board[coord][p + 1], opponent(turn)) && home[turn].include?(coord.to_sym)
+          if belongs_to?(board[coord][p + 1], opponent(turn)) &&
+             home[turn].include?(coord.to_sym)
+            next
+          end
 
           # The moving stack.
           mstack = board[coord][0..p]
@@ -156,7 +161,8 @@ Rules.create('Accasta') do
 
               # ... otherwise move and combine the two stacks.
               else
-                # Only if the number of pieces of one color is less or equal three.
+                # Only if the number of pieces of one color is less
+                # or equal three.
                 if valid_stack?(mstack + board[nc])
                   a << "#{mstack.length}#{coord}#{nc}"
                 end

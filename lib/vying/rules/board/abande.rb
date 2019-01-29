@@ -99,9 +99,14 @@ Rules.create('Abande') do
 
           board.occupied(p).each do |c|
             board.coords.neighbors(c).each do |n|
-              if board[n] && board[n].first == opponent(turn) && board[c].length + board[n].length <= 3
-                all << "#{c}#{n}" if board.coords.connected?(board.occupied - [c])
+              unless board[n] && board[n].first == opponent(turn) &&
+                     board[c].length + board[n].length <= 3
+                next
               end
+
+              next unless board.coords.connected?(board.occupied - [c])
+
+              all << "#{c}#{n}"
             end
           end
         end

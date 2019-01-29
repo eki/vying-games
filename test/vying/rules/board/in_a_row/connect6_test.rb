@@ -61,7 +61,9 @@ class TestConnect6 < Minitest::Test
 
   def test_game01
     # This game is going to be a win for White (vertical)
-    g = play_sequence([:b1, :f14, :f13, :b2, :b3, :f12, :f11, :b4, :b5, :f10, :f9])
+    g = play_sequence [
+      :b1, :f14, :f13, :b2, :b3, :f12, :f11, :b4, :b5, :f10, :f9
+    ]
 
     assert(!g.draw?)
     assert(!g.winner?(:black))
@@ -72,7 +74,9 @@ class TestConnect6 < Minitest::Test
 
   def test_game02
     # This game is going to be a win for White (diagonal)(winner in middle)
-    g = play_sequence([:f13, :a1, :c3, :f12, :f11, :d4, :e5, :f14, :f10, :f6, :b2])
+    g = play_sequence [
+      :f13, :a1, :c3, :f12, :f11, :d4, :e5, :f14, :f10, :f6, :b2
+    ]
 
     assert(!g.draw?)
     assert(!g.winner?(:black))
@@ -83,7 +87,9 @@ class TestConnect6 < Minitest::Test
 
   def test_game03
     # This game is going to be a win for Black (horizontal)(7-in-a-row)
-    g = play_sequence [:a1, :f10, :f9, :b1, :c1, :g10, :g9, :e1, :f1, :g8, :g7, :g1, :d1]
+    g = play_sequence [
+      :a1, :f10, :f9, :b1, :c1, :g10, :g9, :e1, :f1, :g8, :g7, :g1, :d1
+    ]
 
     assert(!g.draw?)
     assert(g.winner?(:black))

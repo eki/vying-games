@@ -162,10 +162,12 @@ class TestPente < Minitest::Test
   end
 
   def test_game04
-    g = play_sequence [:b2, :b1, :b3, :b4,                     # capture 1
-                       :d7, :e7, :c7, :b7,                     # capture 2
-                       :m7, :l6, :n8, :r12, :p10, :a1, :q11, :o9, # capture 3 & 4
-                       :s18, :s19, :s17, :s16] # capture 5
+    g = play_sequence [
+      :b2, :b1, :b3, :b4,                        # capture 1
+      :d7, :e7, :c7, :b7,                        # capture 2
+      :m7, :l6, :n8, :r12, :p10, :a1, :q11, :o9, # capture 3 & 4
+      :s18, :s19, :s17, :s16                     # capture 5
+    ]
 
     assert(!g.draw?)
     assert(g.winner?(:black))

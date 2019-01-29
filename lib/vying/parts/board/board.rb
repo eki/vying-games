@@ -32,7 +32,7 @@ class Board
   attr_reader :shape, :cell_shape, :coords, :cells,
               :width, :height, :plugins
 
-  protected :cells
+  protected :cells # rubocop:disable Style/AccessModifierDeclarations
 
   # Initialize a board.  Accepts a hash with the following parameters:
   #
@@ -234,13 +234,6 @@ class Board
     end
 
     p
-  end
-
-  # Translates (x,y) coordinates into an index for the underlying array.  You
-  # shouldn't need this.
-
-  def ci(x, y) # :nodoc:
-    (x - @origin.x) + (y - @origin.y) * width
   end
 
   # Compare boards for equality.
@@ -552,6 +545,10 @@ class Board
     end
   end
 
-  private :ci
+  # Translates (x,y) coordinates into an index for the underlying array.  You
+  # shouldn't need this.
 
+  def ci(x, y) # :nodoc:
+    (x - @origin.x) + (y - @origin.y) * width
+  end
 end

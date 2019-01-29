@@ -16,7 +16,9 @@ module Vying
       if s =~ /^\s*(\w\d)\s*$/
         conv(Regexp.last_match(1))
       elsif s =~ /^\s*(\w\d),?(\w\d)-?(\w\d)\s*$/
-        conv(Regexp.last_match(1)) + conv(Regexp.last_match(2)) + conv(Regexp.last_match(3))
+        conv(Regexp.last_match(1)) +
+        conv(Regexp.last_match(2)) +
+        conv(Regexp.last_match(3))
       else
         s
       end
@@ -35,7 +37,12 @@ module Vying
           s += c.to_s
         end
       end
-      s =~ /(\w\d)(\w\d)(\w\d)/ ? "#{Regexp.last_match(1)},#{Regexp.last_match(2)}-#{Regexp.last_match(3)}" : s
+
+      if md = s.match(/(\w\d)(\w\d)(\w\d)/)
+        "#{md[1]},#{md[2]}-#{md[3]}"
+      else
+        s
+      end
     end
 
     private

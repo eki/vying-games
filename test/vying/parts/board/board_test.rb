@@ -78,7 +78,8 @@ class TestBoard < Minitest::Test
     assert_equal(:white, b[Coord[2, 2]] = :white)
     assert_equal(:white, b[Coord[2, 2]])
 
-    assert_equal([:black, :white, nil, :white], b[[3, 4], :a1, :b2, Coord[2, 2]])
+    assert_equal([:black, :white, nil, :white],
+      b[[3, 4], :a1, :b2, Coord[2, 2]])
   end
 
   def test_in_bounds

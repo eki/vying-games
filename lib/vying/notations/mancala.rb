@@ -22,7 +22,7 @@ module Vying
            'F' => 'a1' }.freeze
 
     def to_move(s)
-      TO[s] ? TO[s] : s
+      TO[s] || s
     end
 
     FROM = [%w(F E D C B A),

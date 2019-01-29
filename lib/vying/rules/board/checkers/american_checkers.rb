@@ -49,7 +49,8 @@ Rules.create('AmericanCheckers') do
     def init
       @board = Board.square(8)
       @board[:b1, :d1, :f1, :h1, :a2, :c2, :e2, :g2, :b3, :d3, :f3, :h3] = :red
-      @board[:a8, :c8, :e8, :g8, :b7, :d7, :f7, :h7, :a6, :c6, :e6, :g6] = :white
+      @board[:a8, :c8, :e8, :g8, :b7, :d7, :f7, :h7, :a6, :c6, :e6, :g6] =
+        :white
 
       @jumping = false
     end

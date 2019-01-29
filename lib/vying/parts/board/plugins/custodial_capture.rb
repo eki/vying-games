@@ -56,6 +56,8 @@ module Board::Plugins::CustodialCapture
     false
   end
 
+  private
+
   # Does the heavy lifting for custodial actions.  Takes the coord to play,
   # the piece to place, what to replace captured pieces with, and the range
   # to effect.
@@ -89,7 +91,4 @@ module Board::Plugins::CustodialCapture
 
     cap
   end
-
-  private :custodial
-
 end

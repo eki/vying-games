@@ -15,21 +15,21 @@ Rules.create('Hearts') do
 
   random
 
-  deck [:SA, :SK, :SQ, :SJ, :ST, :S9, :S8, :S7, :S6, :S5, :S4, :S3, :S2,
-        :CA, :CK, :CQ, :CJ, :CT, :C9, :C8, :C7, :C6, :C5, :C4, :C3, :C2,
-        :HA, :HK, :HQ, :HJ, :HT, :H9, :H8, :H7, :H6, :H5, :H4, :H3, :H2,
-        :DA, :DK, :DQ, :DJ, :DT, :D9, :D8, :D7, :D6, :D5, :D4, :D3, :D2]
+  deck %i(SA SK SQ SJ ST S9 S8 S7 S6 S5 S4 S3 S2
+          CA CK CQ CJ CT C9 C8 C7 C6 C5 C4 C3 C2
+          HA HK HQ HJ HT H9 H8 H7 H6 H5 H4 H3 H2
+          DA DK DQ DJ DT D9 D8 D7 D6 D5 D4 D3 D2)
 
-  suits spades: [:SA, :SK, :SQ, :SJ, :ST, :S9, :S8, :S7, :S6, :S5, :S4, :S3, :S2],
-        clubs: [:CA, :CK, :CQ, :CJ, :CT, :C9, :C8, :C7, :C6, :C5, :C4, :C3, :C2],
-        hearts: [:HA, :HK, :HQ, :HJ, :HT, :H9, :H8, :H7, :H6, :H5, :H4, :H3, :H2],
-        diamonds: [:DA, :DK, :DQ, :DJ, :DT, :D9, :D8, :D7, :D6, :D5, :D4, :D3, :D2]
+  suits spades:   %i(SA SK SQ SJ ST S9 S8 S7 S6 S5 S4 S3 S2),
+        clubs:    %i(CA CK CQ CJ CT C9 C8 C7 C6 C5 C4 C3 C2),
+        hearts:   %i(HA HK HQ HJ HT H9 H8 H7 H6 H5 H4 H3 H2),
+        diamonds: %i(DA DK DQ DJ DT D9 D8 D7 D6 D5 D4 D3 D2)
 
   trump             []
   lead              [Card[:C2], :any]
   follow            [:must_follow_suit]
   deal_out          13
-  wait_until_broken [:HA, :HK, :HQ, :HJ, :HT, :H9, :H8, :H7, :H6, :H5, :H4, :H3, :H2]
+  wait_until_broken %i(HA HK HQ HJ HT H9 H8 H7 H6 H5 H4 H3 H2)
 
   pass_before_deal  number: 3,
                     directions: [:left, :right, :across, :no_pass]
@@ -94,7 +94,9 @@ Rules.create('Hearts') do
         if shot_moon.class == Array
           tmp_scores.each { |k, v| @score[k] += 26 if k != shot_moon[0][0] }
         elsif shot_moon.class == Hash
-          tmp_scores.each { |k, v| @score[k] += 26 if k != shot_moon.keys.first }
+          tmp_scores.each do |k, v|
+            @score[k] += 26 if k != shot_moon.keys.first
+          end
         end
       else
         tmp_scores.each { |k, v| @score[k] += v }

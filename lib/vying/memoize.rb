@@ -11,6 +11,8 @@
 #   different state, which could effect the results of the call
 #
 
+# rubocop:disable Style/AccessModifierDeclarations
+
 module Memoizable
   def memoize(name, cache={})
     original = "__unmemoized_#{name}__"
@@ -88,3 +90,4 @@ class Class
     end
   end
 end
+# rubocop:enable Style/AccessModifierDeclarations

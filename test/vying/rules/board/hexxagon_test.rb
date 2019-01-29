@@ -94,8 +94,8 @@ class TestHexxagon < Minitest::Test
   end
 
   def test_block_maps
-    assert(rules.block_maps.keys.include?(2))
-    assert(rules.block_maps.keys.include?(3))
+    assert(rules.block_maps.key?(2))
+    assert(rules.block_maps.key?(3))
 
     map_2p = rules.block_maps[2]
 

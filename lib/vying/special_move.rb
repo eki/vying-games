@@ -49,7 +49,6 @@ module Vying
     end
 
     class << self
-
       # Require all the special moves.
       def require_all
         Dir.glob("#{Vying.root}/lib/vying/special_moves/**/*.rb") do |f|
@@ -85,7 +84,7 @@ module Vying
         list.map { |sm| sm.generate_for(game, player) }.flatten.compact
       end
 
-      private :new
+      private :new # rubocop:disable Style/AccessModifierDeclarations
     end
 
     def _dump(depth=-1)
