@@ -14,13 +14,12 @@ Gem::Specification.new do |spec|
   spec.description   = 'Vying is a game library.'
   spec.homepage      = 'https://github.com/eki/vying'
 
-  spec.files         = %x(git ls-files -z).split("\x0").reject do |f|
-    f.match(%r{^test/})
-  end
+  spec.files         = Dir['lib/**/*', 'bin/*', 'ext/**/*.{rb,c,h}',
+                         'ext/**/Makefile', 'README', 'LICENSE']
   spec.bindir        = 'bin'
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = %w(lib ext)
-  spec.extensions = 'ext/vying/c/parts/board/extconf.rb'
+  spec.extensions    = 'ext/vying/c/parts/board/extconf.rb'
 
   spec.add_development_dependency 'bundler', '~> 1.16'
   spec.add_development_dependency 'minitest', '~> 5.0'
