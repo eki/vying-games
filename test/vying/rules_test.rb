@@ -70,7 +70,7 @@ class TestRules < Minitest::Test
 
   def test_inspect
     assert_equal("#<Rules name: 'Kalah', version: 2.0.0>",
-                  Rules.find(Kalah, '2.0.0').inspect)
+      Rules.find(Kalah, '2.0.0').inspect)
   end
 
   def test_deterministic

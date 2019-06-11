@@ -77,7 +77,7 @@ class TestBreakthrough < Minitest::Test
     g.board[:e5] = :black
     g.clear_cache
     assert_equal(%w(e4f5 e4d5 e5e6 e5f6 e5d6),
-                  g.moves.map(&:to_s))
+      g.moves.map(&:to_s))
 
     g.board[:e5] = nil
     g.clear_cache
@@ -102,7 +102,7 @@ class TestBreakthrough < Minitest::Test
     g.board[:e4] = :white
     g.clear_cache
     assert_equal(%w(e5f4 e5d4 e4e3 e4f3 e4d3),
-                  g.moves.map(&:to_s))
+      g.moves.map(&:to_s))
 
     g.board[:e4] = nil
     g.clear_cache

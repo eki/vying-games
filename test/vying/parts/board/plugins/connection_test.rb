@@ -37,7 +37,7 @@ class TestConnection < Minitest::Test
     refute_equal(bg.object_id, b2g.object_id)
     refute_equal(bg.coords.object_id, b2g.coords.object_id)
     refute_equal(bg.instance_variable_get('@board').object_id,
-                      b2g.instance_variable_get('@board').object_id)
+      b2g.instance_variable_get('@board').object_id)
   end
 
   def test_marshal
@@ -64,7 +64,7 @@ class TestConnection < Minitest::Test
     refute_equal(bg.object_id, b2g.object_id)
     refute_equal(bg.coords.object_id, b2g.coords.object_id)
     refute_equal(bg.instance_variable_get('@board').object_id,
-                      b2g.instance_variable_get('@board').object_id)
+      b2g.instance_variable_get('@board').object_id)
   end
 
   def test_clear
@@ -93,7 +93,7 @@ class TestConnection < Minitest::Test
 
     assert_equal(1, b.groups[:x].length)
     assert_equal([Coord[:a1], Coord[:a2]].sort,
-                  b.groups[:x].first.coords.sort)
+      b.groups[:x].first.coords.sort)
 
     b[:a4] = :x
 
@@ -107,7 +107,7 @@ class TestConnection < Minitest::Test
 
     assert_equal(1, b.groups[:x].length)
     assert_equal([Coord[:a1], Coord[:a2], Coord[:a3], Coord[:a4]].sort,
-                  b.groups[:x].first.coords.sort)
+      b.groups[:x].first.coords.sort)
   end
 
   def test_groups_02
@@ -138,7 +138,7 @@ class TestConnection < Minitest::Test
 
     assert_equal(1, b.groups[:x].length)
     assert_equal([:a1, :a2, :a3, :a4].map { |c| Coord[c] }.sort,
-                  b.groups[:x].first.coords)
+      b.groups[:x].first.coords)
 
     b[:a3] = nil
 
@@ -160,7 +160,7 @@ class TestConnection < Minitest::Test
 
     assert_equal(1, b.groups[:x].length)
     assert_equal([:a1, :a2, :a3, :a4].map { |c| Coord[c] }.sort,
-                  b.groups[:x].first.coords)
+      b.groups[:x].first.coords)
 
     b[:a3] = :o
 

@@ -30,7 +30,7 @@
 class Board
 
   attr_reader :shape, :cell_shape, :coords, :cells,
-              :width, :height, :plugins
+    :width, :height, :plugins
 
   protected :cells # rubocop:disable Style/AccessModifierDeclarations
 

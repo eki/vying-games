@@ -74,7 +74,7 @@ class TestInARow < Minitest::Test
 
     b.threats.each do |t|
       assert_equal("[#{t.degree}, #{t.player}, #{t.empty_coords.inspect}]",
-                    t.to_s)
+        t.to_s)
       assert_equal(t.to_s, t.inspect)
     end
   end

@@ -42,7 +42,7 @@ class TestSpecialMoves < Minitest::Test
 
   def test_inspect
     assert_equal('undo_requested_by_x',
-                  SpecialMove['undo_requested_by_x'].inspect)
+      SpecialMove['undo_requested_by_x'].inspect)
   end
 
 end

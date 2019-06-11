@@ -85,7 +85,7 @@ module Vying
 
         if results.respond_to?(:options)
           g = Game.new(results.rules, results.seed,
-                        (results.options || {}).dup)
+            (results.options || {}).dup)
         else
           g = Game.new(results.rules, results.seed)
         end

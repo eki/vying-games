@@ -65,7 +65,7 @@ class TestBoardInfinite < Minitest::Test
     assert_equal([:n, :e, :w], b.directions([-2, -1]))
 
     assert_equal([Coord[1, -1], Coord[0, 0], Coord[2, 0]].sort,
-                  b.coords.neighbors(Coord[1, 0]).sort)
+      b.coords.neighbors(Coord[1, 0]).sort)
 
     b = Board.infinite(4, 5, cell_shape: :hexagon)
     assert_equal(:infinite, b.shape)
@@ -182,7 +182,7 @@ class TestBoardInfinite < Minitest::Test
     assert(b.coords.include?(Coord[0, 0]))
 
     assert_equal([Coord[0, 0], Coord[2, 0], Coord[-3, -5]].sort,
-                  b.occupied(:x).sort)
+      b.occupied(:x).sort)
     assert_equal(69, b.unoccupied.length)
   end
 

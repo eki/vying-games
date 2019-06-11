@@ -51,7 +51,7 @@ module Vying
     # private :new   # TODO
 
     attr_reader :class_name, :name, :version, :players, :options, :defaults,
-                :misere_rules
+      :misere_rules
 
     def initialize(class_name)
       @class_name, @options, @defaults, @cached = class_name, {}, {}, []

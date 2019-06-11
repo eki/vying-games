@@ -347,13 +347,13 @@ class TestBoard < Minitest::Test
     assert_equal([:w, :e, :s], b.directions(:e3))
 
     assert_equal(%w(a2 b1),
-                  b.coords.neighbors(Coord[:a1]).map(&:to_s).sort)
+      b.coords.neighbors(Coord[:a1]).map(&:to_s).sort)
     assert_equal(%w(a1 c1),
-                  b.coords.neighbors(Coord[:b1]).map(&:to_s).sort)
+      b.coords.neighbors(Coord[:b1]).map(&:to_s).sort)
     assert_equal(%w(b2 c1 d2),
-                  b.coords.neighbors(Coord[:c2]).map(&:to_s).sort)
+      b.coords.neighbors(Coord[:c2]).map(&:to_s).sort)
     assert_equal(%w(a2 b3 c2),
-                  b.coords.neighbors(Coord[:b2]).map(&:to_s).sort)
+      b.coords.neighbors(Coord[:b2]).map(&:to_s).sort)
   end
 
   def test_group_by_connectivity
@@ -373,7 +373,7 @@ class TestBoard < Minitest::Test
 
     assert_equal(1, groups.length)
     assert_equal([Coord[:a1], Coord[:b2], Coord[:b3], Coord[:c3]].sort,
-                  groups.first.sort)
+      groups.first.sort)
 
     b[:b2] = :o
 

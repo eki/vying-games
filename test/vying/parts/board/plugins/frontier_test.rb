@@ -23,12 +23,12 @@ class TestFrontier < Minitest::Test
     b[:a1, :b1] = :x
 
     assert_equal(%w(a2 b2 c1 c2),
-                  b.frontier.map(&:to_s).sort)
+      b.frontier.map(&:to_s).sort)
 
     b[:b1] = nil
 
     assert_equal(%w(a2 b1 b2),
-                  b.frontier.map(&:to_s).sort)
+      b.frontier.map(&:to_s).sort)
   end
 
   def test_hexagon_directions
@@ -40,17 +40,17 @@ class TestFrontier < Minitest::Test
     b[:b2] = :x
 
     assert_equal(%w(a2 b1 b3 c2 c3),
-                  b.frontier.map(&:to_s).sort)
+      b.frontier.map(&:to_s).sort)
 
     b[:a4] = :x
 
     assert_equal(%w(a2 a3 b1 b3 b4 b5 c2 c3),
-                  b.frontier.map(&:to_s).sort)
+      b.frontier.map(&:to_s).sort)
 
     b[:a5] = :o # omitted from coords due to board shape
 
     assert_equal(%w(a2 a3 b1 b3 b4 b5 c2 c3),
-                  b.frontier.map(&:to_s).sort)
+      b.frontier.map(&:to_s).sort)
   end
 
   def test_square_no_diagonals
@@ -63,7 +63,7 @@ class TestFrontier < Minitest::Test
     b[:b2] = :x
 
     assert_equal(%w(a2 b1 b3 c2),
-                  b.frontier.map(&:to_s).sort)
+      b.frontier.map(&:to_s).sort)
   end
 
   def test_triangle_directions
@@ -75,12 +75,12 @@ class TestFrontier < Minitest::Test
     b[:b1] = :x
 
     assert_equal(%w(a2 c1),
-                  b.frontier.map(&:to_s).sort)
+      b.frontier.map(&:to_s).sort)
 
     b[:b2] = :x
 
     assert_equal(%w(a2 b3 c1 c2),
-                  b.frontier.map(&:to_s).sort)
+      b.frontier.map(&:to_s).sort)
   end
 
   def test_dup

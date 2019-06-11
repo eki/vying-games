@@ -144,7 +144,7 @@ class TestGame < Minitest::Test
 
     assert_equal('x_resigns', g.sequence.last)
     assert_equal('randombot (o) defeated john_doe (x) (john_doe resigns)',
-                  g.description)
+      g.description)
   end
 
   def test_resign_off_turn
@@ -205,7 +205,7 @@ class TestGame < Minitest::Test
     assert(!g.special_move?('cancel_draw', :white))
 
     assert_equal(%w(draw_accepted_by_white reject_draw),
-                  g.special_moves(:white).sort)
+      g.special_moves(:white).sort)
 
     g[:white].user << 'accept_draw'
     g.step
@@ -268,7 +268,7 @@ class TestGame < Minitest::Test
     assert(!g.special_move?('cancel_draw', :white))
 
     assert_equal(%w(draw_accepted_by_white reject_draw),
-                  g.special_moves(:white).sort)
+      g.special_moves(:white).sort)
 
     g[:white] << 'reject_draw'
     g.step
@@ -321,7 +321,7 @@ class TestGame < Minitest::Test
     assert(!g.special_move?('cancel_draw', :white))
 
     assert_equal(%w(draw_accepted_by_white reject_draw),
-                  g.special_moves(:white).sort)
+      g.special_moves(:white).sort)
 
     g[:red] << 'cancel_draw'
     g.step
@@ -369,7 +369,7 @@ class TestGame < Minitest::Test
     end
 
     assert_equal('randombot (o) defeated john_doe (x) (time exceeded)',
-                  g.description)
+      g.description)
   end
 
   def test_undo
@@ -448,7 +448,7 @@ class TestGame < Minitest::Test
     assert(!g.special_move?('cancel_undo', :o))
 
     assert_equal(%w(undo_accepted_by_o reject_undo).sort,
-                  g.special_moves(:o).sort)
+      g.special_moves(:o).sort)
 
     g[:o] << 'reject_undo'
     g.step
@@ -476,7 +476,7 @@ class TestGame < Minitest::Test
     assert(!g.special_move?('cancel_undo', :x))
 
     assert_equal(%w(undo_accepted_by_x reject_undo).sort,
-                  g.special_moves(:x).sort)
+      g.special_moves(:x).sort)
 
     g[:o] << 'cancel_undo'
     g.step
@@ -504,7 +504,7 @@ class TestGame < Minitest::Test
     assert(!g.special_move?('cancel_undo', :x))
 
     assert_equal(%w(undo_accepted_by_x reject_undo).sort,
-                  g.special_moves(:x).sort)
+      g.special_moves(:x).sort)
 
     g[:x].user << 'accept_undo'
     g.step
@@ -564,7 +564,7 @@ class TestGame < Minitest::Test
                    time_exceeded_by_blue
                    cancel_undo
                    reject_undo).sort,
-                  g.special_moves.map(&:to_s).sort)
+      g.special_moves.map(&:to_s).sort)
 
     g[:white].user << 'accept_undo'
     g.step
@@ -592,7 +592,7 @@ class TestGame < Minitest::Test
                    time_exceeded_by_blue
                    cancel_undo
                    reject_undo).sort,
-                  g.special_moves.sort)
+      g.special_moves.sort)
 
     g2 = Game.replay(g)
 
@@ -650,10 +650,10 @@ class TestGame < Minitest::Test
     assert_equal(:o, g.who?(g[:o].user))
 
     assert_equal(g.move?(g.moves(:x).first, :x),
-                  g.move?(g.moves(g[:x].user).first, g[:x].user))
+      g.move?(g.moves(g[:x].user).first, g[:x].user))
 
     assert_equal(g.move?(g.moves(:o).first, :o),
-                  g.move?(g.moves(g[:o].user).first, g[:o].user))
+      g.move?(g.moves(g[:o].user).first, g[:o].user))
 
     assert_equal(g.has_moves?(:x), g.has_moves?(g[:x].user))
     assert_equal(g.has_moves?(:o), g.has_moves?(g[:o].user))

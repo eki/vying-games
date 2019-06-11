@@ -320,7 +320,7 @@ class TestCustodialFlip < Minitest::Test
     cc = b.custodial_flip(Coord[5, 5], :black)
 
     assert_equal([Coord[1, 1], Coord[2, 2], Coord[3, 3], Coord[4, 4]].sort,
-                  cc.sort)
+      cc.sort)
 
     assert_equal(:black, b[0, 0])
     assert_equal(:black, b[1, 1])

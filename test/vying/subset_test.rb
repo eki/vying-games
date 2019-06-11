@@ -32,6 +32,6 @@ class TestSubset < Minitest::Test
                   Subset.count_subsets(1, 5) +
                   Subset.count_subsets(2, 5) +
                   Subset.count_subsets(3, 5),
-                  Subset.count_subsets_less_than(3, 5))
+      Subset.count_subsets_less_than(3, 5))
   end
 end

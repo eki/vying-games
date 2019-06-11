@@ -158,7 +158,7 @@ class TestYinsh < Minitest::Test
     assert_equal(:white, g.turn)
     assert_equal(2, g.rows.length)
     assert_equal(%w(b7 c8 d9 g3).sort,
-                  g.moves.map(&:to_s).sort)
+      g.moves.map(&:to_s).sort)
 
     g << 'b7'
 
@@ -170,7 +170,7 @@ class TestYinsh < Minitest::Test
     assert_equal(:white, g.turn)
     assert_equal(1, g.rows.length)
     assert_equal(%w(c8 d9 g3).sort,
-                  g.moves.map(&:to_s).sort)
+      g.moves.map(&:to_s).sort)
 
     g << 'c8'
 
@@ -212,7 +212,7 @@ class TestYinsh < Minitest::Test
     assert_equal(:white, g.turn)
     assert_equal(2, g.rows.length)
     assert_equal(%w(b7 c8 d9 f3).sort,
-                  g.moves.map(&:to_s).sort)
+      g.moves.map(&:to_s).sort)
 
     g << 'b7'
 
@@ -224,7 +224,7 @@ class TestYinsh < Minitest::Test
     assert_equal(:white, g.turn)
     assert_equal(1, g.rows.length)
     assert_equal(%w(c8 d9 f3).sort,
-                  g.moves.map(&:to_s).sort)
+      g.moves.map(&:to_s).sort)
 
     g << 'c8'
 
@@ -259,7 +259,7 @@ class TestYinsh < Minitest::Test
 
     assert_equal(:black, g.turn)
     assert_equal(%w(f10 g10 h10 i10 j10).sort,
-                  g.moves.map(&:to_s).sort)
+      g.moves.map(&:to_s).sort)
 
     g << 'f10'
 
@@ -290,7 +290,7 @@ class TestYinsh < Minitest::Test
 
     assert_equal(:white, g.turn)
     assert_equal(%w(d3 b7 c8 d9 e10).sort,
-                  g.moves.map(&:to_s).sort)
+      g.moves.map(&:to_s).sort)
 
     g << 'd3'
 
@@ -300,7 +300,7 @@ class TestYinsh < Minitest::Test
 
     assert_equal(:black, g.turn)
     assert_equal(%w(f10 g10 h10 i10 j10).sort,
-                  g.moves.map(&:to_s).sort)
+      g.moves.map(&:to_s).sort)
 
     g << 'f10'
 
@@ -347,7 +347,7 @@ class TestYinsh < Minitest::Test
     assert_equal(:white, g.turn)
     assert_equal(2, g.rows.length)
     assert_equal(%w(b7 c8 d9 f3).sort,
-                  g.moves.map(&:to_s).sort)
+      g.moves.map(&:to_s).sort)
 
     g << 'b7'
 
@@ -359,7 +359,7 @@ class TestYinsh < Minitest::Test
     assert_equal(:white, g.turn)
     assert_equal(1, g.rows.length)
     assert_equal(%w(c8 d9 f3).sort,
-                  g.moves.map(&:to_s).sort)
+      g.moves.map(&:to_s).sort)
 
     g << 'c8'
 

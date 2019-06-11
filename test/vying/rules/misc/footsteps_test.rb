@@ -145,11 +145,11 @@ class TestFootsteps < Minitest::Test
     assert_equal([4], g.sealed_moves(nil))
 
     assert_equal(%w(4 5 6 4 4),
-                  g.history.censored_sequence(:left))
+      g.history.censored_sequence(:left))
     assert_equal(['4', '5', '6', '4', :hidden],
-                  g.history.censored_sequence(:right))
+      g.history.censored_sequence(:right))
     assert_equal(['4', '5', '6', '4', :hidden],
-                  g.history.censored_sequence(nil))
+      g.history.censored_sequence(nil))
   end
 
   def test_game01

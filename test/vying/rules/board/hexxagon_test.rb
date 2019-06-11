@@ -76,9 +76,9 @@ class TestHexxagon < Minitest::Test
   def test_players
     assert_equal([:red, :blue, :white], rules.new.players)
     assert_equal([:red, :blue],
-                  rules.new(number_of_players: 2).players)
+      rules.new(number_of_players: 2).players)
     assert_equal([:red, :blue, :white],
-                  rules.new(number_of_players: 3).players)
+      rules.new(number_of_players: 3).players)
   end
 
   def test_has_score

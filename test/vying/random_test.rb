@@ -68,7 +68,7 @@ class TestRandomNumberGenerator < Minitest::Test
 
   def test_inspect
     assert_equal('#<RNG seed: 1234, count: 0>',
-                  RandomNumberGenerator.new(1234).inspect)
+      RandomNumberGenerator.new(1234).inspect)
   end
 
   def test_rand_limit_seed_0
