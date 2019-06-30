@@ -46,8 +46,8 @@ module CLI
         end
       end
 
-      b = total_spread.to_f / total_moves.to_f
-      mg = total_moves.to_f / n.to_f
+      b = total_spread.to_f / total_moves
+      mg = total_moves.to_f / n
 
       puts format('%20s %16.2f %16.2f', r.to_s, b, mg)
     end

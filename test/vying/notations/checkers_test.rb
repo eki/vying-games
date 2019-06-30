@@ -45,7 +45,7 @@ class TestCheckersNotation < Minitest::Test
     g = Game.new AmericanCheckers
     n = CheckersNotation.new(g)
 
-    s = ['9-14', '9-13', '10-15', '10-14', '11-16', '11-15', '12-16']
+    s = %w(9-14 9-13 10-15 10-14 11-16 11-15 12-16)
 
     assert_equal(s, n.moves)
     assert_equal(s, n.moves(:red))
