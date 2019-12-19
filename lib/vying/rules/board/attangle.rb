@@ -27,7 +27,6 @@ Rules.create('Attangle') do
 
     def init
       length   = @options[:board_size]
-
       @board   = Board.hexagon(length, plugins: [:stacking])
       @pool    = Hash.new(initial_pool(length))
       @triples = required_triples(length)

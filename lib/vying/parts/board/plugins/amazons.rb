@@ -82,9 +82,9 @@ module Board::Plugins::Amazons
       @coords = coords_found
 
       if not_found.empty?
-        return self
+        self
       else
-        return [self, Territory[board, not_found]]
+        [self, Territory[board, not_found]]
       end
     end
 

@@ -69,10 +69,10 @@ module Search
       # the score by #put.
 
       def get(position, player)
-        cr = @cache[[position, player]]
-        if cr
+        if cr = @cache[[position, player]]
           cr.hits += 1
-          return [cr.score, cr.distance]
+
+          [cr.score, cr.distance]
         end
       end
 
