@@ -1,11 +1,19 @@
-= Vying
+This is a really old library that's only very infrequently maintained. It *was*
+the core of a game server (Vying Games) that was shutdown about a million years
+ago.
 
-Vying is a library for multi-player, turn-based, strategy games. The goal is to
-make it easy to implement a large number of games very quickly, with only a
-small amount of code. This includes the rules (or game logic) and AI, but does
-not extend to user interface code (though there is a small, primitive
-command-line program for playing games). This library is the core of Vying
-Games <http://vying.org>.
+Because this library is so old, it doesn't always follow what are generally
+considered Ruby best practices. Buyer beware!
+
+---
+
+# Vying Games
+
+Vying Games is a library for multi-player, turn-based, strategy games. The
+goal is to make it easy to implement a large number of games very quickly,
+with only a small amount of code. This includes the rules (or game logic) and
+AI, but does not extend to user interface code (though there is a small,
+primitive command-line program for playing games).
 
 Some of vying's features are:
 
@@ -20,74 +28,107 @@ Some of vying's features are:
   needs improvement) 
 
 
-== Development Info
+## The Games
 
-This README is just a brief introduction to this library.  For more detailed /
-up-to-date info see the dev wiki: <http://vying.org/wiki/dev>.
+Implements the logic for:
 
+  * Abande
+  * Accasta
+  * Amazons
+  * American Checkers
+  * Ataxx
+  * Attangle
+  * Breakthrough
+  * Cephalopod
+  * Connect Four
+  * Connect6
+  * Dodgem
+  * Dots and Boxes
+  * Footsteps
+  * Frames
+  * Havannah
+  * Hearts
+  * Hex
+  * Hexplode
+  * Hexthello
+  * Hexxagon
+  * Kalah
+  * Keryo-Pente
+  * Lines of Action
+  * Misere Dots and Boxes
+  * Nine Men's Morris
+  * Ordo
+  * Othello
+  * Oware
+  * Pah-Tum
+  * Pente
+  * Phutball
+  * Pig
+  * Spangles
+  * Three Musketeers
+  * Tic Tac Toe
+  * Y
+  * YINSH
+  * Yavalath
 
-== The Games
+## Installation
 
-See <http://vying.org/wiki/games> for a list of games that have 
-already been implemented.  Planned games are also listed there.
+Vying Games is **NOT** currently available as a gem. Grab the code if you'd
+like to try it:
 
-
-== Installation
-
-Vying is available as a gem:
-
-  gem install vying --source http://vying.org
+```
+  git clone git@github.com:eki/vying-games.git
+```
 
 This gem has a native C extension to provide better performance (in some
 areas).  There are Ruby equivalents for all the C code, meaning the extension
-is not necessary.  It's loaded dynamically if present.  However, installation
-of the 'vying' gem will fail on platforms that can't build the C (despite the
-fact that the gem would still be 100% functional).  So, the 'vying-pure' gem is
-provided.  This is essentially the same gem, with all the C removed.
+is not necessary.  It's loaded dynamically if present. Use `rake compile` to
+build the extension.
 
-  gem install vying-pure --source http://vying.org
+## Command-Line Interface
 
-Because the 'vying-pure' gem has no dependencies and consists solely of pure 
-Ruby, it should be portable to any platform that Ruby supports.
-
-Or, if you prefer, the code is available at Github:
-
-  git clone git://github.com/eki/vying.git
-
-
-== Command-Line Interface
-
-This package includes a small command-line application called 'vying' that can
+This package includes a small command-line application called 'vg' that can
 be invoked in the following ways.  To get more help on any of these commands
 type:
 
-  vying --help
+```
+  vg --help
+```
 
-=== To play a game:
+To play a game:
 
-  vying play --rules Breakthrough --player white=Human --player black=RandomBot
+```
+  vg play --rules Breakthrough --player white=Human --player black=RandomBot
+```
 
-=== To benchmark a game:
+To benchmark a game:
 
-  vying bench --rules Breakthrough
+```
+  vg bench --rules Breakthrough
+```
 
-=== To check the branching factor of a game:
+To check the branching factor of a game:
 
-  vying branch --rules Breakthrough
+```
+  vg branch --rules Breakthrough
+```
 
-=== To get info about a game:
+To get info about a game:
 
-  vying info --rules Breakthrough
+```
+  vg info --rules Breakthrough
+```
 
-== Example Code
+## Example Code
 
 At the heart of the library are the Rules for a game.  For example:
 
+```
   Rules.create( "TicTacToe" ) do
     name    "Tic Tac Toe"
     version "1.0.0"
   end
-
+```
 
 The above is a start at defining the Rules for Tic Tac Toe.  The Rules contain
 largely static information about the game, such as the name of the game or
@@ -96,6 +137,7 @@ Tic Tac Toe would look like.  A Game will be made up (in part) of a series
 of Position, each position is created by changing the previous position by
 playing a move.
 
+```
   Rules.create( "TicTacToe" ) do
     name    "Tic Tac Toe"
     version "1.0.0"
@@ -110,7 +152,7 @@ playing a move.
       end
     end
   end
-
+```
 
 In the above example the players (:x, :o) were defined.  The player symbols
 declared in the order that the players take turns.  In this case, :x will go
@@ -119,8 +161,10 @@ first, and the :o.
 In addition, the position is defined to include a 3x3 board.  It can be
 accessed through a method 'board', like so:
 
+```
   position = TicTacToe.new
   puts position.board
+```
 
 If we were to continue this example, we'd need to define a #moves method to
 return tokens (Strings) representing each move.  In Tic Tac Toe, we'd probably 
@@ -137,10 +181,13 @@ implemented but those are the basics at the core of every game.
 
 Once some rules have been defined, we can play around with them like so:
 
+```
   g = Game.new TicTacToe
+```
 
 A Game represents an entire tree of positions.  
 
+```
   g.moves                  # Returns an array of possible moves
   g << g.moves.first       # Make the first move
 
@@ -176,14 +223,4 @@ A Game represents an entire tree of positions.
  
   g.step   # Play a single move (Game asks the appropriate Bot for it's move) 
   g.play   # Play out the entire game.
-
-
-== The Future
-
-It's the goal of this library to document games through implementation.
-Towards that end adding games, and making it easier to add games is this
-library's top priority.  Secondarily, providing AI utility code, and bots that
-play the games is also important.  Lastly, it's the goal of this library to
-provide some kind of client connectivity to the Vying Games server.  
-
-
+```
