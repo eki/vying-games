@@ -3,7 +3,7 @@
 require_relative '../../test_helper'
 
 class TestAttangleNotation < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_name
     assert_equal(:attangle_notation, AttangleNotation.notation_name)

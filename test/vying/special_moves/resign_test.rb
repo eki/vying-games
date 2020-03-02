@@ -3,7 +3,7 @@
 require_relative '../../test_helper'
 
 class TestResign < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def sm
     Move::Resign

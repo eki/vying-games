@@ -3,7 +3,7 @@
 require_relative '../test_helper'
 
 class TestBot < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_defaults
     assert(Bot.new.bot?)

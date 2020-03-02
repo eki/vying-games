@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'vying'
+require 'vying/games'
 
 module RulesTests
-  include Vying
+  include Vying::Games
 
   def new_game(seed=nil, options={})
     if seed.class == Hash

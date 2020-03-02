@@ -3,7 +3,7 @@
 require_relative '../../test_helper'
 
 class TestOthelloNotation < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_name
     assert_equal(:othello_notation, OthelloNotation.notation_name)

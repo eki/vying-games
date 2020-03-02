@@ -3,7 +3,7 @@
 require_relative '../../../../test_helper'
 
 class TestCounter < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_initialize
     c = Counter[:red, 1]

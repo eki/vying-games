@@ -3,7 +3,7 @@
 require_relative '../../test_helper'
 
 class TestDie < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_initialize
     die = Die.new(3)

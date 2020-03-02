@@ -3,7 +3,7 @@
 require_relative '../../test_helper'
 
 class TestCheckersNotation < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_name
     assert_equal(:checkers_notation, CheckersNotation.notation_name)

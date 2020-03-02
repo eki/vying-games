@@ -3,7 +3,7 @@
 require_relative '../test_helper'
 
 class TestHistory < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_initialize
     h = History.new(TicTacToe, nil, TicTacToe.options)

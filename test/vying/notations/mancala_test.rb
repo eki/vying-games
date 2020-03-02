@@ -3,7 +3,7 @@
 require_relative '../../test_helper'
 
 class TestMancalaNotation < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_name
     assert_equal(:mancala_notation, MancalaNotation.notation_name)

@@ -3,7 +3,7 @@
 require_relative '../test_helper'
 
 class TestSubset < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_count_subsets
     assert_equal(1,  Subset.count_subsets(0, 1))

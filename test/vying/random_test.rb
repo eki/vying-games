@@ -3,7 +3,7 @@
 require_relative '../test_helper'
 
 class TestRandomNumberGenerator < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_initialize
     rng = RandomNumberGenerator.new 1234

@@ -3,7 +3,7 @@
 require_relative '../../../../test_helper'
 
 class TestBoardTriangle < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_initialize
     b = Board.triangle(4)

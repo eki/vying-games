@@ -8,7 +8,7 @@ SimpleCov.start do
   add_filter '/test/'
 end
 
-require 'vying'
+require 'vying/games'
 require_relative './vying/rules/rules_test'
 
 require 'minitest/autorun'

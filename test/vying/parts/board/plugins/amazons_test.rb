@@ -3,7 +3,7 @@
 require_relative '../../../../test_helper'
 
 class TestAmazons < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_initialize_01
     b = Board.square(4, plugins: [:amazons])
