@@ -72,7 +72,7 @@ Rules.create('Cephalopod') do
           end
         else
           o_dice = Dice.new([board[*ns]].flatten)
-          rules.combos.keys.each do |combo|
+          rules.combos.each_key do |combo|
             if o_dice.include?(combo)
               combo.each { |f| ns.each { |c| a << c.to_s if board[c].up == f } }
             end
@@ -103,7 +103,7 @@ Rules.create('Cephalopod') do
 
         capturing = false
 
-        rules.combos.keys.each do |combo|
+        rules.combos.each_key do |combo|
           if dice.include?(combo)
             capturing = true
           end

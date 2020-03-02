@@ -35,7 +35,7 @@ class TestDotsAndBoxes < Minitest::Test
     assert_equal(:black, g.turn)
     assert_equal(60, g.moves.length)
 
-    g.grid.lines.keys.each do |k|
+    g.grid.lines.each_key do |k|
       g.move?("#{k.first}:#{k.last}")
     end
 
