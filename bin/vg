@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+
+# Copyright 2007, Eric Idema except where otherwise noted.
+# You may redistribute / modify this file under the same terms as Ruby.
+
+require 'vying/games'
+require 'vying/games/cli/cli'
+
+if CLI::subcommand?( ARGV.first )
+
+  command = ARGV.shift
+  CLI.require_subcommand( command )
+  CLI.send( command )
+
+elsif ARGV.first == "--version" || ARGV.first == "-v"
+
+  puts Vying::Games.version
+
+  if Vying::Games.random_support?
+    puts "  random support available"
+  else
+    puts "  'random' gem missing -- some games disabled"
+  end
+
+else
+
+  puts "Usage: vg <subcommand> [options] [args]"
+  puts "  Use 'vg <subcommand> --help' for help on a specific subcommand"
+  puts
+  puts "  Available subcommands: "
+  CLI::SUBCOMMANDS.each do |sc|
+    puts "    #{sc}"
+  end
+
+end

@@ -2,10 +2,10 @@
 
 require_relative '../../test_helper'
 
-if Vying::Format.find(:json)
+if Vying::Games::Format.find(:json)
 
   class TestJsonFormat < Minitest::Test
-    include Vying
+    include Vying::Games
 
     def test_type
       assert_equal(:json, JsonFormat.type)
@@ -28,7 +28,7 @@ if Vying::Format.find(:json)
     end
 
     def test_load_rules
-      g = Vying.load(Game.new(TicTacToe).to_format(:json), :json)
+      g = Vying::Games.load(Game.new(TicTacToe).to_format(:json), :json)
 
       assert_equal(TicTacToe, g.rules)
     end
@@ -55,13 +55,13 @@ if Vying::Format.find(:json)
 
     def test_load_history
       g = Game.new(TicTacToe)
-      g2 = Vying.load(g.to_format(:json), :json)
+      g2 = Vying::Games.load(g.to_format(:json), :json)
 
       assert_equal(g.history, g2.history)
 
       g << g.moves.first until g.final?
 
-      g2 = Vying.load(g.to_format(:json), :json)
+      g2 = Vying::Games.load(g.to_format(:json), :json)
 
       assert_equal(g.sequence, g2.sequence)
 
@@ -89,12 +89,12 @@ if Vying::Format.find(:json)
     end
 
     def test_load_options
-      g = Vying.load(Game.new(TicTacToe).to_format(:json), :json)
+      g = Vying::Games.load(Game.new(TicTacToe).to_format(:json), :json)
 
       assert_equal({}, g.options)
 
       g = Game.new Hex, board_size: 9
-      g = Vying.load(g.to_format(:json), :json)
+      g = Vying::Games.load(g.to_format(:json), :json)
 
       assert_equal({ board_size: 9 }, g.options)
     end
@@ -131,14 +131,14 @@ if Vying::Format.find(:json)
 
     def test_load_players
       g = Game.new(TicTacToe)
-      g2 = Vying.load(g.to_format(:json), :json)
+      g2 = Vying::Games.load(g.to_format(:json), :json)
 
       assert(g[:o].user == g2[:o].user)
       assert(g[:x].user == g2[:x].user)
 
       g[:o].user = User.new('john_doe', 1234)
 
-      g2 = Vying.load(g.to_format(:json), :json)
+      g2 = Vying::Games.load(g.to_format(:json), :json)
 
       assert(g[:o].user == g2[:o].user)
       assert_equal(g[:o].username, g2[:o].username)
@@ -201,7 +201,7 @@ if Vying::Format.find(:json)
 
     def test_load_annotations
       g = Game.new(TicTacToe)
-      g2 = Vying.load(g.to_format(:json), :json)
+      g2 = Vying::Games.load(g.to_format(:json), :json)
 
       assert(!g2.id)
       assert(!g2.unrated)
@@ -218,7 +218,7 @@ if Vying::Format.find(:json)
       g.instance_variable_set('@unrated', true)
       g.instance_variable_set('@time_limit', 4321)
 
-      g2 = Vying.load(g.to_format(:json), :json)
+      g2 = Vying::Games.load(g.to_format(:json), :json)
 
       assert_equal(1234, g2.id)
       assert(g2.unrated)

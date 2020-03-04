@@ -3,7 +3,7 @@
 require_relative '../test_helper'
 
 class TestSpecialMoves < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_interface
     SpecialMove.list.each do |sm|

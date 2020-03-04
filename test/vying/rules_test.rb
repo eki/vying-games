@@ -3,7 +3,7 @@
 require_relative '../test_helper'
 
 class TestRules < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_find
     Rules.latest_versions.each do |r|

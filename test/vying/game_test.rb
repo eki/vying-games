@@ -3,7 +3,7 @@
 require_relative '../test_helper'
 
 class TestGame < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_initialize
     g = Game.new TicTacToe

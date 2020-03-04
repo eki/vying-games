@@ -3,7 +3,7 @@
 require_relative '../../../../test_helper'
 
 class TestFrontier < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_initialize
     b = Board.square(4, plugins: [:frontier])

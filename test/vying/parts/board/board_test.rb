@@ -3,7 +3,7 @@
 require_relative '../../../test_helper'
 
 class TestBoard < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_initialize
     assert_raises(NoMethodError) do

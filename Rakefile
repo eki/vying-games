@@ -29,5 +29,5 @@ task "test_sans_ext": [:clobber, :test, :compile]
 desc 'compile the C extension part of the vying library'
 task :compile do
   ruby = $PROGRAM_NAME =~ /rake(.+)/ ? "ruby#{Regexp.last_match(1)}" : 'ruby'
-  sh "cd ext/vying/c/parts/board && #{ruby} ./extconf.rb && make"
+  sh "cd ext/vying/games/c/parts/board && #{ruby} ./extconf.rb && make"
 end

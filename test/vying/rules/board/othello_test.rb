@@ -3,6 +3,7 @@
 require_relative '../../../test_helper'
 
 class TestOthello < Minitest::Test
+  include Vying::Games
   include RulesTests
 
   def rules

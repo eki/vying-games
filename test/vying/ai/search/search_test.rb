@@ -2,7 +2,7 @@
 
 require_relative '../../../test_helper'
 
-module Vying
+module Vying::Games
   module BotTemplate
 
     attr_reader :leaf, :nodes, :leaf_list, :nodes_list
@@ -51,7 +51,7 @@ module Vying
 end
 
 class TestSearch < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_alphabeta_01
     mini = MiniMaxBot.new

@@ -2,8 +2,8 @@
 
 require_relative '../test_helper'
 
-class TestVying < Minitest::Test
+class TestVyingGames < Minitest::Test
   def test_version
-    assert(Vying.version)
+    assert(Vying::Games.version)
   end
 end

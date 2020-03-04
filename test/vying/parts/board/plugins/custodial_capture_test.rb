@@ -3,7 +3,7 @@
 require_relative '../../../../test_helper'
 
 class TestCustodialCapture < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def full_ancestors(b)
     class << b; ancestors; end

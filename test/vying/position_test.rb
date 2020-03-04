@@ -3,7 +3,7 @@
 require_relative '../test_helper'
 
 class TestPosition < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_censor
     p = Ataxx.new 1234

@@ -3,7 +3,7 @@
 require_relative '../../../../test_helper'
 
 class TestBoardSquare < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_initialize
     b = Board.square(8)

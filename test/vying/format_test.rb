@@ -3,7 +3,7 @@
 require_relative '../test_helper'
 
 class TestFormat < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_list
     Format.list.each do |n|

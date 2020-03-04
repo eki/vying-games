@@ -3,7 +3,7 @@
 require_relative '../../../test_helper'
 
 class TestCard < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_initialize
     c = Card.new(:clubs, 9)

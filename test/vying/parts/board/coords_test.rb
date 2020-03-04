@@ -3,7 +3,7 @@
 require_relative '../../../test_helper'
 
 class TestCoords < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def test_initialize
     coords = Coords.new(Coords.bounds_for(3, 4))

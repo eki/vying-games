@@ -3,7 +3,7 @@
 require_relative '../../test_helper'
 
 class TestTimeout < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def sm
     Move::Timeout

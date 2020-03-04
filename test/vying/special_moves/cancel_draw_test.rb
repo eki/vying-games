@@ -3,7 +3,7 @@
 require_relative '../../test_helper'
 
 class TestCancelDraw < Minitest::Test
-  include Vying
+  include Vying::Games
 
   def sm
     Move::CancelDraw
